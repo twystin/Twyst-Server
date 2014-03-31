@@ -38,7 +38,13 @@ module.exports = function (app) {
             return false;
         }
         return false;
-    }
+    };
+
+    (function user_otp_route() {
+        var OtpCtrl = require('../controllers/otpCtrl.js');
+        app.get('/api/v2/getotp/:mobile', OtpCtrl.getOTP);
+        app.get('/api/v2/update_device_id', OtpCtrl.updateDeviceId);
+    })();
 
     (function public_route() {
         var OutletCtrl = require('../controllers/outlet');
