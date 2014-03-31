@@ -19,7 +19,6 @@ module.exports = function () {
         logs = require('../models/smslog'),
         smsMessageSentLogs = require('../models/smsMessageSentLogs'),
         redirect = require('../models/redirect'),
-        user_accounts = require('../models/userAccount.js'),
         beta_merchants = require('../models/beta_merchants');
 
     mongoose.model('Account').schema.add({

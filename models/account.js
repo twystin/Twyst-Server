@@ -32,7 +32,20 @@ var Account = new Schema({
         latitude: {type: Number},
         longitude: {type: Number}
     },
-    gcm: {type: String, default: ''}
+    gcm: {type: String, default: ''},
+    social_graph: {
+        provider: {
+            facebook: {
+
+            },
+            google: {
+
+            }
+        }
+    },
+    device_id: {type: String, default: ''},
+    otp: String,
+    otp_validated: Boolean
 });
 
 Account.plugin(passportLocalMongoose);
