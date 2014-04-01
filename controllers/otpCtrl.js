@@ -160,7 +160,7 @@ module.exports.updateDeviceId = function (req, res) {
 		account.role = 6;
 		account.otp_validated = true;
 
-		Account.register(new Account(account), "twyst2014", function(err, user) {
+		Account.register(new Account(account), phone, function(err, user) {
 	        if (err) {
 	            res.send(400, {
 	            	'status' : 'error',
