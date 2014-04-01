@@ -168,7 +168,7 @@ module.exports.updateDeviceId = function (req, res) {
 	                'info':  JSON.stringify(err) 
 	            });
 	        } else {
-	            requestLogin(user.username, user.username);
+	            returnResponse(user.username);
 	        }
 	    });
 	}
@@ -185,36 +185,18 @@ module.exports.updateDeviceId = function (req, res) {
 						'info': JSON.stringify(err)
 					});
 				} else {
-					requestLogin(user.username, user.username);
+					returnResponse(user.username);
 				}
 		});
 	}
 
-	function requestLogin (username, password) {
+	function returnResponse (username) {
 		
-		http.post('http://50.112.252.87/api/v1/auth/login', {username: username, password: password}, function(response){
-						
-			var body = '';
-			response.on('data', function (chunk) {
-				body += chunk;
-			});
-			response.on('end', function () {
-				if(response.statusCode === 200) {
-					res.send(response.statusCode, {
-						'status' : 'success',
-						'message': 'Successfully authentiated user.',
-						'info': JSON.stringify(body)
-					});
-				}
-				else {
-					res.send(response.statusCode, {
-						'status' : 'Error',
-						'message': 'Error authentiated user.',
-						'info': JSON.stringify(body)
-					});
-				}
-			});
-		});
+		res.send(200, {
+			'status': "success",
+			'message': "Successfully verified User",
+			'info': JSON.stringify(username)
+		})
 	}
 }
 
