@@ -160,7 +160,7 @@ module.exports.updateDeviceId = function (req, res) {
 		account.role = 6;
 		account.otp_validated = true;
 
-		Account.register(new Account(account), '', function(err, user) {
+		Account.register(new Account(account), "twyst2014", function(err, user) {
 	        if (err) {
 	            res.send(400, {
 	            	'status' : 'error',
@@ -185,14 +185,14 @@ module.exports.updateDeviceId = function (req, res) {
 						'info': JSON.stringify(err)
 					});
 				} else {
-					requestLogin(user.username, "");
+					requestLogin(user.username, "twyst2014");
 				}
 		});
 	}
 
 	function requestLogin (username, password) {
 		
-		http.post('http://dogfood.twsyt.in/api/v1/auth/login', {username: username, password: password}, function(response){
+		http.post('http://50.112.252.87/api/v1/auth/login', {username: username, password: password}, function(response){
 						
 			var body = '';
 			response.on('data', function (chunk) {
