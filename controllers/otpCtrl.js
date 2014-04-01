@@ -118,6 +118,7 @@ module.exports.updateDeviceId = function (req, res) {
 	}
 
 	function matchPhoneAndOTP(existing_otp) {
+
 		if((existing_otp.phone === phone) && (existing_otp.otp === otp)) {
 			checkIfExistingUser(phone);
 		}
@@ -125,7 +126,7 @@ module.exports.updateDeviceId = function (req, res) {
 			res.send(400, {
 				'status': 'error',
 				'message': 'The OTP you enterd is incorrect.',
-				'info': JSON.stringify(err)
+				'info': ''
 			});
 		}
 	};
@@ -198,11 +199,20 @@ module.exports.updateDeviceId = function (req, res) {
 				body += chunk;
 			});
 			response.on('end', function () {
-				res.send(response.statusCode, {
-					'status' : 'success',
-					'message': 'Successfully authentiated user.',
-					'info': JSON.stringify(body)
-				});
+				if(response.statusCode === 200) {
+					res.send(response.statusCode, {
+						'status' : 'success',
+						'message': 'Successfully authentiated user.',
+						'info': JSON.stringify(body)
+					});
+				}
+				else {
+					res.send(response.statusCode, {
+						'status' : 'Error',
+						'message': 'Error authentiated user.',
+						'info': JSON.stringify(body)
+					});
+				}
 			});
 		});
 	}
