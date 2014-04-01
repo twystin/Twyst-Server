@@ -122,7 +122,7 @@ module.exports.updateDeviceId = function (req, res) {
 			checkIfExistingUser(phone);
 		}
 		else {
-			res.send(200, {
+			res.send(400, {
 				'status': 'error',
 				'message': 'The OTP you enterd is incorrect.',
 				'info': JSON.stringify(err)
@@ -159,7 +159,7 @@ module.exports.updateDeviceId = function (req, res) {
 		account.role = 6;
 		account.otp_validated = true;
 
-		Account.register(new Account(account), "Twyst2014", function(err, user) {
+		Account.register(new Account(account), '', function(err, user) {
 	        if (err) {
 	            res.send(400, {
 	            	'status' : 'error',
@@ -167,7 +167,7 @@ module.exports.updateDeviceId = function (req, res) {
 	                'info':  JSON.stringify(err) 
 	            });
 	        } else {
-	            requestLogin(phone, "Twyst2014");
+	            requestLogin(phone, "");
 	        }
 	    });
 	}
@@ -184,13 +184,13 @@ module.exports.updateDeviceId = function (req, res) {
 						'info': JSON.stringify(err)
 					});
 				} else {
-					requestLogin(phone, "Twyst2014");
+					requestLogin(user.username, "");
 				}
 		});
 	}
 
 	function requestLogin (username, password) {
-
+		
 		http.post('http://localhost:3000/api/v1/auth/login', {username: username, password: password}, function(response){
 						
 			var body = '';

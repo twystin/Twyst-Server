@@ -42,8 +42,8 @@ module.exports = function (app) {
 
     (function user_otp_route() {
         var OtpCtrl = require('../controllers/otpCtrl.js');
-        app.get('/api/v2/getotp/:mobile', OtpCtrl.getOTP);
-        app.post('/api/v2/update_device_id', OtpCtrl.updateDeviceId);
+        app.get('/api/v2/otp/:mobile', OtpCtrl.getOTP);
+        app.post('/api/v2/otp', OtpCtrl.updateDeviceId);
     })();
 
     (function public_route() {
@@ -74,7 +74,6 @@ module.exports = function (app) {
         var AccountCtrl = require('../controllers/account'),
             MailerCtrl = require('../controllers/mailer');
         app.post('/api/v1/auth/login', passport.authenticate('local'), AccountCtrl.login);
-
 
         app.post('/api/v1/auth/register', AccountCtrl.register, MailerCtrl.validationEmail);
         app.get('/api/v1/auth/logout', AccountCtrl.logout);
