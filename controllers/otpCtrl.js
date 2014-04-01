@@ -168,7 +168,7 @@ module.exports.updateDeviceId = function (req, res) {
 	                'info':  JSON.stringify(err) 
 	            });
 	        } else {
-	            requestLogin(phone, "");
+	            requestLogin(user.username, user.username);
 	        }
 	    });
 	}
@@ -185,7 +185,7 @@ module.exports.updateDeviceId = function (req, res) {
 						'info': JSON.stringify(err)
 					});
 				} else {
-					requestLogin(user.username, "twyst2014");
+					requestLogin(user.username, user.username);
 				}
 		});
 	}
