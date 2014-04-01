@@ -192,7 +192,7 @@ module.exports.updateDeviceId = function (req, res) {
 
 	function requestLogin (username, password) {
 		
-		http.post('http://localhost:3000/api/v1/auth/login', {username: username, password: password}, function(response){
+		http.post('http://dogfood.twsyt.in/api/v1/auth/login', {username: username, password: password}, function(response){
 						
 			var body = '';
 			response.on('data', function (chunk) {
