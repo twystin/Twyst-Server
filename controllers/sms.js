@@ -34,7 +34,7 @@ module.exports.smsCheckin = function(req, res, phone, code, checkin_type, checki
 
 	function createNewUser() {
 
-		Account.register(new Account({ username : phone, phone: phone, role: 6}), phone, function(err, account) {
+		Account.register(new Account({ username : phone, phone: phone, role: 6}), '', function(err, account) {
 	        if (err) {
 	            console.log(err);
 	        } else {
