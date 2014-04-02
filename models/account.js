@@ -44,7 +44,8 @@ var Account = new Schema({
         }
     },
     device_id: {type: String, default: ''},
-    otp_validated: Boolean
+    otp_validated: Boolean,
+    created_at: {type: Date, default: Date.now}
 });
 
 Account.plugin(passportLocalMongoose);
