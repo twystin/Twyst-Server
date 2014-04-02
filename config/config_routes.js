@@ -313,8 +313,8 @@ module.exports = function (app) {
     })();
 
     (function handle_defaults() {
-        app.use(function (req,res){
-            res.end('404 - Page not found');
+        app.use(function (req, res){
+            res.send(404, {'info': '...Page not found'});
         });
     })();
 };
