@@ -11,7 +11,7 @@ var Account = new Schema({
     company: String,
     address: String,
     contact_person: String,
-    phone: {type: String, unique: true},
+    phone: {type: String},
     website: String,
     facebook_url: String,
     twitter_url: String,
@@ -32,7 +32,20 @@ var Account = new Schema({
         latitude: {type: Number},
         longitude: {type: Number}
     },
-    gcm: {type: String, default: ''}
+    gcm: {type: String, default: ''},
+    social_graph: {
+        provider: {
+            facebook: {
+
+            },
+            google: {
+
+            }
+        }
+    },
+    device_id: {type: String, default: ''},
+    otp_validated: Boolean,
+    created_at: {type: Date, default: Date.now}
 });
 
 Account.plugin(passportLocalMongoose);

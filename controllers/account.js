@@ -4,19 +4,21 @@ var Account = mongoose.model('Account');
 var _ = require('underscore');
 
 module.exports.login = function (req, res) {
-    res.send({'status': 'success',
+    res.send(200, {
+    	'status': 'success',
         'message': 'Login successful',
-        'info': req.user});
+        'info': req.user
+    });
 };
 
 module.exports.register = function(req, res, next) {
     Account.register(new Account({ username : req.body.username, email: req.body.email, role: req.body.role, parent: req.body.parent}), req.body.password, function(err, account) {
         if (err) {
-            res.send({'status' : 'error',
+            res.send(400, {'status' : 'error',
                 'message' : 'Error creating account',
                 'info':  err });
         } else {
-            res.send({'status': 'success',
+            res.send(200, {'status': 'success',
                 'message' : 'Account created',
                 'info' : account});
             next();

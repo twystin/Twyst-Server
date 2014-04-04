@@ -38,7 +38,13 @@ module.exports = function (app) {
             return false;
         }
         return false;
-    }
+    };
+
+    (function user_otp_route() {
+        var OtpCtrl = require('../controllers/otpCtrl.js');
+        app.get('/api/v2/otp/:mobile', OtpCtrl.getOTP);
+        app.post('/api/v2/otp', OtpCtrl.updateDeviceId);
+    })();
 
     (function public_route() {
         var OutletCtrl = require('../controllers/outlet');
@@ -68,7 +74,6 @@ module.exports = function (app) {
         var AccountCtrl = require('../controllers/account'),
             MailerCtrl = require('../controllers/mailer');
         app.post('/api/v1/auth/login', passport.authenticate('local'), AccountCtrl.login);
-
 
         app.post('/api/v1/auth/register', AccountCtrl.register, MailerCtrl.validationEmail);
         app.get('/api/v1/auth/logout', AccountCtrl.logout);
@@ -308,8 +313,8 @@ module.exports = function (app) {
     })();
 
     (function handle_defaults() {
-        app.use(function (req,res){
-            res.end('404 - Page not found');
+        app.use(function (req, res){
+            res.send(404, {'info': '...Page not found'});
         });
     })();
 };

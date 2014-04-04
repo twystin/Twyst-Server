@@ -16,7 +16,7 @@ module.exports = function (app) {
         app.use(express.methodOverride());
         app.use(passport.initialize());
         app.use(passport.session());
-        app.use(express.static(__dirname + '/../../web_apps/'));
+        app.use(express.static(__dirname + '/../../Twyst-Web-Apps/'));
         app.use(app.router);
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         app.use(express.favicon(__dirname + '/../../web_apps/common/images/favicon/twyst.ico'));

@@ -19,7 +19,10 @@ module.exports = function () {
         logs = require('../models/smslog'),
         smsMessageSentLogs = require('../models/smsMessageSentLogs'),
         redirect = require('../models/redirect'),
+        temp_otp = require('../models/temp_otp'),
+        notif = require('../models/notif'),
         beta_merchants = require('../models/beta_merchants');
+
     mongoose.model('Account').schema.add({
         account: {type: Schema.ObjectId, ref: 'Account'}
     });
