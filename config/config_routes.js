@@ -40,6 +40,16 @@ module.exports = function (app) {
         return false;
     };
 
+    (function user_data_route() {
+        var UserDataCtrl = require('../controllers/user/userDataCtrl');
+        app.get('/api/v2/data/:latitude/:longitude', UserDataCtrl.getData);
+    })();
+
+    (function user_const_route() {
+        var UserConstCtrl = require('../controllers/user/userConstCtrl');
+        app.get('/api/v2/constants', UserConstCtrl.getConst);
+    })();
+
     (function user_otp_route() {
         var OtpCtrl = require('../controllers/otpCtrl.js');
         app.get('/api/v2/otp/:mobile', OtpCtrl.getOTP);

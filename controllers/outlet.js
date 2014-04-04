@@ -45,18 +45,31 @@ module.exports.nearbyOutlets = function(req,res) {
 	var latitude = Number(req.params.latitude);
 	var longitude = Number(req.params.longitude);
 	var radius =  6371.0008; // Earth radius
+
+	if(longitude && latitude) {
+		getData();
+	}
+	else {
+		res.send(400,{'status': 'error',
+		  				'message': 'Error getting list of outlets',
+		  				'info': JSON.stringify(err)
+		});
+	}
 	//, $maxDistance: 0.01
 	//Outlet.geoNear([Number(longitude), Number(latitude)], {num: 5,distanceMultiplier: 6371 }, function(err, outlets) {
-	Outlet.find({'outlet_meta.status': 'active','contact.location.coords': { $nearSphere: [longitude, latitude], $maxDistance: 5000}}, {}, {skip: 0}, function(err, outlets) {
-		if (err) {
-			res.send(400,{'status': 'error',
-			  'message': 'Error getting list of outlets',
-			  'info': JSON.stringify(err)
-			});
-		} else {
-			getProgramForOutlets(outlets, res);   
-		}
-	 })
+	function getData() {
+		Outlet.find({'outlet_meta.status': 'active','contact.location.coords': { $nearSphere: [longitude, latitude], $maxDistance: 5000}}, {}, {skip: 0}, function(err, outlets) {
+			if (err) {
+				res.send(400,{'status': 'error',
+				  'message': 'Error getting list of outlets',
+				  'info': JSON.stringify(err)
+				});
+				console.log(err)
+			} else {
+				getProgramForOutlets(outlets, res);   
+			}
+		});
+	}
 };
 
 function getProgramForOutlets(outlets, res) {
