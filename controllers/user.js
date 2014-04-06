@@ -144,6 +144,7 @@ module.exports.socialUpdate = function (req, res) {
             });
 
             response.on('end', function() {
+                body = JSON.parse(body);
                 updateUser(access, info, body);
             });
         })
