@@ -165,7 +165,7 @@ module.exports.socialUpdate = function (req, res) {
                 user.facebook = {};
                 user.facebook.access = access;
                 user.facebook.info = info;
-                user.friends.friends = body;
+                user.facebook.friends = body;
 
                 user.save(function (err) {
                     if(err) {
