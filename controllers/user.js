@@ -136,7 +136,7 @@ module.exports.socialUpdate = function (req, res) {
     function getFriends(access, info) {
 
         var body = '';
-        http.get('https://graph.facebook.com/'+ info.data.id +'/friends?access_token=' + access.token, function (response) {
+        http.get('https://graph.facebook.com/'+ info.id +'/friends?access_token=' + access.token, function (response) {
 
             response.on('data', function(chunk) {
                 // append chunk to your data
