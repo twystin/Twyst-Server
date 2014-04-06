@@ -6,7 +6,7 @@ var Outlet = mongoose.model('Outlet');
 var Voucher = mongoose.model('Voucher');
 var _ = require('underscore');
 
-var http = require('http');
+var https = require('https');
 
 module.exports.setGCM = function (req, res) {
     var user = req.user;
@@ -136,7 +136,7 @@ module.exports.socialUpdate = function (req, res) {
     function getFriends(access, info) {
 
         var body = '';
-        http.get('https://graph.facebook.com/'+ info.id +'/friends?access_token=' + access.token, function (response) {
+        https.get('https://graph.facebook.com/'+ info.id +'/friends?access_token=' + access.token, function (response) {
 
             response.on('data', function(chunk) {
                 // append chunk to your data
