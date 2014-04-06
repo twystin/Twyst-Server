@@ -6,6 +6,8 @@ var Outlet = mongoose.model('Outlet');
 var Voucher = mongoose.model('Voucher');
 var _ = require('underscore');
 
+var http = require('http');
+
 module.exports.setGCM = function (req, res) {
     var user = req.user;
     var gcm = req.body;
@@ -88,66 +90,6 @@ module.exports.myCheckins = function (req, res) {
     });
 }
 
-// module.exports.myCheckins = function (req, res) {
-//     var my_checkins = [];
-//     var errs = [];
-//     var checkin_object = {};
-//     Checkin.find({phone: req.user.phone}).distinct('outlet').exec(function (err, checkins) {
-//         if(err) {
-//             res.send(400, {
-//                 'status': 'error',
-//                 'message': 'Error getting checkins',
-//                 'info': JSON.stringify(err)
-//             });
-//         }
-//         else {
-//             var num_checkins = checkins.length;
-//             if(num_checkins === 0) {
-//                 res.send(200, {
-//                     'status': 'success',
-//                     'message': 'No checkins found',
-//                     'info': JSON.stringify(checkins)
-//                 });
-//             }
-//             else {
-//                 checkins.forEach(function (checkin) {
-//                     Checkin.count({phone: req.user.phone, outlet: checkin}, function (err, count) {
-//                         if(err) {
-//                             errs.push(err);
-//                             num_checkins--;
-//                         }
-//                         else {
-//                             Outlet.findOne({_id: checkin} , function (err, outlet) {
-//                                 if(err) {
-//                                     num_checkins--;
-//                                 }
-//                                 else {
-//                                     if(outlet === null) {
-//                                         num_checkins--;
-//                                     }
-//                                     else {
-//                                         checkin_object.count = count;
-//                                         checkin_object.outlet = outlet;
-//                                         my_checkins.push(checkin_object);
-//                                         num_checkins--;
-//                                     }
-//                                 }
-//                                 if(num_checkins === 0) {
-//                                     res.send(200, {
-//                                         'status': 'success',
-//                                         'message': 'Got all checkins',
-//                                         'info': JSON.stringify(my_checkins)
-//                                     });
-//                                 }
-//                             })
-//                         }
-//                     })
-//                 })
-//             }
-//         }
-//     })
-// }
-
 module.exports.myVouchers = function (req, res) {
     
     Voucher.find({'issue_details.issued_to': req.user._id})
@@ -173,4 +115,75 @@ module.exports.myVouchers = function (req, res) {
             });
         }
     })
+}
+
+module.exports.socialUpdate = function (req, res) {
+
+    if(req.body.access && req.body.info) {
+        var access = req.body.access;
+        var info = req.body.info;
+
+        getFriends(access, info);
+    }
+    else {
+        res.send(400, {
+            'status': 'error',
+            'message': 'Error in request',
+            'info': ''
+        });
+    }
+
+    function getFriends(access, info) {
+
+        var body = '';
+        http.get('https://graph.facebook.com/'+ info.data.id +'/friends?access_token=' + access.token, function (response) {
+
+            response.on('data', function(chunk) {
+                // append chunk to your data
+                body += chunk;
+            });
+
+            response.on('end', function() {
+                updateUser(access, info, body);
+            });
+        })
+    }
+
+    function updateUser(access, info, body) {
+
+        var phone = req.user.phone;
+        Account.findOne({phone: phone}, function (err, user) {
+
+            if(err) {
+                res.send(400, {
+                    'status': 'error',
+                    'message': 'Error saving user',
+                    'info': JSON.stringify(err)
+                });
+            }
+            else {
+                user.facebook = {};
+                user.facebook.access = access;
+                user.facebook.info = info;
+                user.friends.friends = body;
+
+                user.save(function (err) {
+                    if(err) {
+                        res.send(400, {
+                            'status': 'error',
+                            'message': 'Error saving user',
+                            'info': JSON.stringify(err)
+                        });
+                    }
+                    else {
+                        res.send(200, {
+                            'status': 'success',
+                            'message': 'Save user successfully',
+                            'info': JSON.stringify(user)
+                        });
+                    }
+                })
+            }
+        })
+    }
 }

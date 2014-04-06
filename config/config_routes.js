@@ -306,6 +306,7 @@ module.exports = function (app) {
 
     (function user_routes() {
         var UserCtrl = require('../controllers/user');
+        app.get('/api/v2/social',checkAuthenticated(), checkRole(6), UserCtrl.socialUpdate);
         app.get('/api/v1/mycheckins',checkAuthenticated(), checkRole(6), UserCtrl.myCheckins);
         app.get('/api/v1/myvouchers',checkAuthenticated(), checkRole(6), UserCtrl.myVouchers);
         app.post('/api/v1/user/home', UserCtrl.setHome) ;//User authentication to be added here
