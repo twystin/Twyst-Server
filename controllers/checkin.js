@@ -170,7 +170,7 @@ function updateQrUsedDetails(qr) {
 
 function checkUserLocation (qr, req, res) {
 
-	if(req.user.home && req.user.home.longitude && req.user.home.lattitude) {
+	if(req.user.home && req.user.home.longitude && req.user.home.latitude) {
 		getOutletLocation();
 	}
 	else {
@@ -187,7 +187,7 @@ function checkUserLocation (qr, req, res) {
 			&& outlet.contact.location
 			&& outlet.contact.location.coords
 			&& outlet.contact.location.coords.longitude
-			&& outlet.contact.location.coords.lattitude) {
+			&& outlet.contact.location.coords.latitude) {
 
 			var distance = calculateDistance(req.user, outlet);
 			console.log("Distance = "+distance);
