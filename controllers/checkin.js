@@ -194,7 +194,7 @@ function checkUserLocation (qr, req, res) {
 
 			if(distance > 200) {
 				res.send(200, {	'status': 'error',
-								'message': 'Ha ha ha You are frodulent.',
+								'message': 'Checkin error! Please contact your server to checkin.',
 								'info': ''
 				});
 			}
