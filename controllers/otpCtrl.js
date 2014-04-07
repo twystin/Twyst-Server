@@ -242,7 +242,7 @@ module.exports.updateDeviceId = function (req, res) {
 	                else {
 	                	user.hash = new Buffer(hashRaw, 'binary').toString('hex');
 	                	user.salt = salt;
-	                	console.log(hash+salt);
+	                	
 	                	saveUser();
 	                }
 	            });
