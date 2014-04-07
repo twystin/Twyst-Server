@@ -132,7 +132,7 @@ module.exports.updateDeviceId = function (req, res) {
 	};
 
 	function checkIfExistingUser (phone) {
-		Account.findOne({phone: phone, role: 6}, function (err, user) {
+		Account.findOne({phone: phone, role: {$gt: 5}}, function (err, user) {
 			if(err) {
 				res.send(400, {
 					'status': 'error',
@@ -145,7 +145,12 @@ module.exports.updateDeviceId = function (req, res) {
 					registerNewUser();
 				}
 				else {
-					updateUser();
+					if(user.role === 6) {
+						migrateUser(user);
+					}
+					else {
+						updateUser();
+					}
 				}
 			}
 		});
@@ -157,7 +162,7 @@ module.exports.updateDeviceId = function (req, res) {
 		account.username = phone;
 		account.phone = phone;
 		account.device_id = device_id;
-		account.role = 6;
+		account.role = 7;
 		account.otp_validated = true;
 
 		Account.register(new Account(account), phone, function(err, user) {
@@ -174,7 +179,7 @@ module.exports.updateDeviceId = function (req, res) {
 	}
 
 	function updateUser() {
-		Account.findOneAndUpdate({phone: phone, role: 6}, 
+		Account.findOneAndUpdate({phone: phone, role: 7}, 
 			{$set: {device_id: device_id, otp_validated: true} },
 			{upsert:true},
 			function(err,user) {
@@ -188,6 +193,28 @@ module.exports.updateDeviceId = function (req, res) {
 					returnResponse(user.username);
 				}
 		});
+	}
+
+	function migrateUser(user) {
+		
+		user.username = phone;
+		user.phone = phone;
+		user.device_id = device_id;
+		user.role = 7;
+		user.otp_validated = true;
+		
+		user.save(function (err) {
+			if(err) {
+				res.send(400, {	
+					'status' : 'error',
+					'message': 'Error updating device id.',
+					'info': JSON.stringify(err)
+				});
+			}
+			else {
+				returnResponse(user.username);
+			}
+		})
 	}
 
 	function returnResponse (username) {
