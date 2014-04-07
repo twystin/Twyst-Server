@@ -11,6 +11,19 @@ var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&pass
 var http = require('http');
 http.post = require('http-post');
 
+var util = require('util'),
+    crypto = require('crypto'),
+    LocalStrategy = require('passport-local').Strategy,
+    BadRequestError = require('passport-local').BadRequestError;
+
+options = {};
+options.saltlen = options.saltlen || 32;
+options.iterations = options.iterations || 25000;
+options.keylen = options.keylen || 512;
+    
+options.hashField = options.hashField || 'hash';
+options.saltField = options.saltField || 'salt';
+
 module.exports.getOTP = function (req, res) {
 
 	if(req.params && req.params.mobile) {
@@ -202,19 +215,54 @@ module.exports.updateDeviceId = function (req, res) {
 		user.device_id = device_id;
 		user.role = 7;
 		user.otp_validated = true;
+
+		updatePassword(phone);
+
+		function updatePassword (password) {
+
+			crypto.randomBytes(options.saltlen, function(err, buf) {
+	            if (err) {
+	                res.send(400, {	
+						'status' : 'error',
+						'message': 'Error migrating user.',
+						'info': JSON.stringify(err)
+					});
+	            }
+
+	            var salt = buf.toString('hex');
+
+	            crypto.pbkdf2(password, salt, options.iterations, options.keylen, function(err, hashRaw) {
+	                if (err) {
+	                    res.send(400, {	
+							'status' : 'error',
+							'message': 'Error generating password.',
+							'info': JSON.stringify(err)
+						});
+	                }
+	                else {
+	                	user.hash = new Buffer(hashRaw, 'binary').toString('hex');
+	                	user.salt = salt;
+	                	console.log(hash+salt);
+	                	saveUser();
+	                }
+	            });
+	        });
+		}
 		
-		user.save(function (err) {
-			if(err) {
-				res.send(400, {	
-					'status' : 'error',
-					'message': 'Error updating device id.',
-					'info': JSON.stringify(err)
-				});
-			}
-			else {
-				returnResponse(user.username);
-			}
-		})
+		function saveUser() {
+			user.save(function (err) {
+				if(err) {
+					res.send(400, {	
+						'status' : 'error',
+						'message': 'Error updating device id.',
+						'info': JSON.stringify(err)
+					});
+				}
+				else {
+					returnResponse(user.username);
+				}
+			});
+		};
 	}
 
 	function returnResponse (username) {
