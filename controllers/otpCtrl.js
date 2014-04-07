@@ -16,7 +16,7 @@ var util = require('util'),
     LocalStrategy = require('passport-local').Strategy,
     BadRequestError = require('passport-local').BadRequestError;
 
-options = {};
+var options = {};
 options.saltlen = options.saltlen || 32;
 options.iterations = options.iterations || 25000;
 options.keylen = options.keylen || 512;
@@ -230,7 +230,8 @@ module.exports.updateDeviceId = function (req, res) {
 	            }
 
 	            var salt = buf.toString('hex');
-
+	            console.log(buf);
+	            console.log(salt);
 	            crypto.pbkdf2(password, salt, options.iterations, options.keylen, function(err, hashRaw) {
 	                if (err) {
 	                    res.send(400, {	
