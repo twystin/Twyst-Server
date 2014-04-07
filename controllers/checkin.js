@@ -189,7 +189,7 @@ function checkUserLocation (qr, req, res) {
 			&& outlet.contact.location.coords.longitude
 			&& outlet.contact.location.coords.latitude) {
 
-			var distance = calculateDistance(req.user, outlet);
+			var distance = calculateDistance(req.user, outlet) * 1000;
 			console.log("Distance = "+distance);
 
 			if(distance > 200) {
@@ -241,7 +241,7 @@ function checkUserLocation (qr, req, res) {
         if (d > 100) {
             return 100;
         }
-        return d.toFixed(1)*1000;
+        return d.toFixed(1);
 	}
 }
 
