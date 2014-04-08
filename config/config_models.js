@@ -21,6 +21,7 @@ module.exports = function () {
         redirect = require('../models/redirect'),
         temp_otp = require('../models/temp_otp'),
         notif = require('../models/notif'),
+        social = require('../models/social'),
         beta_merchants = require('../models/beta_merchants');
 
     mongoose.model('Account').schema.add({

@@ -296,7 +296,7 @@ module.exports = function (app) {
 
     (function notification_routes() {
         var NotifCtrl = require('../controllers/push_notification');
-        app.get('/api/v1/notif',NotifCtrl.pushNotification);
+        app.post('/api/v2/notifs',NotifCtrl.save);
     })();
 
     (function typeahead_routes() {

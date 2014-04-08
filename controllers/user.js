@@ -4,6 +4,7 @@ var Account = mongoose.model('Account');
 var Checkin = mongoose.model('Checkin');
 var Outlet = mongoose.model('Outlet');
 var Voucher = mongoose.model('Voucher');
+var Social = mongoose.model('Social');
 var _ = require('underscore');
 
 var https = require('https');
@@ -163,10 +164,13 @@ module.exports.socialUpdate = function (req, res) {
                 });
             }
             else {
-                user.facebook = {};
-                user.facebook.access = access;
-                user.facebook.info = info;
-                user.facebook.friends = body;
+                user.facebook.id = info.id;
+
+                var obj = {};
+                obj.facebook = {};
+                obj.facebook.access = access;
+                obj.facebook.info = info;
+                obj.facebook.friends = body;
 
                 user.save(function (err) {
                     if(err) {
@@ -177,13 +181,31 @@ module.exports.socialUpdate = function (req, res) {
                         });
                     }
                     else {
-                        res.send(200, {
-                            'status': 'success',
-                            'message': 'Save user successfully',
-                            'info': JSON.stringify(user)
-                        });
+                        saveSocial(obj);
                     }
                 })
+            }
+        })
+    }
+
+    function saveSocial(obj) {
+
+        obj = new Social(obj);
+
+        obj.save(function (err) {
+            if(err) {
+                res.send(400, {
+                        'status': 'error',
+                        'message': 'Error saving social data.',
+                        'info': JSON.stringify(err)
+                    });
+            }
+            else {
+                res.send(200, {
+                    'status': 'success',
+                    'message': 'Saved user successfully',
+                    'info': ''
+                });
             }
         })
     }
