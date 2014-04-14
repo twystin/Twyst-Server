@@ -236,7 +236,7 @@ module.exports.socialUpdate = function (req, res) {
 
             Social.findOneAndUpdate(
                 {'facebook.info.id': obj.facebook.info.id},
-                {$set: obj},{upsert: true} function (err) {
+                {$set: obj},{upsert: true}, function (err) {
 
                 if(err) {
                     res.send(400, {
