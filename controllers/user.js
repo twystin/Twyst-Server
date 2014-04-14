@@ -194,21 +194,63 @@ module.exports.socialUpdate = function (req, res) {
 
         obj = new Social(obj);
 
-        obj.save(function (err) {
+        Social.findOne({facebook.info.id: obj.facebook.info.id}, function (err, social) {
+
             if(err) {
                 res.send(400, {
+                    'status': 'error',
+                    'message': 'Error saving social data.',
+                    'info': JSON.stringify(err)
+                });
+            }
+            else {
+                if(social === null) {
+                    createNew(obj);
+                }
+                else {
+                    updateExisting(obj);
+                }
+            }
+        });
+
+        function createNew (obj) {
+            obj.save(function (err) {
+                if(err) {
+                    res.send(400, {
+                            'status': 'error',
+                            'message': 'Error saving social data.',
+                            'info': JSON.stringify(err)
+                        });
+                }
+                else {
+                    res.send(200, {
+                        'status': 'success',
+                        'message': 'Saved user successfully',
+                        'info': ''
+                    });
+                }
+            });
+        }
+
+        function updateExisting (obj) {
+
+            Social.findOneAndUpdate({facebook.info.id: obj.facebook.info.id},{$set: {obj}}, function (err) {
+
+                if(err) {
+                    res.send(400, {
                         'status': 'error',
                         'message': 'Error saving social data.',
                         'info': JSON.stringify(err)
                     });
-            }
-            else {
-                res.send(200, {
-                    'status': 'success',
-                    'message': 'Saved user successfully',
-                    'info': ''
-                });
-            }
-        });
+                }
+                else {
+                    res.send(200, {
+                        'status': 'success',
+                        'message': 'Saved user successfully',
+                        'info': ''
+                    });
+                }
+            });
+        }
     }
 }
