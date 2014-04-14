@@ -256,3 +256,67 @@ module.exports.socialUpdate = function (req, res) {
         }
     }
 }
+
+module.exports.friendsOnTwyst = function (req, res) {
+
+    if(user.facebook && user.facebook.id) {
+        var facebook_id = req.user.facebook.id;
+        getSocial(facebook_id);
+    }
+    else {
+        res.send(400, {
+            'status': 'error',
+            'message': 'Your facebook is not connected.',
+            'info': ''
+        });
+    }
+
+    function getSocial(facebook_id) {
+        Social.findOne({'facebook.info.id': facebook_id}, function (err, data) {
+            if(err) {
+                res.send(400, {
+                    'status': 'error',
+                    'message': 'Error getting social data.',
+                    'info': JSON.stringify(err)
+                });
+            }
+            else {
+                if(data === null) {
+                    res.send(200, {
+                        'status': 'error',
+                        'message': 'Error getting social data.',
+                        'info': ''
+                    });
+                }
+                else {
+                    findFriendsOnTwyst(data);
+                }
+            }
+        });
+    }
+
+    function findFriendsOnTwyst(data) {
+        Social.find(
+            {'facebook.info.id': {$in:
+                data.facebook.friends.map(
+                        function(obj){ 
+                            return obj.id; 
+                    })
+            }}, function (err, friends) {
+                if(err) {
+                    res.send(400, {
+                        'status': 'error',
+                        'message': 'Error getting friends.',
+                        'info': JSON.stringify(err)
+                    });
+                }
+                else {
+                    res.send(200, {
+                        'status': 'success',
+                        'message': 'Successfully got friends data',
+                        'info': JSON.stringify(friends)
+                    });
+                }
+            })
+    }
+};

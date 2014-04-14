@@ -309,6 +309,7 @@ module.exports = function (app) {
         app.post('/api/v2/social',checkAuthenticated(), checkRole(7), UserCtrl.socialUpdate);
         app.get('/api/v1/mycheckins',checkAuthenticated(), checkRole(7), UserCtrl.myCheckins);
         app.get('/api/v1/myvouchers',checkAuthenticated(), checkRole(7), UserCtrl.myVouchers);
+        app.get('/api/v2/friends',checkAuthenticated(), checkRole(7), UserCtrl.friendsOnTwyst);
         app.post('/api/v1/user/home', UserCtrl.setHome) ;//User authentication to be added here
         app.post('/api/v1/user/gcm', UserCtrl.setGCM) ;//User authentication to be added here
     })();
