@@ -215,7 +215,6 @@ module.exports.socialUpdate = function (req, res) {
         function createNew (obj) {
             obj.save(function (err) {
                 if(err) {
-                    console.log("238 "+err);
                     res.send(400, {
                             'status': 'error',
                             'message': 'Error saving social data.',
@@ -289,7 +288,19 @@ module.exports.friendsOnTwyst = function (req, res) {
                     });
                 }
                 else {
-                    findFriendsOnTwyst(data);
+                    if(data.facebook 
+                        && data.facebook.friends
+                        && data.facebook.friends.data.length > 0) {
+
+                        findFriendsOnTwyst(data);
+                    }
+                    else {
+                        res.send(200, {
+                            'status': 'error',
+                            'message': 'Your friends not found.',
+                            'info': ''
+                        });
+                    }
                 }
             }
         });
@@ -298,11 +309,11 @@ module.exports.friendsOnTwyst = function (req, res) {
     function findFriendsOnTwyst(data) {
         Social.find(
             {'facebook.info.id': {$in:
-                data.facebook.friends.map(
+                data.facebook.friends.data.map(
                         function(obj){ 
                             return obj.id; 
                     })
-            }}, function (err, friends) {
+            }}, function (err, found_friends_data) {
                 if(err) {
                     res.send(400, {
                         'status': 'error',
@@ -311,12 +322,28 @@ module.exports.friendsOnTwyst = function (req, res) {
                     });
                 }
                 else {
-                    res.send(200, {
-                        'status': 'success',
-                        'message': 'Successfully got friends data',
-                        'info': JSON.stringify(friends)
-                    });
+                    processData(found_friends_data);
                 }
             })
+    }
+
+    function processData(found_friends_data) {
+
+        var processed_data = [];
+
+        if(found_friends_data.length > 0) {
+            found_friends_data.forEach(function (obj) {
+                var temp_friend = {};
+                temp_friend.name = obj.facebook.info.name;
+                temp_friend.id = obj.facebook.info.id;
+
+                processed_data.push(temp_friend);
+            });
+        }
+        res.send(200, {
+            'status': 'success',
+            'message': 'Successfully got friends data',
+            'info': JSON.stringify(processed_data)
+        });
     }
 };
