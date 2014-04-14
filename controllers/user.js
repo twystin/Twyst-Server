@@ -192,8 +192,6 @@ module.exports.socialUpdate = function (req, res) {
 
     function saveSocial(obj) {
 
-        obj = new Social(obj);
-
         Social.findOne({'facebook.info.id': obj.facebook.info.id}, function (err, social) {
 
             if(err) {
@@ -205,6 +203,7 @@ module.exports.socialUpdate = function (req, res) {
             }
             else {
                 if(social === null) {
+                    obj = new Social(obj);
                     createNew(obj);
                 }
                 else {
@@ -235,8 +234,10 @@ module.exports.socialUpdate = function (req, res) {
 
         function updateExisting (obj) {
 
-            Social.findOneAndUpdate({'facebook.info.id': obj.facebook.info.id},{$set: obj}, function (err) {
-                console.log("238 "+err);
+            Social.findOneAndUpdate(
+                {'facebook.info.id': obj.facebook.info.id},
+                {$set: obj},{upsert: true} function (err) {
+
                 if(err) {
                     res.send(400, {
                         'status': 'error',
