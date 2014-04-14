@@ -164,6 +164,7 @@ module.exports.socialUpdate = function (req, res) {
                 });
             }
             else {
+                user.facebook = user.facebook || {};
                 user.facebook.id = info.id;
 
                 var obj = {};
