@@ -258,7 +258,7 @@ module.exports.socialUpdate = function (req, res) {
 }
 
 module.exports.friendsOnTwyst = function (req, res) {
-
+    var user = req.user;
     if(user.facebook && user.facebook.id) {
         var facebook_id = req.user.facebook.id;
         getSocial(facebook_id);
