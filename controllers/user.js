@@ -194,7 +194,7 @@ module.exports.socialUpdate = function (req, res) {
 
         obj = new Social(obj);
 
-        Social.findOne({facebook.info.id: obj.facebook.info.id}, function (err, social) {
+        Social.findOne({'facebook.info.id': obj.facebook.info.id}, function (err, social) {
 
             if(err) {
                 res.send(400, {
@@ -234,7 +234,7 @@ module.exports.socialUpdate = function (req, res) {
 
         function updateExisting (obj) {
 
-            Social.findOneAndUpdate({facebook.info.id: obj.facebook.info.id},{$set: {obj}}, function (err) {
+            Social.findOneAndUpdate({'facebook.info.id': obj.facebook.info.id},{$set: {obj}}, function (err) {
 
                 if(err) {
                     res.send(400, {
