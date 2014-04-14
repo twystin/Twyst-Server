@@ -613,7 +613,7 @@ module.exports.nearBy = function(req, c) {
 	else {
 		CB2({'status': 'error',
 		  				'message': 'Error getting list of outlets',
-		  				'info': JSON.stringify(err)
+		  				'info': ''
 		});
 	}
 	//, $maxDistance: 0.01
@@ -625,7 +625,6 @@ module.exports.nearBy = function(req, c) {
 				  'message': 'Error getting list of outlets',
 				  'info': JSON.stringify(err)
 				});
-				console.log(err)
 			} else {
 				getProgramForOutlets(outlets);   
 			}
