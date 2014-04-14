@@ -165,6 +165,7 @@ module.exports.socialUpdate = function (req, res) {
             }
             else {
                 user.facebook = user.facebook || {};
+                user.facebook.name = info.name;
                 user.facebook.id = info.id;
 
                 var obj = {};
@@ -208,6 +209,6 @@ module.exports.socialUpdate = function (req, res) {
                     'info': ''
                 });
             }
-        })
+        });
     }
 }
