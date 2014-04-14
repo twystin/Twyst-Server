@@ -216,6 +216,7 @@ module.exports.socialUpdate = function (req, res) {
         function createNew (obj) {
             obj.save(function (err) {
                 if(err) {
+                    console.log("238 "+err);
                     res.send(400, {
                             'status': 'error',
                             'message': 'Error saving social data.',
@@ -235,7 +236,7 @@ module.exports.socialUpdate = function (req, res) {
         function updateExisting (obj) {
 
             Social.findOneAndUpdate({'facebook.info.id': obj.facebook.info.id},{$set: obj}, function (err) {
-
+                console.log("238 "+err);
                 if(err) {
                     res.send(400, {
                         'status': 'error',
