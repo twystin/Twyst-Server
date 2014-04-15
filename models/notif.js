@@ -16,7 +16,7 @@ var NotifSchema = new Schema({
     logged_at: {type: Date, default: Date.now},
     scheduled_at: {type: Date},
     sent_at: {type: Date},
-    comments: String
+    comment: String
 });
 
 module.exports = mongoose.model('Notif', NotifSchema);
