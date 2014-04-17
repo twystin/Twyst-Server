@@ -40,6 +40,13 @@ module.exports = function (app) {
         return false;
     };
 
+    (function admin_route() {
+        var DataCtrl = require('../controllers/admin/dataCtrl');
+        app.get('/api/v2/merchants', DataCtrl.getMerchants);
+        app.get('/api/v2/outlets/city/:merchant/:cities', DataCtrl.getOutlets);
+        app.post('/api/v2/outlets/data', DataCtrl.getData);
+    })();
+
     (function user_data_route() {
         var UserDataCtrl = require('../controllers/user/userDataCtrl');
         app.get('/api/v2/data/:latitude/:longitude', UserDataCtrl.getData);
