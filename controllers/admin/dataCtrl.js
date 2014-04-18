@@ -329,6 +329,42 @@ module.exports.getData = function (req, res) {
 	};
 
 	function getUsers(program, callback) {
-		callback(null, '');
+
+		(function countUsersByCheckinType() {
+			Checkin.aggregate({	$match: { checkin_program: 
+								mongoose.Types.ObjectId(String(program._id)),
+								created_date: {
+									$gt: new Date(start),
+									$lt: new Date(end)
+								}
+		        			}
+	        			},
+	        			{ $group: 
+	        				{ _id: '$checkin_type', count: { $sum: 1 }}
+	        			}, function (err, op) {
+	        				console.log(op)
+	        				assembleResult(op);
+	        });
+		})();
+
+		function assembleResult(op) {
+			var USERS_BY_CHECKIN_TYPE = {
+				'PANEL': 0,
+				'QR': 0,
+				'SMS': 0
+			};
+			op.forEach(function(item) {
+				if(item._id === 'PANEL') {
+					USERS_BY_CHECKIN_TYPE.PANEL = item.count;
+				}
+				if(item._id === 'QR') {
+					USERS_BY_CHECKIN_TYPE.QR = item.count;
+				}
+				if(item._id === 'SMS') {
+					USERS_BY_CHECKIN_TYPE.SMS = item.count;
+				}
+			});
+			callback(null, {USERS_BY_CHECKIN_TYPE: USERS_BY_CHECKIN_TYPE});
+		}
 	};
 }
