@@ -296,7 +296,7 @@ module.exports.getData = function (req, res) {
 			if(len === 0) {
 				countTotalVouchers();
 			}
-		}
+		};
 
 		function countTotalVouchers() {
 			Voucher.aggregate({	$match: {  "issue_details.program":
@@ -311,7 +311,7 @@ module.exports.getData = function (req, res) {
 	        			}, function (err, op) {
 	        				countResult(op);
 	        })
-		}
+		};
 
 		function countResult(op) {
 			var TOTAL = {
@@ -325,12 +325,12 @@ module.exports.getData = function (req, res) {
 				}
 			});
 			callback(null, {RESULTS: results, TOTAL: TOTAL});
-		}
+		};
 	};
 
 	function getUsers(program, callback) {
 
-		(function countUsersByCheckinType() {
+		(function countUsersByCheckinTypeInRange() {
 			Checkin.aggregate({	$match: { checkin_program: 
 								mongoose.Types.ObjectId(String(program._id)),
 								created_date: {
@@ -342,10 +342,23 @@ module.exports.getData = function (req, res) {
 	        			{ $group: 
 	        				{ _id: '$checkin_type', count: { $sum: 1 }}
 	        			}, function (err, op) {
-	        				console.log(op)
-	        				assembleResult(op);
+	        				var data = assembleResult(op);
+	        				countUsersByCheckinTypeTotal(data);
 	        });
 		})();
+
+		function countUsersByCheckinTypeTotal(RANGE_DATA) {
+			Checkin.aggregate({	$match: { checkin_program: 
+								mongoose.Types.ObjectId(String(program._id))
+		        			}
+	        			},
+	        			{ $group: 
+	        				{ _id: '$checkin_type', count: { $sum: 1 }}
+	        			}, function (err, op) {
+	        				var data = assembleResult(op);
+	        				callback(null, {RANGE: RANGE_DATA, TOTAL: data});
+	        });
+		}
 
 		function assembleResult(op) {
 			var USERS_BY_CHECKIN_TYPE = {
@@ -364,7 +377,7 @@ module.exports.getData = function (req, res) {
 					USERS_BY_CHECKIN_TYPE.SMS = item.count;
 				}
 			});
-			callback(null, {USERS_BY_CHECKIN_TYPE: USERS_BY_CHECKIN_TYPE});
-		}
+			return USERS_BY_CHECKIN_TYPE;
+		};
 	};
 }
