@@ -44,7 +44,8 @@ module.exports = function (app) {
         var DataCtrl = require('../controllers/admin/dataCtrl');
         app.get('/api/v2/merchants', DataCtrl.getMerchants);
         app.get('/api/v2/outlets/city/:merchant/:cities', DataCtrl.getOutlets);
-        app.post('/api/v2/outlets/data', DataCtrl.getData);
+        app.get('/api/v2/admin/programs/:outlets', DataCtrl.getPrograms);
+        app.get('/api/v2/admin/data/:program/:start/:end', DataCtrl.getData);
     })();
 
     (function user_data_route() {
