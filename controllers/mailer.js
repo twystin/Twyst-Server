@@ -102,7 +102,6 @@ module.exports.forgot = function(req, res) {
 									});
 								} 
 								else {
-									console.log(user);
 									res.send(200, {'status': 'success',
 													'message': 'Successfully generated token',
 													'info': JSON.stringify(user)

@@ -40,6 +40,24 @@ module.exports = function (app) {
         return false;
     };
 
+    (function admin_route() {
+        var DataCtrl = require('../controllers/admin/dataCtrl');
+        app.get('/api/v2/merchants', DataCtrl.getMerchants);
+        app.get('/api/v2/outlets/city/:merchant/:cities', DataCtrl.getOutlets);
+        app.get('/api/v2/admin/programs/:outlets', DataCtrl.getPrograms);
+        app.get('/api/v2/admin/data/:program/:start/:end', DataCtrl.getData);
+    })();
+
+    (function user_data_route() {
+        var UserDataCtrl = require('../controllers/user/userDataCtrl');
+        app.get('/api/v2/data/:latitude/:longitude', UserDataCtrl.getData);
+    })();
+
+    (function user_const_route() {
+        var UserConstCtrl = require('../controllers/user/userConstCtrl');
+        app.get('/api/v2/constants', UserConstCtrl.getConst);
+    })();
+
     (function user_otp_route() {
         var OtpCtrl = require('../controllers/otpCtrl.js');
         app.get('/api/v2/otp/:mobile', OtpCtrl.getOTP);
@@ -79,7 +97,7 @@ module.exports = function (app) {
         app.get('/api/v1/auth/logout', AccountCtrl.logout);
         app.get('/api/v1/auth/users', checkAuthenticated(), checkRole(3), AccountCtrl.query);
         app.get('/api/v1/auth/users/:user_id', checkAuthenticated(), checkRole(4), AccountCtrl.read);
-        app.put('/api/v1/auth/users/:user_id', checkAuthenticated(), checkRole(6), AccountCtrl.update);
+        app.put('/api/v1/auth/users/:user_id', checkAuthenticated(), checkRole(7), AccountCtrl.update);
         app.put('/api/v1/auth/users/validate/:user_id', AccountCtrl.validateByConsole);
         app.put('/api/v1/auth/validate/email/:token', AccountCtrl.setEmailValidated)
         app.delete('/api/v1/auth/users/:user_id', checkAuthenticated(), checkRole(3), AccountCtrl.delete);
@@ -243,7 +261,7 @@ module.exports = function (app) {
     (function checkin_routes() {
         var CheckinCtrl = require('../controllers/checkin');
         app.get('/api/v1/checkins',checkAuthenticated(), checkRole(5), CheckinCtrl.query);
-        app.post('/api/v1/qr/checkins', checkAuthenticated(), checkRole(6), CheckinCtrl.qrCheckin);
+        app.post('/api/v1/qr/checkins', checkAuthenticated(), checkRole(7), CheckinCtrl.qrCheckin);
         app.get('/api/v1/checkins/:checkin_id',checkAuthenticated(),checkRole(5), CheckinCtrl.read);
         app.post('/api/v1/checkins',checkAuthenticated(), checkRole(5), CheckinCtrl.panelCheckin);
         app.put('/api/v1/checkins/:checkin_id',checkAuthenticated(), checkRole(5), CheckinCtrl.update);
@@ -254,10 +272,10 @@ module.exports = function (app) {
     //Favourites management routes
     (function favourite_routes() {
         var FavouriteCtrl = require('../controllers/favourites');
-        app.get('/api/v1/favourites', checkAuthenticated(), checkRole(6), FavouriteCtrl.query);
-        app.get('/api/v1/favourites/:favourite_id', checkAuthenticated(), checkRole(6), FavouriteCtrl.read);
-        app.post('/api/v1/favourites', checkAuthenticated(), checkRole(6), FavouriteCtrl.create);
-        app.delete('/api/v1/favourites/:outlet_id/:offer_id', checkAuthenticated(), checkRole(6), FavouriteCtrl.delete);
+        app.get('/api/v1/favourites', checkAuthenticated(), checkRole(7), FavouriteCtrl.query);
+        app.get('/api/v1/favourites/:favourite_id', checkAuthenticated(), checkRole(7), FavouriteCtrl.read);
+        app.post('/api/v1/favourites', checkAuthenticated(), checkRole(7), FavouriteCtrl.create);
+        app.delete('/api/v1/favourites/:outlet_id/:offer_id', checkAuthenticated(), checkRole(7), FavouriteCtrl.delete);
     })();
 
 
@@ -286,7 +304,7 @@ module.exports = function (app) {
 
     (function notification_routes() {
         var NotifCtrl = require('../controllers/push_notification');
-        app.get('/api/v1/notif',NotifCtrl.pushNotification);
+        app.post('/api/v2/notifs',NotifCtrl.save);
     })();
 
     (function typeahead_routes() {
@@ -296,8 +314,10 @@ module.exports = function (app) {
 
     (function user_routes() {
         var UserCtrl = require('../controllers/user');
-        app.get('/api/v1/mycheckins',checkAuthenticated(), checkRole(6), UserCtrl.myCheckins);
-        app.get('/api/v1/myvouchers',checkAuthenticated(), checkRole(6), UserCtrl.myVouchers);
+        app.post('/api/v2/social',checkAuthenticated(), checkRole(7), UserCtrl.socialUpdate);
+        app.get('/api/v1/mycheckins',checkAuthenticated(), checkRole(7), UserCtrl.myCheckins);
+        app.get('/api/v1/myvouchers',checkAuthenticated(), checkRole(7), UserCtrl.myVouchers);
+        app.get('/api/v2/friends',checkAuthenticated(), checkRole(7), UserCtrl.friendsOnTwyst);
         app.post('/api/v1/user/home', UserCtrl.setHome) ;//User authentication to be added here
         app.post('/api/v1/user/gcm', UserCtrl.setGCM) ;//User authentication to be added here
     })();

@@ -4,7 +4,10 @@ var Account = mongoose.model('Account');
 var Checkin = mongoose.model('Checkin');
 var Outlet = mongoose.model('Outlet');
 var Voucher = mongoose.model('Voucher');
+var Social = mongoose.model('Social');
 var _ = require('underscore');
+
+var https = require('https');
 
 module.exports.setGCM = function (req, res) {
     var user = req.user;
@@ -88,66 +91,6 @@ module.exports.myCheckins = function (req, res) {
     });
 }
 
-// module.exports.myCheckins = function (req, res) {
-//     var my_checkins = [];
-//     var errs = [];
-//     var checkin_object = {};
-//     Checkin.find({phone: req.user.phone}).distinct('outlet').exec(function (err, checkins) {
-//         if(err) {
-//             res.send(400, {
-//                 'status': 'error',
-//                 'message': 'Error getting checkins',
-//                 'info': JSON.stringify(err)
-//             });
-//         }
-//         else {
-//             var num_checkins = checkins.length;
-//             if(num_checkins === 0) {
-//                 res.send(200, {
-//                     'status': 'success',
-//                     'message': 'No checkins found',
-//                     'info': JSON.stringify(checkins)
-//                 });
-//             }
-//             else {
-//                 checkins.forEach(function (checkin) {
-//                     Checkin.count({phone: req.user.phone, outlet: checkin}, function (err, count) {
-//                         if(err) {
-//                             errs.push(err);
-//                             num_checkins--;
-//                         }
-//                         else {
-//                             Outlet.findOne({_id: checkin} , function (err, outlet) {
-//                                 if(err) {
-//                                     num_checkins--;
-//                                 }
-//                                 else {
-//                                     if(outlet === null) {
-//                                         num_checkins--;
-//                                     }
-//                                     else {
-//                                         checkin_object.count = count;
-//                                         checkin_object.outlet = outlet;
-//                                         my_checkins.push(checkin_object);
-//                                         num_checkins--;
-//                                     }
-//                                 }
-//                                 if(num_checkins === 0) {
-//                                     res.send(200, {
-//                                         'status': 'success',
-//                                         'message': 'Got all checkins',
-//                                         'info': JSON.stringify(my_checkins)
-//                                     });
-//                                 }
-//                             })
-//                         }
-//                     })
-//                 })
-//             }
-//         }
-//     })
-// }
-
 module.exports.myVouchers = function (req, res) {
     
     Voucher.find({'issue_details.issued_to': req.user._id})
@@ -174,3 +117,233 @@ module.exports.myVouchers = function (req, res) {
         }
     })
 }
+
+module.exports.socialUpdate = function (req, res) {
+
+    if(req.body.access && req.body.info) {
+        var access = req.body.access;
+        var info = req.body.info;
+
+        getFriends(access, info);
+    }
+    else {
+        res.send(400, {
+            'status': 'error',
+            'message': 'Error in request',
+            'info': ''
+        });
+    }
+
+    function getFriends(access, info) {
+
+        var body = '';
+        https.get('https://graph.facebook.com/'+ info.id +'/friends?access_token=' + access.token, function (response) {
+
+            response.on('data', function(chunk) {
+                // append chunk to your data
+                body += chunk;
+            });
+
+            response.on('end', function() {
+                body = JSON.parse(body);
+                updateUser(access, info, body);
+            });
+        })
+    }
+
+    function updateUser(access, info, body) {
+
+        var phone = req.user.phone;
+        Account.findOne({phone: phone}, function (err, user) {
+
+            if(err) {
+                res.send(400, {
+                    'status': 'error',
+                    'message': 'Error saving user',
+                    'info': JSON.stringify(err)
+                });
+            }
+            else {
+                user.facebook = user.facebook || {};
+                user.facebook.name = info.name;
+                user.facebook.id = info.id;
+
+                var obj = {};
+                obj.facebook = {};
+                obj.facebook.access = access;
+                obj.facebook.info = info;
+                obj.facebook.friends = body;
+
+                user.save(function (err) {
+                    if(err) {
+                        res.send(400, {
+                            'status': 'error',
+                            'message': 'Error saving user',
+                            'info': JSON.stringify(err)
+                        });
+                    }
+                    else {
+                        saveSocial(obj);
+                    }
+                })
+            }
+        })
+    }
+
+    function saveSocial(obj) {
+
+        Social.findOne({'facebook.info.id': obj.facebook.info.id}, function (err, social) {
+
+            if(err) {
+                res.send(400, {
+                    'status': 'error',
+                    'message': 'Error saving social data.',
+                    'info': JSON.stringify(err)
+                });
+            }
+            else {
+                if(social === null) {
+                    obj = new Social(obj);
+                    createNew(obj);
+                }
+                else {
+                    updateExisting(obj);
+                }
+            }
+        });
+
+        function createNew (obj) {
+            obj.save(function (err) {
+                if(err) {
+                    res.send(400, {
+                            'status': 'error',
+                            'message': 'Error saving social data.',
+                            'info': JSON.stringify(err)
+                        });
+                }
+                else {
+                    res.send(200, {
+                        'status': 'success',
+                        'message': 'Saved user successfully',
+                        'info': ''
+                    });
+                }
+            });
+        }
+
+        function updateExisting (obj) {
+
+            Social.findOneAndUpdate(
+                {'facebook.info.id': obj.facebook.info.id},
+                {$set: obj},{upsert: true}, function (err) {
+
+                if(err) {
+                    res.send(400, {
+                        'status': 'error',
+                        'message': 'Error saving social data.',
+                        'info': JSON.stringify(err)
+                    });
+                }
+                else {
+                    res.send(200, {
+                        'status': 'success',
+                        'message': 'Saved user successfully',
+                        'info': ''
+                    });
+                }
+            });
+        }
+    }
+}
+
+module.exports.friendsOnTwyst = function (req, res) {
+    var user = req.user;
+    if(user.facebook && user.facebook.id) {
+        var facebook_id = req.user.facebook.id;
+        getSocial(facebook_id);
+    }
+    else {
+        res.send(400, {
+            'status': 'error',
+            'message': 'Your facebook is not connected.',
+            'info': ''
+        });
+    }
+
+    function getSocial(facebook_id) {
+        Social.findOne({'facebook.info.id': facebook_id}, function (err, data) {
+            if(err) {
+                res.send(400, {
+                    'status': 'error',
+                    'message': 'Error getting social data.',
+                    'info': JSON.stringify(err)
+                });
+            }
+            else {
+                if(data === null) {
+                    res.send(200, {
+                        'status': 'error',
+                        'message': 'Error getting social data.',
+                        'info': ''
+                    });
+                }
+                else {
+                    if(data.facebook 
+                        && data.facebook.friends
+                        && data.facebook.friends.data.length > 0) {
+
+                        findFriendsOnTwyst(data);
+                    }
+                    else {
+                        res.send(200, {
+                            'status': 'error',
+                            'message': 'Your friends not found.',
+                            'info': ''
+                        });
+                    }
+                }
+            }
+        });
+    }
+
+    function findFriendsOnTwyst(data) {
+        Social.find(
+            {'facebook.info.id': {$in:
+                data.facebook.friends.data.map(
+                        function(obj){ 
+                            return obj.id; 
+                    })
+            }}, function (err, found_friends_data) {
+                if(err) {
+                    res.send(400, {
+                        'status': 'error',
+                        'message': 'Error getting friends.',
+                        'info': JSON.stringify(err)
+                    });
+                }
+                else {
+                    processData(found_friends_data);
+                }
+            })
+    }
+
+    function processData(found_friends_data) {
+
+        var processed_data = [];
+
+        if(found_friends_data.length > 0) {
+            found_friends_data.forEach(function (obj) {
+                var temp_friend = {};
+                temp_friend.name = obj.facebook.info.name;
+                temp_friend.id = obj.facebook.info.id;
+
+                processed_data.push(temp_friend);
+            });
+        }
+        res.send(200, {
+            'status': 'success',
+            'message': 'Successfully got friends data',
+            'info': JSON.stringify(processed_data)
+        });
+    }
+};

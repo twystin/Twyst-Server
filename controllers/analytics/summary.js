@@ -206,7 +206,7 @@ function getAllVouchers (program, res) {
 		result.redeemed = 0;
 		op.forEach(function(item) {
 			result.earned += item.count;
-			if(item._id === 'redeemed') {
+			if(item._id === 'merchant redeemed' || item._id === 'user redeemed') {
 				result.redeemed += item.count;
 			}
 		});

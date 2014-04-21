@@ -4,14 +4,19 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var NotifSchema = new Schema({
-    gcm: {type: String},
-    message: {type: String},
+    phone: {type: String},
+    message: {
+    	head: String,
+    	body: String
+    },
     applicability_day: {type: String, enum: ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday','all days']},
     applicability_time: {type: String, enum: ['breakfast', 'brunch', 'lunch', 'dinner', 'all day', 'evening']},
     priority: {type: Number},
-    status: {type: String, enum: ['DRAFT', 'SENT'], default: 'DRAFT'},
+    status: {type: String, enum: ['DRAFT', 'SENT', 'ERROR'], default: 'DRAFT'},
     logged_at: {type: Date, default: Date.now},
-    sent_at: {type: Date}
+    scheduled_at: {type: Date},
+    sent_at: {type: Date},
+    comment: String
 });
 
 module.exports = mongoose.model('Notif', NotifSchema);

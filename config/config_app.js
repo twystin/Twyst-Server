@@ -19,7 +19,7 @@ module.exports = function (app) {
         app.use(express.static(__dirname + '/../../Twyst-Web-Apps/'));
         app.use(app.router);
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
-        app.use(express.favicon(__dirname + '/../../web_apps/common/images/favicon/twyst.ico'));
+        app.use(express.favicon(__dirname + '/../../Twyst-Web-Apps/common/images/favicon/twyst.ico'));
         app.all("/api/*", function(req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
             res.header("Access-Control-Allow-Headers", "Cache-Control, Pragma, Origin, Authorization, Content-Type, X-Requested-With");

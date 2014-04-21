@@ -6,4 +6,5 @@ Role Book:
 4	Marketing Manager (Manage all Outlets and Users)
 5	Outlet Manager (Outlet specific managers)
 6	User (The phone app User)
-7	Public (Anonymous Users)
+7	OTP users
+8	Public (Anonymous Users)

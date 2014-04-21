@@ -67,7 +67,7 @@ module.exports.qrCheckin = function(req, res) {
 	global_qr = null;
 
 	var created_checkin = {};
-	Qr.findOne({code: req.body.code}, function (err, qr) {
+	Qr.findOne({code: req.body.code}).populate('outlet_id').exec(function (err, qr) {
 		if(err) {
 			res.send(400, {	'status': 'error',
 						'message': 'Sorry, check-in unsuccessful – this code is invalid. Please try again with a valid code.',
@@ -128,7 +128,7 @@ function checkValidCheckin(qr, req, res) {
 		detect();
 	}
 	else {
-		onValidRequest(qr, req, res);
+		checkUserLocation(qr, req, res);
 	}
 
 	function detect() {
@@ -168,6 +168,83 @@ function updateQrUsedDetails(qr) {
 				}
 			}
 		})
+	}
+}
+
+function checkUserLocation (qr, req, res) {
+
+	if(req.user.home && req.user.home.longitude && req.user.home.latitude) {
+		getOutletLocation();
+	}
+	else {
+		res.send(200, {	'status': 'error',
+						'message': 'Home location not set for user',
+						'info': ''
+		});
+	}
+
+	function getOutletLocation () {
+		var outlet = qr.outlet_id;
+
+		if(outlet.contact
+			&& outlet.contact.location
+			&& outlet.contact.location.coords
+			&& outlet.contact.location.coords.longitude
+			&& outlet.contact.location.coords.latitude) {
+
+			var distance = calculateDistance(req.user, outlet) * 1000;
+			console.log("Distance = "+distance);
+
+			if(distance > 200) {
+				res.send(200, {	'status': 'error',
+								'message': 'Checkin error! Please contact your server to checkin.',
+								'info': ''
+				});
+			}
+			else {
+				onValidRequest(qr, req, res);
+			}
+		}
+		else {
+			res.send(200, {	'status': 'error',
+							'message': 'Location not set for outlet',
+							'info': ''
+			});
+		}
+	}
+
+	function calculateDistance(user, outlet) {
+
+		var p1 = {latitude: outlet.contact.location.coords.latitude, longitude: outlet.contact.location.coords.longitude};
+        var p2 = {latitude: user.home.latitude, longitude: user.home.longitude};
+
+		var R = 6371; // km
+        if (typeof (Number.prototype.toRad) === "undefined") {
+            Number.prototype.toRad = function() {
+                return this * Math.PI / 180;
+            };
+        }
+
+        if (!p1 || !p2) {
+            return 100; 
+            //return null;
+        }
+
+        var dLat = (p2.latitude-p1.latitude).toRad();
+        var dLon = (p2.longitude-p1.longitude).toRad();
+        
+        var lat1 = p1.latitude.toRad();
+        var lat2 = p2.latitude.toRad();
+
+        var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+            Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        var d = R * c;
+        console.log(d);
+        if (d > 100) {
+            return 100;
+        }
+        return d.toFixed(1);
 	}
 }
 
