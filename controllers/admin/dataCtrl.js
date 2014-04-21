@@ -148,7 +148,7 @@ module.exports.getData = function (req, res) {
 
 	function getRange (start, end) {
 		var day_in_milliseond = 24 * 60 * 60 * 1000;
-		for(var i = start; i <= end; i += day_in_milliseond) {
+		for(var i = start; i <= (end+3000); i += day_in_milliseond) {
 			RANGES.push(i);
 		}
 	}
@@ -286,9 +286,12 @@ module.exports.getData = function (req, res) {
 			        ]
 			    });
 			};
-
-			Checkin.aggregate({	$match: { checkin_tier: 
-								mongoose.Types.ObjectId(String(tier._id)),
+			console.log(new Date(RANGES[6]))
+			console.log(new Date())
+			console.log(new Date(start))
+			console.log(new Date(end))
+			Checkin.aggregate({	$match: { checkin_program: 
+								mongoose.Types.ObjectId(String(program._id)),
 								created_date: {
 									$gt: new Date(start),
 									$lt: new Date(end)
@@ -310,21 +313,9 @@ module.exports.getData = function (req, res) {
 								"_id": 1 
 							} 
 						}, function(err, op) {
-					    	console.log(err || op);
-					    	assembleResult(tier, op);
+					    	callback(null, {RESULTS: op});
 					    }
 			);
-		}
-
-		function assembleResult(tier, op) {
-			result = {};
-			result.tier = tier;
-			result.data = op;
-			results.push(result);
-			len--;
-			if(len === 0) {
-				callback(null, {RESULTS: results});		
-			}
 		};
 	};
 
@@ -436,15 +427,17 @@ module.exports.getData = function (req, res) {
 			        ]
 			    });
 			};
-
-			Voucher.aggregate({	$match: {  "issue_details.issued_for": {
-		        				$in: tier.offers.map(
-		        					function(id){ 
-		        						return mongoose.Types.ObjectId(String(id)); 
-		        				})},
+			Voucher.aggregate({	$match: {  "issue_details.program":
+		        					mongoose.Types.ObjectId(String(program._id)) 
+		        				,
 		        				'issue_details.issue_time': {
 		        					$gt: new Date(start),
 									$lt: new Date(end) 
+		        				},
+		        				"basics.status": {
+		        					$in: [
+		        						'user redeemed', 'merchant redeemed'
+		        					]
 		        				}
 	        				}
 	        			},{ 
@@ -463,21 +456,10 @@ module.exports.getData = function (req, res) {
 								"_id": 1 
 							} 
 						}, function(err, op) {
-					    	console.log(err || op);
-					    	assembleResult(tier, op);
+							console.log(op)
+					    	callback(null, {RESULTS: op});
 					    }
 			);
-		}
-
-		function assembleResult(tier, op) {
-			result = {};
-			result.tier = tier;
-			result.data = op;
-			results.push(result);
-			len--;
-			if(len === 0) {
-				callback(null, {RESULTS: results});		
-			}
 		};
 	};
 
