@@ -125,6 +125,8 @@ module.exports.getData = function (req, res) {
 
 	start = Number(start);
 	end = Number(end);
+
+	var RANGES = [];
 	
 	var data = {
 		'CHECKINS': {},
@@ -134,6 +136,7 @@ module.exports.getData = function (req, res) {
 
 	if(program) {
 		getProgramDetails(program);
+		getRange(start, end);
 	}
 	else {
 		res.send(400, {
@@ -141,6 +144,13 @@ module.exports.getData = function (req, res) {
 			'message': 'Error getting data.',
 			'info': ''
 		});
+	}
+
+	function getRange (start, end) {
+		var day_in_milliseond = 24 * 60 * 60 * 1000;
+		for(var i = start; i <= end; i += day_in_milliseond) {
+			RANGES.push(i);
+		}
 	}
 
 	function getProgramDetails(program_id) {
@@ -172,8 +182,14 @@ module.exports.getData = function (req, res) {
 		    CHECKINS: function(callback) {
 		    	getCheckinDetails(program, callback);
 		    },
+		    CHECKINS_DAILY: function(callback) {
+		    	getCheckinDaily(program, callback);
+		    },
 		    VOUCHERS: function(callback) {
 		    	getVoucherDetails(program, callback);
+		    },
+		    VOUCHERS_DAILY: function(callback) {
+		    	getVoucherDaily(program, callback);
 		    },
 		    USERS: function(callback) {
 		    	getUsers(program, callback);
@@ -242,6 +258,73 @@ module.exports.getData = function (req, res) {
 				}
 				callback(null, {RESULTS: results, TOTAL: count});
 			});
+		};
+	};
+
+	function getCheckinDaily(program, callback) {
+
+		var len = program.tiers.length;
+		var results = [];
+
+		if(len < 1) {
+			callback(null, 'ERROR');
+		}
+		else {
+			program.tiers.forEach(function (tier) {
+				checkinData(tier);
+			});
+		}
+		
+		function checkinData(tier) {
+			var rangeProj = { "$concat": [] };
+			for (var i=1; i<RANGES.length; i++ ) {
+			    rangeProj.$concat.push( {
+			        $cond: [ { $and: [
+			           { $gte: [ "$created_date", new Date(RANGES[i-1]) ] },
+			           { $lt:  [ "$created_date", new Date(RANGES[i]) ] }
+			           ]}, "" +RANGES[i-1], "" 
+			        ]
+			    });
+			};
+
+			Checkin.aggregate({	$match: { checkin_tier: 
+								mongoose.Types.ObjectId(String(tier._id)),
+								created_date: {
+									$gt: new Date(start),
+									$lt: new Date(end)
+								}
+			    			}
+						},{ 
+							$project: { 
+								"_id": 0, "range": rangeProj 
+							} 
+						},{ 
+							$group: { 
+								_id: "$range", 
+								count: { 
+									$sum: 1 
+								} 
+							} 
+						},	{ 
+							$sort: { 
+								"_id": 1 
+							} 
+						}, function(err, op) {
+					    	console.log(err || op);
+					    	assembleResult(tier, op);
+					    }
+			);
+		}
+
+		function assembleResult(tier, op) {
+			result = {};
+			result.tier = tier;
+			result.data = op;
+			results.push(result);
+			len--;
+			if(len === 0) {
+				callback(null, {RESULTS: results});		
+			}
 		};
 	};
 
@@ -325,6 +408,76 @@ module.exports.getData = function (req, res) {
 				}
 			});
 			callback(null, {RESULTS: results, TOTAL: TOTAL});
+		};
+	};
+
+	function getVoucherDaily(program, callback) {
+
+		var len = program.tiers.length;
+		var results = [];
+
+		if(len < 1) {
+			callback(null, 'ERROR');
+		}
+		else {
+			program.tiers.forEach(function (tier) {
+				voucherData(tier);
+			});
+		}
+		
+		function voucherData(tier) {
+			var rangeProj = { "$concat": [] };
+			for (var i=1; i<RANGES.length; i++ ) {
+			    rangeProj.$concat.push( {
+			        $cond: [ { $and: [
+			           { $gte: [ "$basics.created_at", new Date(RANGES[i-1]) ] },
+			           { $lt:  [ "$basics.created_at", new Date(RANGES[i]) ] }
+			           ]}, "" +RANGES[i-1], "" 
+			        ]
+			    });
+			};
+
+			Voucher.aggregate({	$match: {  "issue_details.issued_for": {
+		        				$in: tier.offers.map(
+		        					function(id){ 
+		        						return mongoose.Types.ObjectId(String(id)); 
+		        				})},
+		        				'issue_details.issue_time': {
+		        					$gt: new Date(start),
+									$lt: new Date(end) 
+		        				}
+	        				}
+	        			},{ 
+							$project: { 
+								"_id": 0, "range": rangeProj 
+							} 
+						},{ 
+							$group: { 
+								_id: "$range", 
+								count: { 
+									$sum: 1 
+								} 
+							} 
+						},	{ 
+							$sort: { 
+								"_id": 1 
+							} 
+						}, function(err, op) {
+					    	console.log(err || op);
+					    	assembleResult(tier, op);
+					    }
+			);
+		}
+
+		function assembleResult(tier, op) {
+			result = {};
+			result.tier = tier;
+			result.data = op;
+			results.push(result);
+			len--;
+			if(len === 0) {
+				callback(null, {RESULTS: results});		
+			}
 		};
 	};
 
