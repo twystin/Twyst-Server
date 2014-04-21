@@ -71,7 +71,7 @@ module.exports.getMerchants = function (req, res) {
 				'info': merchants
 			});
 		}
-	})
+	});
 }
 
 module.exports.getPrograms = function (req, res) {
@@ -113,8 +113,8 @@ module.exports.getPrograms = function (req, res) {
 					'info': programs
 				});
 			}
-		})
-	}
+		});
+	};
 }
 
 module.exports.getData = function (req, res) {
