@@ -11,11 +11,11 @@ var async = require('async');
 
 module.exports.getOutlets = function (req, res) {
 
-	var cities = req.params.cities || [];
-	var merchant = req.params.merchant;
-	
-	if(merchant && cities.length > 0) {
-		cities = cities.split(',');
+	var cities = req.body.cities || [];
+	var merchants = req.body.merchants || [];
+	console.log(cities)
+	console.log(merchants);
+	if(merchants.length > 0 && cities.length > 0) {
 		find();
 	}
 	else {
@@ -28,7 +28,11 @@ module.exports.getOutlets = function (req, res) {
 
 	function find() {
 		Outlet.find({
-			'outlet_meta.accounts': merchant,
+			'outlet_meta.accounts': {
+				$in: merchants.map(function(obj) {
+					return obj._id
+				})
+			},
 			'contact.location.city': {
 				$in: cities
 			}}).select({'basics.name':1, 'contact.location.locality_1': 1}).exec(function (err, outlets) {
@@ -94,7 +98,7 @@ module.exports.getPrograms = function (req, res) {
 		Program.find({
 			'outlets': {
 				$in: outlets.map(
-        					function(id){ 
+        					function(id){
         						return mongoose.Types.ObjectId(String(id)); 
         				})
 			}}).select({'name':1}).exec(function (err, programs) {
@@ -225,12 +229,7 @@ module.exports.getData = function (req, res) {
 	        			{ $group: 
 	        				{ _id: '$phone', count: { $sum: 1 }}
 	        			}, function (err, op) {
-	        				if(err) {
-	        					assembleResult(tier, op);
-	        				}
-	        				else {
-	        					assembleResult(tier, op);
-	        				}
+	        				assembleResult(tier, op);
 	        });
 		}
 
@@ -246,6 +245,7 @@ module.exports.getData = function (req, res) {
 			});
 			results.push(result);
 			len--;
+			
 			if(len === 0) {
 				countTotal();		
 			}
@@ -270,12 +270,10 @@ module.exports.getData = function (req, res) {
 			callback(null, 'ERROR');
 		}
 		else {
-			program.tiers.forEach(function (tier) {
-				checkinData(tier);
-			});
+			checkinData();
 		}
 		
-		function checkinData(tier) {
+		function checkinData() {
 			var rangeProj = { "$concat": [] };
 			for (var i=1; i<RANGES.length; i++ ) {
 			    rangeProj.$concat.push( {
@@ -286,10 +284,7 @@ module.exports.getData = function (req, res) {
 			        ]
 			    });
 			};
-			console.log(new Date(RANGES[6]))
-			console.log(new Date())
-			console.log(new Date(start))
-			console.log(new Date(end))
+
 			Checkin.aggregate({	$match: { checkin_program: 
 								mongoose.Types.ObjectId(String(program._id)),
 								created_date: {
@@ -411,12 +406,10 @@ module.exports.getData = function (req, res) {
 			callback(null, 'ERROR');
 		}
 		else {
-			program.tiers.forEach(function (tier) {
-				voucherData(tier);
-			});
+			voucherData();
 		}
 		
-		function voucherData(tier) {
+		function voucherData() {
 			var rangeProj = { "$concat": [] };
 			for (var i=1; i<RANGES.length; i++ ) {
 			    rangeProj.$concat.push( {
@@ -456,7 +449,6 @@ module.exports.getData = function (req, res) {
 								"_id": 1 
 							} 
 						}, function(err, op) {
-							console.log(op)
 					    	callback(null, {RESULTS: op});
 					    }
 			);

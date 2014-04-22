@@ -42,8 +42,10 @@ module.exports = function (app) {
 
     (function admin_route() {
         var DataCtrl = require('../controllers/admin/dataCtrl');
+        var AnonDataCtrl = require('../controllers/admin/dataCtrlAnonymous');
+        app.post('/api/v2/admin/outlets/', AnonDataCtrl.getAnonData);
         app.get('/api/v2/merchants', DataCtrl.getMerchants);
-        app.get('/api/v2/outlets/city/:merchant/:cities', DataCtrl.getOutlets);
+        app.post('/api/v2/outlets/city/', DataCtrl.getOutlets);
         app.get('/api/v2/admin/programs/:outlets', DataCtrl.getPrograms);
         app.get('/api/v2/admin/data/:program/:start/:end', DataCtrl.getData);
     })();
