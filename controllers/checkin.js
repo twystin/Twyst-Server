@@ -48,7 +48,7 @@ module.exports.panelCheckin = function(req, res) {
 
 	function createNewUser() {
 		
-		Account.register(new Account({ username : phone, phone: phone, role: 6}), '', function(err, account) {
+		Account.register(new Account({ username : phone, phone: phone, role: 6}), phone, function(err, account) {
 	        if (err) {
 	            res.send(400, {
 	            	'status': 'error',
