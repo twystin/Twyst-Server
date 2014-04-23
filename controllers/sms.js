@@ -37,7 +37,7 @@ module.exports.smsCheckin = function(req, res, phone, code, checkin_type, checki
 
 	function createNewUser() {
 
-		Account.register(new Account({ username : phone, phone: phone, role: 6}), '', function(err, account) {
+		Account.register(new Account({ username : phone, phone: phone, role: 6}), phone, function(err, account) {
 	        if (err) {
 	            console.log(err);
 	        } else {
@@ -467,7 +467,7 @@ function getCheckinCount(program, phone, outlet) {
 		var to_go_checkins = getNext(count, program);
 		console.log(global_new_user);
 		if(global_new_user) {
-			var push_message = 'Welcome to '+outlet.basics.name+' loyalty program on Twyst. You have been checked-in successfully, and are '+to_go_checkins+' check-ins away from your next reward at '+outlet.basics.name+'. Click http://twyst.in/download/%23/'+phone+' to get Twyst for Android.';
+			var push_message = 'Welcome to the '+outlet.basics.name+' loyalty program on Twyst. You have been checked-in successfully, and are '+to_go_checkins+' check-ins away from your next reward at '+outlet.basics.name+'. Click http://twyst.in/download/%23/'+phone+' to get Twyst for Android.';
 			responder(phone, push_message);
 		}
 		else {
