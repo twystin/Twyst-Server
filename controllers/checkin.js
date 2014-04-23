@@ -18,6 +18,7 @@ http.post = require('http-post');
  
 var global_qr = null;
 var global_panel = false;
+var global_new_user = false;
 
 module.exports.panelCheckin = function(req, res) {
 	var phone = req.body.phone;
@@ -30,12 +31,14 @@ module.exports.panelCheckin = function(req, res) {
 	isUserRegistered ();
 
 	global_panel = true;
+	global_new_user = false;
 
 	function isUserRegistered () {
 		
-		Account.findOne({phone: phone}, function (err, user) {
+		Account.findOne({phone: phone, role: 6}, function (err, user) {
 			if(err || user === null) {
 				createNewUser();
+				global_new_user = true;
 			}
 			else {
 				detectSixHoursCap(qr, req, res, outlet, phone, checkin_type, checkin_code);
@@ -45,7 +48,7 @@ module.exports.panelCheckin = function(req, res) {
 
 	function createNewUser() {
 		
-		Account.register(new Account({ username : phone, phone: phone, role: 6}), '', function(err, account) {
+		Account.register(new Account({ username : phone, phone: phone, role: 6}), phone, function(err, account) {
 	        if (err) {
 	            res.send(400, {
 	            	'status': 'error',
@@ -602,8 +605,15 @@ function getCheckinCount(program, phone, outlet) {
 			count = 0;
 		}
 		var to_go_checkins = getNext(count, program);
-		var push_message = 'Check-in successful. You are '+to_go_checkins+' check-ins away from your next reward at '+outlet.basics.name+'.';
-		smsResponder(phone, push_message);
+		console.log(global_new_user);
+		if(global_new_user) {
+			var push_message = 'Welcome to '+outlet.basics.name+' loyalty program on Twyst. You have been checked-in successfully, and are '+to_go_checkins+' check-ins away from your next reward at '+outlet.basics.name+'. Click http://twyst.in/download/%23/'+phone+' to get Twyst for Android.';
+			smsResponder(phone, push_message);
+		}
+		else {
+			var push_message = 'Check-in successful. You are '+to_go_checkins+' check-ins away from your next reward at '+outlet.basics.name+'.';
+			smsResponder(phone, push_message);
+		}
 	});
 }
 
