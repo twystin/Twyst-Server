@@ -52,7 +52,7 @@ module.exports.nearbyOutlets = function(req,res) {
 	else {
 		res.send(400,{'status': 'error',
 		  				'message': 'Error getting list of outlets',
-		  				'info': JSON.stringify(err)
+		  				'info': ''
 		});
 	}
 	//, $maxDistance: 0.01

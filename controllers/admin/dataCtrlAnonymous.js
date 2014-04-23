@@ -183,7 +183,7 @@ module.exports.getAnonData = function (req, res) {
 			op.forEach(function(item) {
 				result.earned += item.count;
 				if(item._id !== 'active') {
-					result.redeemed = item.count;
+					result.redeemed += item.count;
 				}
 			});
 			
