@@ -134,7 +134,7 @@ module.exports.qrCreate = function (req, res) {
 	function writeOnDisk(zip) {
 
 		var time = Date.now();
-		zip.writeZip("../../Twyst-Web-Apps/common/"+outlet+"_"+time+".zip");
+		zip.writeZip(__dirname + '/../../Twyst-Web-Apps/common/'+outlet+"_"+time+".zip");
 		res.send(200, {
             status: 'success',
             message: 'Successfully saved QR code for Outlet;',
