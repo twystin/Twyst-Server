@@ -97,7 +97,7 @@ module.exports.qrCreate = function (req, res) {
 		qr = _.extend(qr, qr_n);
 
 		for (var i = 0; i < num; i++) {
-			var qrcode = keygen._({forceUppercase: true, length: 6, exclude:['O', '0', 'I', '1']});
+			var qrcode = keygen._({forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});
 			qr.code = qrcode;
 			saveQr(qr, i);
 		};

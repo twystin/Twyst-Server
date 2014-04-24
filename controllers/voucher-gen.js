@@ -156,7 +156,7 @@ function findUserId(program, tier, phone, outlet_id, offer) {
 
 function generateVoucher(voucher, phone) {
 	voucher.basics = voucher.basics || {};
-	voucher.basics.code = keygen._({forceUppercase: true, length: 6, exclude:['O', '0', 'I', '1']});
+	voucher.basics.code = keygen._({forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});
 
 	var voucher = new Voucher(voucher);
 	voucher.save(function (err, voucher) {
