@@ -128,7 +128,8 @@ function checkValidCheckin(qr, req, res) {
 		detect();
 	}
 	else {
-		checkUserLocation(qr, req, res);
+		onValidRequest(qr, req, res);
+		//checkUserLocation(qr, req, res);
 	}
 
 	function detect() {
