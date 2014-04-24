@@ -13,8 +13,6 @@ module.exports.getOutlets = function (req, res) {
 
 	var cities = req.body.cities || [];
 	var merchants = req.body.merchants || [];
-	console.log(cities)
-	console.log(merchants);
 	if(merchants.length > 0 && cities.length > 0) {
 		find();
 	}
@@ -197,6 +195,9 @@ module.exports.getData = function (req, res) {
 		    },
 		    USERS: function(callback) {
 		    	getUsers(program, callback);
+		    },
+		    USERS_BY_CHECKIN_NO: function(callback) {
+		    	groupByCheckinNumber(program, callback);
 		    }
 		}, function(err, results) {
 		    res.send(200,results);
@@ -506,5 +507,26 @@ module.exports.getData = function (req, res) {
 			});
 			return USERS_BY_CHECKIN_TYPE;
 		};
+	};
+
+	function groupByCheckinNumber(program, callback) {
+		Checkin.aggregate({	$match: { checkin_program: 
+								mongoose.Types.ObjectId(String(program._id))
+	        			}
+        			},
+        			{ $group: 
+        				{ _id: '$phone', count: { $sum: 1 }}
+        			},
+        			{
+        				$group: {
+        					_id: '$count', value: {$sum: 1}
+        				}
+        			}, {
+        				$sort: { 
+								"_id": 1 
+							}
+        			}, function (err, op) {
+        				callback(null, {DATA: op});
+        });
 	};
 }

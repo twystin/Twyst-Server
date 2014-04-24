@@ -48,6 +48,12 @@ module.exports.getAnonData = function (req, res) {
 		    },
 		    VOUCHERS_DAILY: function(callback) {
 		    	getVoucherDaily(outlets, callback);
+		    },
+		    USERS_BY_CHECKIN_NO: function(callback) {
+		    	groupByCheckinNumber(outlets, callback);
+		    },
+		    USERS_BY_APP: function(callback) {
+		    	groupByApp(callback);
 		    }
 		}, function(err, results) {
 		    res.send(200,results);
@@ -272,6 +278,65 @@ module.exports.getAnonData = function (req, res) {
 					    	callback(null, {RESULTS: op});
 					    }
 			);
+		};
+	};
+
+	function groupByCheckinNumber(outlets, callback) {
+		Checkin.aggregate({	$match: { outlet: {
+								$in: outlets.map(function(id) {
+									return mongoose.Types.ObjectId(id);
+								})
+							}
+	        			}
+        			},
+        			{ $group: 
+        				{ _id: '$phone', count: { $sum: 1 }}
+        			},
+        			{
+        				$group: {
+        					_id: '$count', value: {$sum: 1}
+        				}
+        			}, {
+        				$sort: { 
+								"_id": 1 
+							}
+        			}, function (err, op) {
+        				callback(null, {DATA: op});
+        });
+	};
+
+	function groupByApp(callback) {
+		async.parallel({
+		    APP_USERS: function(app_callback) {
+		    	getAppUsers(app_callback);
+		    },
+		    NON_APP_USERS: function(app_callback) {
+		    	getNonAppUsers(app_callback);
+		    }
+		}, function(err, results) {
+		    callback(null, {RESULTS: results});
+		});
+
+		function getAppUsers(app_callback) {
+			Account.count({ 
+					$where: "this.username != this.phone" 
+				}, function (err, count) {
+					if(err) {
+						count = 0;
+					}
+				app_callback(null, count);
+			});
+		};
+
+		function getNonAppUsers(app_callback) {
+			Account.count({ 
+					$where: "this.username == this.phone" 
+				}, function (err, count) {
+					if(err) {
+						count = 0;
+					}
+				app_callback(null, count);
+			});
 		};
 	};
 }
