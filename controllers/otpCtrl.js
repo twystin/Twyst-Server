@@ -138,7 +138,7 @@ module.exports.updateDeviceId = function (req, res) {
 		else {
 			res.send(400, {
 				'status': 'error',
-				'message': 'The OTP you enterd is incorrect.',
+				'message': 'The OTP you entered is incorrect.',
 				'info': ''
 			});
 		}
