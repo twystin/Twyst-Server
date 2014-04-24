@@ -24,7 +24,7 @@ module.exports.smsCheckin = function(req, res, phone, code, checkin_type, checki
 	global_new_user = false;
 
 	function isUserRegistered () {
-		Account.findOne({phone: phone,role: 6}, function (err, user) {
+		Account.findOne({phone: phone}, function (err, user) {
 			if(err || user === null) {
 				createNewUser();
 				global_new_user = true;
