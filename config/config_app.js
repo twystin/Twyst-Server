@@ -1,5 +1,6 @@
 'use strict';
 var express = require('express');
+var MongoStore = require('connect-mongo')(express);
 var mongoose = require('mongoose');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
@@ -7,15 +8,31 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 
 var settings = require('./settings');
 
+var sessionStore = new MongoStore({
+    url: 'mongodb://myuser:mypass@localhost:27017/twyst',
+     // db: 'session',
+     // host: 'mongodb://localhost/twyst',
+     clear_interval: 3600
+});
+
 module.exports = function (app) {
     app.configure(function () {
         app.use(express.logger('dev'));
         app.use(express.bodyParser());
         app.use(express.cookieParser('some secret'));
-        app.use(express.session({cookie: { maxAge: 864000000 }}));
+        app.use(express.session({
+            secret: "myappsecret",
+            cookie: { 
+                maxAge: 24 * 60 * 60 * 1000 
+            },
+            store:sessionStore
+        }));
+        //app.use(express.session({cookie: { maxAge: 864000000 }}));
         app.use(express.methodOverride());
         app.use(passport.initialize());
         app.use(passport.session());
+        app.use(express.compress());
+        app.use(express.staticCache());
         app.use(express.static(__dirname + '/../../Twyst-Web-Apps/'));
         app.use(app.router);
         app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));

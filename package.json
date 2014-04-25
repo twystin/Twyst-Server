@@ -18,7 +18,8 @@
     "qrpng": "~0.1.1",
     "adm-zip": "~0.4.4",
     "easy-zip": "0.0.4",
-    "string": "~1.8.0"
+    "string": "~1.8.0",
+    "connect-mongo": "~0.4.0"
   },
   "name": "twyst",
   "subdomain": "twyst",

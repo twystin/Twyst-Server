@@ -46,8 +46,10 @@ module.exports.setEmailValidated = function (req, res) {
     );
 };
 
-module.exports.logout = function(req,res) {
+module.exports.logout = function(req, res) {
 	req.logout();
+	console.log(req)
+	req.session.destroy();
 	res.send({	'status': 'success',
 				'message': 'Logout successful',
 				'info': ''
