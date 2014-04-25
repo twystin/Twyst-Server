@@ -7,7 +7,6 @@ module.exports = function (app) {
     //Check if a User is authenticated
     function checkAuthenticated() {
         return function (req, res, next) {
-            console.log(req.isAuthenticated())
             if (req.isAuthenticated()) {
                 next();
             } else {

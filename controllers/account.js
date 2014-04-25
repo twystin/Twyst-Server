@@ -47,9 +47,18 @@ module.exports.setEmailValidated = function (req, res) {
 };
 
 module.exports.logout = function(req, res) {
-	req.logout();
-	console.log(req)
-	req.session.destroy();
+	if (req.isAuthenticated()) {
+        // this destroys the current session (not really necessary because you get a new one
+        req.session.destroy(function() {
+            // if you don't want destroy the whole session, because you anyway get a new one you also could just change the flags and remove the private informations
+            // req.session.user.save(callback(err, user)) // didn't checked this
+            //delete req.session.user;  // remove credentials
+            //req.session.authenticated = false; // set flag
+            //res.clearCookie('connect.sid', { path: '/' }); // see comments above                res.send('removed session', 200); // tell the client everything went well
+        });
+
+        req.logout();
+    };
 	res.send({	'status': 'success',
 				'message': 'Logout successful',
 				'info': ''

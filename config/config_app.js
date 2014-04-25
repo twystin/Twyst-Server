@@ -21,21 +21,19 @@ module.exports = function (app) {
         app.use(express.bodyParser());
         app.use(express.cookieParser('some secret'));
         app.use(express.session({
-            secret: "myappsecret",
+            secret: "Twyst_2014_Sessions",
             cookie: { 
-                maxAge: 24 * 60 * 60 * 1000 
+                maxAge: 7 * 24 * 60 * 60 * 1000 
             },
-            store:sessionStore
+            store: sessionStore
         }));
         //app.use(express.session({cookie: { maxAge: 864000000 }}));
         app.use(express.methodOverride());
         app.use(passport.initialize());
         app.use(passport.session());
         app.use(express.compress());
-        app.use(express.staticCache());
         app.use(express.static(__dirname + '/../../Twyst-Web-Apps/'));
         app.use(app.router);
-        app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
         app.use(express.favicon(__dirname + '/../../Twyst-Web-Apps/common/images/favicon/twyst.ico'));
         app.all("/api/*", function(req, res, next) {
             res.header("Access-Control-Allow-Origin", "*");
@@ -84,6 +82,8 @@ module.exports = function (app) {
                 }
             });
         }));
+
+        app.use(express.errorHandler({ dumpExceptions: true, showStack: true }));
     });
     // Connect to the database
     // mongoose.connect('mongodb://localhost/twyst', {user: 'code', pass: 'Twyst2014'}, function(err) {
