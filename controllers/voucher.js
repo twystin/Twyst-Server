@@ -161,7 +161,7 @@ module.exports.changeStatus  = function (req, res){
                     }
                     else {
                         res.send(200, { 'status': 'success',
-                                       'message': 'Successfully redeemed',
+                                       'message': 'Successfully redeemed Voucher.',
                                        'info': ''
                         });
                     }
