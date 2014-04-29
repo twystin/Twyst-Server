@@ -691,7 +691,7 @@ function responder(checkin, offer, program, res) {
 
 function smsResponder(phone, push_message) {
 	
-	saveSentSms(phone, message);
+	saveSentSms(phone, push_message);
 
 	var message = push_message.replace('&','n');
 	console.log(message);
