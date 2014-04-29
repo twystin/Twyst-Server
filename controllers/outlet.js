@@ -92,7 +92,7 @@ function getProgramForOutlets(outlets, res) {
 	};
 
 	function findProgram(item) {
-		Program.find({outlets: item._id}, function (err, programs) {
+		Program.find({outlets: item._id, status: 'active'}, function (err, programs) {
 			if(err){
 				errs.push(err);
 				outlet.outlet = item;
