@@ -23,7 +23,7 @@ module.exports = function (app) {
         app.use(express.session({
             secret: "Twyst_2014_Sessions",
             cookie: { 
-                maxAge: 7 * 24 * 60 * 60 * 1000 
+                maxAge: 90 * 24 * 60 * 60 * 1000 
             },
             store: sessionStore
         }));

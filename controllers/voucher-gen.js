@@ -20,7 +20,7 @@ module.exports.readProgramAndPopulateTiers = function(outlet_id, phone, sms_flag
 	
 	global_sms_flag = sms_flag;
 
-	Program.findOne({outlets: outlet_id}).populate('tiers').exec(function (err, program) {
+	Program.findOne({outlets: outlet_id, status: 'active'}).populate('tiers').exec(function (err, program) {
 		if(err) {
 			console.log("No program found to generate Voucher");
 		}

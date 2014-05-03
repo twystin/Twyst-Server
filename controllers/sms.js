@@ -205,7 +205,7 @@ function detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, ch
 
 function create (req, res, outlet_id, phone, checkin_type, checkin_code) {
 
-	Program.findOne({outlets: outlet_id}).populate('tiers').exec(function (err, program) {
+	Program.findOne({outlets: outlet_id, status: 'active'}).populate('tiers').exec(function (err, program) {
 		if(program === null || err) {
 			var checkin = {};
 			checkin.outlet = outlet_id;
