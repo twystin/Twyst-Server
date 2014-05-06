@@ -18,3 +18,9 @@ module.exports.createLog = function (req, res) {
 		}				
 	});
 }
+
+module.exports.deliveryReport = function (req, res) {
+	
+	console.log("HERE HERE HERE HERE")
+	console.log(req.query);
+}
