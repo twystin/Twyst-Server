@@ -109,8 +109,8 @@ module.exports.readByUserPhone = function(req, res) {
             'issue_details.issued_to': user_id,
             'issue_details.issued_at': {
                 $in: outlets.map(
-                            function(id){
-                                return mongoose.Types.ObjectId(String(id)); 
+                            function(item){
+                                return mongoose.Types.ObjectId(String(item._id)); 
                         })
             }
         }).populate('issue_details.issued_for').populate('issue_details.issued_to').exec(function(err,vouchers) {
