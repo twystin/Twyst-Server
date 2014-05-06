@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Voucher = mongoose.model('Voucher');
 var Account = mongoose.model('Account');
 var Program = mongoose.model('Program');
+var Outlet = mongoose.model('Outlet');
 var _ = require('underscore');
 
 module.exports.read = function(req,res) {
