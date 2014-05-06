@@ -208,8 +208,10 @@ module.exports.getNotifs = function (req, res) {
 				result.date = item.created_date;
 				result.type = "FAVS";
 				result.data = item;
-				result.phone = item.account.phone;
-				results.push(result);
+				if(item.account && item.account.phone;) {
+					result.phone = item.account.phone;
+					results.push(result);
+				}
 			});
 
 			callback(null, results);
