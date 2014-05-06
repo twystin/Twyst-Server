@@ -334,7 +334,7 @@ module.exports = function (app) {
         var VoucherNotifyCtrl = require('../controllers/notifications/voucher');
         var CommonNotifyCtrl = require('../controllers/notifications/common');
         app.get('/api/v1/notify/voucher',checkAuthenticated(),checkRole(5), VoucherNotifyCtrl.getVoucherNotify);
-        app.get('/api/v2/notify/merchants',checkAuthenticated(),checkRole(5), CommonNotifyCtrl.getNotifs);
+        app.get('/api/v2/notify/merchants/:range',checkAuthenticated(),checkRole(5), CommonNotifyCtrl.getNotifs);
     })();
 
     (function handle_defaults() {

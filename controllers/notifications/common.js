@@ -58,8 +58,6 @@ module.exports.getNotifs = function (req, res) {
 		// 	return -(item.date);
 		// });
 		data.sort(date_sort_desc);
-
-		data = _.first(data, 20);
 		
 		res.send(200, {
 			'status': 'success',
@@ -89,7 +87,7 @@ module.exports.getNotifs = function (req, res) {
 					'created_date' : -1
 				},
 				skip: skip,
-				limit: 20 
+				limit: 10 
 			}, function(err, checkins) {
 
 				assembleResults(checkins);
@@ -123,7 +121,7 @@ module.exports.getNotifs = function (req, res) {
 					'basics.created_at' : -1
 				},
 				skip: skip,
-				limit: 20 
+				limit: 10 
 			}).populate('issue_details.issued_to').exec(function(err, vouchers) {
 
 				assembleResults(vouchers);
@@ -159,7 +157,7 @@ module.exports.getNotifs = function (req, res) {
 					'used_details.used_time' : -1
 				},
 				skip: skip,
-				limit: 20 
+				limit: 10 
 			}).populate('used_details.used_by'
 			).populate('used_details.used_at'
             ).populate('issue_details.issued_for').exec(function(err, vouchers) {
@@ -196,7 +194,7 @@ module.exports.getNotifs = function (req, res) {
 					'created_date' : -1
 				},
 				skip: skip,
-				limit: 20 
+				limit: 10 
 			}).populate('account').exec(function(err, favs) {
 
 				assembleResults(favs);
