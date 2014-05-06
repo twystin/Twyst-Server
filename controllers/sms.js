@@ -460,6 +460,11 @@ function getOutlet(outlet_id, program, phone) {
 
 function getCheckinCount(program, phone, outlet) {
 
+	var program_id = '';
+	if(program && program._id) {
+		program_id = program._id;
+	}
+	
 	Checkin.count({phone: phone, checkin_program: program._id}, function (err, count) {
 		if(err) {
 			count = 0;
