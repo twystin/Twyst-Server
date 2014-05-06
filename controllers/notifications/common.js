@@ -59,6 +59,8 @@ module.exports.getNotifs = function (req, res) {
 		// });
 		data.sort(date_sort_desc);
 
+		data = _.first(data, 20);
+		
 		res.send(200, {
 			'status': 'success',
 			'message': 'Successfully got notifications',
