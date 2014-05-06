@@ -215,10 +215,10 @@ function responder(phone, push_message) {
 	var message = push_message.replace('&','n');
 	console.log("SMS sent");
 	console.log(message);
-	var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message + '&dlr_mask=19&dlr_url=';
+	var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
 	var test_url = 'http://staging.twyst.in/api/v2/sms/status';
 
-	http.post(send_sms_url + test_url, function(res){
+	http.post(send_sms_url, function(res){
 		res.on('data', function(chunk) {
             // append chunk to your data
             body += chunk;
