@@ -73,38 +73,46 @@ module.exports.readByUserPhone = function(req, res) {
                     });
                 }
                 else {
-                    getVoucherDetails(user._id);
+                    getOutlet(user._id);
                 }
             }
         });
     }
 
-    // function getRunningProgram (user_id) {
+    function getOutlet (user_id) {
 
-    //     Program.findOne({accounts: req.user._id, 'status': 'active'}, function (err, program) {
+        Outlet.find({'outlet_meta.accounts': req.user._id}, function (err, outlets) {
 
-    //         if(err) {
-    //             res.send(400, {'status': 'error',
-    //                            'message': 'Error getting the program',
-    //                            'info': JSON.stringify(err)
-    //             });
-    //         }
-    //         else {
-    //             if(program === null) {
-    //                 res.send(200, {'status': 'error',
-    //                                'message': 'Program not found',
-    //                                'info': ''
-    //                 });
-    //             }
-    //             else {
-    //                 getVoucherDetails(user_id, program._id);
-    //             }
-    //         }
-    //     })
-    // }
+            if(err) {
+                res.send(400, {'status': 'error',
+                               'message': 'Error getting the outlets',
+                               'info': JSON.stringify(err)
+                });
+            }
+            else {
+                if(outlets.length <= 0) {
+                    res.send(200, {'status': 'error',
+                                   'message': 'Outlets not found',
+                                   'info': ''
+                    });
+                }
+                else {
+                    getVoucherDetails(user_id, outlets);
+                }
+            }
+        })
+    }
 
-    function getVoucherDetails (user_id) {
-        Voucher.find({'issue_details.issued_to': user_id}).populate('issue_details.issued_for').populate('issue_details.issued_to').exec(function(err,vouchers) {
+    function getVoucherDetails (user_id, outlets) {
+        Voucher.find({
+            'issue_details.issued_to': user_id,
+            'issue_details.issued_at': {
+                $in: outlets.map(
+                            function(id){
+                                return mongoose.Types.ObjectId(String(id)); 
+                        })
+            }
+        }).populate('issue_details.issued_for').populate('issue_details.issued_to').exec(function(err,vouchers) {
             if (err) {
                 res.send(400, {'status': 'error',
                                'message': 'Error getting voucher details',
