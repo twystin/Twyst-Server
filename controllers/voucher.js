@@ -73,38 +73,38 @@ module.exports.readByUserPhone = function(req, res) {
                     });
                 }
                 else {
-                    getRunningProgram(user._id);
+                    getVoucherDetails(user._id);
                 }
             }
         });
     }
 
-    function getRunningProgram (user_id) {
+    // function getRunningProgram (user_id) {
 
-        Program.findOne({accounts: req.user._id}, function (err, program) {
+    //     Program.findOne({accounts: req.user._id, 'status': 'active'}, function (err, program) {
 
-            if(err) {
-                res.send(400, {'status': 'error',
-                               'message': 'Error getting the program',
-                               'info': JSON.stringify(err)
-                });
-            }
-            else {
-                if(program === null) {
-                    res.send(200, {'status': 'error',
-                                   'message': 'Program not found',
-                                   'info': ''
-                    });
-                }
-                else {
-                    getVoucherDetails(user_id, program._id);
-                }
-            }
-        })
-    }
+    //         if(err) {
+    //             res.send(400, {'status': 'error',
+    //                            'message': 'Error getting the program',
+    //                            'info': JSON.stringify(err)
+    //             });
+    //         }
+    //         else {
+    //             if(program === null) {
+    //                 res.send(200, {'status': 'error',
+    //                                'message': 'Program not found',
+    //                                'info': ''
+    //                 });
+    //             }
+    //             else {
+    //                 getVoucherDetails(user_id, program._id);
+    //             }
+    //         }
+    //     })
+    // }
 
-    function getVoucherDetails (user_id, program_id) {
-        Voucher.find({'issue_details.issued_to': user_id, 'issue_details.program': program_id}).populate('issue_details.issued_for').populate('issue_details.issued_to').exec(function(err,vouchers) {
+    function getVoucherDetails (user_id) {
+        Voucher.find({'issue_details.issued_to': user_id}).populate('issue_details.issued_for').populate('issue_details.issued_to').exec(function(err,vouchers) {
             if (err) {
                 res.send(400, {'status': 'error',
                                'message': 'Error getting voucher details',
