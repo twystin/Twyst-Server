@@ -173,7 +173,9 @@ module.exports.getNotifs = function (req, res) {
 				result.date = item.used_details.used_time;
 				result.type = "REDEEM";
 				result.data = item;
-				result.phone = item.used_details.used_by.phone;
+				if(item.used_details.used_by) {
+					result.phone = item.used_details.used_by.phone;
+				}
 				results.push(result);
 			});
 

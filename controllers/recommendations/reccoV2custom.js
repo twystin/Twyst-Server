@@ -7,7 +7,7 @@ var Outlet = mongoose.model('Outlet');
 var Checkin = mongoose.model('Checkin');
 var Favourite = mongoose.model('Favourite');
 var Voucher = mongoose.model('Voucher');
-
+ 
 var _ = require('underscore');
 
 var CB1,CB2,CB3,CB4,CB5; // Callback

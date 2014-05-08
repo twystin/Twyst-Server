@@ -25,6 +25,7 @@ module.exports.panelCheckin = function(req, res) {
 	var outlet = req.body.outlet;
 	var checkin_type = 'PANEL';
 	var checkin_code = 'PANEL';
+	var checkin_location = req.body.location;
 
 	var qr = null;
 
@@ -41,7 +42,7 @@ module.exports.panelCheckin = function(req, res) {
 				global_new_user = true;
 			}
 			else {
-				detectSixHoursCap(qr, req, res, outlet, phone, checkin_type, checkin_code);
+				detectSixHoursCap(qr, req, res, outlet, phone, checkin_type, checkin_code, checkin_location);
 			}
 		});
 	}
@@ -56,7 +57,7 @@ module.exports.panelCheckin = function(req, res) {
 	            	'info': JSON.stringify(err)
 	            });
 	        } else {
-	            detectSixHoursCap(qr, req, res, outlet, phone, checkin_type, checkin_code);
+	            detectSixHoursCap(qr, req, res, outlet, phone, checkin_type, checkin_code, checkin_location);
 	        }
 	    });
 	}
@@ -124,11 +125,15 @@ function validateQrCode (qr, req, res) {
 
 function checkValidCheckin(qr, req, res) {
 
+	var checkin_location;
+
 	if(qr.type === 'single') {
+		checkin_location = 'HOME_DELIVERY';
 		detect();
 	}
 	else {
-		onValidRequest(qr, req, res);
+		checkin_location = 'DINE_IN';
+		onValidRequest(qr, req, res, checkin_location);
 		//checkUserLocation(qr, req, res);
 	}
 
@@ -143,7 +148,7 @@ function checkValidCheckin(qr, req, res) {
 				});
 			}
 			if(checkin === null) {
-				onValidRequest(qr, req, res);
+				onValidRequest(qr, req, res, checkin_location);
 			}
 			else {
 				res.send(200, {
@@ -249,7 +254,7 @@ function checkUserLocation (qr, req, res) {
 	}
 }
 
-function onValidRequest(qr, req, res) {
+function onValidRequest(qr, req, res, checkin_location) {
 	var created_checkin = {};
 
 	if(qr.outlet_id) {
@@ -263,7 +268,7 @@ function onValidRequest(qr, req, res) {
 				detectSixHoursCap(qr, req, res, created_checkin.outlet, 
 					created_checkin.phone, 
 					created_checkin.checkin_type,
-					created_checkin.checkin_code);
+					created_checkin.checkin_code, checkin_location);
 			}
 			else {
 				res.send(200, {	'status': 'error',
@@ -287,19 +292,19 @@ function onValidRequest(qr, req, res) {
 	}
 }
 
-function detectSixHoursCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code) {
+function detectSixHoursCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location) {
 	
 	Checkin.findOne({phone: phone, outlet: outlet_id}, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
 		if(err) {
-			detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code)
+			detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location);
 		}
 		if(checkin === null) {
-			detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code)
+			detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location);
 		}
 		else {
 			var diff = Date.now() - checkin.created_date;
 			if(diff > 21600000) {
-				detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code)
+				detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location);
 			}
 			else {
 				res.send(200, {	'status': 'error',
@@ -311,19 +316,19 @@ function detectSixHoursCap(qr, req, res, outlet_id, phone, checkin_type, checkin
 	});
 }
 
-function detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code) {
+function detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location) {
 	
 	Checkin.findOne({phone: phone}, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
 		if(err) {
-			create(req, res, outlet_id, phone, checkin_type, checkin_code);
+			create(req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location);
 		}
 		if(checkin === null) {
-			create(req, res, outlet_id, phone, checkin_type, checkin_code);			
+			create(req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location);			
 		}
 		else {
 			var diff = Date.now() - checkin.created_date;
 			if(diff > 1800000) {
-				create(req, res, outlet_id, phone, checkin_type, checkin_code);				
+				create(req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location);				
 			}
 			else {
 				res.send(200, {	'status': 'error',
@@ -335,7 +340,7 @@ function detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, ch
 	});
 }
 
-function create (req, res, outlet_id, phone, checkin_type, checkin_code) {
+function create (req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location) {
 
 	Program.findOne({outlets: outlet_id, status: 'active'}).populate('tiers').exec(function (err, program) {
 		if(program === null || err) {
@@ -344,15 +349,16 @@ function create (req, res, outlet_id, phone, checkin_type, checkin_code) {
 			checkin.phone = phone;
 			checkin.checkin_code = checkin_code;
 			checkin.checkin_type = checkin_type;
+			checkin.location = checkin_location;
 			createCheckin(req, res, checkin);
 		}
 		else {
-			populateOffers(req, res, program, outlet_id, phone, checkin_type, checkin_code);
+			populateOffers(req, res, program, outlet_id, phone, checkin_type, checkin_code, checkin_location);
 		}
 	})
 }
 
-function populateOffers (req, res, program, outlet_id, phone, checkin_type, checkin_code) {
+function populateOffers (req, res, program, outlet_id, phone, checkin_type, checkin_code, checkin_location) {
 	var tiers = [];
 	var tier_count = program.tiers.length;
 	program.tiers.forEach(function (tier) {
@@ -362,7 +368,7 @@ function populateOffers (req, res, program, outlet_id, phone, checkin_type, chec
 				tier_count--;
 				if (tier_count === 0) {
 					program.tiers = tiers;
-					countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, checkin_code);
+					countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, checkin_code, checkin_location);
 				}
 			}
 			else {
@@ -375,14 +381,14 @@ function populateOffers (req, res, program, outlet_id, phone, checkin_type, chec
 				}
 				if (tier_count === 0) {
 					program.tiers = tiers;
-					countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, checkin_code);
+					countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, checkin_code, checkin_location);
 				}
 			}
 		})
 	})
 }
 
-function countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, checkin_code) {
+function countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, checkin_code, checkin_location) {
 	Checkin.count({phone: phone, checkin_program: program._id}, function (err, count) {
 		if(err) {
 			var checkin = {};
@@ -391,15 +397,16 @@ function countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, 
 			checkin.checkin_program = program;
 			checkin.checkin_code = checkin_code;
 			checkin.checkin_type = checkin_type;
+			checkin.location = checkin_location;
 			createCheckin(req, res, checkin);
 		}
 		else {
-			decideTier(req, res, program, outlet_id, phone, count, checkin_type, checkin_code);
+			decideTier(req, res, program, outlet_id, phone, count, checkin_type, checkin_code, checkin_location);
 		}
 	});
 }
 
-function decideTier(req, res, program, outlet_id, phone, count, checkin_type, checkin_code) {
+function decideTier(req, res, program, outlet_id, phone, count, checkin_type, checkin_code, checkin_location) {
 	var marked_tier = null;
 	var offer_count;
 	var tier_count = program.tiers.length;
@@ -415,7 +422,7 @@ function decideTier(req, res, program, outlet_id, phone, count, checkin_type, ch
 	});
 	if(marked_tier) { 
 		if(offer_count > 0) {
-			decideOffer(req, res, program, marked_tier, outlet_id, phone, count, checkin_type, checkin_code);
+			decideOffer(req, res, program, marked_tier, outlet_id, phone, count, checkin_type, checkin_code, checkin_location);
 		}
 		else {
 			var checkin = {};
@@ -425,6 +432,7 @@ function decideTier(req, res, program, outlet_id, phone, count, checkin_type, ch
 			checkin.checkin_tier = marked_tier;
 			checkin.checkin_code = checkin_code;
 			checkin.checkin_type = checkin_type;
+			checkin.location = checkin_location;
 			createCheckin(req, res, checkin);
 		}
 	}
@@ -435,11 +443,12 @@ function decideTier(req, res, program, outlet_id, phone, count, checkin_type, ch
 		checkin.checkin_program = program;
 		checkin.checkin_code = checkin_code;
 		checkin.checkin_type = checkin_type;
+		checkin.location = checkin_location;
 		createCheckin(req, res, checkin);
 	}
 }
 
-function decideOffer(req, res, program, marked_tier, outlet_id, phone, count, checkin_type, checkin_code) {
+function decideOffer(req, res, program, marked_tier, outlet_id, phone, count, checkin_type, checkin_code, checkin_location) {
 
 	var checkin = {};
 	checkin.outlet = outlet_id;
@@ -448,6 +457,7 @@ function decideOffer(req, res, program, marked_tier, outlet_id, phone, count, ch
 	checkin.checkin_tier = marked_tier;
 	checkin.checkin_code = checkin_code;
 	checkin.checkin_type = checkin_type;
+	checkin.location = checkin_location;
 	
 	if(marked_tier.offers.length === 1) {
 		checkin.checkin_for = marked_tier.offers[0];

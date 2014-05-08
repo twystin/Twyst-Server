@@ -40,6 +40,11 @@ module.exports = function (app) {
         return false;
     };
 
+    (function panel_checkin_route() {
+        var PanelCtrl = require('../controllers/checkins/panel/main');
+        app.post('/api/v2/checkins', PanelCtrl.checkin);
+    })();
+
     (function admin_route() {
         var DataCtrl = require('../controllers/admin/dataCtrl');
         var AnonDataCtrl = require('../controllers/admin/dataCtrlAnonymous');
