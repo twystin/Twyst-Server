@@ -19,7 +19,8 @@
     "adm-zip": "~0.4.4",
     "easy-zip": "0.0.4",
     "string": "~1.8.0",
-    "connect-mongo": "~0.4.0"
+    "connect-mongo": "~0.4.0",
+    "dateformat": "~1.0.7-1.2.3"
   },
   "name": "twyst",
   "subdomain": "twyst",

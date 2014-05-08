@@ -1,4 +1,9 @@
 var _ = require('underscore');
+var dateFormat = require('dateformat');
+
+module.exports.formatDate = function(date) {
+    return dateFormat(date, "mmmm dS yyyy, h:MM:ss");
+}
 
 module.exports.calculateDistance = function(a, b) {
 

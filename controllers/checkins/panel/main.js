@@ -3,6 +3,7 @@ var mongoose = require('mongoose');
 var Helper = require('./helper');
 var response = require('./response');
 var SMS = require('../../../common/smsSender');
+var CommonUtilities = require('../../../common/utilities');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
 var keygen = require("keygenerator");
