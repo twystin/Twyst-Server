@@ -704,6 +704,7 @@ function responder(checkin, offer, program, res) {
 }
 
 function smsResponder(phone, push_message) {
+	push_message = push_message.replace(/(\n)+/g, '');
 	
 	saveSentSms(phone, push_message);
 

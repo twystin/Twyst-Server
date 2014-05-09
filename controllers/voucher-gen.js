@@ -210,6 +210,8 @@ function getVoucherDetails(code, phone, outlet_name) {
 
 function responder(phone, push_message) {
 
+	push_message = push_message.replace(/(\n)+/g, '');
+
 	saveSentSms (phone, push_message);
 
 	var message = push_message.replace('&','n');
