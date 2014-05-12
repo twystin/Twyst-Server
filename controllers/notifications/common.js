@@ -10,23 +10,53 @@ var Voucher = mongoose.model('Voucher');
 var Favourite = mongoose.model('Favourite');
 var async = require('async');
 
+var NodeCache = require( "node-cache" ),
+	Cache = new NodeCache();
+
 
 module.exports.getNotifs = function (req, res) {
 
 	var skip = req.params.skip || 0;
 
-	Outlet.find({'outlet_meta.accounts': req.user._id}, function (err, outlets) {
-		if(err || outlets.length < 1) {
-			res.send(400,{
-				'status': 'error',
-				'message': 'Unable to get voucher analytics',
-				'info': JSON.stringify(err)
+	if(skip == 0) {
+		getOutlet();
+	}
+	else {
+		getFromCache();
+	}
+
+	function getFromCache() {
+		var user = req.user._id.toString();
+		var data = Cache.get(user)[user];
+		var min = Number(skip);
+		var max = min + 20;
+		data = data.slice(min, max);
+		if(data) {
+	    	res.send(200, {
+				'status': 'success',
+				'message': 'Successfully got notifications',
+				'info': data
 			});
-		}
-		else {			
-			parallelExecutor(outlets, skip);
-		}
-	});
+	    }
+	    else {
+	    	getOutlet();
+	    }
+	}
+
+	function getOutlet() {
+		Outlet.find({'outlet_meta.accounts': req.user._id}, function (err, outlets) {
+			if(err || outlets.length < 1) {
+				res.send(400,{
+					'status': 'error',
+					'message': 'Unable to get voucher analytics',
+					'info': JSON.stringify(err)
+				});
+			}
+			else {			
+				parallelExecutor(outlets, skip);
+			}
+		});
+	}
 
 	function parallelExecutor(outlets, skip) {
 		async.parallel({
@@ -58,12 +88,21 @@ module.exports.getNotifs = function (req, res) {
 		// 	return -(item.date);
 		// });
 		data.sort(date_sort_desc);
-		
+		// Set cache here
+		setCache(data);
+		data = _.first(data, 20);
+
 		res.send(200, {
 			'status': 'success',
 			'message': 'Successfully got notifications',
 			'info': data
 		});
+	}
+
+	function setCache (data) {
+		data = _.first(data, 100);
+		var user = req.user._id.toString();
+		Cache.set(user, data, 60 * 60);
 	}
 
 	var date_sort_desc = function (a, b) {
@@ -86,8 +125,7 @@ module.exports.getNotifs = function (req, res) {
 				sort: { 
 					'created_date' : -1
 				},
-				skip: skip,
-				limit: 10 
+				limit: 100 
 			}, function(err, checkins) {
 
 				assembleResults(checkins);
@@ -120,8 +158,7 @@ module.exports.getNotifs = function (req, res) {
 				sort: { 
 					'basics.created_at' : -1
 				},
-				skip: skip,
-				limit: 10 
+				limit: 100 
 			}).populate('issue_details.issued_to').exec(function(err, vouchers) {
 
 				assembleResults(vouchers);
@@ -156,8 +193,7 @@ module.exports.getNotifs = function (req, res) {
 				sort: { 
 					'used_details.used_time' : -1
 				},
-				skip: skip,
-				limit: 10 
+				limit: 100 
 			}).populate('used_details.used_by'
 			).populate('used_details.used_at'
             ).populate('issue_details.issued_for').exec(function(err, vouchers) {
@@ -195,8 +231,7 @@ module.exports.getNotifs = function (req, res) {
 				sort: { 
 					'created_date' : -1
 				},
-				skip: skip,
-				limit: 10 
+				limit: 100 
 			}).populate('account').exec(function(err, favs) {
 
 				assembleResults(favs);
