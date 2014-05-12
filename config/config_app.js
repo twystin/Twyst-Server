@@ -9,7 +9,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var settings = require('./settings');
 
 var sessionStore = new MongoStore({
-    url: 'mongodb://myuser:mypass@localhost:27017/twyst',
+    url: 'mongodb://localhost:27017/twyst',
      // db: 'session',
      // host: 'mongodb://localhost/twyst',
      clear_interval: 3600
