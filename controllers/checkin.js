@@ -696,7 +696,7 @@ function responder(checkin, offer, program, res) {
 			checkin_object.offer = offer;
             checkin_object.program = program;
 			res.send(200, {'status': 'success',
-									'message': 'Checkin successful.',
+									'message': 'User "' + checkin.phone + '" has been checked in successfully.',
 									'info': JSON.stringify(checkin_object)
 			});
 		}
