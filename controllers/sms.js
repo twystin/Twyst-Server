@@ -263,6 +263,9 @@ function countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, 
 			createCheckin(req, res, checkin);
 		}
 		else {
+			if(count === 0) {
+				global_new_user = true;
+			}
 			decideTier(req, res, program, outlet_id, phone, count, checkin_type, checkin_code);
 		}
 	});

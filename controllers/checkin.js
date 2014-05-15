@@ -39,7 +39,6 @@ module.exports.panelCheckin = function(req, res) {
 		Account.findOne({phone: phone}, function (err, user) {
 			if(err || user === null) {
 				createNewUser();
-				global_new_user = true;
 			}
 			else {
 				detectSixHoursCap(qr, req, res, outlet, phone, checkin_type, checkin_code, checkin_location);
@@ -401,6 +400,9 @@ function countCheckinforUser(req, res, program, outlet_id, phone, checkin_type, 
 			createCheckin(req, res, checkin);
 		}
 		else {
+			if(count === 0) {
+				global_new_user = true;
+			}
 			decideTier(req, res, program, outlet_id, phone, count, checkin_type, checkin_code, checkin_location);
 		}
 	});
