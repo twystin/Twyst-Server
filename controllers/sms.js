@@ -27,7 +27,6 @@ module.exports.smsCheckin = function(req, res, phone, code, checkin_type, checki
 		Account.findOne({phone: phone}, function (err, user) {
 			if(err || user === null) {
 				createNewUser();
-				global_new_user = true;
 			}
 			else {
 				getQr();
