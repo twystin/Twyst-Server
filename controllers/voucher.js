@@ -19,7 +19,11 @@ module.exports.read = function(req,res) {
     }
 
     function getVoucherDetails () {
-        Voucher.findOne({'basics.code': code}).populate('issue_details.issued_for').populate('issue_details.issued_to').exec(function(err,voucher) {
+        Voucher.findOne({'basics.code': code})
+            .populate('issue_details.issued_for')
+            .populate('issue_details.issued_to')
+            .populate('issue_details.program')
+            .exec(function(err,voucher) {
             if (err) {
                 res.send(400, {'status': 'error',
                                'message': 'Error getting voucher details',
@@ -113,7 +117,11 @@ module.exports.readByUserPhone = function(req, res) {
                                 return mongoose.Types.ObjectId(String(item._id)); 
                         })
             }
-        }).populate('issue_details.issued_for').populate('issue_details.issued_to').exec(function(err,vouchers) {
+        }).populate('issue_details.issued_for')
+            .populate('issue_details.issued_to')
+            .populate('issue_details.program')
+            .exec(function(err,vouchers) {
+            
             if (err) {
                 res.send(400, {'status': 'error',
                                'message': 'Error getting voucher details',

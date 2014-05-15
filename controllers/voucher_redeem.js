@@ -87,8 +87,8 @@ function redeemVoucherSms (code, phone, outlet_id) {
     function validateVoucher(voucher) {
 
         var push_message = '';
-        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date >= Date.now())) {
-            push_message = 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.';
+        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
+            push_message = 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.';
             responder(phone, push_message);
         }
         else if(voucher.basics.status === 'merchant redeemed') {
@@ -237,6 +237,7 @@ module.exports.redeemVoucherApp = function(req, res) {
 		
 		Voucher.findOne({'basics.code': req.body.code})
             .populate('issue_details.issued_for')
+            .populate('issue_details.program')
             .populate('issue_details.issued_at')
             .exec(function(err,voucher) {
 			if(err) {
@@ -269,9 +270,9 @@ module.exports.redeemVoucherApp = function(req, res) {
 
     function validateVoucher(voucher) {
 
-        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date >= Date.now())) {
+        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
             res.send(200, {'status': 'error',
-                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.',
+                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.',
                            'info': JSON.stringify(voucher)
             });
         }
@@ -427,7 +428,10 @@ module.exports.redeemVoucherPanel = function(req,res) {
 
     function getVoucher() {
         
-        Voucher.findOne({'basics.code': code}).populate('issue_details.issued_for').exec(function(err,voucher) {
+        Voucher.findOne({'basics.code': code})
+            .populate('issue_details.issued_for')
+            .populate('issue_details.program').exec(function(err,voucher) {
+            
             if(err) {
                 res.send(400, {'status': 'error',
                                'message': 'There was error serving your request.',
@@ -471,9 +475,9 @@ module.exports.redeemVoucherPanel = function(req,res) {
 
     function validateVoucher(voucher) {
 
-        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date >= Date.now())) {
+        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
             res.send(200, {'status': 'success',
-                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.',
+                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.',
                            'info': JSON.stringify(voucher)
             });
         }
