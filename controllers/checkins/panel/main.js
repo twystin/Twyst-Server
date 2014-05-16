@@ -14,8 +14,14 @@ module.exports.checkin = function(req, res) {
 		q = {},
 		history = {},
 		applicable = {},
-		reward = {},
-		user = null;
+		reward = null,
+		user = null,
+		sms = {},
+		voucher = null;		
+
+	sms.checkin = false;
+	sms.reward = false;
+	history.last = null;
 
 	q.phone  = req.body.phone;
 	q.outlet = req.body.outlet;
@@ -49,7 +55,7 @@ module.exports.checkin = function(req, res) {
 
 	function isValidCheckin(last_checkin) {
 		var diff = Date.now() - last_checkin.created_date;
-		if(diff > 21600000) {
+		if(diff > 2) {
 			createCheckin(checkin);
 		}
 		else {
@@ -57,9 +63,9 @@ module.exports.checkin = function(req, res) {
 				
 				responder(response.message.six_hours_error.statusCode, 
 					response.message.six_hours_error);
-			}	
+			}
 			else {
-				if(diff > 1800000) {
+				if(diff > 1) {
 					createCheckin(checkin);
 				}
 				else {
@@ -114,12 +120,13 @@ module.exports.checkin = function(req, res) {
 						response.message.error);
 			}
 			else {
+				sms.checkin = true;
 				reward = Helper.isRewardTime(applicable.tier, history.count);
 				if(reward) {
 					saveVoucher(reward);
 				}
 				else {
-					SMS.sendSms(q.phone, response.sms.success.message);
+					smsController();
 					response.message.success.message = "User " + q.phone + ' has been checked-in successfully.';
 					responder(response.message.success.statusCode, 
 						response.message.success);
@@ -129,24 +136,69 @@ module.exports.checkin = function(req, res) {
 	}
 
 	function saveVoucher(reward) {
-		var voucher = getVoucherDetails(reward);
+		voucher = getVoucherDetails(reward);
 		voucher = new Voucher(voucher);
 
 		voucher.save(function(err, voucher) {
 			if(err) {
-				SMS.sendSms(q.phone, response.sms.success.message);
+				sms.checkin = true;
+				smsController();
 				response.message.success.message = "User " + q.phone + ' has been checked-in successfully.';
 				responder(response.message.success.statusCode, 
 						response.message.success);
 			}
 			else {
-				SMS.sendSms(q.phone, response.sms.success.message);
-				response.message.success.message = "User has been checked-in successfully. The user has also unlocked a reward.";
+				sms.reward = true;
+				smsController();
+				response.message.success.message = "User "+ q.phone + " has been checked-in successfully. The user has also unlocked a reward.";
 				responder(response.message.success.statusCode, 
 						response.message.success);
 			}
 		});
 
+	}
+
+	function smsController() {
+		var outlet = null;
+		Helper.getOutlet(q.outlet, function (o) {
+			if(o) {
+				outlet = o;
+				getMessages();
+			}
+			else {
+				console.log("Error here. Outlet not found.")
+			}
+		});
+
+		var checkins_to_next_reward = Helper.getNext(history.count, q.program);
+
+		function getMessages() {
+			var message = '';
+			if(sms.checkin && sms.reward && isNewUser()) {
+				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date()) +' and unlocked a reward at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ voucher.basics.description +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+			}
+			else if(sms.checkin && sms.reward && !isNewUser()) {
+				message = 'Reward unlocked at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ voucher.basics.description +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', ' +  Helper.getTOD(reward.reward_applicability.time_of_day) + ', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+			}
+			else if(sms.checkin && !isNewUser()) {
+				message = 'You have checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date()) +'. You are '+ checkins_to_next_reward +' check-ins away from your next reward. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+			}
+			else if(sms.checkin && isNewUser()) {
+				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date()) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +'. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+			}
+			sms.checkin = false;
+			sms.reward = false;
+			SMS.sendSms(q.phone, message);
+		}
+	}
+
+	function isNewUser() {
+		if(history.last) {
+			if(history.last.outlet.equals(q.outlet)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	function getVoucherDetails (reward) {

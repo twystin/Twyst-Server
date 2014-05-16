@@ -205,3 +205,88 @@ module.exports.isUserRegistered = function (query, cb) {
 	    });
 	}
 }
+
+module.exports.getDOW = function(array) {
+	if(array.length === 0) {
+		return '';
+	}
+	for(var i = 0; i < array.length; i++ ) {
+    	if(array[i] !== 'all days') {
+            return 'on '+array.join(',');
+        }
+        if(array[i] === 'all days') {
+            return 'on all days of the week';
+        }
+    };
+}
+
+module.exports.getTOD = function(array) {
+	if(array.length === 0) {
+		return '';
+	}
+	for(var i = 0; i < array.length; i++ ) {
+
+        if(array[i] !== 'all day') {
+            return 'at '+array.join(',');
+        }
+        if(array[i] === 'all day') {
+            return 'all day long';
+        }
+    };
+}
+
+module.exports.getOutlet = function(id, cb) {
+	Outlet.findOne({_id: id}, function(err, outlet) {
+		cb(outlet);
+	});
+}
+
+module.exports.getNext = function(c, p) {
+        
+    var count = Number(c);
+    var rewards = [];
+    var val = -1;
+
+    var program = p;
+    
+    for(var i = 0; i < program.tiers.length; i++) {
+        for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
+            for(var j = 0; j < program.tiers[i].offers.length; j++) {
+                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
+                    if((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
+                        rewards.push(lim);
+                    }
+                }
+                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
+                    
+                    if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
+                        rewards.push(lim);
+                    }
+                }
+                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
+                    if(lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
+                        rewards.push(lim);
+                    }
+                }
+            }
+        }
+    }
+    
+    rewards = _.uniq(rewards);
+    rewards = _.sortBy(rewards, function (num) {
+    	return num;
+    });
+    
+    for (var i = 0; i < rewards.length; i++) {
+        if(rewards[0] > count) {
+            val = rewards[0] - count;
+        }
+        else if(rewards[i] === count) {
+            val = rewards[i+1] - rewards[i];
+        }
+        else if(rewards[i-1] < count && rewards[i] > count) {
+            val = rewards[i] - count;
+        }
+    };
+    return val;
+}
