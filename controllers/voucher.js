@@ -62,7 +62,7 @@ module.exports.readByUserPhone = function(req, res) {
 
     function getUserId() {
 
-        Account.findOne ({phone: phone}, function (err, user) {
+        Account.find({phone: phone}, function (err, users) {
 
             if(err) {
                 res.send(400, {'status': 'error',
@@ -71,20 +71,20 @@ module.exports.readByUserPhone = function(req, res) {
                 });
             }
             else {
-                if(user === null) {
+                if(users.length === 0) {
                     res.send(200, {'status': 'error',
-                                   'message': 'User not found',
+                                   'message': 'User has no vouchers.',
                                    'info': JSON.stringify(err)
                     });
                 }
                 else {
-                    getOutlet(user._id);
+                    getOutlet(users);
                 }
             }
         });
     }
 
-    function getOutlet (user_id) {
+    function getOutlet (users) {
 
         Outlet.find({'outlet_meta.accounts': req.user._id}, function (err, outlets) {
 
@@ -102,15 +102,20 @@ module.exports.readByUserPhone = function(req, res) {
                     });
                 }
                 else {
-                    getVoucherDetails(user_id, outlets);
+                    getVoucherDetails(users, outlets);
                 }
             }
         })
     }
 
-    function getVoucherDetails (user_id, outlets) {
+    function getVoucherDetails (users, outlets) {
         Voucher.find({
-            'issue_details.issued_to': user_id,
+            'issue_details.issued_to': {
+                $in: users.map(
+                            function(item){
+                                return mongoose.Types.ObjectId(String(item._id)); 
+                        })
+            },
             'issue_details.issued_at': {
                 $in: outlets.map(
                             function(item){
