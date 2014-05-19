@@ -55,7 +55,7 @@ module.exports.checkin = function(req, res) {
 
 	function isValidCheckin(last_checkin) {
 		var diff = Date.now() - last_checkin.created_date;
-		if(diff > 2) {
+		if(diff > 21600000) {
 			createCheckin(checkin);
 		}
 		else {
@@ -65,7 +65,7 @@ module.exports.checkin = function(req, res) {
 					response.message.six_hours_error);
 			}
 			else {
-				if(diff > 1) {
+				if(diff > 1800000) {
 					createCheckin(checkin);
 				}
 				else {
