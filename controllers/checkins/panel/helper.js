@@ -205,9 +205,9 @@ module.exports.isUserRegistered = function (query, cb) {
 
 	        if (err) {
 	        	console.log(err);
-	            cb(false);
+	            cb(account);
 	        } else {
-	            cb(true);
+	            cb(account);
 	        }
 	    });
 	}
