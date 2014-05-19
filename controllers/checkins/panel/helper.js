@@ -250,7 +250,7 @@ module.exports.getOutlet = function(id, cb) {
 
 module.exports.getNext = function(c, p) {
         
-    var count = Number(c);
+    var count = Number(c) + 1;
     var rewards = [];
     var val = -1;
 
