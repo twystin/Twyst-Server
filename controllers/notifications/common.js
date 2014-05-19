@@ -172,7 +172,9 @@ module.exports.getNotifs = function (req, res) {
 				result.date = item.basics.created_at;
 				result.type = "VOUCHER";
 				result.data = item;
-				result.phone = item.issue_details.issued_to.phone;
+				if(item.issue_details.issued_to && item.issue_details.issued_to.phone) {
+					result.phone = item.issue_details.issued_to.phone;
+				}
 				results.push(result);
 			});
 
