@@ -589,6 +589,7 @@ module.exports.redeemVoucherPanel = function(req,res) {
 		        });
         	}
         	else {
+                
         		res.send(200, {'status': 'success',
 		                       'message': 'Successfully redeemed voucher.',
 		                       'info': JSON.stringify(voucher)

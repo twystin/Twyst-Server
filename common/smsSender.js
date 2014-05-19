@@ -8,10 +8,11 @@ var SmsSentLog = mongoose.model('SmsSentLog');
 module.exports.sendSms = function (phone, push_message) {
 
 	push_message = push_message.replace(/(\n)+/g, '');
-	saveSentSms(phone, push_message);
-	var message = push_message.replace('&','n');
-	message = message.replace('% ','%25 ');
+	
+	var message = push_message.replace(/&/g,'%26');
+	message = message.replace(/% /g,'%25 ');
 	console.log(message);
+	saveSentSms(phone, message);
 	var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
 	var test_url = 'http://staging.twyst.in/api/v2/sms/status';
 	http.post(send_sms_url, function(res){
