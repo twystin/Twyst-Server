@@ -123,7 +123,7 @@ module.exports.getNotifs = function (req, res) {
 			{}, 
 			{
 				sort: { 
-					'created_date' : -1
+					'checkin_date' : -1
 				},
 				limit: 100 
 			}, function(err, checkins) {
@@ -136,7 +136,8 @@ module.exports.getNotifs = function (req, res) {
 			var results = [];
 			checkins.forEach(function(item) {
 				result = {};
-				result.date = item.created_date;
+				result.date = item.checkin_date;
+				result.actual_date = item.created_date;
 				result.type = "CHECKIN";
 				result.data = item;
 				results.push(result);
@@ -170,6 +171,7 @@ module.exports.getNotifs = function (req, res) {
 			vouchers.forEach(function(item) {
 				result = {};
 				result.date = item.basics.created_at;
+				result.actual_date = item.basics.created_at;
 				result.type = "VOUCHER";
 				result.data = item;
 				if(item.issue_details.issued_to && item.issue_details.issued_to.phone) {
@@ -193,7 +195,7 @@ module.exports.getNotifs = function (req, res) {
 			{}, 
 			{
 				sort: { 
-					'used_details.used_time' : -1
+					'used_details.used_date' : -1
 				},
 				limit: 100 
 			}).populate('used_details.used_by'
@@ -208,7 +210,8 @@ module.exports.getNotifs = function (req, res) {
 			var results = [];
 			vouchers.forEach(function(item) {
 				result = {};
-				result.date = item.used_details.used_time;
+				result.date = item.used_details.used_date;
+				result.actual_date = item.used_details.used_time;
 				result.type = "REDEEM";
 				result.data = item;
 				if(item.used_details.used_by) {
@@ -245,6 +248,7 @@ module.exports.getNotifs = function (req, res) {
 			favs.forEach(function(item) {
 				result = {};
 				result.date = item.created_date;
+				result.actual_date = item.created_date;
 				result.type = "FAVS";
 				result.data = item;
 				if(item.account && item.account.phone) {

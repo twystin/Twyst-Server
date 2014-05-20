@@ -8,7 +8,7 @@ var SmsSentLog = mongoose.model('SmsSentLog');
 var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";
 
 var message;
-
+ 
 var http = require('http');
 http.post = require('http-post');
 
@@ -415,6 +415,7 @@ module.exports.redeemVoucherApp = function(req, res) {
 module.exports.redeemVoucherPanel = function(req,res) {
     var code = req.body.code;
     var used_at = req.body.used_at;
+    var used_time = req.body.used_time || Date.now();
 
     if(code && used_at) {
         getVoucher();
@@ -578,9 +579,10 @@ module.exports.redeemVoucherPanel = function(req,res) {
     	
         voucher.basics.status = 'merchant redeemed';
         voucher.used_details = {};
-        voucher.used_details.used_at = req.body.used_at;
+        voucher.used_details.used_at = used_at;
         voucher.used_details.used_by = voucher.issue_details.issued_to;
-        voucher.used_details.used_time = Date.now();
+        voucher.used_details.used_time = used_time;
+        voucher.used_details.used_date = Date.now();
         voucher.save(function (err, voucher) {
         	if(err) {
         		res.send(400, {'status': 'error',
@@ -600,14 +602,18 @@ module.exports.redeemVoucherPanel = function(req,res) {
 };
 
 function responder(phone, push_message) {
-    saveSentSms (phone, push_message);
-    console.log("Message sent to " + phone + ' MESSAGE: '+ push_message);
-    var message = push_message.replace('&', 'n');
+    
+    push_message = push_message.replace(/(\n)+/g, '');
+    
+    var message = push_message.replace(/&/g,'%26');
+    message = message.replace(/% /g,'%25 ');
+    saveSentSms (phone, message);
+    console.log("Message sent to " + phone + ' MESSAGE: '+ message);
     var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
     
-    http.post(send_sms_url, function(res){
-        console.log(res);
-    });
+    // http.post(send_sms_url, function(res){
+    //     console.log(res);
+    // });
 }
 
 function saveSentSms (phone, message) {

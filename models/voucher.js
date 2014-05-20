@@ -29,7 +29,7 @@ var VoucherSchema = new Schema({
     used_details: {
         used_by: {type: Schema.ObjectId, ref: 'Account'},
         used_at: {type: Schema.ObjectId, ref: 'Outlet'},
-        used_date: {type: Date},
+        used_date: {type: Date, default: Date.now},
         used_time: {type: Date}
     },
     redemption_phone_number: {type: String, default: ''},
