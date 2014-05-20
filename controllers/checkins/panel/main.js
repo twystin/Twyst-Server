@@ -225,6 +225,8 @@ module.exports.checkin = function(req, res) {
 			voucher.basics.description = reward.basics.description;
 		}
 
+		voucher.basics.created_at = checkin.created_date;
+
 		voucher.basics.code = keygen._(
 			{forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});
 
@@ -235,4 +237,4 @@ module.exports.checkin = function(req, res) {
 		res.send(statusCode, message);
 	}
 
-}
+} 
