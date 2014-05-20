@@ -87,3 +87,17 @@ module.exports.rewardify = function (input) {
         return '';
     }
 }
+
+module.exports.setCurrentTime = function (oldDate) {
+    if(!oldDate) {
+        return null;
+    }
+    var date = new Date();
+
+    var newDate = new Date(oldDate);
+    return newDate.setHours(
+        date.getHours(), 
+        date.getMinutes(), 
+        date.getSeconds(),
+        date.getMilliseconds());
+}

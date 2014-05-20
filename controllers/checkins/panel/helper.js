@@ -84,36 +84,39 @@ module.exports.getApplicableOffer = function (p, c) {
     var obj = {};
     
     for(var i = 0; i < program.tiers.length; i++) {
-        for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
-            for(var j = 0; j < program.tiers[i].offers.length; j++) {
-                obj = {};
-                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
-                    if((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
-                        obj.lim = lim;
-                        obj.tier = program.tiers[i];
-                        obj.offer = program.tiers[i].offers[j];
-                        rewards.push(obj);
-                    }
-                }
-                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
-                    
-                    if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                        obj.lim = lim;
-                        obj.tier = program.tiers[i];
-                        obj.offer = program.tiers[i].offers[j];
-                        rewards.push(obj);
-                    }
-                }
-                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
-                    if(lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                        obj.lim = lim;
-                        obj.tier = program.tiers[i];
-                        obj.offer = program.tiers[i].offers[j];
-                        rewards.push(obj);
-                    }
-                }
-            }
-        }
+    	if(program.tiers[i]) {
+    		for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
+	            for(var j = 0; j < program.tiers[i].offers.length; j++) {
+	                obj = {};
+	                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
+	                    if((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
+	                        obj.lim = lim;
+	                        obj.tier = program.tiers[i];
+	                        obj.offer = program.tiers[i].offers[j];
+	                        rewards.push(obj);
+	                    }
+	                }
+	                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
+	                    
+	                    if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
+	                        obj.lim = lim;
+	                        obj.tier = program.tiers[i];
+	                        obj.offer = program.tiers[i].offers[j];
+	                        rewards.push(obj);
+	                    }
+	                }
+	                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
+	                    if(lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
+	                        obj.lim = lim;
+	                        obj.tier = program.tiers[i];
+	                        obj.offer = program.tiers[i].offers[j];
+	                        rewards.push(obj);
+	                    }
+	                }
+	            }
+	        }	
+    	}
+        
     }
     
     rewards = _.uniq(rewards, function (obj) {
@@ -153,24 +156,26 @@ module.exports.isRewardTime = function (tier, count) {
 	}
 
 	for(var i = 0; i < tier.offers.length; i++) {
-		if(tier.offers[i].user_eligibility) {
-			if(tier.offers[i].user_eligibility.criteria) {
-				if(tier.offers[i].user_eligibility.criteria.condition === 'on only') {
-					if(Number(tier.offers[i].user_eligibility.criteria.value) === total_checkin_count) {
-						reward = tier.offers[i];
-						break;
+		if(tier.offers[i]) {
+			if(tier.offers[i].user_eligibility) {
+				if(tier.offers[i].user_eligibility.criteria) {
+					if(tier.offers[i].user_eligibility.criteria.condition === 'on only') {
+						if(Number(tier.offers[i].user_eligibility.criteria.value) === total_checkin_count) {
+							reward = tier.offers[i];
+							break;
+						}
 					}
-				}
-				if(tier.offers[i].user_eligibility.criteria.condition === 'after') {
-					if(Number(tier.offers[i].user_eligibility.criteria.value) <= total_checkin_count) {
-						reward = tier.offers[i];
-						break;
+					if(tier.offers[i].user_eligibility.criteria.condition === 'after') {
+						if(Number(tier.offers[i].user_eligibility.criteria.value) <= total_checkin_count) {
+							reward = tier.offers[i];
+							break;
+						}
 					}
-				}
-				if(tier.offers[i].user_eligibility.criteria.condition === 'on every') {
-					if((in_tier_checkin_count + 1) % Number(tier.offers[i].user_eligibility.criteria.value) === 0) {
-						reward = tier.offers[i];
-						break;
+					if(tier.offers[i].user_eligibility.criteria.condition === 'on every') {
+						if((in_tier_checkin_count + 1) % Number(tier.offers[i].user_eligibility.criteria.value) === 0) {
+							reward = tier.offers[i];
+							break;
+						}
 					}
 				}
 			}
@@ -257,25 +262,27 @@ module.exports.getNext = function(c, p) {
     var program = p;
     
     for(var i = 0; i < program.tiers.length; i++) {
-        for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
-            for(var j = 0; j < program.tiers[i].offers.length; j++) {
-                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
-                    if((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
-                        rewards.push(lim);
-                    }
-                }
-                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
-                    
-                    if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                        rewards.push(lim);
-                    }
-                }
-                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
-                    if(lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                        rewards.push(lim);
-                    }
-                }
-            }
+        if(program.tiers[i]) {
+        	for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
+	            for(var j = 0; j < program.tiers[i].offers.length; j++) {
+	                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
+	                    if((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
+	                        rewards.push(lim);
+	                    }
+	                }
+	                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
+	                    
+	                    if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
+	                        rewards.push(lim);
+	                    }
+	                }
+	                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
+	                    if(lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
+	                        rewards.push(lim);
+	                    }
+	                }
+	            }
+	        }
         }
     }
     

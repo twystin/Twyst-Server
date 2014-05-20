@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Voucher = mongoose.model('Voucher');
 var Outlet = mongoose.model('Outlet');
 var _ = require('underscore');
+var CommonUtilities = require('../common/utilities');
 var Reward = require('../models/reward_applicability');
 var SmsSentLog = mongoose.model('SmsSentLog');
 
@@ -581,7 +582,7 @@ module.exports.redeemVoucherPanel = function(req,res) {
         voucher.used_details = {};
         voucher.used_details.used_at = used_at;
         voucher.used_details.used_by = voucher.issue_details.issued_to;
-        voucher.used_details.used_time = used_time;
+        voucher.used_details.used_time = CommonUtilities.setCurrentTime(used_time);
         voucher.used_details.used_date = Date.now();
         voucher.save(function (err, voucher) {
         	if(err) {

@@ -107,6 +107,8 @@ module.exports.checkin = function(req, res) {
 		checkin.checkin_program = q.program;
 		checkin.checkin_tier = applicable.tier;
 		checkin.checkin_for = applicable.offer;
+		checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date);
+		checkin.checkin_date = Date.now();
 		return new Checkin(checkin);
 	}
 
@@ -225,7 +227,8 @@ module.exports.checkin = function(req, res) {
 			voucher.basics.description = reward.basics.description;
 		}
 
-		voucher.basics.created_at = checkin.created_date;
+		voucher.basics.created_at = CommonUtilities.setCurrentTime(
+											checkin.created_date);
 
 		voucher.basics.code = keygen._(
 			{forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});
