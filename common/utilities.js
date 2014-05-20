@@ -59,7 +59,7 @@ module.exports.rewardify = function (input) {
         if(input.reward.free.title && input.reward.free._with) {
             return "Get a free " + ifEmpty(input.reward.free.title) + " with " + ifEmpty(input.reward.free._with);
         }
-        if(input.reward.flat.off) {
+        if(input.reward.free.title) {
             return "Get a free " + ifEmpty(input.reward.free.title);
         }
     } else if (input.reward.buy_one_get_one && input.reward.buy_one_get_one.title) {
