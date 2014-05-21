@@ -417,6 +417,7 @@ module.exports.redeemVoucherPanel = function(req,res) {
     var code = req.body.code;
     var used_at = req.body.used_at;
     var used_time = req.body.used_time || Date.now();
+    var applicable = null;
 
     if(code && used_at) {
         getVoucher();
@@ -432,7 +433,10 @@ module.exports.redeemVoucherPanel = function(req,res) {
         
         Voucher.findOne({'basics.code': code})
             .populate('issue_details.issued_for')
-            .populate('issue_details.program').exec(function(err,voucher) {
+            .populate('issue_details.program')
+            .populate('issue_details.issued_to')
+            .populate('issue_details.issued_at')
+            .exec(function(err,voucher) {
             
             if(err) {
                 res.send(400, {'status': 'error',
@@ -456,11 +460,9 @@ module.exports.redeemVoucherPanel = function(req,res) {
 
     function isVoucherApplicableToThisOutlet (voucher) {
 
-        var applicable = false;
-
-        voucher.issue_details.issued_at.forEach(function (voucher_outlet_id) {
-            if(voucher_outlet_id.equals(used_at)) {
-                applicable = true;
+        voucher.issue_details.issued_at.forEach(function (voucher_outlet) {
+            if(voucher_outlet._id.equals(used_at)) {
+                applicable = voucher_outlet;
             }
         });
 
@@ -577,6 +579,7 @@ module.exports.redeemVoucherPanel = function(req,res) {
     }
 
     function redeemVoucher(voucher) {
+        var check_voucher = voucher;
     	
         voucher.basics.status = 'merchant redeemed';
         voucher.used_details = {};
@@ -592,6 +595,13 @@ module.exports.redeemVoucherPanel = function(req,res) {
 		        });
         	}
         	else {
+                if(voucher.issue_details &&
+                    voucher.issue_details.issued_to && 
+                    voucher.issue_details.issued_to.phone) {
+
+                    var message = 'Voucher code '+ check_voucher.basics.code +' redeemed at '+ applicable.basics.name +' on '+ CommonUtilities.formatDate(new Date()) +' at '+ new Date().getHours() + ':' + new Date().getMinutes() +'. Keep checking-in at '+ applicable.basics.name +' on Twyst for more rewards! Click http://twyst.in/download/%23/' + check_voucher.issue_details.issued_to.phone + ' to get Twyst for Android.';
+                    responder(voucher.issue_details.issued_to.phone, message);    
+                }
                 
         		res.send(200, {'status': 'success',
 		                       'message': 'Successfully redeemed voucher.',
@@ -612,9 +622,9 @@ function responder(phone, push_message) {
     console.log("Message sent to " + phone + ' MESSAGE: '+ message);
     var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
     
-    // http.post(send_sms_url, function(res){
-    //     console.log(res);
-    // });
+    http.post(send_sms_url, function(res){
+        console.log(res);
+    });
 }
 
 function saveSentSms (phone, message) {

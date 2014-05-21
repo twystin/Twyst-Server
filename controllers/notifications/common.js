@@ -136,8 +136,8 @@ module.exports.getNotifs = function (req, res) {
 			var results = [];
 			checkins.forEach(function(item) {
 				result = {};
-				result.date = item.checkin_date;
-				result.actual_date = item.created_date;
+				result.date = item.created_date;
+				result.actual_date = item.checkin_date;
 				result.type = "CHECKIN";
 				result.data = item;
 				results.push(result);
@@ -210,8 +210,8 @@ module.exports.getNotifs = function (req, res) {
 			var results = [];
 			vouchers.forEach(function(item) {
 				result = {};
-				result.date = item.used_details.used_date;
-				result.actual_date = item.used_details.used_time;
+				result.date = item.used_details.used_time;
+				result.actual_date = item.used_details.used_date;
 				result.type = "REDEEM";
 				result.data = item;
 				if(item.used_details.used_by) {
