@@ -108,8 +108,8 @@ module.exports.getNotifs = function (req, res) {
 	var date_sort_desc = function (a, b) {
 		// This is a comparison function that will result in dates being sorted in
 		// DESCENDING order.
-		if (a.date > b.date) return -1;
-		if (a.date < b.date) return 1;
+		if (a.actual_date > b.actual_date) return -1;
+		if (a.actual_date < b.actual_date) return 1;
 		return 0;
 	};
 
@@ -171,7 +171,7 @@ module.exports.getNotifs = function (req, res) {
 			vouchers.forEach(function(item) {
 				result = {};
 				result.date = item.basics.created_at;
-				result.actual_date = item.basics.created_at;
+				result.actual_date = item.basics.modified_at;
 				result.type = "VOUCHER";
 				result.data = item;
 				if(item.issue_details.issued_to && item.issue_details.issued_to.phone) {
