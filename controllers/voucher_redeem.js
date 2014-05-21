@@ -598,8 +598,8 @@ module.exports.redeemVoucherPanel = function(req,res) {
                 if(voucher.issue_details &&
                     voucher.issue_details.issued_to && 
                     voucher.issue_details.issued_to.phone) {
-
-                    var message = 'Voucher code '+ check_voucher.basics.code +' redeemed at '+ applicable.basics.name +' on '+ CommonUtilities.formatDate(new Date()) +' at '+ new Date().getHours() + ':' + new Date().getMinutes() +'. Keep checking-in at '+ applicable.basics.name +' on Twyst for more rewards! Click http://twyst.in/download/%23/' + check_voucher.issue_details.issued_to.phone + ' to get Twyst for Android.';
+                    var date = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+                    var message = 'Voucher code '+ check_voucher.basics.code +' redeemed at '+ applicable.basics.name +' on '+ CommonUtilities.formatDate(new Date()) +' at '+ date.getHours() + ':' + date.getMinutes() +'. Keep checking-in at '+ applicable.basics.name +' on Twyst for more rewards! Click http://twyst.in/download/%23/' + check_voucher.issue_details.issued_to.phone + ' to get Twyst for Android.';
                     responder(voucher.issue_details.issued_to.phone, message);    
                 }
                 
