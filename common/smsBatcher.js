@@ -8,7 +8,7 @@ csv()
 .on('record', function (row, index) {
     if (index >= 0) {
         var number = row[0];
-        var message = 'Have you redeemed your reward at Biryani Blues yet? Your voucher expires tomorrow 23 May, so hurry! Stay connected with Biryani Blues on Twyst, click http://twyst.in/download/%23/'+ number +' to get Twyst for Android.';
+		var message = 'Have you redeemed your reward at Biryani Blues yet? Your voucher expires tomorrow 23 May, so hurry! Track all your Vouchers easily via the Twyst App, click http://twyst.in/download/%23/'+ number +' to get Twyst for Android.';
 		SmsSender.sendSms(number, message);
     }
 })
