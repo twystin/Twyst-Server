@@ -3,18 +3,18 @@ var csv = require('csv');
 var fs = require('fs');
 
 //API Server Key
-var sender = new gcm.Sender('AIzaSyBi6MTa4P26485PLLo6-LFCMrT-H5o-b5w');
+var sender = new gcm.Sender('AIzaSyCracQVWEuEGaXI8REyDjcaemUAwdwgWy4');
 
 csv()
 .from.stream(fs.createReadStream(__dirname + '/notifications.csv', { encoding: 'utf8' }))
 .on('record', function (row, index) {
-    if (index == 0) {
+    if (index > 0) {
         var gcm_id = row[0];
         var message = new gcm.Message();
 
 		// Value the payload data to send...
 		message.addData('message', row[1]);
-		message.addData('title','Welcome to Twyst' );
+		message.addData('title','Biryani Blues' );
 		message.addData('msgcnt','1'); // Shows up in the notification in the status bar
 		message.addData('soundname','beep.wav'); //Sound to play upon notification receipt - put in the www folder in app
 		//message.collapseKey = 'demo';
