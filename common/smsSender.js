@@ -1,5 +1,5 @@
 var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";
-
+var smsMessageSentLogs = require('../models/smsMessageSentLogs');
 var http = require('http');
 http.post = require('http-post');
 var mongoose = require('mongoose');
@@ -15,21 +15,21 @@ module.exports.sendSms = function (phone, push_message) {
 	saveSentSms(phone, message);
 	var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
 	var test_url = 'http://staging.twyst.in/api/v2/sms/status';
-	http.post(send_sms_url, function(res){
-		console.log(res.statusCode);
-		res.on('data', function(chunk) {
-            // append chunk to your data
-            body += chunk;
-        });
+	// http.post(send_sms_url, function(res){
+	// 	console.log(res.statusCode);
+	// 	res.on('data', function(chunk) {
+ //            // append chunk to your data
+ //            body += chunk;
+ //        });
 
-        res.on('end', function() {
-            console.log(body);
-        });
+ //        res.on('end', function() {
+ //            console.log(body);
+ //        });
 
-        res.on('error', function(e) {
-            console.log("Error message: " + e.message)
-        });
-	});
+ //        res.on('error', function(e) {
+ //            console.log("Error message: " + e.message)
+ //        });
+	// });
 }
 
 function saveSentSms (phone, message) {

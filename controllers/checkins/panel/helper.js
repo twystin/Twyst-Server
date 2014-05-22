@@ -14,16 +14,19 @@ var SmsSentLog = mongoose.model('SmsSentLog');
 module.exports.getCheckinHistory = function(query, cb) {
 	async.parallel({
 	    last: function(callback) {
-	    	getLastCheckin(query, callback);
+	    	getCheckin(query, callback);
 	    },
 	    count: function(callback) {
 	    	getCheckinCount(query, callback);
+	    },
+	    last_checkin: function(callback) {
+	    	getLastCheckin(query, callback);
 	    }
 	}, function(err, results) {
 	    cb(results);
 	});
 
-	function getLastCheckin(query, callback) {
+	function getCheckin(query, callback) {
 		Checkin.findOne({
 				phone: query.phone, 
 				checkin_program: query.program._id
@@ -42,6 +45,15 @@ module.exports.getCheckinHistory = function(query, cb) {
 					count = 0;
 				}
 				callback(null, count);
+		});
+	}
+
+	function getLastCheckin(query, callback) {
+		Checkin.findOne({
+				phone: query.phone
+			}, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
+
+				callback(null, checkin);
 		});
 	}
 }

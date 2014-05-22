@@ -27,6 +27,7 @@ module.exports.checkin = function(req, res) {
 	q.outlet = req.body.outlet;
 	// Get request body and save in Checkin object.
 	_.extend(checkin, req.body);
+	var current_time = Date.now();
 	checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date) || Date.now();
 	checkin.checkin_type = "PANEL";
 	checkin.checkin_code = "PANEL";
@@ -46,7 +47,7 @@ module.exports.checkin = function(req, res) {
 		Helper.getCheckinHistory(query, function(data) {
 			history = data;
 			if(history.last) {
-				isValidCheckin(history.last);
+				isValidCheckin(history.last_checkin);
 			}
 			else {
 				createCheckin(checkin);
@@ -56,7 +57,8 @@ module.exports.checkin = function(req, res) {
 
 	function isValidCheckin(last_checkin) {
 		var diff = Date.now() - last_checkin.created_date;
-		if(checkin.created_date - Date.now() < 0) {
+		var diff2 = checkin.created_date - current_time;
+		if(diff2 < 0) {
 			createCheckin(checkin);
 		}
 		else if(diff > 21600000) {
