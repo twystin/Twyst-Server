@@ -90,7 +90,13 @@ module.exports.considerationSet = function(req, res) {
 		var program = consideration_object.program;
 
 		if(outlet){
-			Checkin.count({outlet: outlet._id}, function (err, outlet_checkin_count) {
+			Checkin.count({
+				outlet: outlet._id,
+				checkin_date: {
+					$gt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+					$lt: new Date()
+				}
+			}, function (err, outlet_checkin_count) {
 				
 				if(err) {
 					outlet_checkin_count = 0;
@@ -533,7 +539,12 @@ function countUniverseOfCheckins (consideration_set, res) {
 
 	var universe_checkin_count = 1;
 
-	Checkin.count({}, function (err, count) {
+	Checkin.count({
+		checkin_date: {
+			$gt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+			$lt: new Date()
+		}
+	}, function (err, count) {
 		if(err || count <= 0) {
 			universe_checkin_count = 1;
 		}
