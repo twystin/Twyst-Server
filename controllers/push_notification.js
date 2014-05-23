@@ -5,58 +5,51 @@ var Notif = mongoose.model('Notif');
 module.exports.save = function (req, res) {
 
 	var obj = req.body.obj;
-	var length;
-
-	if((obj.phones.length > 0) 
-		&& obj.message.head 
-		&& obj.message.body
-		&& obj.scheduled_at) {
-
-		length = obj.phones.length;
-		breakNotif();
+	
+	if((!obj.phones) ||(!obj.gcms)) {
+		fillAllFields();
 	}
-	else {
-		res.send(400, {
+	if(obj.phones) {
+		if(obj.body 
+			&& obj.head
+			&& obj.scheduled_at) {
+			saveNotifs();
+		}
+		else {
+			fillAllFields();
+		}
+	}
+	if(obj.gcms) {
+		if(obj.body 
+			&& obj.head
+			&& obj.server_key
+			&& obj.scheduled_at) {
+			saveNotifs();
+		}
+		else {
+			fillAllFields();
+		}
+	}
+
+	function saveNotifs () {
+		var notif = new Notif(obj);
+
+		notif.save(function (err) {
+			sendResponse(err);
+		});
+	}
+
+	function fillAllFields () {
+		res.send(200, {
 			'status' : 'error',
-            'message' : 'Please fill all required fields.',
+            'message' : 'Fill all fields please.',
             'info':  ''
         });
-	};
-
-	function breakNotif() {
-		
-		obj.phones.forEach( function (num) {
-			var notif = {};
-			notif.phone = num;
-			notif.message = obj.message;
-			notif.scheduled_at = obj.scheduled_at;
-			
-			notif = new Notif(notif);
-			saveNotif(notif);
-		});
 	}
 
-	var errs = [];
+	function sendResponse(err) {
 
-	function saveNotif(obj) {
-
-		obj.save(function(err) {
-			if(err) {
-				errs.push(obj.phone);
-				length--;			
-			}
-			else {
-				length--;	
-			}
-			if(length === 0) {
-				sendResponse();
-			}
-		});
-	}
-
-	function sendResponse() {
-
-		if(errs.length === 0) {
+		if(err) {
 			res.send(200, {
 				'status' : 'success',
 	            'message' : 'Notifications saved successfully.',
