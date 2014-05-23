@@ -6,10 +6,10 @@ module.exports.save = function (req, res) {
 
 	var obj = req.body.obj;
 	
-	if((!obj.phones) ||(!obj.gcms)) {
+	if((!obj.phones) && (!obj.gcms)) {
 		fillAllFields();
 	}
-	if(obj.phones) {
+	else if(obj.phones) {
 		if(obj.body 
 			&& obj.head
 			&& obj.scheduled_at) {
@@ -19,7 +19,7 @@ module.exports.save = function (req, res) {
 			fillAllFields();
 		}
 	}
-	if(obj.gcms) {
+	else if(obj.gcms) {
 		if(obj.body 
 			&& obj.head
 			&& obj.server_key
@@ -40,7 +40,7 @@ module.exports.save = function (req, res) {
 	}
 
 	function fillAllFields () {
-		res.send(200, {
+		res.send(400, {
 			'status' : 'error',
             'message' : 'Fill all fields please.',
             'info':  ''
@@ -59,7 +59,7 @@ module.exports.save = function (req, res) {
 		else {
 			res.send(200, {
 				'status' : 'success',
-	            'message' : 'Notifications saved successfully. Except these numbers. ' + errs,
+	            'message' : 'Notifications saved successfully',
 	            'info':  ''
 	        });
 		}
