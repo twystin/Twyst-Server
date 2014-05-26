@@ -21,6 +21,9 @@ module.exports.getCheckinHistory = function(query, cb) {
 	    },
 	    last_checkin: function(callback) {
 	    	getLastCheckin(query, callback);
+	    },
+	    last_checkin_today: function(callback) {
+	    	getLastCheckinToday(query, callback);
 	    }
 	}, function(err, results) {
 	    cb(results);
@@ -51,6 +54,19 @@ module.exports.getCheckinHistory = function(query, cb) {
 	function getLastCheckin(query, callback) {
 		Checkin.findOne({
 				phone: query.phone
+			}, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
+
+				callback(null, checkin);
+		});
+	}
+
+	function getLastCheckinToday(query, callback) {
+		Checkin.findOne({
+				phone: query.phone,
+				created_date: {
+					$gt: new Date(query.checkin_time - 21600000),
+					$lt: new Date(query.checkin_time)
+				}
 			}, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
 
 				callback(null, checkin);
