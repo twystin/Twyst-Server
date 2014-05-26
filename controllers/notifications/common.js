@@ -8,7 +8,7 @@ var _ = require('underscore');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
 var Favourite = mongoose.model('Favourite');
-var async = require('async');
+var async = require('async'); 
 
 var NodeCache = require( "node-cache" ),
 	Cache = new NodeCache();
@@ -157,7 +157,7 @@ module.exports.getNotifs = function (req, res) {
 			{}, 
 			{
 				sort: { 
-					'basics.created_at' : -1
+					'basics.modified_at' : -1
 				},
 				limit: 100 
 			}).populate('issue_details.issued_to').exec(function(err, vouchers) {
