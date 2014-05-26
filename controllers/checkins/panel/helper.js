@@ -158,12 +158,9 @@ module.exports.getApplicableOffer = function (p, c) {
 }
 
 module.exports.isRewardTime = function (tier, count) {
+	var total_checkin_count = count + 1;
 	var in_tier_checkin_count = count - tier.basics.start_value + 1;
-	var total_checkin_count = count - 0;
 	var reward = null;
-	if(total_checkin_count === 0) {
-		total_checkin_count = count + 1;
-	}
 
 	if(!tier || tier.offers.length === 0) {
 		return null;
