@@ -1,34 +1,49 @@
 {
-  "dependencies": {
-    "express": "latest",
-    "jade": "latest",
-    "mongoose": "latest",
-    "passport": "latest",
-    "passport-local": "latest",
-    "passport-facebook": "latest",
-    "passport-local-mongoose": "latest",
-    "underscore": "latest",
-    "csv": "latest",
-    "mongoose-rbac": "~0.1.0",
-    "emailjs": "0.3.4",
-    "async": "latest",
-    "aws-sdk": "~1.13.0",
-    "http-post": "~0.1.1",
-    "node-gcm": "~0.9.8",
-    "qrpng": "~0.1.1",
-    "adm-zip": "~0.4.4",
-    "easy-zip": "0.0.4",
-    "string": "~1.8.0",
-    "connect-mongo": "~0.4.0",
-    "dateformat": "~1.0.7-1.2.3"
-  },
-  "name": "twyst",
-  "subdomain": "twyst",
-  "scripts": {
-    "start": "node app.js"
-  },
-  "version": "0.0.1",
-  "engines": {
-    "node": "0.8.x"
-  }
+    "dependencies": {
+        "express": "latest",
+        "jade": "latest",
+        "mongoose": "latest",
+        "passport": "latest",
+        "passport-local": "latest",
+        "passport-facebook": "latest",
+        "passport-local-mongoose": "latest",
+        "underscore": "latest",
+        "csv": "latest",
+        "mongoose-rbac": "~0.1.0",
+        "emailjs": "0.3.4",
+        "async": "latest",
+        "aws-sdk": "~1.13.0",
+        "http-post": "~0.1.1",
+        "node-gcm": "~0.9.8",
+        "qrpng": "~0.1.1",
+        "adm-zip": "~0.4.4",
+        "easy-zip": "0.0.4",
+        "string": "~1.8.0",
+        "connect-mongo": "latest",
+        "dateformat": "~1.0.7-1.2.3",
+        "body-parser": "latest",
+        "morgan": "latest",
+        "method-override": "latest",
+        "compression": "latest",
+        "cookie-parser": "latest",
+        "express-session": "latest",
+        "serve-favicon": "latest",
+"errorhandler":"latest"
+    },
+    "devDependencies": {
+        "mocha": "latest",
+        "chai": "latest",
+        "should": "latest",
+        "supertest": "latest"
+    },
+    "name": "twyst",
+    "subdomain": "twyst",
+    "scripts": {
+        "start": "node app.js",
+        "test": "mocha"
+    },
+    "version": "0.0.1",
+    "engines": {
+        "node": "0.8.x"
+    }
 }
