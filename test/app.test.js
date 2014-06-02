@@ -10,3 +10,15 @@ describe('addition', function() {
         done();
     });
 });
+
+describe('nearby', function() {
+    it('returns JSON', function(done) {
+        api.get('/api/v1/near/10/10')
+            .expect(200)
+            .expect('Content-Type', /json/)
+            .end(function(err, res) {
+                if (err) return done(err);
+                done();
+            })
+    });
+});
