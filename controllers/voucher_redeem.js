@@ -378,6 +378,7 @@ module.exports.redeemVoucherApp = function(req, res) {
         voucher.used_details.used_at = req.body.outlet_id;
         voucher.used_details.used_by = req.user._id;
         voucher.used_details.used_time = Date.now();
+        voucher.used_details.used_date = Date.now();
         voucher.save(function (err, voucher) {
         	if(err) {
         		res.send(400, {'status': 'error',
