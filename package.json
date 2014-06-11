@@ -1,49 +1,50 @@
 {
-    "dependencies": {
-        "express": "latest",
-        "jade": "latest",
-        "mongoose": "latest",
-        "passport": "latest",
-        "passport-local": "latest",
-        "passport-facebook": "latest",
-        "passport-local-mongoose": "latest",
-        "underscore": "latest",
-        "csv": "latest",
-        "mongoose-rbac": "~0.1.0",
-        "emailjs": "0.3.4",
-        "async": "latest",
-        "aws-sdk": "~1.13.0",
-        "http-post": "~0.1.1",
-        "node-gcm": "~0.9.8",
-        "qrpng": "~0.1.1",
-        "adm-zip": "~0.4.4",
-        "easy-zip": "0.0.4",
-        "string": "~1.8.0",
-        "connect-mongo": "latest",
-        "dateformat": "~1.0.7-1.2.3",
-        "body-parser": "latest",
-        "morgan": "latest",
-        "method-override": "latest",
-        "compression": "latest",
-        "cookie-parser": "latest",
-        "express-session": "latest",
-        "serve-favicon": "latest",
-"errorhandler":"latest"
-    },
-    "devDependencies": {
-        "mocha": "latest",
-        "chai": "latest",
-        "should": "latest",
-        "supertest": "latest"
-    },
-    "name": "twyst",
-    "subdomain": "twyst",
-    "scripts": {
-        "start": "node app.js",
-        "test": "mocha"
-    },
-    "version": "0.0.1",
-    "engines": {
-        "node": "0.8.x"
-    }
+  "dependencies": {
+    "adm-zip": "~0.4.4",
+    "async": "latest",
+    "aws-sdk": "~1.13.0",
+    "body-parser": "latest",
+    "compression": "latest",
+    "connect-mongo": "latest",
+    "cookie-parser": "latest",
+    "csv": "latest",
+    "dateformat": "~1.0.7-1.2.3",
+    "easy-zip": "0.0.4",
+    "emailjs": "0.3.4",
+    "errorhandler": "latest",
+    "express": "latest",
+    "express-session": "latest",
+    "http-post": "~0.1.1",
+    "jade": "latest",
+    "method-override": "latest",
+    "mongoose": "latest",
+    "mongoose-rbac": "~0.1.0",
+    "morgan": "latest",
+    "multer": "^0.1.0",
+    "node-gcm": "~0.9.8",
+    "passport": "latest",
+    "passport-facebook": "latest",
+    "passport-local": "latest",
+    "passport-local-mongoose": "latest",
+    "qrpng": "~0.1.1",
+    "serve-favicon": "latest",
+    "string": "~1.8.0",
+    "underscore": "latest"
+  },
+  "devDependencies": {
+    "mocha": "latest",
+    "chai": "latest",
+    "should": "latest",
+    "supertest": "latest"
+  },
+  "name": "twyst",
+  "subdomain": "twyst",
+  "scripts": {
+    "start": "node app.js",
+    "test": "mocha"
+  },
+  "version": "0.0.1",
+  "engines": {
+    "node": "0.8.x"
+  }
 }

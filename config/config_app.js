@@ -14,6 +14,7 @@ var compression = require('compression');
 var session = require('express-session');
 var favicon = require('serve-favicon');
 var errorhandler = require('errorhandler');
+var multer  = require('multer');
 
 var MongoStore = require('connect-mongo')(session);
 var settings = require('./settings');
@@ -29,6 +30,7 @@ module.exports = function(app) {
 
         app.use(morgan('dev'));
         app.use(bodyParser());
+        app.use(multer());
         app.use(cookieParser('some secret'));
         app.use(session({
             secret: "Twyst_2014_Sessions",
