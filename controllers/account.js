@@ -12,7 +12,11 @@ module.exports.login = function (req, res) {
 };
 
 module.exports.register = function(req, res, next) {
-    Account.register(new Account({ username : req.body.username, email: req.body.email, role: req.body.role, parent: req.body.parent}), req.body.password, function(err, account) {
+    Account.register(new Account({ 
+    	username : req.body.username, 
+    	email: req.body.email, 
+    	role: req.body.role, 
+    	parent: req.body.parent}), req.body.password, function(err, account) {
         if (err) {
             res.send(400, {'status' : 'error',
                 'message' : 'Error creating account',
