@@ -1,5 +1,4 @@
 var http = require('http');
-var async = require('async');
 
 var RecoCtrl = require('../../controllers/recommendations/reccoV2custom');
 var OutletCtrl = require('../../controllers/outlet');
@@ -11,85 +10,67 @@ data.NEAR = {};
 data.CHECKINS = {};
 data.VOUCHERS = {};
 data.FAVOURITES = {};
- 
+
 module.exports.getData = function (req, res) {
 
-	async.parallel({
-	    RECCO: function(callback) {
-	    	getReccos(callback);
-	    },
-	    NEAR: function(callback) {
-	    	getNearby(callback);
-	    },
-	    CHECKIN: function(callback) {
-	    	getCheckins(callback);
-	    },
-	    VOUCHER: function(callback) {
-	    	getVouchers(callback);
-	    },
-	    FAVS: function(callback) {
-	    	getFavourites(callback);
-	    }
-	}, function(err, results) {
-	    res.send(200, {
-	    	'status': "success",
-	    	'message': 'Got data successfully',
-	    	'info': data
-	    });
-	});
+	getReccos();
 
-	function getReccos(callback) {
+	function getReccos() {
 
 		RecoCtrl.considerationSet(req, function (obj) {
 			data.RECCO = obj;
 			if(data.RECCO.info && (typeof data.RECCO.info) == 'string') {
 		    	data.RECCO.info = JSON.parse(data.RECCO.info);
-		    	callback(null, null);
 		    }
+		    getNearby();
 		});
 	}
 
-	function getNearby (callback) {
+	function getNearby () {
 		
 		RecoCtrl.nearBy(req, function (obj) {
 			data.NEAR = obj;
 			if(data.NEAR.info && (typeof data.NEAR.info) == 'string') {
 		    	data.NEAR.info = JSON.parse(data.NEAR.info);
-		    	callback(null, null);
 		    }
+		    getCheckins();
 		});
 	}
 
-	function getCheckins (callback) {
+	function getCheckins () {
 		
 		RecoCtrl.myCheckins(req, function (obj) {
 			data.CHECKINS = obj;
 			if(data.CHECKINS.info && (typeof data.CHECKINS.info) == 'string') {
 		    	data.CHECKINS.info = JSON.parse(data.CHECKINS.info);
-		    	callback(null, null);
 		    }
+		    getVouchers();
 		});
 	}
 
-	function getVouchers (callback) {
+	function getVouchers () {
 		
 		RecoCtrl.myVouchers(req, function (obj) {
 			data.VOUCHERS = obj;
 			if(data.VOUCHERS.info && (typeof data.VOUCHERS.info) == 'string') {
 		    	data.VOUCHERS.info = JSON.parse(data.VOUCHERS.info);
-		    	callback(null, null);
 		    }
+		    getFavourites();
 		});
 	}
 
-	function getFavourites (callback) {
+	function getFavourites () {
 		
 		RecoCtrl.myFavourites(req, function (obj) {
 			data.FAVOURITES = obj;
 			if(data.FAVOURITES.info && (typeof data.FAVOURITES.info) == 'string') {
 		    	data.FAVOURITES.info = JSON.parse(data.FAVOURITES.info);
-		    	callback(null, null);
 		    }
+		    res.send(200, {
+		    	'status': "success",
+		    	'message': 'Got data successfully',
+		    	'info': data
+		    })
 		});
 	}	
 }

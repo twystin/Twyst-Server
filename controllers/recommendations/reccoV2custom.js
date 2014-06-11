@@ -6,7 +6,7 @@ var Tag = mongoose.model('Tag');
 var Outlet = mongoose.model('Outlet');
 var Checkin = mongoose.model('Checkin');
 var Favourite = mongoose.model('Favourite');
-var Voucher = mongoose.model('Voucher');
+var Voucher = mongoose.model('Voucher'); 
  
 var _ = require('underscore');
 
@@ -795,7 +795,7 @@ module.exports.myVouchers = function (req, c) {
 	        .populate('used_details.used_at')
 	        .exec(function (err, vouchers) {
 	        if(err) {
-	            Cb4({
+	            CB4({
 	                'status': 'error',
 	                'message': 'Error getting vouchers',
 	                'info': JSON.stringify(err)
