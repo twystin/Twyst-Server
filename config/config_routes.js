@@ -53,6 +53,7 @@ module.exports = function (app) {
         app.post('/api/v2/outlets/city/', DataCtrl.getOutlets);
         app.get('/api/v2/admin/programs/:outlets', DataCtrl.getPrograms);
         app.get('/api/v2/admin/data/:program/:start/:end', DataCtrl.getData);
+        app.get('/api/v2/total_checkins', AnonDataCtrl.totalCheckins)
     })();
 
     (function user_data_route() {

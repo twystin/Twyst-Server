@@ -17,7 +17,7 @@ module.exports.considerationSet = function(req, res) {
 	var num_of_programs = 0;
 	var num_of_consideration_objects = 0;
 	var phone = '';
-
+	
 	if (req.user) {
 		phone = req.user.phone;
 	}

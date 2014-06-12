@@ -340,3 +340,13 @@ module.exports.getAnonData = function (req, res) {
 		};
 	};
 }
+
+module.exports.totalCheckins = function (req, res) {
+	Checkin.count({}, function (err, total_checkins) {
+		res.send(200, {
+			'status': 'success',
+			'message': 'total checkins',
+			'info': total_checkins
+		})
+	});
+}
