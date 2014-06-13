@@ -20,6 +20,7 @@
     "mongoose": "latest",
     "mongoose-rbac": "~0.1.0",
     "morgan": "latest",
+    "mstring": "^0.1.2",
     "multer": "^0.1.0",
     "node-gcm": "~0.9.8",
     "passport": "latest",

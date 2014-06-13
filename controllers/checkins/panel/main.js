@@ -25,6 +25,8 @@ module.exports.checkin = function(req, res) {
 
 	q.phone  = req.body.phone;
 	q.outlet = req.body.outlet;
+	q.batch_user = req.body.batch_user || false;
+	q.message = req.body.message;
 	// Get request body and save in Checkin object.
 	_.extend(checkin, req.body);
 	var current_time = Date.now();
@@ -194,7 +196,12 @@ module.exports.checkin = function(req, res) {
 
 		function getMessages() {
 			var message = '';
-			if(sms.checkin && sms.reward && isNewUser()) {
+			if(q.batch_user) {
+				message = q.message;
+				message = message.replace(/code xxxxxx/g, 'code ' + voucher.basics.code);
+				message = message.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
+			}
+			else if(sms.checkin && sms.reward && isNewUser()) {
 				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
 			}
 			else if(sms.checkin && sms.reward && !isNewUser()) {

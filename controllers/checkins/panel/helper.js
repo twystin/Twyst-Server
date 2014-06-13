@@ -31,8 +31,7 @@ module.exports.getCheckinHistory = function(query, cb) {
 
 	function getCheckin(query, callback) {
 		Checkin.findOne({
-				phone: query.phone, 
-				checkin_program: query.program._id
+				phone: query.phone
 			}, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
 
 				callback(null, checkin);
@@ -232,7 +231,8 @@ module.exports.isUserRegistered = function (query, cb) {
 			new Account({ 
 				username : query.phone, 
 				phone: query.phone, 
-				role: 6
+				role: 6,
+				batch_user: query.batch_user
 			}), query.phone, function(err, account) {
 
 	        if (err) {
