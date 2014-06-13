@@ -15,7 +15,7 @@ var settings = require('./config/settings');
     console.log('Port:' + settings.values.config[settings.values.env].port);
     app.listen(settings.values.config[settings.values.env].port);
     console.log('Started the server');
-    process.on('uncaughtException', function (err) {
-        console.log('Caught exception: ' + err);
+    process.on('uncaughtException', function (error) {
+        console.log(error.stack);
     });
 })();
