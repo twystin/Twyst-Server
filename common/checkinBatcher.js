@@ -4,93 +4,7 @@ var M = require('mstring')
 
 var phones = M(function(){
   /***
-9560465685
-9811160444
-9999624480
-9711179121
-9810819931
-8373914693
-9854034948
-8800406665
-9999965030
-9560899098
-8376908871
-9650505346
-9811010541
-9810443013
-8860701525
-9818886664
-9958943730
-9971094931
-9811226877
-9911203077
-8860370022
-9711130188
-9818692948
-9923448351
-9923449283
-9873317385
-9650598867
-8802202285
-9873021764
-8800649998
-9811180007
-9899442563
-9971689243
-9958381116
-9871370303
-9911079410
-9999402952
-9871370310
-8800555678
-9999447034
-9582005555
-9717004722
-9971053445
-9818000668
-9818133739
-9971633622
-8122203533
-9582214395
-7838781400
-8800674005
-9873799584
-9958319996
-9910433711
-9818888881
-9987020616
-9560534432
-9910940142
-9811452024
-9910995722
-9873955339
-9650280303
-8287631102
-9711333912
-9811078764
-9899994070
-9899806154
-8860995586
-8800294553
-9686748610
-9717111465
-7042035053
-9999502876
-9810943784
-9871621876
-8527802821
-8860025566
-9555755868
-9540739699
-9971689243
-8800003239
-9950009696
-9582222489
-9818774223
-9953911307
-8588824526
-9990085919
-9873410399
+  9873410399
 9910041645
 9820267473
 7503862183
@@ -306,36 +220,31 @@ var phones = M(function(){
 9810113833
 9818520288
 9873675628
-9999106918
-9560544518
-9899722219
-9899852905
-8881657998
+9971090349
+9871303236
+9820165960
+9818227447
+
 ***/});
 
 phones = phones.split(/\r\n/);
 
-phones = [
-	'9871303236',
-	'9820165960',
-	'9971090349'
-];
 var i = 0;
 phones.forEach(function (phone) {
 	++i;
 	setTimeout(function() {
 		httpCheckin(phone);
-	}, i * 5000);
+	}, i * 1000);
 })
 
 function httpCheckin (phone) {
-	http.post('http://localhost:3000/api/v2/checkins', {
+	http.post('http://twyst.in/api/v2/checkins', {
 		phone: phone,
-        outlet: '530eff0e02bc583c2100001b',
+        outlet: '5332a2924871e79576000c27',
         location: 'DINE_IN',
         created_date: new Date(),
         batch_user: true,
-        message: 'We love having you over at Cocktails & Dreams Speakeasy! As a small way of saying thanks, we have enrolled you into our new loyalty program on Twyst. You get a complimentary drink on your next visit (Voucher code xxxxxx). Check in on Twyst on each visit for bigger rewards. Click URL to get Twyst for Android. See you at Speaks!'
+        message: 'We loved having you over at Tughlaq! As a small way of saying thanks, we have enrolled you into our new loyalty program on Twyst. Enjoy a complimentary dessert on your next visit or order (Voucher code xxxxxx). Check-in on Twyst on each visit for bigger rewards. Click URL to get Twyst for Android. See you at Tughlaq!'
 	},
 	function(res){
 		console.log(res.statusCode);

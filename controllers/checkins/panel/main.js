@@ -38,7 +38,7 @@ module.exports.checkin = function(req, res) {
 
 	Helper.getActiveProgram(q, function(data) {
 		if(data) {
-			q.program = data;
+			q.program = data; 
 			getCheckinHistory(q);
 		}
 		else {
