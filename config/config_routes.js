@@ -193,7 +193,7 @@ module.exports = function (app) {
     (function qr_routes() {
         var QrCtrl = require('../controllers/qr');
         app.post('/api/v1/qr/outlets', checkAuthenticated(), checkRole(1), QrCtrl.qrCreate);
-    })();
+    })(); 
 
 
     //Program CRUD routes
@@ -235,7 +235,7 @@ module.exports = function (app) {
         var FreqCtrl = require('../controllers/analytics/frequency');
         var CheckinCtrl = require('../controllers/analytics/checkin_analytics');
         var VoucherCtrl = require('../controllers/analytics/voucher_analytics');
-        app.get('/api/v1/getcounts/:outlet_id', checkAuthenticated(), checkRole(5), SummaryCtrl.getCounts);
+        app.get('/api/v1/getcounts/:outlet_id/:program_id', checkAuthenticated(), checkRole(5), SummaryCtrl.getCounts);
         app.get('/api/v1/analytics/checkins/:program_id', checkAuthenticated(), checkRole(4), SummaryCtrl.getSummaryCheckins);
         app.get('/api/v1/analytics/vouchers/:program_id', checkAuthenticated(), checkRole(4), SummaryCtrl.getSummaryVouchers);
         app.get('/api/v1/analytics/freq/checkins/:program_id', checkAuthenticated(), checkRole(4), FreqCtrl.getFrequencyCheckins);

@@ -13,7 +13,7 @@ module.exports.getCounts = function (req, res) {
 		'voucher_count': null,
 		'redeem_count': null
 	};
-	var outlet_id;
+	var outlet_id, program_id;
 
 	if(!req.params.outlet_id) {
 		res.send(400, {
@@ -23,13 +23,43 @@ module.exports.getCounts = function (req, res) {
 		});
 	}
 	else {
-		var outlet_id = req.params.outlet_id;
+		if(req.params.program_id !== 'ALL') {
+			var q_checkins = {
+				'outlet' : req.params.outlet_id,
+				'checkin_program' : req.params.program_id
+			};
+			var q_voucher = {
+				'issue_details.issued_at' : req.params.outlet_id,
+				'issue_details.program' : req.params.program_id
+			};
+			var q_redeem = {
+				'used_details.used_at' : req.params.outlet_id,
+				'issue_details.program' : req.params.program_id,
+				'basics.status': {
+					$ne: 'active'
+				}
+			}
+		}
+		else {
+			var q_checkins = {
+				'outlet' : req.params.outlet_id
+			};
+			var q_voucher = {
+				'issue_details.issued_at' : req.params.outlet_id
+			}
+			var q_redeem = {
+				'used_details.used_at' : req.params.outlet_id,
+				'basics.status': {
+					$ne: 'active'
+				}
+			}
+		}
 		getCheckinCount();
 	}
 
 	function getCheckinCount () {
 
-		Checkin.count({outlet: outlet_id}, function (err, count) {
+		Checkin.count(q_checkins, function (err, count) {
 
 			if(err) {
 				counts.checkin_count = null;
@@ -43,7 +73,7 @@ module.exports.getCounts = function (req, res) {
 
 	function getVoucherCount () {
 
-		Voucher.count({'issue_details.issued_at': outlet_id}, function (err, count) {
+		Voucher.count(q_voucher, function (err, count) {
 
 			if(err) {
 				counts.voucher_count = null;
@@ -57,7 +87,7 @@ module.exports.getCounts = function (req, res) {
 
 	function getRedeemCount () {
 
-		Voucher.count({'used_details.used_at': outlet_id,'basics.status': {$ne: 'active'}}, function (err, count) {
+		Voucher.count(q_redeem, function (err, count) {
 
 			if(err) {
 				counts.redeem_count = null;

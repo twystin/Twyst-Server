@@ -51,20 +51,20 @@ module.exports.onlyPrograms = function (req, res) {
 };
 
 module.exports.query = function (req, res) {
-	Program.find({accounts: req.params.user_id}).populate('outlets').exec(function (err, programs) {
+	Program.find({accounts: req.user._id}).populate('outlets').exec(function (err, programs) {
 		if(err) {
 			res.send(400, {
 				'status': 'error',
 				'message': 'Error getting programs',
 				'info': JSON.stringify(err)
-			})
+			});
 		}
 		else {
 			res.send(200, {
 				'status': 'error',
 				'message': 'Unable to get',
 				'info': JSON.stringify(programs)
-			})
+			});
 		}
 	});
 };
