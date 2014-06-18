@@ -7,8 +7,8 @@ module.exports.formatDate = function(date) {
 
 module.exports.calculateDistance = function(a, b) {
 
-	var p1 = {latitude: point1.latitude, longitude: point1.longitude};
-    var p2 = {latitude: point2.latitude, longitude: point2.longitude};
+	var p1 = {latitude: a.latitude, longitude: a.longitude};
+    var p2 = {latitude: b.latitude, longitude: b.longitude};
 
 	var R = 6371; // km
     if (typeof (Number.prototype.toRad) === "undefined") {
@@ -100,4 +100,38 @@ module.exports.setCurrentTime = function (oldDate) {
         date.getMinutes(), 
         date.getSeconds(),
         date.getMilliseconds());
+}
+
+module.exports.getOutletAttributes = function (outlet) {
+
+    var attributes = [];
+    
+    if(outlet.attributes)  {
+        _.each( outlet.attributes, function( val, key ) {
+            if(key === "cost_for_two" || key === "timings" || key === "toObject") {
+
+            }
+            else if (key === "tags") {
+                attributes = attributes.concat(val);
+            }
+            else if(key === "cuisines" || key === "payment_options") {
+                attributes = attributes.concat(val);
+            }
+            else if(key === "wifi" && (val === "Free" || val === "Paid")) {
+                attributes.push(key);
+            }
+            else if(key === "parking" && (val === "Available" || val === "Valet")) {
+                attributes.push(key);
+            }
+            else if(key === "air_conditioning" && (val === "Available" || val === "Partial")) {
+                attributes.push(key);
+            }
+            else {
+                if ( val ) {
+                    attributes.push(key);
+                }
+            }
+        });
+    }
+    return _.uniq(attributes);
 }
