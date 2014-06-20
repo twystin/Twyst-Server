@@ -210,7 +210,9 @@ module.exports.getUserTags = function (user_history_obj) {
 	}
 	if(user_history_obj.favourites.length > 0) {
 		user_history_obj.checkins.forEach(function (obj) {
-			total_tags = total_tags.concat(obj.checkin_for.tags || []);
+			if(obj.checkin_for && obj.checkin_for.tags) {
+				total_tags = total_tags.concat(obj.checkin_for.tags || []);
+			}
 		});
 	}
 
