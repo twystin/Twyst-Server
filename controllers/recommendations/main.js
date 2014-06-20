@@ -9,7 +9,7 @@ module.exports.getRecco = function (req, res) {
 			'status': 'success',
 			'message': 'Got recommendations success',
 			'info': JSON.stringify(recommendations)
-		});
+		}); 
 	});
 }
 
@@ -20,14 +20,25 @@ function computeRecco (req, callback) {
 // Step 1 for Recco algo. Get the whole consideration set.
 
 function getConsiderationSet (req, callback) {
-	Helper.getRelevantPrograms(function (filtered_set) {
-		if(filtered_set.length === 0) {
-			callback(filtered_set);
-		}
-		else {
-			getHistoryOfCheckins(req, filtered_set, callback);
-		}
-	});
+	async.parallel({
+		    RELEVANCE_SET: function(cb) {
+		    	Helper.getRelevantPrograms(function (filtered_set) {
+					cb(null, filtered_set);
+				});
+		    },
+		    UPDATE_RECCO_CONFIG: function (cb) {
+		    	Helper.updateReccoConfig(function (filtered_set) {
+					cb(null, true);
+				});
+		    }
+		}, function(err, result) {
+			if(result.RELEVANCE_SET.length === 0) {
+				callback(result.RELEVANCE_SET);
+			}
+			else {
+				getHistoryOfCheckins(req, result.RELEVANCE_SET, callback);
+			}
+		});
 }
 
 // Step 2 for Recco algo. Get the History of checkins for 

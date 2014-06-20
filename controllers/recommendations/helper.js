@@ -6,13 +6,21 @@ var Tag = mongoose.model('Tag');
 var Outlet = mongoose.model('Outlet');
 var Checkin = mongoose.model('Checkin');
 var Favourite = mongoose.model('Favourite');
+var ReccoConfig = mongoose.model('ReccoConfig');
 var CommonUtilities = require('../../common/utilities');
 
-var _ = require('underscore');
+var _ = require('underscore'); 
 var async = require('async');
 
-var USER_CHECKIN_WEIGHT = 5;
-var NUMBER_OF_RECCO = 10;
+var RECCO_CONFIG = {
+	USER_CHECKIN_WEIGHT : 5,
+	NUMBER_OF_RECCO : 10,
+	CHECKIN_CUTOFF_INTERVAL : 15,
+	NORMALIZED_WEIGHT : 100,
+	OUTLET_POPULARITY_WEIGHT : 100,
+	RELEVANCE_MATCH_WEIGHT : 100,
+	DISTANCE_WEIGHT : 100
+};
 
 module.exports.getRelevantPrograms = function (callback) {
 	getActivePrograms();
@@ -62,6 +70,19 @@ module.exports.getRelevantPrograms = function (callback) {
 	}
 }
 
+module.exports.updateReccoConfig = function (callback) {
+	ReccoConfig.findOne({}, function (err, recco_config) {
+		if(!err && recco_config) {
+			RECCO_CONFIG = recco_config;
+		}
+		if(!recco_config) {
+			var recco_config = new ReccoConfig(RECCO_CONFIG);
+			recco_config.save();
+		}
+		callback(true);
+	});
+}
+
 module.exports.getHistoryOfCheckins = function (req, filtered_set, callback) {
 	var filtered_set_length = filtered_set.length;
 	filtered_set.forEach(function (obj) {
@@ -70,7 +91,7 @@ module.exports.getHistoryOfCheckins = function (req, filtered_set, callback) {
 		    	var q = {
 		    		outlet: obj.outlet._id,
 					checkin_date: {
-						$gt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+						$gt: new Date(Date.now() - RECCO_CONFIG.CHECKIN_CUTOFF_INTERVAL * 24 * 60 * 60 * 1000),
 						$lt: new Date()
 					}
 		    	};
@@ -336,7 +357,7 @@ module.exports.reccoComputation = function (req, populated_set, sorted_tags) {
 			match *= matched_tags / match_tags_set_length;
 		}
 		
-		return match * 100; // Scale it on 100
+		return match; // Scale it on 100
 	}
 
 	function indexOfTag(user_preferenced_tags, tag, user_preferenced_tags_length) {
@@ -351,7 +372,7 @@ module.exports.reccoComputation = function (req, populated_set, sorted_tags) {
 
 module.exports.universeCheckin = function (callback) {
 	Checkin.count({checkin_date: {
-			$gt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000),
+			$gt: new Date(Date.now() - RECCO_CONFIG.CHECKIN_CUTOFF_INTERVAL * 24 * 60 * 60 * 1000),
 			$lt: new Date()
 		}}, function (err, count) {
 			callback(count || 0);
@@ -363,19 +384,19 @@ module.exports.normalizeSet = function (populated_set, universe_checkin_count) {
 	var normalized_weight;
 
 	populated_set.forEach(function (obj) {
-		normalized_weight = 100;
+		normalized_weight = RECCO_CONFIG.NORMALIZED_WEIGHT;
 
 		if(obj.distance > 0){
-			normalized_weight -= obj.distance;
+			normalized_weight += (RECCO_CONFIG.DISTANCE_WEIGHT - obj.distance);
 		}
 		if(obj.count.USER_CHECKIN_ON_PROGRAM > 0) {
-			normalized_weight += obj.count.USER_CHECKIN_ON_PROGRAM * USER_CHECKIN_WEIGHT;
+			normalized_weight += obj.count.USER_CHECKIN_ON_PROGRAM * RECCO_CONFIG.USER_CHECKIN_WEIGHT;
 		}
 		if(obj.match > 0) {
-			normalized_weight += obj.match;
+			normalized_weight += obj.match * RECCO_CONFIG.RELEVANCE_MATCH_WEIGHT;
 		}
 		if(obj.count.CHECKIN_ON_OUTLET > 0) {
-			normalized_weight += (obj.count.CHECKIN_ON_OUTLET / universe_checkin_count) * 100;
+			normalized_weight += (obj.count.CHECKIN_ON_OUTLET / universe_checkin_count) * RECCO_CONFIG.OUTLET_POPULARITY_WEIGHT;
 		}
 
 		obj.normalized_weight = normalized_weight;
@@ -390,7 +411,7 @@ module.exports.normalizeSet = function (populated_set, universe_checkin_count) {
 
 		var recommendations;
 
-		recommendations = _.first(sorted_populated_set, NUMBER_OF_RECCO);
+		recommendations = _.first(sorted_populated_set, RECCO_CONFIG.NUMBER_OF_RECCO);
 		return recommendations;
 	}
 }

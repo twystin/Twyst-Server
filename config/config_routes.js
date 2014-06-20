@@ -148,6 +148,12 @@ module.exports = function (app) {
         app.get('/api/v1/getusers/:user_id', checkAuthenticated(), checkRole(4), UserCtrl.getManagers);
     })();
 
+    //Create new users and view all users
+    (function recco_config_routes() {
+        var ReccoConfigCtrl = require('../controllers/recco_config');
+        app.get('/api/v2/recco_config', checkAuthenticated(), checkRole(1), ReccoConfigCtrl.read);
+        app.put('/api/v2/recco_config', checkAuthenticated(), checkRole(1), ReccoConfigCtrl.update);
+    })();
 
     //Create log for users
     (function user_log_routes() {
@@ -291,9 +297,9 @@ module.exports = function (app) {
     //Recommendation routes
     (function recommendation_routes() {
         var RecoCtrl = require('../controllers/recommendation');
-        var NewRecoCtrl = require('../controllers/recommendations/reccoV2');
+        var NewRecoCtrl = require('../controllers/recommendations/main');
         app.get('/api/v1/recommendations', RecoCtrl.getRecommendedPrograms);
-        app.get('/api/v2/recommendations', NewRecoCtrl.considerationSet);
+        app.get('/api/v2/recommendations', NewRecoCtrl.getRecco);
     })();
 
 
