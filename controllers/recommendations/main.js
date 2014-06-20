@@ -2,14 +2,14 @@ var Helper = require('./helper');
 var _ = require('underscore');
 var async = require('async');
 
-module.exports.getRecco = function (req, res) {
+module.exports.getRecco = function (req, data_callback) {
 	
 	computeRecco(req, function (recommendations) {
-		res.send(200,{
+		data_callback({
 			'status': 'success',
-			'message': 'Got recommendations success',
+			'message': 'Got recommendations success from v3',
 			'info': JSON.stringify(recommendations)
-		}); 
+		});
 	});
 }
 

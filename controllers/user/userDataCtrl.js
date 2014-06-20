@@ -1,6 +1,7 @@
 var http = require('http');
 
 var RecoCtrl = require('../../controllers/recommendations/reccoV2custom');
+var RecoCtrl3 = require('../../controllers/recommendations/main');
 var OutletCtrl = require('../../controllers/outlet');
 
 var data = {};
@@ -17,7 +18,7 @@ module.exports.getData = function (req, res) {
 
 	function getReccos() {
 
-		RecoCtrl.considerationSet(req, function (obj) {
+		RecoCtrl3.getRecco(req, function (obj) {
 			data.RECCO = obj;
 			if(data.RECCO.info && (typeof data.RECCO.info) == 'string') {
 		    	data.RECCO.info = JSON.parse(data.RECCO.info);
