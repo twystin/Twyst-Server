@@ -13,7 +13,7 @@ module.exports.getOutlets = function (req, res) {
 
 	var cities = req.body.cities || [];
 	var merchants = req.body.merchants || [];
-	if(merchants.length > 0 && cities.length > 0) {
+	if(merchants.length > 0 && merchants[0] != null && cities.length > 0) {
 		find();
 	}
 	else {
