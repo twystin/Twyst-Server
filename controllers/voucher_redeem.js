@@ -152,7 +152,7 @@ function redeemVoucherSms (code, phone, outlet_id) {
     		var hour = new Date().getHours();
     		var minute = new Date().getMinutes();
 
-            var time_in_minutes = hour * 60 + minute;
+            var time_in_minutes = hour * 60 + minute + 330;
     		voucher.issue_details.issued_for.reward_applicability.time_of_day.forEach(function (time) {
     			if(time === 'all day') {
     				mark_valid = true;
@@ -339,7 +339,7 @@ module.exports.redeemVoucherApp = function(req, res) {
     		var hour = new Date().getHours();
     		var minute = new Date().getMinutes();
 
-            var time_in_minutes = hour * 60 + minute;
+            var time_in_minutes = hour * 60 + minute + 330;
     		voucher.issue_details.issued_for.reward_applicability.time_of_day.forEach(function (time) {
     			if(time === 'all day') {
     				mark_valid = true;
@@ -548,7 +548,7 @@ module.exports.redeemVoucherPanel = function(req,res) {
     		var hour = new Date().getHours();
     		var minute = new Date().getMinutes();
 
-            var time_in_minutes = hour * 60 + minute;
+            var time_in_minutes = hour * 60 + minute + 330;
     		voucher.issue_details.issued_for.reward_applicability.time_of_day.forEach(function (time) {
     			if(time === 'all day') {
     				mark_valid = true;
