@@ -25,15 +25,15 @@ module.exports.calculateDistance = function(a, b) {
     var dLat = (p2.latitude-p1.latitude).toRad();
     var dLon = (p2.longitude-p1.longitude).toRad();
     
-    var lat1 = p1.latitude.toRad();
-    var lat2 = p2.latitude.toRad();
+    var lat1 = (p1.latitude * 1).toRad();
+    var lat2 = (p2.latitude * 1).toRad();
 
     var a = Math.sin(dLat/2) * Math.sin(dLat/2) +
         Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     var d = R * c;
     
-    return d.toFixed(1);
+    return d.toFixed(1)*1;
 }
 
 

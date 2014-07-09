@@ -318,6 +318,12 @@ module.exports.reccoComputation = function (req, populated_set, sorted_tags) {
 			user_loc = req.user.home;
 			user = req.user;
 		}
+		else {
+			user_loc = {
+				latitude: req.params.latitude,
+				longitude: req.params.longitude
+			}
+		}
 		
 		if(!_.isEmpty(user_loc) && !_.isEmpty(outlet_loc)) {
 			obj.distance = CommonUtilities.calculateDistance(user_loc, outlet_loc);
@@ -325,7 +331,7 @@ module.exports.reccoComputation = function (req, populated_set, sorted_tags) {
 			outlet_loc = null;	
 		}
 		else {
-			obj.distance = 0;
+			obj.distance = 100;
 		}
 
 		obj.match = calculateMatch(
