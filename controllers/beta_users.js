@@ -1,9 +1,10 @@
 var mongoose = require('mongoose');
 var BetaUser = mongoose.model('BetaUsers');
+var MailSender = require('../common/sendMail')
 
 var _ = require('underscore');
 
-module.exports.create = function(req,res) {
+module.exports.create = function(req, res) {
 
 	var created_user = {};
 
@@ -22,6 +23,8 @@ module.exports.create = function(req,res) {
 			});
 
 		} else {
+			var to ='<jayram.chandan@gmail.com>,<mayankyadav@twyst.in>,<rc@twyst.in>'
+			MailSender.sendEmail(to, created_user)
 
 			res.send(200, {	'status': 'success',
 

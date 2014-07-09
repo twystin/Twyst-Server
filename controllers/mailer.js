@@ -7,11 +7,11 @@ var crypto = require('crypto');
 var email   = require("../node_modules/emailjs/email");
 
 var server  = email.server.connect({
-									    user:       "jayram@twyst.in", 
-									    password:   "Singh@005", 
-									    host:       "smtp.gmail.com", 
-									    ssl:        true
-			});
+			user:       "jayram@twyst.in", 
+			password:   "Singh@005", 
+			host:       "smtp.gmail.com", 
+			ssl:        true
+});
 
 module.exports.validationEmail = function(req, res) {
 	//console.log(req.body);
