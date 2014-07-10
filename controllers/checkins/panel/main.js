@@ -129,6 +129,10 @@ module.exports.checkin = function(req, res) {
 		checkin.checkin_tier = applicable.tier;
 		checkin.checkin_for = applicable.offer;
 		checkin.checkin_date = Date.now();
+		if(q.batch_user) {
+			checkin.checkin_code = 'BATCH';
+			checkin.checkin_type = "BATCH";
+		}
 		return new Checkin(checkin);
 	}
 
