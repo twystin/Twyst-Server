@@ -76,7 +76,7 @@ module.exports.checkin = function(req, res) {
 				createCheckin(checkin);
 			}
 		}
-		else if(diff > 21600000) {
+		else if(diff > 2) {
 			createCheckin(checkin);
 		}
 		else {
@@ -86,7 +86,7 @@ module.exports.checkin = function(req, res) {
 					response.message.six_hours_error);
 			}
 			else {
-				if(diff > 1800000) {
+				if(diff > 1) {
 					createCheckin(checkin);
 				}
 				else {
@@ -224,10 +224,8 @@ module.exports.checkin = function(req, res) {
 	}
 
 	function isNewUser() {
-		if(history.last) {
-			if(history.last.outlet.equals(q.outlet)) {
-				return false;
-			}
+		if(history.count > 0) {
+			return false;
 		}
 		return true;
 	}
