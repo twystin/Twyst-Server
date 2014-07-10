@@ -135,12 +135,14 @@ module.exports.getNotifs = function (req, res) {
 			var result;
 			var results = [];
 			checkins.forEach(function(item) {
-				result = {};
-				result.date = item.created_date;
-				result.actual_date = item.checkin_date;
-				result.type = "CHECKIN";
-				result.data = item;
-				results.push(result);
+				if(item.created_date && item.checkin_date) {
+					result = {};
+					result.date = item.created_date;
+					result.actual_date = item.checkin_date;
+					result.type = "CHECKIN";
+					result.data = item;
+					results.push(result);
+				}
 			});
 
 			callback(null, results);
@@ -169,15 +171,17 @@ module.exports.getNotifs = function (req, res) {
 			var result;
 			var results = [];
 			vouchers.forEach(function(item) {
-				result = {};
-				result.date = item.basics.created_at;
-				result.actual_date = item.basics.modified_at;
-				result.type = "VOUCHER";
-				result.data = item;
-				if(item.issue_details.issued_to && item.issue_details.issued_to.phone) {
-					result.phone = item.issue_details.issued_to.phone;
+				if(item.basics.created_at && item.basics.modified_at) {
+					result = {};
+					result.date = item.basics.created_at;
+					result.actual_date = item.basics.modified_at;
+					result.type = "VOUCHER";
+					result.data = item;
+					if(item.issue_details.issued_to && item.issue_details.issued_to.phone) {
+						result.phone = item.issue_details.issued_to.phone;
+					}
+					results.push(result);
 				}
-				results.push(result);
 			});
 
 			callback(null, results);
@@ -209,15 +213,17 @@ module.exports.getNotifs = function (req, res) {
 			var result;
 			var results = [];
 			vouchers.forEach(function(item) {
-				result = {};
-				result.date = item.used_details.used_time;
-				result.actual_date = item.used_details.used_date;
-				result.type = "REDEEM";
-				result.data = item;
-				if(item.used_details.used_by) {
-					result.phone = item.used_details.used_by.phone;
+				if(item.used_details.used_time && item.used_details.used_date) {
+					result = {};
+					result.date = item.used_details.used_time;
+					result.actual_date = item.used_details.used_date;
+					result.type = "REDEEM";
+					result.data = item;
+					if(item.used_details.used_by) {
+						result.phone = item.used_details.used_by.phone;
+					}
+					results.push(result);
 				}
-				results.push(result);
 			});
 
 			callback(null, results);
