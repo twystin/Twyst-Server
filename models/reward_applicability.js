@@ -22,7 +22,7 @@ module.exports.reward = {
             'time': 690
         },
         'end': {
-            'time': 900
+            'time': 960
         }
     },
     "evening": {
