@@ -76,7 +76,7 @@ module.exports.checkin = function(req, res) {
 				createCheckin(checkin);
 			}
 		}
-		else if(diff > 2) {
+		else if(diff > 6 * 30 * 60 * 1000) {
 			createCheckin(checkin);
 		}
 		else {
@@ -86,7 +86,7 @@ module.exports.checkin = function(req, res) {
 					response.message.six_hours_error);
 			}
 			else {
-				if(diff > 1) {
+				if(diff > 30 * 60 * 1000) {
 					createCheckin(checkin);
 				}
 				else {
