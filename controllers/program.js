@@ -50,8 +50,8 @@ module.exports.onlyPrograms = function (req, res) {
 	})
 };
 
-module.exports.query = function (req, res) {
-	Program.find({accounts: req.user._id}).populate('outlets').exec(function (err, programs) {
+module.exports.query = function (req, res) { 
+	Program.find({accounts: getAccountIdForProgram()}).populate('outlets').exec(function (err, programs) {
 		if(err) {
 			res.send(400, {
 				'status': 'error',
@@ -62,11 +62,19 @@ module.exports.query = function (req, res) {
 		else {
 			res.send(200, {
 				'status': 'error',
-				'message': 'Unable to get',
+				'message': 'Got programs successfully.',
 				'info': JSON.stringify(programs)
 			});
 		}
 	});
+
+	function getAccountIdForProgram() {
+		if(req.user.role === 4 || req.user.role === 5) {
+			var user = req.user.toObject();
+			return user.account;
+		} 
+		return req.user._id;
+	}
 };
 
 module.exports.readOne = function (req, res) {
