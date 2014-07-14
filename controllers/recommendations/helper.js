@@ -90,6 +90,9 @@ module.exports.getHistoryOfCheckins = function (req, filtered_set, callback) {
 		    CHECKIN_ON_OUTLET: function(cb) {
 		    	var q = {
 		    		outlet: obj.outlet._id,
+		    		checkin_type: {
+		    			$ne: 'BATCH'
+		    		},
 					checkin_date: {
 						$gt: new Date(Date.now() - RECCO_CONFIG.CHECKIN_CUTOFF_INTERVAL * 24 * 60 * 60 * 1000),
 						$lt: new Date()
@@ -379,7 +382,11 @@ module.exports.reccoComputation = function (req, populated_set, sorted_tags) {
 }
 
 module.exports.universeCheckin = function (callback) {
-	Checkin.count({checkin_date: {
+	Checkin.count({
+		checkin_type: {
+			$ne: 'BATCH'
+		},
+		checkin_date: {
 			$gt: new Date(Date.now() - RECCO_CONFIG.CHECKIN_CUTOFF_INTERVAL * 24 * 60 * 60 * 1000),
 			$lt: new Date()
 		}}, function (err, count) {

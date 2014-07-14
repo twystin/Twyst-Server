@@ -10,6 +10,52 @@ var Voucher = mongoose.model('Voucher');
 
 var Account = mongoose.model('Account');
 
+// Checkin.find({
+// 	'outlet': "5316d59326b019ee59000026",
+// 	'modified_date': {$lt: new Date(2014, 6, 11)},
+// 	'created_date': {$gt: new Date(2014, 6, 10)} 
+// }, function (err, checkins) {
+// 	console.log(checkins.length)
+// 	checkins.forEach(function (ch) {
+// 		ch.checkin_type = "BATCH";
+// 		ch.save(function (err, success) {
+// 			console.log(err || "success")
+// 		})
+// 	})
+// })
+
+// Checkin.find({checkin_type: 'BATCH'}, function (err, checkins) {
+// 	if(err) {
+// 		console.log(err);
+// 	}
+// 	else {
+// 		checkins.forEach(function (ch) {
+// 			ch.checkin_type = "PANEL";
+// 			ch.save(function (err, success) {
+// 				console.log(err || success)
+// 			})
+// 		})
+// 	}
+// })
+
+// Account.find({batch_user: true}, function (err, users) {
+// 	users.forEach(function (user) {
+// 		Checkin.findOne({phone: user.phone}, function (err, checkin) {
+// 			if(err) {
+// 				console.log(err);
+// 			}
+// 			else {
+// 				if(checkin) {
+// 					checkin.checkin_type = "PANEL";
+// 					checkin.save(function (err) {
+// 						console.log(err || "success")
+// 					});
+// 				}
+// 			}
+// 		})
+// 	})
+// })
+
 // PHONE NUMBER IN THE CHECKIN TABLE 10 DIGITS
 
 // Checkin.find({}, function (err, checkins) {
