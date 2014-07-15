@@ -492,7 +492,8 @@ module.exports.getData = function (req, res) {
 			var USERS_BY_CHECKIN_TYPE = {
 				'PANEL': 0,
 				'QR': 0,
-				'SMS': 0
+				'SMS': 0,
+				'BATCH': 0
 			};
 			op.forEach(function(item) {
 				if(item._id === 'PANEL') {
@@ -503,6 +504,9 @@ module.exports.getData = function (req, res) {
 				}
 				if(item._id === 'SMS') {
 					USERS_BY_CHECKIN_TYPE.SMS = item.count;
+				}
+				if(item._id === 'BATCH') {
+					USERS_BY_CHECKIN_TYPE.BATCH = item.count;
 				}
 			});
 			return USERS_BY_CHECKIN_TYPE;

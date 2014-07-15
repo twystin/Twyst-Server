@@ -93,6 +93,9 @@ module.exports.getAnonData = function (req, res) {
 				if(item._id === 'SMS') {
 					result.SMS = item.count;
 				}
+				if(item._id === 'BATCH') {
+					result.BATCH = item.count;
+				}
 			});
 			countTotal(result);
 		}

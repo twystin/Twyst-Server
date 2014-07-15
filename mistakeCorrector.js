@@ -10,6 +10,33 @@ var Voucher = mongoose.model('Voucher');
 
 var Account = mongoose.model('Account');
 
+// Voucher.find({}).select('gen_type').exec(function (err, vouchers) {
+// 	console.log(vouchers.length)
+// 	var a = 0, b =0;
+// 	vouchers.forEach(function (vh) {
+// 		if(!vh.gen_type) {
+// 			vh.gen_type = 'NA';
+// 			vh.save(function (err, s) {
+// 				console.log(err || "succ")
+// 			})
+// 		}
+// 	})
+// })
+
+// Voucher.find({
+// 	'issue_details.issued_at': "5332a2924871e79576000c27",
+// 	'issue_details.issue_time': {$lt: new Date(2014, 5, 14)},
+// 	'issue_details.issue_date': {$gt: new Date(2014, 5, 13)} 
+// }, function (err, vouchers) {
+// 	console.log(vouchers.length)
+// 	vouchers.forEach(function (vh) {
+// 		vh.gen_type = 'BATCH';
+// 		vh.save(function (err, s) {
+// 			console.log(err || "succ")
+// 		})
+// 	})
+// })
+
 // Checkin.find({
 // 	'outlet': "5316d59326b019ee59000026",
 // 	'modified_date': {$lt: new Date(2014, 6, 11)},
