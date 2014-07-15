@@ -38,6 +38,9 @@ module.exports.getAllCheckins = function (req, res) {
 		async.forEach([1,2,3,4,5,6,7], function(key) {
 			
 			Checkin.find({
+				checkin_type: {
+					$ne: "BATCH"
+				},
 				outlet: {
         				$in: outlets.map(
         					function(outlet){ 

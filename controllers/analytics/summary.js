@@ -26,7 +26,10 @@ module.exports.getCounts = function (req, res) {
 		if(req.params.program_id !== 'ALL') {
 			var q_checkins = {
 				'outlet' : req.params.outlet_id,
-				'checkin_program' : req.params.program_id
+				'checkin_program' : req.params.program_id,
+				'checkin_type' : {
+					$ne: 'BATCH'
+				}
 			};
 			var q_voucher = {
 				'issue_details.issued_at' : req.params.outlet_id,
@@ -42,7 +45,10 @@ module.exports.getCounts = function (req, res) {
 		}
 		else {
 			var q_checkins = {
-				'outlet' : req.params.outlet_id
+				'outlet' : req.params.outlet_id,
+				'checkin_type' : {
+					$ne: 'BATCH'
+				}
 			};
 			var q_voucher = {
 				'issue_details.issued_at' : req.params.outlet_id
