@@ -28,7 +28,7 @@ module.exports.getData = function (req, res) {
 			}
 			var distance = CommonUtilities.calculateDistance(current_loc, cache_loc);
 			console.log(distance)
-			if(distance >= 2) {
+			if(distance >= 0.3) {
 				returnRefreshedData();
 			}
 			else {

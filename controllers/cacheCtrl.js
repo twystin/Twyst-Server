@@ -1,7 +1,7 @@
 var cache = require('memory-cache');
 
 module.exports.setCache = function (key, data) {
-	cache.put(key, data);
+	cache.put(key, data, 6 * 60 * 60 * 1000);
 }
 
 module.exports.getCache = function (key) {
