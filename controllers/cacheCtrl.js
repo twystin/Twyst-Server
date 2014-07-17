@@ -1,5 +1,6 @@
 var cache = require('memory-cache');
 
+console.log("Clearing data cache from memory :)");
 cache.clear();
 
 module.exports.setCache = function (key, data) {
