@@ -618,6 +618,7 @@ module.exports.nearBy = function(req, c) {
 	function getData() {
 		Outlet.find({'outlet_meta.status': 'active','contact.location.coords': { $nearSphere: [longitude, latitude], $maxDistance: 5000}}, {}, {skip: 0}, function(err, outlets) {
 			if (err) {
+				console.log(err)
 				CB2({'status': 'error',
 				  'message': 'Error getting list of outlets',
 				  'info': JSON.stringify(err)

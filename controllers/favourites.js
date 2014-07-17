@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Favourite = mongoose.model('Favourite');
 var _ = require('underscore');
+var UserDataCtrl = require('./user/userDataCtrl');
 
 module.exports.query = function(req,res) {
 	Favourite.find({account: req.user._id}).populate('outlets').populate('program').populate('tier').populate('offers').exec(function(err,favourites) {
@@ -72,6 +73,10 @@ module.exports.create = function(req,res) {
 							'info': JSON.stringify(err)
 				});
 			} else {
+				// Refresh cache
+				UserDataCtrl.refreshData(req, function (status) {
+					// Data refreshed
+				});
 				res.send(200, {	'status': 'success',
 							'message': 'Saved Favourite',
 							'info': ''

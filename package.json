@@ -16,6 +16,7 @@
     "express-session": "latest",
     "http-post": "~0.1.1",
     "jade": "latest",
+    "memory-cache": "0.0.5",
     "method-override": "latest",
     "mongoose": "latest",
     "mongoose-rbac": "~0.1.0",

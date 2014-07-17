@@ -60,11 +60,11 @@ module.exports.nearbyOutlets = function(req,res) {
 	function getData() {
 		Outlet.find({'outlet_meta.status': 'active','contact.location.coords': { $nearSphere: [longitude, latitude], $maxDistance: 5000}}, {}, {skip: 0}, function(err, outlets) {
 			if (err) {
+				console.log(err)
 				res.send(400,{'status': 'error',
 				  'message': 'Error getting list of outlets',
 				  'info': JSON.stringify(err)
 				});
-				console.log(err)
 			} else {
 				getProgramForOutlets(outlets, res);   
 			}

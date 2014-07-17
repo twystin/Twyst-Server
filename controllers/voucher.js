@@ -3,6 +3,10 @@ var Voucher = mongoose.model('Voucher');
 var Account = mongoose.model('Account');
 var Program = mongoose.model('Program');
 var Outlet = mongoose.model('Outlet');
+var Checkin = mongoose.model('Checkin');
+
+var async = require('async');
+
 var _ = require('underscore');
 
 module.exports.read = function(req,res) {
@@ -86,7 +90,7 @@ module.exports.readByUserPhone = function(req, res) {
 
     function getOutlet (users) {
 
-        Outlet.find({'outlet_meta.accounts': req.user._id}, function (err, outlets) {
+        Outlet.find({'outlet_meta.accounts': getAccountIdForProgram()}, function (err, outlets) {
 
             if(err) {
                 res.send(400, {'status': 'error',
@@ -102,13 +106,56 @@ module.exports.readByUserPhone = function(req, res) {
                     });
                 }
                 else {
-                    getVoucherDetails(users, outlets);
+                    async.parallel({
+                        CHECKIN_COUNT: function(callback) {
+                            getCheckinCount(users, outlets, callback);
+                        },
+                        VOUCHERS: function(callback) {
+                            getVoucherDetails(users, outlets, callback);
+                        }
+                    }, function(err, results) {
+                        res.send(200, { 
+                            'status': 'success',
+                            'message': 'Got details for the user.',
+                            'info': results
+                        });
+                    });
                 }
             }
         })
     }
 
-    function getVoucherDetails (users, outlets) {
+    function getCheckinCount(users, outlets, callback) {
+        getActiveProgram();
+        function getActiveProgram () {
+            Program.findOne({
+                    accounts: getAccountIdForProgram(),
+                    'status': 'active'
+                }, function (err, program) {
+                    if(!program) {
+                        callback(null, 0);
+                    }
+                    getCount(program);
+            });
+        }
+        
+        function getCount (program) {
+            Checkin.count({
+                'phone': {
+                    $in: users.map(
+                                function(item){
+                                    return item.phone; 
+                            })
+                },
+                'checkin_program': program._id
+            }, function (err, count) {
+
+                    callback(null, count || 0);
+            });
+        } 
+    }
+
+    function getVoucherDetails (users, outlets, callback) {
         Voucher.find({
             'issue_details.issued_to': {
                 $in: users.map(
@@ -125,28 +172,84 @@ module.exports.readByUserPhone = function(req, res) {
         }).populate('issue_details.issued_for')
             .populate('issue_details.issued_to')
             .populate('issue_details.program')
+            .sort({'basics.modified_at': -1})
             .exec(function(err,vouchers) {
+
+                sortVouchers(vouchers)
             
-            if (err) {
-                res.send(400, {'status': 'error',
-                               'message': 'Error getting voucher details',
-                               'info': JSON.stringify(err)
-                });
-            } else {
-                if(vouchers.length > 0) {
-                    res.send(200, { 'status': 'success',
-                                    'message': 'Got vouchers details',
-                                    'info': JSON.stringify(vouchers)
-                    });
-                }
-                else {
-                    res.send(200, { 'status': 'success',
-                                    'message': 'No voucher found for this user',
-                                    'info': ''
-                    });
-                }
-            }
+            // if (err) {
+            //     res.send(400, {'status': 'error',
+            //                    'message': 'Error getting voucher details',
+            //                    'info': JSON.stringify(err)
+            //     });
+            // } else {
+            //     if(vouchers.length > 0) {
+            //         res.send(200, { 'status': 'success',
+            //                         'message': 'Got vouchers details',
+            //                         'info': JSON.stringify(vouchers)
+            //         });
+            //     }
+            //     else {
+            //         res.send(200, { 'status': 'success',
+            //                         'message': 'No voucher found for this user',
+            //                         'info': ''
+            //         });
+            //     }
+            // }
         }); 
+
+        function sortVouchers (vouchers) {
+
+            if(vouchers.length <= 1) {
+                callback(null, vouchers);
+            }
+            else {
+                var i = 0, meta_data = [];
+                vouchers.forEach(function (voucher) {
+                    var data = {};
+                    if((voucher.basics.status === 'active'
+                        || voucher.basics.status === 'user redeemed')
+                        && (new Date(voucher.issue_details.program.validity.burn_end) > new Date())) {
+                        data.status = 2;
+                        data.pos = i;
+                        meta_data.push(data);
+                    }
+                    else if(voucher.basics.status === 'merchant redeemed') {
+                        data.status = 1;
+                        data.pos = i;
+                        meta_data.push(data);
+                    }
+                    else if(voucher.basics.status !== 'merchant redeemed'
+                        && new Date(voucher.issue_details.program.validity.burn_end) <= new Date()) {
+                        data.status = 0;
+                        data.pos = i;
+                        meta_data.push(data);
+                    }
+                    i++;
+                });
+
+                meta_data = _.sortBy(meta_data, function (data) {
+                    return -data.status;
+                });
+
+                var sorted_vouchers = [];
+                var k = 0;
+                meta_data.forEach(function (data) {
+                    var pos = data.pos;
+                    sorted_vouchers[k++] = vouchers[pos];
+                });
+
+                callback(null, sorted_vouchers);
+            }
+        }
+    }
+
+    function getAccountIdForProgram() {
+        if(req.user.role === 4 || req.user.role === 5) {
+            var user = req.user.toObject();
+            return user.account;
+        } 
+        return req.user._id;
     }
 };
 
