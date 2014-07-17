@@ -8,6 +8,7 @@ var Outlet = mongoose.model('Outlet');
 var Tier = mongoose.model('Tier');
 var Account = mongoose.model('Account');
 var SmsSentLog = mongoose.model('SmsSentLog');
+var UserDataCtrl = require('./user/userDataCtrl');
 
 var _ = require('underscore');
 
@@ -578,6 +579,10 @@ function createCheckin(req, res, checkin) {
 			});
 		}
 		else {
+			// Refresh cache
+			UserDataCtrl.refreshData(req, function (status) {
+				// Data refreshed
+			})
 			var sms_flag = false;
 			if(global_panel) {
 				getOutlet(checkin.outlet, program, checkin.phone);
