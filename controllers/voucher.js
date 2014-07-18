@@ -78,7 +78,7 @@ module.exports.readByUserPhone = function(req, res) {
                 if(users.length === 0) {
                     res.send(200, {'status': 'error',
                                    'message': 'User has no vouchers.',
-                                   'info': JSON.stringify(err)
+                                   'info': ''
                     });
                 }
                 else {
