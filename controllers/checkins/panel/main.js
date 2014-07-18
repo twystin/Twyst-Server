@@ -147,10 +147,6 @@ module.exports.checkin = function(req, res) {
 						response.message.error);
 			}
 			else {
-				// Refresh cache
-				UserDataCtrl.refreshData(req, function (status) {
-					// Data refreshed
-				})
 				sms.checkin = true;
 				reward = Helper.isRewardTime(applicable.tier, history.count);
 				if(reward) {
