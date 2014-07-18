@@ -30,8 +30,9 @@ module.exports.getNotifs = function (req, res) {
 		var data = Cache.get(user)[user];
 		var min = Number(skip);
 		var max = min + 20;
-		data = data.slice(min, max);
+		
 		if(data) {
+			data = data.slice(min, max);
 	    	res.send(200, {
 				'status': 'success',
 				'message': 'Successfully got notifications',
