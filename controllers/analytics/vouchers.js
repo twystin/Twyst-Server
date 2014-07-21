@@ -145,7 +145,7 @@ module.exports.getRedeems = function (req, res) {
 		Voucher.find(q, 
 				{}, 
 				{sort: { 
-					'basics.modified_at' : -1 
+					'used_details.used_time' : -1 
 				},
 				skip: skip, 
 				limit: limit
