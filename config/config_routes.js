@@ -40,9 +40,14 @@ module.exports = function (app) {
         return false;
     };
 
-    (function panel_checkin_route() {
+    (function panel_route() {
         var PanelCtrl = require('../controllers/checkins/panel/main');
+        var AllCheckinCtrl = require('../controllers/analytics/checkins');
+        var AllVoucherCtrl = require('../controllers/analytics/vouchers');
         app.post('/api/v2/checkins', PanelCtrl.checkin);
+        app.get('/api/v2/allcheckins/:outlet/:program', AllCheckinCtrl.getCheckins);
+        app.get('/api/v2/allvouchers/:outlet/:program', AllVoucherCtrl.getVouchers);
+        app.get('/api/v2/allredeems/:outlet/:program', AllVoucherCtrl.getRedeems);
     })();
 
     (function admin_route() {

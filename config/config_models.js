@@ -22,6 +22,7 @@ module.exports = function () {
         temp_otp = require('../models/temp_otp'),
         notif = require('../models/notif'),
         social = require('../models/social'),
+        rating = require('../models/rating'),
         recco_config = require('../models/recco_config'),
         beta_merchants = require('../models/beta_merchants');
 
