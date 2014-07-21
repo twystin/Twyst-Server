@@ -32,7 +32,7 @@ module.exports.getData = function (req, res) {
 				returnRefreshedData();
 			}
 			else {
-				res.send(304, {
+				res.send(200, {
 			    	'status': "success",
 			    	'message': 'Got data successfully',
 			    	'info': userCache
@@ -40,7 +40,7 @@ module.exports.getData = function (req, res) {
 			}
 		}
 		else {
-			res.send(304, {
+			res.send(200, {
 		    	'status': "success",
 		    	'message': 'Got data successfully',
 		    	'info': userCache
