@@ -3,6 +3,8 @@ var Outlet = mongoose.model('Outlet');
 var Program = mongoose.model('Program');
 var async = require('async');
 
+var CacheCtrl = require('../cacheCtrl.js');
+
 module.exports.changeOutletStatus = function (req, res) {
 	if(!req.body.outlet) {
 		res.send(400, {
@@ -43,6 +45,7 @@ module.exports.changeOutletStatus = function (req, res) {
 				            });
 						}
 						else {
+							CacheCtrl.clear();
 							res.send(200, {
 						    	'status' : 'success',
 				                'message' : 'successfully updated status.',
@@ -96,6 +99,7 @@ module.exports.changeProgramStatus = function (req, res) {
 				            });
 						}
 						else {
+							CacheCtrl.clear();
 							res.send(200, {
 						    	'status' : 'success',
 				                'message' : 'successfully updated status.',
