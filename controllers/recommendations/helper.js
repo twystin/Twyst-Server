@@ -54,11 +54,13 @@ module.exports.getRelevantPrograms = function (callback) {
 			if(program.outlets) {
 				if(program.outlets.length > 0) {
 					program.outlets.forEach(function (outlet) {
-						var consideration_object = {};
-						if(program.tiers.length > 0) {
-							consideration_object.program = program;
-							consideration_object.outlet = outlet;
-							consideration_set.push(consideration_object);
+						if(outlet.outlet_meta.status === 'active') {
+							var consideration_object = {};
+							if(program.tiers.length > 0) {
+								consideration_object.program = program;
+								consideration_object.outlet = outlet;
+								consideration_set.push(consideration_object);
+							}
 						}
 					});
 					program.outlets = [];
