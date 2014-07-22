@@ -158,9 +158,9 @@ module.exports.getAllOutlets = function (req, res) {
 
 	function getOutlets (q, callback) {
 		Outlet.find(q, 
-				{}, 
+				{},  
 				{sort: { 
-					'created_at' : -1 
+					'basics.created_at' : -1 
 				},
 				skip: skip, 
 				limit: limit
