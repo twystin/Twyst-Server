@@ -10,3 +10,8 @@ module.exports.setCache = function (key, data) {
 module.exports.getCache = function (key) {
 	return cache.get(key);
 }
+
+module.exports.clear = function () {
+	cache.clear();
+	return true;
+}
