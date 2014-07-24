@@ -53,6 +53,8 @@ module.exports = function (app) {
     (function admin_route() {
         var DataCtrl = require('../controllers/admin/dataCtrl');
         var StatusCtrl = require('../controllers/admin/status');
+        var UserCtrl = require('../controllers/admin/user');
+        var QrCtrl = require('../controllers/admin/qr');
         var AnonDataCtrl = require('../controllers/admin/dataCtrlAnonymous');
         app.post('/api/v2/admin/outlets/', AnonDataCtrl.getAnonData);
         app.get('/api/v2/merchants', DataCtrl.getMerchants);
@@ -62,8 +64,11 @@ module.exports = function (app) {
         app.get('/api/v2/total_checkins', AnonDataCtrl.totalCheckins);
         app.get('/api/v2/alloutlets', StatusCtrl.getAllOutlets);
         app.get('/api/v2/allprograms', StatusCtrl.getAllPrograms);
+        app.get('/api/v2/allusers', UserCtrl.getAllUsers);
+        app.get('/api/v2/allqrs', QrCtrl.getAllQrs);
         app.post('/api/v2/changestatus/outlet', StatusCtrl.changeOutletStatus);
         app.post('/api/v2/changestatus/program', StatusCtrl.changeProgramStatus);
+        app.post('/api/v2/changevalidity/qr', QrCtrl.updateValidity);
     })();
 
     (function user_data_route() {

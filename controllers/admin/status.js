@@ -13,7 +13,7 @@ module.exports.changeOutletStatus = function (req, res) {
             'info': ''
         });
 	}
-	else {
+	else { 
 		changeStatus();
 	}
 
@@ -151,7 +151,7 @@ module.exports.getAllOutlets = function (req, res) {
 	}, function(err, results) {
 	    res.send(200, {
 	    	'status' : 'success',
-            'message' : 'Got checkins.',
+            'message' : 'Got outlets.',
             'info': results
         });
 	});
@@ -215,7 +215,7 @@ module.exports.getAllPrograms = function (req, res) {
 	}, function(err, results) {
 	    res.send(200, {
 	    	'status' : 'success',
-            'message' : 'Got checkins.',
+            'message' : 'Got programs.',
             'info': results
         });
 	});
