@@ -14,6 +14,10 @@ module.exports.getAllUsers = function (req, res) {
 		q = {};
 	}
 
+	if(req.query.role && req.query.role !== 'All') {
+		q.role = req.query.role;
+	}
+
 	initQuery();
 
 	function initQuery () {
