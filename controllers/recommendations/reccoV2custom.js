@@ -785,7 +785,12 @@ module.exports.myVouchers = function (req, c) {
 	}
 
 	function getData() {
-		Voucher.find({'issue_details.issued_to': req.user._id})
+		console.log(new Date(Date.now() - 3 * 60 * 60 * 1000))
+		Voucher.find({
+			'issue_details.issued_to': req.user._id,
+			'basics.created_at': {
+				$lt: new Date(Date.now() - 3 * 60 * 60 * 1000)
+			}})
 	        .populate('issue_details.issued_at')
 	        .populate('issue_details.program')
 	        .populate('issue_details.tier')
