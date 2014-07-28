@@ -24,6 +24,7 @@
     "mstring": "^0.1.2",
     "multer": "^0.1.0",
     "node-gcm": "~0.9.8",
+    "nodemailer": "^1.0.4",
     "passport": "latest",
     "passport-facebook": "latest",
     "passport-local": "latest",

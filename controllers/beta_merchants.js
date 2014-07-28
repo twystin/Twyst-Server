@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var BetaMerchant = mongoose.model('BetaMerchants');
 var _ = require('underscore');
+var MailSender = require('../common/sendMail');
 
 module.exports.create = function(req,res) {
 	var created_merchant = {};
@@ -14,6 +15,8 @@ module.exports.create = function(req,res) {
 						'info': JSON.stringify(err)
 			});
 		} else {
+			var to ='<jayram.chandan@gmail.com>'
+			MailSender.sendEmail(to, created_merchant)
 			res.send(200, {	'status': 'success',
 						'message': 'Saved merchant',
 						'info': ''

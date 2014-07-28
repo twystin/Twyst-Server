@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var BetaUser = mongoose.model('BetaUsers');
-var MailSender = require('../common/sendMail')
+var MailSender = require('../common/sendMail');
 
 var _ = require('underscore');
 
