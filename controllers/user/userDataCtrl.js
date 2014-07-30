@@ -1,5 +1,6 @@
 var http = require('http');
 var async = require('async');
+var _ = require('underscore');
 
 var RecoCtrl = require('../../controllers/recommendations/reccoV2custom');
 var RecoCtrl3 = require('../../controllers/recommendations/main');
@@ -9,8 +10,7 @@ var CommonUtilities = require('../../common/utilities');
 
 module.exports.getData = function (req, res) {
 
-	console.log(req.sessionID)
-	var userCache = CacheCtrl.getCache(req.sessionID);
+	var userCache = getFromCache();
 	var current_loc = {
 		latitude : Number(req.params.latitude),
 		longitude : Number(req.params.longitude)
@@ -27,7 +27,7 @@ module.exports.getData = function (req, res) {
 				'longitude': userCache.lon
 			}
 			var distance = CommonUtilities.calculateDistance(current_loc, cache_loc);
-			console.log(distance)
+			
 			if(distance >= 0.3) {
 				returnRefreshedData();
 			}
@@ -56,9 +56,32 @@ module.exports.getData = function (req, res) {
 			res.send(200, {
 		    	'status': "success",
 		    	'message': 'Got data successfully',
-		    	'info': CacheCtrl.getCache(req.sessionID)
+		    	'info': getFromCache()
 		    })
 		});
+	}
+
+	function getFromCache() {
+		var data = CacheCtrl.getCache(req.sessionID);
+		if(data) {
+			data.VOUCHERS = filterVouchers(data.VOUCHERS);
+		}
+		return data;
+	}
+
+	function filterVouchers(vouchers) {
+		var voucher_cutoff = 0;
+		var info = vouchers.info;
+		if(info && info.length > 0) {
+			info.forEach (function (v) {
+				if(new Date(v.basics.created_at) < new Date(Date.now() - 3 * 60 * 60 * 1000)) {
+					++voucher_cutoff;
+				}
+			});
+			info = _.first(info, voucher_cutoff);
+			vouchers.info = info;
+		}
+		return vouchers;
 	}
 }
 
