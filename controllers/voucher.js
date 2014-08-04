@@ -9,8 +9,9 @@ var async = require('async');
 
 var _ = require('underscore');
 
-module.exports.read = function(req,res) {
+module.exports.read = function(req, res) {
     var code = req.params.code;
+    var searchedAt = req.params.searchedAt;
 
     if(code) {
         getVoucherDetails();
@@ -41,13 +42,30 @@ module.exports.read = function(req,res) {
                     });
                 }
                 else {
-                    res.send(200, { 'status': 'success',
-                                    'message': 'Got vouchers details',
-                                    'info': JSON.stringify(voucher)
-                    });
+                    if(isVoucherApplicableToThisOutlet(voucher)) {
+                        res.send(200, { 'status': 'success',
+                                        'message': 'Got vouchers details',
+                                        'info': JSON.stringify(voucher)
+                        });
+                    }
+                    else {
+                        res.send(400, { 'status': 'error',
+                                        'message': 'Error - voucher does not belong to this outlet / merchant.',
+                                        'info': ''
+                        });
+                    }
                 }
             }
         }); 
+    }
+
+    function isVoucherApplicableToThisOutlet (voucher) {
+        for(var i = 0; i < voucher.issue_details.issued_at.length; i++) {
+            if(voucher.issue_details.issued_at[i].equals(searchedAt)) {
+                return true;
+            }
+        }
+        return false;
     }
 };
 
@@ -90,7 +108,7 @@ module.exports.readByUserPhone = function(req, res) {
 
     function getOutlet (users) {
 
-        Outlet.find({'outlet_meta.accounts': getAccountIdForProgram()}, function (err, outlets) {
+        Outlet.find({'outlet_meta.accounts': getAccountIdForProgram(req)}, function (err, outlets) {
 
             if(err) {
                 res.send(400, {'status': 'error',
@@ -129,7 +147,7 @@ module.exports.readByUserPhone = function(req, res) {
         getActiveProgram();
         function getActiveProgram () {
             Program.findOne({
-                    accounts: getAccountIdForProgram(),
+                    accounts: getAccountIdForProgram(req),
                     'status': 'active'
                 }, function (err, program) {
                     if(!program) {
@@ -243,15 +261,15 @@ module.exports.readByUserPhone = function(req, res) {
             }
         }
     }
-
-    function getAccountIdForProgram() {
-        if(req.user.role === 4 || req.user.role === 5) {
-            var user = req.user.toObject();
-            return user.account;
-        } 
-        return req.user._id;
-    }
 };
+
+function getAccountIdForProgram(req) {
+    if(req.user.role === 4 || req.user.role === 5) {
+        var user = req.user.toObject();
+        return user.account;
+    } 
+    return req.user._id;
+}
 
 module.exports.changeStatus  = function (req, res){
 

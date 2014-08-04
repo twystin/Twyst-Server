@@ -237,7 +237,7 @@ module.exports = function (app) {
         var VoucherCtrl = require('../controllers/voucher');
         var VoucherRedeemCtrl = require('../controllers/voucher_redeem');
         //app.get('/api/v1/vouchers', checkAuthenticated(), VoucherCtrl.query);
-        app.get('/api/v1/vouchers/:code', checkAuthenticated(), checkRole(5), VoucherCtrl.read);
+        app.get('/api/v1/vouchers/:code/:searchedAt', checkAuthenticated(), checkRole(5), VoucherCtrl.read);
         app.get('/api/v1/vouchers_by_phone/:phone', checkAuthenticated(), checkRole(5), VoucherCtrl.readByUserPhone);
         app.post('/api/v1/vouchers', checkAuthenticated(), VoucherCtrl.create);
         app.get('/api/v1/vouchers/status/change/:code', checkAuthenticated(), checkRole(5), VoucherCtrl.changeStatus);

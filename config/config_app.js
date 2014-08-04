@@ -24,24 +24,31 @@ var authdb = settings.values.config[settings.values.env].db.auth_db;
 
 var sessionStore;
 
-if(settings.values.env === 'LOCAL') {
-    sessionStore = new MongoStore({
-        url: 'mongodb://localhost:27017/twyst',
-        // db: 'session',
-        // host: 'mongodb://localhost/twyst',
-        clear_interval: 3600
-    });
-}
-else {
-    sessionStore = new MongoStore({
-        url: 'mongodb://localhost:27017/twyst',
-        'username': db_user,
-        'password': db_pwd,
-        // db: 'session',
-        // host: 'mongodb://localhost/twyst',
-        clear_interval: 3600
-    });
-}
+sessionStore = new MongoStore({
+    url: 'mongodb://localhost:27017/twyst',
+    // db: 'session',
+    // host: 'mongodb://localhost/twyst',
+    clear_interval: 3600
+});
+
+// if(settings.values.env === 'LOCAL') {
+//     sessionStore = new MongoStore({
+//         url: 'mongodb://localhost:27017/twyst',
+//         // db: 'session',
+//         // host: 'mongodb://localhost/twyst',
+//         clear_interval: 3600
+//     });
+// }
+// else {
+//     sessionStore = new MongoStore({
+//         url: 'mongodb://localhost:27017/twyst',
+//         'username': db_user,
+//         'password': db_pwd,
+//         // db: 'session',
+//         // host: 'mongodb://localhost/twyst',
+//         clear_interval: 3600
+//     });
+// }
 
 
 module.exports = function(app) {
@@ -54,7 +61,8 @@ module.exports = function(app) {
             secret: "Twyst_2014_Sessions",
             cookie: {
                 maxAge: 90 * 24 * 60 * 60 * 1000
-            }//
+            },
+            store: sessionStore
         }));
         //app.use(express.session({cookie: { maxAge: 864000000 }}));
         app.use(methodOverride());
@@ -129,16 +137,16 @@ module.exports = function(app) {
     //         console.log(err);
     //     }
     // });
-    // //mongoose.connect('mongodb://localhost/twyst');
+    mongoose.connect('mongodb://localhost/twyst');
 
     // mongoose.createConnection("mongodb://twyst:Twyst123@localhost:27017/twyst" ,{auth:{authdb:"twyst"}}, function (a, b) {
     //     console.log(a || b)
     // });
     
-    if(settings.values.env === 'LOCAL') {
-        mongoose.connect('mongodb://localhost/twyst');
-    }
-    else {
-        mongoose.connect("mongodb://"+ db_user + ':' + db_pwd +"@127.0.0.1:27017/twyst",{auth:{authdb:authdb}});
-    }
+    // if(settings.values.env === 'LOCAL') {
+    //     mongoose.connect('mongodb://localhost/twyst');
+    // }
+    // else {
+    //     mongoose.connect("mongodb://"+ db_user + ':' + db_pwd +"@127.0.0.1:27017/twyst",{auth:{authdb:authdb}});
+    // }
 };
