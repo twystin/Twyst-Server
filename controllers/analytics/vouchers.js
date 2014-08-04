@@ -63,11 +63,11 @@ module.exports.getVouchers = function (req, res) {
 		Voucher.find(q, 
 				{}, 
 				{sort: { 
-					'basics.modified_at' : -1 
+					'basics.modified_at' : -1  
 				},
 				skip: skip, 
 				limit: limit
-			}).populate('issue_details.')
+			}).populate('issue_details.issued_to')
 			.populate('issue_details.program')
 			.exec(function (err, vouchers) {
 
@@ -145,7 +145,7 @@ module.exports.getRedeems = function (req, res) {
 		Voucher.find(q, 
 				{}, 
 				{sort: { 
-					'used_details.used_time' : -1 
+					'used_details.used_date' : -1 
 				},
 				skip: skip, 
 				limit: limit
