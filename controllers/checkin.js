@@ -582,7 +582,7 @@ function createCheckin(req, res, checkin) {
 			// Refresh cache
 			UserDataCtrl.refreshData(req, function (status) {
 				// Data refreshed
-			})
+			});
 			var sms_flag = false;
 			if(global_panel) {
 				getOutlet(checkin.outlet, program, checkin.phone);
