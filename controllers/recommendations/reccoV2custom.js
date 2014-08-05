@@ -603,7 +603,7 @@ module.exports.nearBy = function(req, c) {
 	var latitude = Number(req.params.latitude);
 	var longitude = Number(req.params.longitude);
 	var radius =  6371.0008; // Earth radius
-
+	
 	if(longitude && latitude) {
 		getData();
 	}
