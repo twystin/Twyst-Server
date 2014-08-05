@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var _ = require('underscore');
 require('./config/config_models')();
 
 var Checkin = mongoose.model('Checkin');
@@ -9,6 +10,35 @@ mongoose.connect('mongodb://twyst.in/twyst');
 var Voucher = mongoose.model('Voucher');
 
 var Account = mongoose.model('Account');
+
+// Checkin.find({'outlet': '530ef84902bc583c21000004',
+// 				'created_date': {
+// 						$gte: new Date(2014, 4, 24),
+// 						$lte: new Date(2014, 7, 3)
+// 				},
+// 				'checkin_type': 'QR'
+// 	}, function (err, checkins) {
+// 		checkins = _.uniq(checkins, function (ch) {
+// 			return ch.phone;
+// 		});
+// 		var distinct_checkins = checkins.length;
+// 		hasPrevCheckins();
+// 		function hasPrevCheckins () {
+// 			checkins.forEach(function (ch) {
+// 				Checkin.findOne({
+// 					phone: ch.phone,
+// 					created_date: {
+// 						$lt: new Date(ch.created_date)
+// 					}
+// 				}, function (err, checkin) {
+// 					if(checkin) {
+// 						--distinct_checkins;
+// 					}
+// 					console.log(distinct_checkins)
+// 				})
+// 			})
+// 		}
+// })
 
 // Voucher.find({}).select('gen_type').exec(function (err, vouchers) {
 // 	console.log(vouchers.length)

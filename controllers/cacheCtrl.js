@@ -19,6 +19,8 @@ module.exports.clear = function () {
 function validateData (key, data) {
 	var validatedData = getCache(key) || {};
 	validatedData.loggedIn = data.loggedIn;
+	validatedData.lat = data.lat;
+	validatedData.lon = data.lon;
 	if(data.RECCO && data.RECCO.info) {
 		validatedData.RECCO = data.RECCO;
 	}
