@@ -95,8 +95,9 @@ module.exports.setCurrentTime = function (oldDate) {
     var date = new Date();
 
     var newDate = new Date(oldDate);
+    
     return newDate.setHours(
-        date.getHours(), 
+        date.getHours(),
         date.getMinutes(), 
         date.getSeconds(),
         date.getMilliseconds());

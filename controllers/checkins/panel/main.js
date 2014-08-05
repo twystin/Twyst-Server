@@ -33,6 +33,7 @@ module.exports.checkin = function(req, res) {
 	var current_time = Date.now();
 
 	checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date) || Date.now();
+
 	q.checkin_time = checkin.created_date;
 	checkin.checkin_type = "PANEL";
 	checkin.checkin_code = "PANEL";
@@ -257,7 +258,7 @@ module.exports.checkin = function(req, res) {
 
 		voucher.basics.created_at = CommonUtilities.setCurrentTime(
 											checkin.created_date);
-
+		
 		voucher.basics.code = keygen._(
 			{forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});
 

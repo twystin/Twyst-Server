@@ -111,6 +111,10 @@ module.exports.delete = function(req,res) {
 							'info': JSON.stringify(err)
 				});
 			} else {
+				// Refresh cache
+				UserDataCtrl.refreshData(req, function (status) {
+					// Data refreshed
+				});
 				res.send(200, {	'status': 'success',
 							'message': 'Successfully deleted Favourite',
 							'info': ''

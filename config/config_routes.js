@@ -364,6 +364,12 @@ module.exports = function (app) {
         app.get('/api/v2/notify/merchants/:skip',checkAuthenticated(),checkRole(5), CommonNotifyCtrl.getNotifs);
     })();
 
+    (function testing_routes (){
+        app.get('/:type(gurgaon|delhi)/*', function (req, res) {
+            res.send(200, {info: 'This works. Wow :)'});
+        });
+    })();
+
     (function handle_defaults() {
         app.use(function (req, res){
             res.send(404, {'info': '...Page not found'});
