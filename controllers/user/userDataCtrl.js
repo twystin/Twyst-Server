@@ -63,7 +63,7 @@ module.exports.getData = function (req, res) {
 
 	function getFromCache() {
 		var data = CacheCtrl.getCache(req.sessionID);
-		if(data) {
+		if(data && data.VOUCHERS) {
 			data.VOUCHERS = filterVouchers(data.VOUCHERS);
 		}
 		return data;
