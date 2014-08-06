@@ -90,13 +90,13 @@ module.exports.getRedeems = function (req, res) {
 		initData();
 		if(program === 'ALL') {
 			q = {
-				'issue_details.issued_at': outlet,
+				'used_details.used_at': outlet,
 				'basics.status': 'merchant redeemed'
 			};
 		}
 		else {
 			q = {
-				'issue_details.issued_at': outlet,
+				'used_details.used_at': outlet, 
 				'issue_details.program': program,
 				'basics.status': 'merchant redeemed'
 			}
