@@ -32,7 +32,7 @@ module.exports.checkin = function(req, res) {
 	_.extend(checkin, req.body);
 	var current_time = Date.now();
 
-	checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date) || Date.now();
+	checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date);
 
 	q.checkin_time = checkin.created_date;
 	checkin.checkin_type = "PANEL";

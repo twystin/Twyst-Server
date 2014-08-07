@@ -14,24 +14,24 @@ module.exports.sendSms = function (phone, push_message) {
 	console.log(message);
 	var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
 	var test_url = 'http://staging.twyst.in/api/v2/sms/status';
-	http.get(send_sms_url, function(res){
-		console.log(res.statusCode);
-		var body = '';
-		res.on('data', function(chunk) {
-            // append chunk to your data
-            body += chunk;
-        });
+	// http.get(send_sms_url, function(res){
+	// 	console.log(res.statusCode);
+	// 	var body = '';
+	// 	res.on('data', function(chunk) {
+ //            // append chunk to your data
+ //            body += chunk;
+ //        });
 
-        res.on('end', function() {
-        	saveSentSms(phone, message, body);
-            console.log(body);
-        });
+ //        res.on('end', function() {
+ //        	saveSentSms(phone, message, body);
+ //            console.log(body);
+ //        });
 
-        res.on('error', function(e) {
-        	saveSentSms(phone, message, e);
-            console.log("Error message: " + e.message)
-        });
-	});
+ //        res.on('error', function(e) {
+ //        	saveSentSms(phone, message, e);
+ //            console.log("Error message: " + e.message)
+ //        });
+	// });
 }
 
 function saveSentSms (phone, message, status) {

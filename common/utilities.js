@@ -90,17 +90,15 @@ module.exports.rewardify = function (input) {
 
 module.exports.setCurrentTime = function (oldDate) {
     if(!oldDate) {
-        return null;
+        return new Date();
     }
-    var date = new Date();
-
-    var newDate = new Date(oldDate);
-    
-    return newDate.setHours(
-        date.getHours(),
-        date.getMinutes(), 
-        date.getSeconds(),
-        date.getMilliseconds());
+    // Check if 24 hours difference
+    if(new Date() - new Date(oldDate) > 86399999) {        
+        return new Date(oldDate);
+    }
+    else {
+        return new Date();
+    }
 }
 
 module.exports.getOutletAttributes = function (outlet) {
