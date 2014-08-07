@@ -146,7 +146,6 @@ function read(programs, res) {
 								num_programs--;
 								tiers = [];
 								if(num_programs === 0) {
-									console.log(recommended_programs)
 									res.send(200, {
                                         'status': 'success',
                                         'message': 'Got all programs',
