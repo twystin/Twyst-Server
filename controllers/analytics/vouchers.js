@@ -63,7 +63,7 @@ module.exports.getVouchers = function (req, res) {
 		Voucher.find(q, 
 				{}, 
 				{sort: { 
-					'basics.modified_at' : -1  
+					'issue_details.issue_time' : -1  
 				},
 				skip: skip, 
 				limit: limit

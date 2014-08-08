@@ -1,4 +1,5 @@
 var cache = require('memory-cache');
+var _ = require('underscore');
 
 console.log("Clearing data cache from memory :)");
 cache.clear();
@@ -18,6 +19,9 @@ module.exports.clear = function () {
 
 function validateData (key, data) {
 	var validatedData = getCache(key) || {};
+	if(_.isEmpty(validatedData)) {
+		return data;
+	}
 	validatedData.loggedIn = data.loggedIn;
 	validatedData.lat = data.lat;
 	validatedData.lon = data.lon;
