@@ -4,7 +4,9 @@ var Program = mongoose.model('Program');
 var Tier = mongoose.model('Tier');
 var Tag = mongoose.model('Tag');
 var _ = require('underscore');
+var async = require('async');
 var TagCtrl = require('../controllers/tag');
+var CommonUtilities = require('../common/utilities');
 
 module.exports.getCount = function (req, res) {
 	Outlet.count({'outlet_meta.accounts': req.params.user_id}, function (err, count) {
@@ -210,19 +212,113 @@ module.exports.read = function(req,res) {
 };
 
 module.exports.publicview = function(req,res) {
-	Outlet.findOne({_id: req.params.outlet_id}).populate('outlet_meta.offers').exec(function(err,outlet) {
-		if (err) {
-			res.send(400, {	'status': 'error',
-						'message': 'Error getting outlet id ' + req.params.outlet_id,
-						'info': JSON.stringify(err)
-			});
-		} else {
-			res.send(200, {	'status': 'success',
-						'message': 'Got outlet ' + req.params.outlet_id,
-						'info': JSON.stringify(outlet)
+	var outlet_id = req.params.outlet_id;
+	async.parallel({
+	    OUTLET: function(callback) {
+	    	getOutlet(outlet_id, callback);
+	    },
+	    REWARDS: function(callback) {
+	    	getRewards(outlet_id, callback);
+	    }
+	}, function(err, results) {
+	    res.send(200,  {
+	    	'status': 'success',
+	    	'message': 'Got details successfully.',
+	    	'info': results
+	    });
+	});
+
+	function getOutlet (outlet_id, callback) {
+		Outlet.findOne({_id: outlet_id}, function(err, outlet) {
+			callback (null, outlet || {});
+		}); 
+	}
+
+	function getRewards (outlet_id, callback) {
+		Program.findOne({
+			outlets: outlet_id,
+			'status': 'active'
+		}, function(err, program) {
+
+			populateProgram(program);
+		});
+
+		function populateProgram (program) {
+			var tiers = [];
+			var count = program.tiers.length;
+
+			program.tiers.forEach(function (id) {
+				Tier.findOne({_id: id}).populate('offers').exec(function (err, tier) {
+						var t = {};
+						t = tier;
+						count--;
+						tiers.push(t);
+						if(count === 0) {
+							program = program.toObject();
+							program.tiers = tiers;
+							callback(null, getOffers(program));
+						}
+					})
 			});
 		}
-	}) 
+	}
+
+	function getOffers (p) {
+	    var rewards = [];
+	    var val = -1;
+
+	    var program = p;
+	    var obj = {};
+	    
+	    for(var i = 0; i < program.tiers.length; i++) {
+	    	if(program.tiers[i]) {
+	    		for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
+		            
+		            for(var j = 0; j < program.tiers[i].offers.length; j++) {
+		                obj = {};
+		                if(program.tiers[i].offers[j]) {
+		                	if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
+			                    if((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
+			                        obj.count = lim + 1;
+			                        obj.desc = CommonUtilities.rewardify(program.tiers[i].offers[j]);
+			                        obj.title = program.tiers[i].offers[j].basics.description;
+			                        rewards.push(obj);
+			                    }
+			                }
+			                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
+			                    
+			                    if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
+			                        obj.count = lim + 1;
+			                        obj.desc = CommonUtilities.rewardify(program.tiers[i].offers[j]);
+			                        obj.title = program.tiers[i].offers[j].basics.description;
+			                        rewards.push(obj);
+			                    }
+			                }
+			                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
+			                    if(lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
+			                        obj.count = lim + 1;
+			                        obj.desc = CommonUtilities.rewardify(program.tiers[i].offers[j]);
+			                        obj.title = program.tiers[i].offers[j].basics.description;
+			                        rewards.push(obj);
+			                    }
+			                }
+		                }
+		            }
+		        }	
+	    	}
+	        
+	    }
+	    
+	    rewards = _.uniq(rewards, function (obj) {
+	    	return obj.count;
+	    });
+
+	    rewards = _.sortBy(rewards, function (obj) {
+	    	return obj.count;
+	    });
+
+	    return rewards;
+	}
 };
 
 module.exports.all = function(req,res) {
