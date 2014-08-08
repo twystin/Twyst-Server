@@ -90,7 +90,7 @@ module.exports = function (app) {
     (function public_route() {
         var OutletCtrl = require('../controllers/outlet');
         app.get('/api/v1/public/outlets/all', OutletCtrl.all);
-        app.get('/api/v1/publicview/outlets/:outlet_id', OutletCtrl.publicview);
+        app.get('/api/v1/publicview/outlets/:publicUrl', OutletCtrl.publicview);
     })();
     // Route to send mails
     (function mailer_routes() {

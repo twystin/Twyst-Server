@@ -5,6 +5,7 @@ var Account = mongoose.model('Account');
 
 var OutletSchema = new Schema({
     username: {type: String},
+    publicUrl: [{type: String}],
     basics : {
         name: {type: String, trim: true, required: true},
         slug: {type: String, trim: true, required: true, index: true},

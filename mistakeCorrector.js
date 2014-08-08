@@ -4,12 +4,32 @@ var _ = require('underscore');
 require('./config/config_models')();
 
 var Checkin = mongoose.model('Checkin');
+var Outlet = mongoose.model('Outlet');
 var voucher_gen = require('./voucherGenMistake')
-mongoose.connect('mongodb://twyst.in/twyst');
+mongoose.connect('mongodb://localhost/twyst');
 
 var Voucher = mongoose.model('Voucher');
 
 var Account = mongoose.model('Account');
+
+// Outlet.find({}, function (err, outlets) {
+// 	outlets.forEach(function (o) {
+// 		var url = o.basics.name + ' ' + o.contact.location.locality_1.toString();
+// 		url = url.replace(/'/g, '');
+// 		url = url.replace(/& /g, '');
+// 		url = url.replace(/- /g, '');
+// 		url = url.replace(/\./g, '');
+// 		url = url.replace(/!/g, '');
+// 		url = url.replace(/ /g, '-');
+// 		o.publicUrl = [];
+// 		o.publicUrl.push(url.toLowerCase());
+// 		o.save(function (err) {
+// 			if(err) {
+// 				console.log(err)
+// 			}
+// 		})
+// 	})
+// })
 
 // Checkin.find({'outlet': '530ef84902bc583c21000004',
 // 				'created_date': {

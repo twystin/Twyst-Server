@@ -3,6 +3,7 @@ var Outlet = mongoose.model('Outlet');
 var Program = mongoose.model('Program');
 var Tier = mongoose.model('Tier');
 var Tag = mongoose.model('Tag');
+var Checkin = mongoose.model('Checkin');
 var _ = require('underscore');
 var async = require('async');
 var TagCtrl = require('../controllers/tag');
@@ -212,26 +213,63 @@ module.exports.read = function(req,res) {
 };
 
 module.exports.publicview = function(req,res) {
-	var outlet_id = req.params.outlet_id;
-	async.parallel({
-	    OUTLET: function(callback) {
-	    	getOutlet(outlet_id, callback);
-	    },
-	    REWARDS: function(callback) {
-	    	getRewards(outlet_id, callback);
-	    }
-	}, function(err, results) {
-	    res.send(200,  {
-	    	'status': 'success',
-	    	'message': 'Got details successfully.',
-	    	'info': results
-	    });
+	var publicUrl = req.params.publicUrl;
+	Outlet.findOne({publicUrl: publicUrl}, function (err, outlet) {
+		if(err) {
+			res.send(400,  {
+		    	'status': 'success',
+		    	'message': 'Error getting outlet.',
+		    	'info': err
+		    });
+		}
+		else {
+			if(outlet) {
+				getData(outlet._id);
+			}
+			else {
+				res.send(400,  {
+			    	'status': 'success',
+			    	'message': 'Error getting outlet.',
+			    	'info': err
+			    });
+			}
+		}
 	});
+	
+	function getData (outlet_id) {
+		console.log(outlet_id)
+		async.parallel({
+		    OUTLET: function(callback) {
+		    	getOutlet(outlet_id, callback);
+		    },
+		    REWARDS: function(callback) {
+		    	getRewards(outlet_id, callback);
+		    },
+		    UNIQUE: function (callback) {
+		    	getUniqueCustomers(outlet_id, callback);
+		    }
+		}, function(err, results) {
+		    res.send(200,  {
+		    	'status': 'success',
+		    	'message': 'Got details successfully.',
+		    	'info': results
+		    });
+		});
+	}
 
 	function getOutlet (outlet_id, callback) {
 		Outlet.findOne({_id: outlet_id}, function(err, outlet) {
 			callback (null, outlet || {});
 		}); 
+	}
+
+	function getUniqueCustomers (outlet_id, callback) {
+		Checkin.
+			find({outlet: outlet_id}).
+			distinct('phone').
+			count().exec(function (err, count) {
+				callback(null, count || 0);
+		});
 	}
 
 	function getRewards (outlet_id, callback) {
@@ -240,7 +278,12 @@ module.exports.publicview = function(req,res) {
 			'status': 'active'
 		}, function(err, program) {
 
-			populateProgram(program);
+			if(program) {
+				populateProgram(program);
+			}
+			else {
+				callback(null, null);
+			}
 		});
 
 		function populateProgram (program) {
@@ -282,6 +325,7 @@ module.exports.publicview = function(req,res) {
 			                        obj.count = lim + 1;
 			                        obj.desc = CommonUtilities.rewardify(program.tiers[i].offers[j]);
 			                        obj.title = program.tiers[i].offers[j].basics.description;
+			                        obj.terms = program.tiers[i].offers[j].terms;
 			                        rewards.push(obj);
 			                    }
 			                }
@@ -291,6 +335,7 @@ module.exports.publicview = function(req,res) {
 			                        obj.count = lim + 1;
 			                        obj.desc = CommonUtilities.rewardify(program.tiers[i].offers[j]);
 			                        obj.title = program.tiers[i].offers[j].basics.description;
+			                        obj.terms = program.tiers[i].offers[j].terms;
 			                        rewards.push(obj);
 			                    }
 			                }
@@ -299,6 +344,7 @@ module.exports.publicview = function(req,res) {
 			                        obj.count = lim + 1;
 			                        obj.desc = CommonUtilities.rewardify(program.tiers[i].offers[j]);
 			                        obj.title = program.tiers[i].offers[j].basics.description;
+			                        obj.terms = program.tiers[i].offers[j].terms;
 			                        rewards.push(obj);
 			                    }
 			                }
