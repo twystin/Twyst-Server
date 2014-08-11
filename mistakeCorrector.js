@@ -19,7 +19,6 @@ Outlet.find({}, function (err, outlets) {
 			|| city === 'gurgaon' 
 			|| city === 'noida' 
 			|| city === 'new delhi') {
-			console.log(typeof o.contact.location.locality_2)
 			var url = '/' + 'ncr' + '/' +
 				o.contact.location.locality_2[0] + '/' +
 				o.basics.name + ' ' + o.contact.location.locality_1[0] + ' ' +
@@ -39,11 +38,11 @@ Outlet.find({}, function (err, outlets) {
 		o.publicUrl = o.publicUrl || [];
 		o.publicUrl.push(url.toLowerCase());
 		console.log(url)
-		// o.save(function (err) {
-		// 	if(err) {
-		// 		console.log(err)
-		// 	}
-		// })
+		o.save(function (err) {
+			if(err) {
+				console.log(err)
+			}
+		})
 	})
 })
 
