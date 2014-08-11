@@ -40,6 +40,11 @@ module.exports = function (app) {
         return false;
     };
 
+    (function seo_route () {
+        var SitemapCtrl = require('../controllers/sitemapGen');
+        app.post('/api/v3/sitemap', SitemapCtrl.initSitemap);
+    })();
+
     (function panel_route() {
         var PanelCtrl = require('../controllers/checkins/panel/main');
         var AllCheckinCtrl = require('../controllers/analytics/checkins');
@@ -365,9 +370,8 @@ module.exports = function (app) {
     })();
 
     (function testing_routes (){
-        app.get('/:type(gurgaon|delhi)/*', function (req, res) {
-            res.send(200, {info: 'This works. Wow :)'});
-        });
+        var OutletRender = require('../controllers/render/outlet');
+        app.get('/:type(ncr|mumbai|banglore)/*', OutletRender.render);
     })();
 
     (function handle_defaults() {
