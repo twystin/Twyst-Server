@@ -60,20 +60,25 @@ function runUserMetricInParallel (program, outlet) {
 }
 
 function saveInCheckinMetric(outlet, program, data) {
-	var obj = {
-		outlet: outlet,
-		program: program._id,
-		total_checkins: data.TOTAL_CHECKIN_COUNT,
-		avg_daily_checkins: getAvgCheckin(data.TOTAL_CHECKIN_COUNT, program),
-		count_by_checkin_type: data.COUNT_BY_CHECKIN_TYPE,
-		count_by_checkin_location: data.COUNT_BY_CHECKIN_LOCATION,
-		avg_daily_checkins_by_day_of_week: data.CHECKIN_BY_DAY_OF_WEEK
-	}
-
-	var checkinmetric = new CheckinMetric(obj);
-	checkinmetric.save(function (err, data) {
-		console.log(err || 'Success');
-	})
+	CheckinMetric.findOne({outlet: outlet, program: program}, function (err, checkinmetric){
+		if(err) {
+			console.log(err);
+		}
+		else {
+			checkinmetric = checkinmetric || new CheckinMetric();
+			checkinmetric.outlet = outlet,
+			checkinmetric.program = program._id,
+			checkinmetric.total_checkins = data.TOTAL_CHECKIN_COUNT,
+			checkinmetric.avg_daily_checkins = getAvgCheckin(data.TOTAL_CHECKIN_COUNT, program),
+			checkinmetric.count_by_checkin_type = data.COUNT_BY_CHECKIN_TYPE,
+			checkinmetric.count_by_checkin_location = data.COUNT_BY_CHECKIN_LOCATION,
+			checkinmetric.avg_daily_checkins_by_day_of_week = data.CHECKIN_BY_DAY_OF_WEEK
+			
+			checkinmetric.save(function (err, success) {
+				console.log(err || 'success');
+			})
+		}
+	});
 }
 
 function getCheckinByDayOfWeek(program, outlet, callback) {

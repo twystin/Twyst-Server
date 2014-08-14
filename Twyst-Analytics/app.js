@@ -62,18 +62,22 @@ function runUserMetricInParallel (program, outlet) {
 }
 
 function saveInUserMetric(outlet, program, data) {
-	var obj = {
-		outlet: outlet,
-		program: program,
-		total_users: data.TOTAL_USERS_COUNT,
-		total_users_with_checkins_gt_one: data.TOTAL_USERS_COUNT_WITH_CHECKINS_GT_ONE,
-		cross_visiting_users: data.CROSS_VISITING_USERS
-	}
-
-	var usermetric = new UserMetric(obj);
-	usermetric.save(function (err, data) {
-		console.log(err || 'Success');
-	})
+	UserMetric.findOne({outlet: outlet, program: program}, function (err, usermetric) {
+		if(err) {
+			console.log(err);
+		}
+		else {
+			usermetric = usermetric || new UserMetric();
+			usermetric.outlet = outlet,
+			usermetric.program = program,
+			usermetric.total_users = data.TOTAL_USERS_COUNT,
+			usermetric.total_users_with_checkins_gt_one = data.TOTAL_USERS_COUNT_WITH_CHECKINS_GT_ONE,
+			usermetric.cross_visiting_users = data.CROSS_VISITING_USERS
+			usermetric.save(function (err, data) {
+				console.log(err || 'Success');
+			});
+		}
+	});	
 }
 
 function getTotalUsersCount(program, outlet, callback) {
