@@ -4,6 +4,7 @@ var _ = require('underscore');
 require('./config/config_models')();
 
 var Checkin = mongoose.model('Checkin');
+var BetaUsers = mongoose.model('BetaUsers');
 var Outlet = mongoose.model('Outlet');
 var voucher_gen = require('./voucherGenMistake')
 mongoose.connect('mongodb://localhost/twyst');
@@ -12,39 +13,177 @@ var Voucher = mongoose.model('Voucher');
 
 var Account = mongoose.model('Account');
 
-Outlet.find({}, function (err, outlets) {
-	outlets.forEach(function (o) {
-		var city = o.contact.location.city.toLowerCase();
-		if(city === 'delhi' 
-			|| city === 'gurgaon' 
-			|| city === 'noida' 
-			|| city === 'new delhi') {
-			var url = '/' + 'ncr' + '/' +
-				o.contact.location.locality_2[0] + '/' +
-				o.basics.name + ' ' + o.contact.location.locality_1[0] + ' ' +
-				o.contact.location.city;
-		}
-		else {
-			var url = '/' + o.contact.location.city + '/' + 
-				o.contact.location.locality_2[0] + '/'
-				o.basics.name + ' ' + o.contact.location.locality_1[0];
-		}
-		url = url.replace(/'/g, '');
-		url = url.replace(/& /g, '');
-		url = url.replace(/- /g, '');
-		url = url.replace(/\./g, '');
-		url = url.replace(/!/g, '');
-		url = url.replace(/ /g, '-');
-		o.publicUrl = o.publicUrl || [];
-		o.publicUrl.push(url.toLowerCase());
-		console.log(url)
-		o.save(function (err) {
-			if(err) {
-				console.log(err)
-			}
-		})
-	})
-})
+// CROSS VISITING M/R
+// var o = {};
+// o.query = {checkin_program: "537b648fc1844b7c5400000f"};
+// o.map = function () { 
+// 	emit(this.phone, this.outlet) 
+// }	
+// o.reduce = function (k, values) {
+// 	var unique = [];
+// 	values.forEach (function (v) {
+// 		var flag = 1;
+// 		unique.forEach(function (u){
+// 			if(u.toString() == v.toString()) {
+// 				flag = 0;
+// 			}
+// 		})
+// 		if(flag){
+// 			unique.push(v);
+// 		}
+// 	})
+// 	return unique.length;
+// }
+// o.finalize = function (k, reduced) {
+// 	if(typeof reduced === 'object') {
+// 		return 0;
+// 	}
+// 	return reduced;
+// }
+// o.out = { replace: 'createdCollectionNameForResults' }
+// o.verbose = true;
+// Checkin.mapReduce(o, function (err, model, stats) {
+// 	console.log(err);
+//   console.log('map reduce took %d ms', stats.processtime)
+//   model.find({}, function (err, docs) {
+//   	console.log(docs.length)
+//   	var c = 0;
+//     docs.forEach(function (d) {
+//     	if(d.value > 1) {
+//     		console.log(d)
+//     		c += 1;
+//     	}
+//     })
+//     console.log(c);
+//   });
+// });
+
+// CROSS VISITING USERS Aggregate
+// var d1 = Date.now();
+// Checkin.aggregate({$match: {}},
+// 			{ $group: 
+// 				{ _id: {phone:'$phone',outlet: '$outlet' }, count: { $sum: 1 }}
+// 			}, {
+// 				$match: {
+// 					count: {
+// 						$gt: 1
+// 					}
+// 				}
+// 			}, function (err, op, stats) {
+// 				console.log(d1 - Date.now())
+// 				console.log(stats)
+// 				console.log(op.length)
+// });
+
+// PERCENTAGE OF USERS WITH GREATER THAN 1 CHECKINS Aggregate
+// var d1 = Date.now();
+// Checkin.aggregate({$match: {}},
+// 			{ $group: 
+// 				{ _id: '$phone', count: { $sum: 1 }}
+// 			}, {
+// 				$match: {
+// 					count: {
+// 						$gt: 1
+// 					}
+// 				}
+// 			}, function (err, op, stats) {
+// 				console.log(d1 - Date.now())
+// 				console.log(stats)
+// 				console.log(op.length)
+// });
+
+// PERCENTAGE OF USERS WITH GREATER THAN 1 CHECKINS M/R
+// var o = {};
+// o.map = function () { 
+// 	emit(this.phone, 1) 
+// }
+// o.reduce = function (k, values) { 
+// 	return values.length;
+// }
+// //o.query = {outlet: "530ef84902bc583c21000004"};
+// o.out = { replace: 'createdCollectionNameForResults' }
+// o.verbose = true;
+// Checkin.mapReduce(o, function (err, model, stats) {
+// 	console.log(err);
+//   console.log('map reduce took %d ms', stats.processtime)
+//   model.find({}, function (err, docs) {
+//   	var c = 0;
+//     docs.forEach(function (d) {
+//     	if(d.value > 1) {
+//     		c += 1;
+//     	}
+//     })
+//     console.log(c);
+//   });
+// });
+
+
+// MAP REDUCE FOR THE DAY-WISE CHECKINS
+// var o = {};
+// o.map = function () { 
+// 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+// 	var day;
+// 	day = new Date(this.checkin_date).getDay();
+// 	emit(day, 1) 
+// }
+// o.reduce = function (k, values) { 
+// 	var count = 0;
+// 	values.forEach(function (v) {
+// 		count += v;
+// 	})
+// 	return count;
+// }
+// //o.query = {outlet: "530ef84902bc583c21000004"};
+// o.out = { replace: 'createdCollectionNameForResults' }
+// o.verbose = true;
+// Checkin.mapReduce(o, function (err, model, stats) {
+// 	console.log(err);
+//   console.log('map reduce took %d ms', stats.processtime)
+//   model.find({}, function (err, docs) {
+//     console.log(docs);
+//     var sum = 0;
+//     docs.forEach(function (d) {
+//     	sum += d.value;
+//     })
+//     docs.forEach(function (d) {
+//     	console.log(d._id + ' = ' + (d.value * 100 / sum).toFixed(2) + '%')
+//     })
+//   });
+// });
+
+// Outlet.find({}, function (err, outlets) {
+// 	outlets.forEach(function (o) {
+// 		var city = o.contact.location.city.toLowerCase();
+// 		if(city === 'delhi' 
+// 			|| city === 'gurgaon' 
+// 			|| city === 'noida' 
+// 			|| city === 'new delhi') {
+// 			var url = '/' + 'ncr' + '/' +
+// 				o.contact.location.locality_2[0] + '/' +
+// 				o.basics.name + ' ' + o.contact.location.locality_1[0] + ' ' +
+// 				o.contact.location.city;
+// 		}
+// 		else {
+// 			var url = '/' + o.contact.location.city + '/' + 
+// 				o.contact.location.locality_2[0] + '/'
+// 				o.basics.name + ' ' + o.contact.location.locality_1[0];
+// 		}
+// 		url = url.replace(/'/g, '');
+// 		url = url.replace(/& /g, '');
+// 		url = url.replace(/- /g, '');
+// 		url = url.replace(/\./g, '');
+// 		url = url.replace(/!/g, '');
+// 		url = url.replace(/ /g, '-');
+// 		o.publicUrl = o.publicUrl || [];
+// 		o.publicUrl.push(url.toLowerCase());
+// 		console.log(url)
+// 		o.save(function (err) {
+// 			if(err) {
+// 				console.log(err)
+// 			}
+// 		})
+// 	})
+// })
 
 // Outlet.find({}, function (err, outlets) {
 // 	outlets.forEach(function(o) {
