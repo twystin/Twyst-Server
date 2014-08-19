@@ -159,12 +159,7 @@ module.exports.readByUserPhone = function(req, res) {
         
         function getCount (program) {
             Checkin.count({
-                'phone': {
-                    $in: users.map(
-                                function(item){
-                                    return item.phone; 
-                            })
-                },
+                'phone': phone,
                 'checkin_program': program._id
             }, function (err, count) {
 
