@@ -20,7 +20,7 @@ module.exports.sendEmail = function(to, message){
 
 	var mailOptions = {
         from: 'Jayram Singh <jayram@twyst.in>', // sender address
-        to: 'jayram.chandan@gmail.com, mayankyadav@twyst.in, rc@twyst.in', // list of receivers
+        to: 'jayram.chandan@gmail.com, mayankyadav@twyst.in, rc@twyst.in, al@twyst.in, sanjay@twyst.in, dk@twyst.in', // list of receivers
         subject: 'Contact us email', // Subject line
         text: 'Contact us email.', // plaintext body
         html: msg
