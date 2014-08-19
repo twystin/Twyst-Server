@@ -5,6 +5,7 @@ var _ = require('underscore');
 var CommonUtilities = require('../common/utilities');
 var Reward = require('../models/reward_applicability');
 var SmsSentLog = mongoose.model('SmsSentLog');
+var AutoCheckin = require('./checkins/auto_checkin');
 
 var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";
 
@@ -589,20 +590,27 @@ module.exports.redeemVoucherPanel = function(req,res) {
         voucher.used_details.used_time = CommonUtilities.setCurrentTime(used_time);
         voucher.used_details.used_date = Date.now();
         voucher.save(function (err, voucher) {
-        	if(err) {
+        	if(err) { 
         		res.send(400, {'status': 'error',
 		                       'message': 'We could not redeem your voucher.',
 		                       'info': JSON.stringify(voucher)
 		        });
         	}
         	else {
+                var auto_checkin_obj = {
+                    'phone': voucher.issue_details.issued_to.phone,
+                    'outlet': applicable._id,
+                    'location': 'DINE_IN'
+                };
+                AutoCheckin.autoCheckin(auto_checkin_obj);
                 if(voucher.issue_details &&
                     voucher.issue_details.issued_to && 
                     voucher.issue_details.issued_to.phone) {
                     var date = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
                     var message = 'Voucher code '+ check_voucher.basics.code +' redeemed at '+ applicable.basics.name +' on '+ CommonUtilities.formatDate(new Date()) +' at '+ date.getHours() + ':' + date.getMinutes() +'. Keep checking-in at '+ applicable.basics.name +' on Twyst for more rewards! Click http://twyst.in/download/%23/' + check_voucher.issue_details.issued_to.phone + ' to get Twyst for Android.';
                     responder(voucher.issue_details.issued_to.phone, message);    
-                }
+
+                }   
                 
         		res.send(200, {'status': 'success',
 		                       'message': 'Successfully redeemed voucher.',

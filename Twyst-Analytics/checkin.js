@@ -85,7 +85,7 @@ function getCheckinByDayOfWeek(program, outlet, callback) {
 	var o = {};
 	o.query = {outlet: outlet, checkin_program: program};
 	o.map = function () { 
-		var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		//var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 		var day;
 		day = new Date(this.checkin_date).getDay();
 		emit(day, 1) 

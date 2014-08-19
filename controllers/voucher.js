@@ -4,6 +4,7 @@ var Account = mongoose.model('Account');
 var Program = mongoose.model('Program');
 var Outlet = mongoose.model('Outlet');
 var Checkin = mongoose.model('Checkin');
+var AutoCheckin = require('./checkins/auto_checkin');
 
 var async = require('async');
 
@@ -285,7 +286,8 @@ module.exports.changeStatus  = function (req, res){
 
     function getVoucher (code) {
 
-        Voucher.findOne({'basics.code': code}, function (err, voucher) {
+        Voucher.findOne({'basics.code': code})
+            .populate('issue_details.issued_to').exec(function (err, voucher) {
 
             if(err || voucher === null) {
                 res.send(400, { 'status': 'error',
@@ -295,6 +297,7 @@ module.exports.changeStatus  = function (req, res){
             }
             else {
                 voucher.basics.status = 'merchant redeemed';
+                var redeemed_voucher = voucher;
                 voucher.save(function(err) {
                     if(err) {
                         res.send(400, { 'status': 'error',
@@ -303,6 +306,12 @@ module.exports.changeStatus  = function (req, res){
                         });
                     }
                     else {
+                        var auto_checkin_obj = {
+                            'phone': redeemed_voucher.issue_details.issued_to.phone,
+                            'outlet': redeemed_voucher.used_details.used_at,
+                            'location': 'DINE_IN'
+                        };
+                        AutoCheckin.autoCheckin(auto_checkin_obj);
                         res.send(200, { 'status': 'success',
                                        'message': 'Successfully redeemed Voucher.',
                                        'info': ''

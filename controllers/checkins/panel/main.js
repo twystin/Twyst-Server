@@ -10,7 +10,19 @@ var keygen = require("keygenerator");
 var UserDataCtrl = require('../../user/userDataCtrl');
 
 module.exports.checkin = function(req, res) {
+	initCheckin(req.body, function (success_object) {
+		if(success_object.sms) {
+			SMS.sendSms(req.body.phone, success_object.sms);
+		}
+		responder(success_object.res.statusCode, success_object.res.message);
+	});
 
+	function responder(statusCode, message) {
+		res.send(statusCode, message);
+	}
+};
+
+module.exports.initCheckin = initCheckin =  function(obj, callback) {
 	var checkin = {}, 
 		q = {},
 		history = {},
@@ -18,18 +30,28 @@ module.exports.checkin = function(req, res) {
 		reward = null,
 		user = null,
 		sms = {},
-		voucher = null;		
+		voucher = null;	
+
+	var success = {
+		'checkin': false,
+		'voucher': null,
+		'sms': null,
+		'res': {
+			'statusCode': null,
+			'message': null
+		}
+	};
 
 	sms.checkin = false;
 	sms.reward = false;
 	history.last = null;
 
-	q.phone  = req.body.phone;
-	q.outlet = req.body.outlet;
-	q.batch_user = req.body.batch_user || false;
-	q.message = req.body.message;
+	q.phone  = obj.phone;
+	q.outlet = obj.outlet;
+	q.batch_user = obj.batch_user || false;
+	q.message = obj.message;
 	// Get request body and save in Checkin object.
-	_.extend(checkin, req.body);
+	_.extend(checkin, obj);
 	var current_time = Date.now();
 
 	checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date);
@@ -44,8 +66,9 @@ module.exports.checkin = function(req, res) {
 			getCheckinHistory(q);
 		}
 		else {
-			responder(response.message.program_error.statusCode, 
-				response.message.program_error);
+			success.res.statusCode = response.message.program_error.statusCode;
+			success.res.message = response.message.program_error;
+			callback(success);
 		}
 	});
 
@@ -67,8 +90,9 @@ module.exports.checkin = function(req, res) {
 		if(diff2 < 0) {
 			if(last_checkin_today) {
 				if(last_checkin_today.outlet.equals(q.outlet)) {
-					responder(response.message.six_hours_error.statusCode, 
-						response.message.six_hours_error);
+					success.res.statusCode = response.message.six_hours_error.statusCode;
+					success.res.message = response.message.six_hours_error;
+					callback(success);
 				}
 				else {
 					createCheckin(checkin);
@@ -83,17 +107,18 @@ module.exports.checkin = function(req, res) {
 		}
 		else {
 			if(last_checkin.outlet.equals(q.outlet)) {
-				
-				responder(response.message.six_hours_error.statusCode, 
-					response.message.six_hours_error);
+				success.res.statusCode = response.message.six_hours_error.statusCode;
+				success.res.message = response.message.six_hours_error;
+				callback(success);
 			}
 			else {
 				if(diff > 30 * 60 * 1000) {
 					createCheckin(checkin);
 				}
 				else {
-					responder(response.message.thirty_minutes_error.statusCode, 
-						response.message.thirty_minutes_error);
+					success.res.statusCode = response.message.thirty_minutes_error.statusCode;
+					success.res.message = response.message.thirty_minutes_error;
+					callback(success);
 				}
 			}
 		}
@@ -119,8 +144,9 @@ module.exports.checkin = function(req, res) {
 			}
 			else {
 				// Error in User registeration ()
-				responder(response.message.error.statusCode, 
-						response.message.error);
+				success.res.statusCode = response.message.error.statusCode;
+				success.res.message = response.message.error;
+				callback(success);
 			}
 		});
 	}
@@ -144,8 +170,9 @@ module.exports.checkin = function(req, res) {
 
 		checkin.save(function (err, checkin) {
 			if(err) {
-				responder(response.message.error.statusCode, 
-						response.message.error);
+				success.res.statusCode = response.message.error.statusCode;
+				success.res.message = response.message.error;
+				callback(success);
 			}
 			else {
 				sms.checkin = true;
@@ -154,10 +181,14 @@ module.exports.checkin = function(req, res) {
 					saveVoucher(reward);
 				}
 				else {
-					smsController();
-					response.message.success.message = "User " + q.phone + ' has been checked-in successfully.';
-					responder(response.message.success.statusCode, 
-						response.message.success);
+					smsController(function (sms_msg) {
+						response.message.success.message = "User " + q.phone + ' has been checked-in successfully.';
+						success.res.statusCode = response.message.success.statusCode;
+						success.res.message = response.message.success;
+						success.sms = sms_msg;
+						success.checkin = true;
+						callback(success);
+					});
 				}
 			}
 		});
@@ -170,31 +201,41 @@ module.exports.checkin = function(req, res) {
 		voucher.save(function(err, voucher) {
 			if(err) {
 				sms.checkin = true;
-				smsController();
-				response.message.success.message = "User " + q.phone + ' has been checked-in successfully.';
-				responder(response.message.success.statusCode, 
-						response.message.success);
+				smsController(function (sms_msg) {
+					response.message.success.message = "User " + q.phone + ' has been checked-in successfully.';
+					success.res.statusCode = response.message.success.statusCode;
+					success.res.message = response.message.success;
+					success.sms = sms_msg;
+					success.checkin = true;
+					callback(success);
+				});
 			}
 			else {
 				sms.reward = true;
-				smsController();
-				response.message.success.message = "User "+ q.phone + " has been checked-in successfully. The user has also unlocked a reward.";
-				responder(response.message.success.statusCode, 
-						response.message.success);
+				smsController(function (sms_msg) {
+					response.message.success.message = "User "+ q.phone + " has been checked-in successfully. The user has also unlocked a reward.";
+					success.res.statusCode = response.message.success.statusCode;
+					success.res.message = response.message.success;
+					success.sms = sms_msg;
+					success.checkin = true;
+					success.voucher = voucher;
+					callback(success);
+				});
+				
 			}
 		});
 
 	}
 
-	function smsController() {
+	function smsController(cb) {
 		var outlet = null;
 		Helper.getOutlet(q.outlet, function (o) {
 			if(o) {
 				outlet = o;
-				getMessages();
+				cb(getMessages());
 			}
 			else {
-				console.log("Error here. Outlet not found.")
+				cb(null);
 			}
 		});
 
@@ -221,7 +262,8 @@ module.exports.checkin = function(req, res) {
 			}
 			sms.checkin = false;
 			sms.reward = false;
-			SMS.sendSms(q.phone, message);
+
+			return message;
 		}
 	}
 
@@ -263,10 +305,6 @@ module.exports.checkin = function(req, res) {
 			{forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});
 
 		return voucher;
-	}
-
-	function responder(statusCode, message) {
-		res.send(statusCode, message);
 	}
 
 } 
