@@ -1,9 +1,13 @@
 var _ = require('underscore');
 var dateFormat = require('dateformat');
 
+module.exports.tenDigitPhone = function (phone_number) {
+    return phone_number.substring(phone_number.length-10, phone_number.length);
+};
+
 module.exports.formatDate = function(date) {
     return dateFormat(date, "d mmmm yyyy");
-}
+};
 
 module.exports.calculateDistance = function(a, b) {
 

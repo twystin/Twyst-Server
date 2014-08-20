@@ -46,6 +46,7 @@ module.exports = function (app) {
     })();
 
     (function panel_route() {
+        
         var PanelCtrl = require('../controllers/checkins/panel/main');
         var AllCheckinCtrl = require('../controllers/analytics/checkins');
         var AllVoucherCtrl = require('../controllers/analytics/vouchers');
@@ -243,7 +244,7 @@ module.exports = function (app) {
         var VoucherRedeemCtrl = require('../controllers/voucher_redeem');
         //app.get('/api/v1/vouchers', checkAuthenticated(), VoucherCtrl.query);
         app.get('/api/v1/vouchers/:code/:searchedAt', checkAuthenticated(), checkRole(5), VoucherCtrl.read);
-        app.get('/api/v1/vouchers_by_phone/:phone', checkAuthenticated(), checkRole(5), VoucherCtrl.readByUserPhone);
+        app.get('/api/v1/vouchers_by_phone/:phone/:outlet', checkAuthenticated(), checkRole(5), VoucherCtrl.readByUserPhone);
         app.post('/api/v1/vouchers', checkAuthenticated(), VoucherCtrl.create);
         app.get('/api/v1/vouchers/status/change/:code', checkAuthenticated(), checkRole(5), VoucherCtrl.changeStatus);
         app.post('/api/v1/voucher/sms/redeem', VoucherRedeemCtrl.recieveSmsRedeem);
