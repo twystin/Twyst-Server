@@ -46,6 +46,7 @@ module.exports = function (app) {
     })();
 
     (function panel_route() {
+        
         var PanelCtrl = require('../controllers/checkins/panel/main');
         var AllCheckinCtrl = require('../controllers/analytics/checkins');
         var AllVoucherCtrl = require('../controllers/analytics/vouchers');
