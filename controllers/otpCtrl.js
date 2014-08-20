@@ -3,6 +3,7 @@ var TempOTP = mongoose.model('TempOTP');
 var SmsSentLog = mongoose.model('SmsSentLog');
 var keygen = require("keygenerator");
 var Account = mongoose.model('Account');
+var CommonUtilities = require('../common/utilities');
 
 var _ = require('underscore');
 
@@ -38,6 +39,7 @@ module.exports.getOTP = function (req, res) {
 	}
 
 	function searchOTP(phone) {
+		phone = CommonUtilities.tenDigitPhone(phone);
 		var otp_code = keygen.number({length: 6});
 		var temp = {};
 		temp.otp = otp_code;
@@ -92,6 +94,7 @@ module.exports.updateDeviceId = function (req, res) {
 
 	var otp = req.body.otp;
 	var phone = req.body.phone;
+	phone = CommonUtilities.tenDigitPhone(phone);
 	var device_id = req.body.device_id;
 
 	if(otp && phone && device_id) {

@@ -119,8 +119,16 @@ module.exports = function (app) {
     //Register user and login as well as other auth routes
     (function authentication_routes() {
         var AccountCtrl = require('../controllers/account'),
-            MailerCtrl = require('../controllers/mailer');
-        app.post('/api/v1/auth/login', passport.authenticate('local'), AccountCtrl.login);
+            MailerCtrl = require('../controllers/mailer'),
+            CommonUtilities = require('../common/utilities');
+        app.post('/api/v1/auth/login', function (req, res, next) {
+            var onlyNumbers = /^[0-9+]*$/;
+            if(onlyNumbers.test(req.body.username) && onlyNumbers.test(req.body.password)) {
+                req.body.username = CommonUtilities.tenDigitPhone(req.body.username);
+                req.body.password = CommonUtilities.tenDigitPhone(req.body.password);
+            }
+            next();
+        }, passport.authenticate('local'), AccountCtrl.login);
 
         app.post('/api/v1/auth/register', AccountCtrl.register, MailerCtrl.validationEmail);
         app.get('/api/v1/auth/logout', AccountCtrl.logout);
