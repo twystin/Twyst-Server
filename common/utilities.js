@@ -93,12 +93,11 @@ module.exports.rewardify = function (input) {
 }
 
 module.exports.setCurrentTime = function (oldDate) {
-    console.log(new Date(oldDate))
     if(!oldDate) {
         return new Date();
     }
     // Check if 24 hours difference
-    if(new Date() - new Date(oldDate) > 86399999) {        
+    if(new Date() - new Date(oldDate) > 6 * 60 * 60 * 1000) {        
         return new Date(oldDate);
     }
     else {
