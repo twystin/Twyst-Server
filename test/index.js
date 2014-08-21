@@ -176,7 +176,6 @@ describe('database', function() {
         }
       });
       assert.equal(flag,1,"flag is 1");
-
     });
   });
 });
