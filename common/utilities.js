@@ -93,6 +93,7 @@ module.exports.rewardify = function (input) {
 }
 
 module.exports.setCurrentTime = function (oldDate) {
+    console.log(new Date(oldDate))
     if(!oldDate) {
         return new Date();
     }

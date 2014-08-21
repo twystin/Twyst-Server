@@ -12,6 +12,27 @@ mongoose.connect('mongodb://localhost/twyst');
 var Voucher = mongoose.model('Voucher');
 
 var Account = mongoose.model('Account');
+var Favourite = mongoose.model('Favourite');
+
+Account.find({role: 7}).select({phone:1}).exec(function (err, users) {
+	users.forEach(function (u) {
+		Checkin.find({phone: u.phone}, function (err, checkins) {
+			if(checkins && checkins.length > 0) {
+
+			}
+			else {
+				Favourite.find({account: u._id}, function (err, favs) {
+					if(favs && favs.length > 0) {
+
+					}
+					else {
+						console.log(u.phone)
+					}
+				})
+			}
+		})
+	});
+})
 
 // CROSS VISITING M/R
 // var o = {};
