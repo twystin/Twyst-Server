@@ -164,7 +164,7 @@ describe('database', function() {
     after(function(done){
     });*/
     //test for correct login
-    it('should be able to check for duplicate users', function(done) {
+    /it('should be able to check for duplicate users', function(done) {
       var flag = 0;
       Account.findOne({
         username: 'pnror'
