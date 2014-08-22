@@ -96,7 +96,7 @@ module.exports.setCurrentTime = function (oldDate) {
     if(!oldDate) {
         return new Date();
     }
-    // Check if 24 hours difference
+    // Check if 6 hours difference
     if(new Date() - new Date(oldDate) > 6 * 60 * 60 * 1000) {        
         return new Date(oldDate);
     }

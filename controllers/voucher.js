@@ -243,8 +243,13 @@ module.exports.changeStatus  = function (req, res){
                 });
             }
             else {
+                var auto_checkin_obj = {
+                    'phone': voucher.issue_details.issued_to.phone,
+                    'outlet': voucher.used_details.used_at,
+                    'location': 'DINE_IN'
+                };
+                triggerAutoCheckin(auto_checkin_obj, voucher);
                 voucher.basics.status = 'merchant redeemed';
-                var redeemed_voucher = voucher;
                 voucher.save(function(err) {
                     if(err) {
                         res.send(400, { 'status': 'error',
@@ -253,12 +258,6 @@ module.exports.changeStatus  = function (req, res){
                         });
                     }
                     else {
-                        var auto_checkin_obj = {
-                            'phone': redeemed_voucher.issue_details.issued_to.phone,
-                            'outlet': redeemed_voucher.used_details.used_at,
-                            'location': 'DINE_IN'
-                        };
-                        AutoCheckin.autoCheckin(auto_checkin_obj);
                         res.send(200, { 'status': 'success',
                                        'message': 'Successfully redeemed Voucher.',
                                        'info': ''
@@ -267,6 +266,26 @@ module.exports.changeStatus  = function (req, res){
                 })
             }
         });
+
+        function triggerAutoCheckin(auto_checkin_obj, voucher) {
+            if(voucher.basics.status === 'active') {
+                AutoCheckin.autoCheckin(auto_checkin_obj);    
+            }
+            else if(voucher.basics.status === 'user redeemed'){
+                Checkin.findOne({
+                    phone: auto_checkin_obj.phone,
+                    checkin_program: voucher.issue_details.program,
+                    checkin_date: {
+                        $gt: new Date(new Date(voucher.used_details.used_time) - 3 * 60 * 60 * 1000),
+                        $lt: new Date(new Date(voucher.used_details.used_time) + 3 * 60 * 60 * 1000)
+                    }
+                }, function (err, checkin) {
+                    if(!checkin) {
+                        AutoCheckin.autoCheckin(auto_checkin_obj); 
+                    }
+                })
+            }
+        }
     }
 }
 

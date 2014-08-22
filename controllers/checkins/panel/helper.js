@@ -103,6 +103,7 @@ module.exports.getActiveProgram = function(query, cb) {
 }
 
 module.exports.getApplicableOffer = function (p, c) {
+	
 	var count = Number(c);
     var rewards = [];
     var val = -1;
