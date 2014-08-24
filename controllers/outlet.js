@@ -214,6 +214,7 @@ module.exports.read = function(req,res) {
 
 module.exports.publicview = function(req,res) {
 	var publicUrl = req.params.publicUrl;
+	publicUrl = publicUrl.toLowerCase();
 	Outlet.findOne({publicUrl: publicUrl}, function (err, outlet) {
 		if(err) {
 			res.send(400,  {

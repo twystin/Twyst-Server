@@ -175,20 +175,22 @@ var Favourite = mongoose.model('Favourite');
 Outlet.find({}, function (err, outlets) {
 	outlets.forEach(function (o) {
 		var city = o.contact.location.city.toLowerCase();
-		if(city === 'delhi' 
-			|| city === 'gurgaon' 
-			|| city === 'noida' 
-			|| city === 'new delhi') {
-			var url = '/' + 'ncr' + '/' +
-				o.contact.location.locality_2[0] + '/' +
-				o.basics.name + ' ' + o.contact.location.locality_1[0] + ' ' +
+		// if(city === 'delhi' 
+		// 	|| city === 'gurgaon' 
+		// 	|| city === 'noida' 
+		// 	|| city === 'new delhi') {
+		// 	var url = '/' + 'ncr' + '/' +
+		// 		o.contact.location.locality_2[0] + '/' +
+		// 		o.basics.name + ' ' + o.contact.location.locality_1[0] + ' ' +
+		// 		o.contact.location.city;
+		// }
+		// else {
+		// 	var url = '/' + o.contact.location.city + '/' + 
+		// 		o.contact.location.locality_2[0] + '/'
+		// 		o.basics.name + ' ' + o.contact.location.locality_1[0];
+		// }
+		var url = o.basics.name + ' ' + o.contact.location.locality_1[0] + ' ' +
 				o.contact.location.city;
-		}
-		else {
-			var url = '/' + o.contact.location.city + '/' + 
-				o.contact.location.locality_2[0] + '/'
-				o.basics.name + ' ' + o.contact.location.locality_1[0];
-		}
 		url = url.replace(/'/g, '');
 		url = url.replace(/& /g, '');
 		url = url.replace(/- /g, '');
