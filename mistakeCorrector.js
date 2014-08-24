@@ -14,25 +14,25 @@ var Voucher = mongoose.model('Voucher');
 var Account = mongoose.model('Account');
 var Favourite = mongoose.model('Favourite');
 
-Account.find({role: 7}).select({phone:1}).exec(function (err, users) {
-	users.forEach(function (u) {
-		Checkin.find({phone: u.phone}, function (err, checkins) {
-			if(checkins && checkins.length > 0) {
+// Account.find({role: 7}).select({phone:1}).exec(function (err, users) {
+// 	users.forEach(function (u) {
+// 		Checkin.find({phone: u.phone}, function (err, checkins) {
+// 			if(checkins && checkins.length > 0) {
 
-			}
-			else {
-				Favourite.find({account: u._id}, function (err, favs) {
-					if(favs && favs.length > 0) {
+// 			}
+// 			else {
+// 				Favourite.find({account: u._id}, function (err, favs) {
+// 					if(favs && favs.length > 0) {
 
-					}
-					else {
-						console.log(u.phone)
-					}
-				})
-			}
-		})
-	});
-})
+// 					}
+// 					else {
+// 						console.log(u.phone)
+// 					}
+// 				})
+// 			}
+// 		})
+// 	});
+// })
 
 // CROSS VISITING M/R
 // var o = {};
@@ -172,39 +172,39 @@ Account.find({role: 7}).select({phone:1}).exec(function (err, users) {
 //   });
 // });
 
-// Outlet.find({}, function (err, outlets) {
-// 	outlets.forEach(function (o) {
-// 		var city = o.contact.location.city.toLowerCase();
-// 		if(city === 'delhi' 
-// 			|| city === 'gurgaon' 
-// 			|| city === 'noida' 
-// 			|| city === 'new delhi') {
-// 			var url = '/' + 'ncr' + '/' +
-// 				o.contact.location.locality_2[0] + '/' +
-// 				o.basics.name + ' ' + o.contact.location.locality_1[0] + ' ' +
-// 				o.contact.location.city;
-// 		}
-// 		else {
-// 			var url = '/' + o.contact.location.city + '/' + 
-// 				o.contact.location.locality_2[0] + '/'
-// 				o.basics.name + ' ' + o.contact.location.locality_1[0];
-// 		}
-// 		url = url.replace(/'/g, '');
-// 		url = url.replace(/& /g, '');
-// 		url = url.replace(/- /g, '');
-// 		url = url.replace(/\./g, '');
-// 		url = url.replace(/!/g, '');
-// 		url = url.replace(/ /g, '-');
-// 		o.publicUrl = o.publicUrl || [];
-// 		o.publicUrl.push(url.toLowerCase());
-// 		console.log(url)
-// 		o.save(function (err) {
-// 			if(err) {
-// 				console.log(err)
-// 			}
-// 		})
-// 	})
-// })
+Outlet.find({}, function (err, outlets) {
+	outlets.forEach(function (o) {
+		var city = o.contact.location.city.toLowerCase();
+		if(city === 'delhi' 
+			|| city === 'gurgaon' 
+			|| city === 'noida' 
+			|| city === 'new delhi') {
+			var url = '/' + 'ncr' + '/' +
+				o.contact.location.locality_2[0] + '/' +
+				o.basics.name + ' ' + o.contact.location.locality_1[0] + ' ' +
+				o.contact.location.city;
+		}
+		else {
+			var url = '/' + o.contact.location.city + '/' + 
+				o.contact.location.locality_2[0] + '/'
+				o.basics.name + ' ' + o.contact.location.locality_1[0];
+		}
+		url = url.replace(/'/g, '');
+		url = url.replace(/& /g, '');
+		url = url.replace(/- /g, '');
+		url = url.replace(/\./g, '');
+		url = url.replace(/!/g, '');
+		url = url.replace(/ /g, '-');
+		o.publicUrl = o.publicUrl || [];
+		o.publicUrl.push(url.toLowerCase());
+		console.log(url)
+		o.save(function (err) {
+			if(err) {
+				console.log(err)
+			}
+		})
+	})
+})
 
 // Outlet.find({}, function (err, outlets) {
 // 	outlets.forEach(function(o) {
@@ -219,8 +219,8 @@ Account.find({role: 7}).select({phone:1}).exec(function (err, users) {
 
 // Checkin.find({'outlet': '530ef84902bc583c21000004',
 // 				'created_date': {
-// 						$gte: new Date(2014, 4, 24),
-// 						$lte: new Date(2014, 7, 3)
+// 						$gte: new Date(2014, 7, 4),
+// 						$lte: new Date(2014, 7, 21)
 // 				},
 // 				'checkin_type': 'QR'
 // 	}, function (err, checkins) {
