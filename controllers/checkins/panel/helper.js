@@ -66,8 +66,6 @@ module.exports.getCheckinHistory = function(query, cb) {
 		};
 		upper = upper || new Date();
 		lower = lower || new Date(new Date().getTime() - (6 * 60 * 60 * 1000));
-		console.log(upper)
-		console.log(lower)
 		Checkin.findOne({
 				phone: query.phone,
 				created_date: {
