@@ -60,11 +60,19 @@ module.exports.getCheckinHistory = function(query, cb) {
 	}
 
 	function getLastCheckinToday(query, callback) {
+		if(query.checkin_time) {
+			var upper = new Date(query.checkin_time.getTime() + (30 * 60 * 1000));
+			var lower = new Date(query.checkin_time.getTime() - (6 * 60 * 60 * 1000));
+		};
+		upper = upper || new Date();
+		lower = lower || new Date(new Date().getTime() - (6 * 60 * 60 * 1000));
+		console.log(upper)
+		console.log(lower)
 		Checkin.findOne({
 				phone: query.phone,
 				created_date: {
-					$gt: new Date(query.checkin_time - 21600000),
-					$lt: new Date(query.checkin_time)
+					$gt: lower,
+					$lt: upper
 				}
 			}, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
 
