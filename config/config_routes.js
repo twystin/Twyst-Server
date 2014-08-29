@@ -263,6 +263,15 @@ module.exports = function (app) {
     })();
 
 
+    (function reports_routes() {
+        var UserMetric = require('../Twyst-Analytics/controllers/users');
+        var CheckinMetric = require('../Twyst-Analytics/controllers/checkins');
+        var RedeemMetric = require('../Twyst-Analytics/controllers/redeems');
+        app.get('/api/v2/analytics/users/:program/:outlet', UserMetric.getUserMetric);
+        app.get('/api/v2/analytics/checkins/:program/:outlet', CheckinMetric.getCheckinMetric);
+        app.get('/api/v2/analytics/redeems/:program/:outlet', RedeemMetric.getRedeemMetric);
+    })();
+
     // Analytics route
     (function analytics_routes () {
         var AnalyticsCtrl = require('../controllers/analytics/analytics');

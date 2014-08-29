@@ -80,18 +80,37 @@ var Favourite = mongoose.model('Favourite');
 // });
 
 //CROSS VISITING USERS Aggregate
+// var d1 = Date.now();
+// Checkin.aggregate({$match: {checkin_program: mongoose.Types.ObjectId("537b648fc1844b7c5400000f")}},
+// 			{ $group: { 
+// 					_id: {
+// 						phone:'$phone'
+// 					}, 
+// 					unique_outlets: { 
+// 						$addToSet: '$outlet' 
+// 					},
+// 					outlets: {
+// 						$push: '$outlet'
+// 					}
+// 				}
+// 			}, function (err, op) {
+// 				console.log(op.length)
+// });
 var d1 = Date.now();
 Checkin.aggregate({$match: {checkin_program: mongoose.Types.ObjectId("537b648fc1844b7c5400000f")}},
 			{ $group: 
-				{ _id: {phone:'$phone'}, outlets: { $addToSet: '$outlet' }}
-			}, function (err, op) {
-				
-				console.log(d1 - Date.now());
-				console.log(op.length)
+				{ _id: '$phone', count: { $sum: 1 }}
+			}, {
+				$group: {
+					_id: '$count', num: { $sum: 1}
+				}
+			}, function (err, op, stats) {
+				console.log(d1- Date.now())
+				console.log(op)
 });
 
 // PERCENTAGE OF USERS WITH GREATER THAN 1 CHECKINS Aggregate
-// var d1 = Date.now();
+// vaw(r d1 = Date.no);
 // Checkin.aggregate({$match: {}},
 // 			{ $group: 
 // 				{ _id: '$phone', count: { $sum: 1 }}
