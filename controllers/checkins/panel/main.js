@@ -112,7 +112,7 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				callback(success);
 			}
 			else {
-				if(diff > 30 * 60 * 1000) {
+				if(diff > 5 * 60 * 1000) {
 					createCheckin(checkin);
 				}
 				else {
