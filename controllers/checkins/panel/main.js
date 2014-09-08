@@ -249,19 +249,26 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				message = message.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
 			}
 			else if(sms.checkin && sms.reward && isNewUser()) {
-				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff on your NEXT VISIT. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff on your NEXT VISIT.';
 			}
 			else if(sms.checkin && sms.reward && !isNewUser()) {
-				message = 'Reward unlocked at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', ' +  Helper.getTOD(reward.reward_applicability.time_of_day) + ', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff on your NEXT VISIT. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+				message = 'Reward unlocked at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', ' +  Helper.getTOD(reward.reward_applicability.time_of_day) + ', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff on your NEXT VISIT.';
 			}
 			else if(sms.checkin && !isNewUser()) {
-				message = 'You have checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-ins away from your next reward. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+				message = 'You have checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-ins away from your next reward.';
 			}
 			else if(sms.checkin && isNewUser()) {
-				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +'. Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +'.';
 			}
 			sms.checkin = false;
 			sms.reward = false;
+			console.log(outlet.contact.location.locality_1[0].toLowerCase())
+			if(outlet.contact.location.locality_1[0].toLowerCase() === 'huda city centre metro station') {
+				message += ' Take part in the Metro Park Foodie Challenge, weekly meal vouchers worth up to Rs 1500 up for grabs! Click http://twyst.in/metropark for more.';
+			}
+			else {
+				message += ' Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+			}
 
 			return message;
 		}

@@ -6,6 +6,7 @@ var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&pass
 
 var http = require('http');
 http.post = require('http-post');
+var SMS = require('../common/smsSender');
 
 module.exports.getApp = function(req, res) {
 	var phone = req.query.mobile_number;
@@ -33,13 +34,9 @@ module.exports.getApp = function(req, res) {
 
 function sendAppDownloadSMS(mobile, merchant) {
 	var merchant = merchant || '';
-	var message = "Thanks, please click on the link to get Twyst on your Android phone: http://twyst.in/download/%23/" + mobile + '/' + merchant + ". The Twyst app will be available for other smartphones soon.";
+	var message = "Thanks for your interest. Please click on http://twyst.in/metropark to sign up for the Metro Park Foodie Challenge on Twyst!";
 	
-	var send_sms_url = sms_push_url + mobile + "&from=TWYSTR&udh=0&text=" + message;
-	
-	http.post(send_sms_url, function(res){
-		console.log(res);
-	});
+	SMS.sendSms(mobile, message);
 }
 
 function assembleLog(phone, sms_text, date_time, operator, circle, merchant) {
@@ -62,7 +59,7 @@ function createLog (created_log) {
 		if (err) {
 			
 		} else {
-			
+			console.log("Message logged.");
 		}				
 	});
 }
