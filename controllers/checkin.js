@@ -701,7 +701,7 @@ function responder(checkin, offer, program, res) {
 			});
 		}
 		else {
-			triggerSmsForMetro(checkin_object.phone, outlet);
+			triggerSmsForMetro(checkin.phone, outlet);
 			checkin_object.outlet = outlet;
 			checkin_object.offer = offer;
             checkin_object.program = program;
