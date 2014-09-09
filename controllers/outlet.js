@@ -9,6 +9,40 @@ var async = require('async');
 var TagCtrl = require('../controllers/tag');
 var CommonUtilities = require('../common/utilities');
 
+module.exports.get = function (req, res) {
+	console.log(getQuery())
+	Outlet.find(getQuery(), function (err, outlets) {
+		if(err) {
+			res.send(400, {
+				'status': 'error',
+				'message': 'Error getting outlets',
+				'info': err
+			});
+		}
+		else {
+			res.send(200, {
+				'status': 'success',
+				'message': 'Successfully got outlets',
+				'info': outlets
+			});
+		}
+	})
+
+	function getQuery() {
+		var status = req.query.status;
+		var q = {
+			'outlet_meta.accounts': req.user._id
+		};
+		if(!status || status === 'ALL') {
+			q['outlet_meta.status'] = {'$ne': 'draft'};
+		}
+		else {
+			q['outlet_meta.status'] = status;
+		}
+		return q;
+	}
+}
+
 module.exports.getCount = function (req, res) {
 	Outlet.count({'outlet_meta.accounts': req.params.user_id}, function (err, count) {
 		if(err) {

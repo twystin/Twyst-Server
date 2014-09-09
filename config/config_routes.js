@@ -212,6 +212,7 @@ module.exports = function (app) {
     //Outlet CRUD routes
     (function outlet_routes() {
         var OutletCtrl = require('../controllers/outlet');
+        app.get('/api/v2/outlets', checkAuthenticated(), checkRole(5), OutletCtrl.get);
         app.get('/api/v1/outlets/count/:user_id', checkAuthenticated(), checkRole(5), OutletCtrl.getCount);
         app.get('/api/v1/outlets/programs/:outlet_id', OutletCtrl.getOffersForOutlet);
         app.get('/api/v1/outlets/:user_id', checkAuthenticated(), checkRole(5), OutletCtrl.query);
@@ -234,6 +235,7 @@ module.exports = function (app) {
     //Program CRUD routes
     (function program_routes() {
         var ProgramCtrl = require('../controllers/program');
+        app.get('/api/v2/programs', checkAuthenticated(), checkRole(5), ProgramCtrl.get);
         app.get('/api/v1/programs/count/:user_id', checkAuthenticated(), checkRole(5), ProgramCtrl.getCount);
         app.get('/api/v1/programs/offer/:offer_id', checkAuthenticated(), checkRole(4), ProgramCtrl.getProgramByOffer);
         app.get('/api/v1/programs/:user_id', checkAuthenticated(), checkRole(5), ProgramCtrl.query);

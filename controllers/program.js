@@ -11,6 +11,40 @@ var program = {};
 var errs = [];
 program.tiers = [];
 
+module.exports.get = function (req, res) {
+	
+	Program.find(getQuery(), function (err, programs) {
+		if(err) {
+			res.send(400, {
+				'status': 'error',
+				'message': 'Error getting programs',
+				'info': err
+			});
+		}
+		else {
+			res.send(200, {
+				'status': 'success',
+				'message': 'Successfully got programs',
+				'info': programs
+			});
+		}
+	})
+
+	function getQuery() {
+		var status = req.query.status;
+		var q = {
+			'accounts': req.user._id
+		};
+		if(!status || status === 'ALL') {
+			q.status = {'$ne': 'draft'};
+		}
+		else {
+			q.status = status;
+		}
+		return q;
+	}
+}
+
 
 module.exports.getCount = function (req, res) {
 	Program.count({'accounts': req.params.user_id}, function (err, count) {
