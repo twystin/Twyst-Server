@@ -96,18 +96,18 @@ var Favourite = mongoose.model('Favourite');
 // 			}, function (err, op) {
 // 				console.log(op.length)
 // });
-var d1 = Date.now();
-Checkin.aggregate({$match: {checkin_program: mongoose.Types.ObjectId("537b648fc1844b7c5400000f")}},
-			{ $group: 
-				{ _id: '$phone', count: { $sum: 1 }}
-			}, {
-				$group: {
-					_id: '$count', num: { $sum: 1}
-				}
-			}, function (err, op, stats) {
-				console.log(d1- Date.now())
-				console.log(op)
-});
+// var d1 = Date.now();
+// Checkin.aggregate({$match: {checkin_program: mongoose.Types.ObjectId("537b648fc1844b7c5400000f")}},
+// 			{ $group: 
+// 				{ _id: '$phone', count: { $sum: 1 }}
+// 			}, {
+// 				$group: {
+// 					_id: '$count', num: { $sum: 1}
+// 				}
+// 			}, function (err, op, stats) {
+// 				console.log(d1- Date.now())
+// 				console.log(op)
+// });
 
 // PERCENTAGE OF USERS WITH GREATER THAN 1 CHECKINS Aggregate
 // vaw(r d1 = Date.no);
@@ -232,34 +232,34 @@ Checkin.aggregate({$match: {checkin_program: mongoose.Types.ObjectId("537b648fc1
 // 	})
 // })
 
-// Checkin.find({'outlet': '530ef84902bc583c21000004',
-// 				'created_date': {
-// 						$gte: new Date(2014, 7, 4),
-// 						$lte: new Date(2014, 7, 21)
-// 				},
-// 				'checkin_type': 'QR'
-// 	}, function (err, checkins) {
-// 		checkins = _.uniq(checkins, function (ch) {
-// 			return ch.phone;
-// 		});
-// 		var distinct_checkins = checkins.length;
-// 		hasPrevCheckins();
-// 		function hasPrevCheckins () {
-// 			checkins.forEach(function (ch) {
-// 				Checkin.findOne({
-// 					phone: ch.phone,
-// 					created_date: {
-// 						$lt: new Date(ch.created_date)
-// 					}
-// 				}, function (err, checkin) {
-// 					if(checkin) {
-// 						--distinct_checkins;
-// 					}
-// 					console.log(distinct_checkins)
-// 				})
-// 			})
-// 		}
-// })
+Checkin.find({'outlet': '531b2a86fada152b630002b4',
+				'created_date': {
+						$gte: new Date(2014, 7, 8),
+						$lte: new Date(2014, 8, 7)
+				},
+				'checkin_type': 'QR'
+	}, function (err, checkins) {
+		checkins = _.uniq(checkins, function (ch) {
+			return ch.phone;
+		});
+		var distinct_checkins = checkins.length;
+		hasPrevCheckins();
+		function hasPrevCheckins () {
+			checkins.forEach(function (ch) {
+				Checkin.findOne({
+					phone: ch.phone,
+					created_date: {
+						$lt: new Date(ch.created_date)
+					}
+				}, function (err, checkin) {
+					if(checkin) {
+						--distinct_checkins;
+					}
+					console.log(distinct_checkins)
+				})
+			})
+		}
+})
 
 // Voucher.find({}).select('gen_type').exec(function (err, vouchers) {
 // 	console.log(vouchers.length)

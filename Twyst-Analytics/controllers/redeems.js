@@ -23,7 +23,7 @@ module.exports.getRedeemMetric = function (req, res) {
 				q = {
 					'basics.status': 'merchant redeemed',
 					'issue_details.program' : mongoose.Types.ObjectId(req.params.program),
-					'issue_details.issued_at': mongoose.Types.ObjectId(req.params.outlet)
+					'used_details.used_at': mongoose.Types.ObjectId(req.params.outlet)
 				}
 			}
 			else {
