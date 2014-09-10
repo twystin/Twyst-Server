@@ -6,6 +6,7 @@ var Checkin = mongoose.model('Checkin');
 var Program = mongoose.model('Program');
 
 var _ = require('underscore');
+var dateFormat = require('dateFormat');
 
 module.exports.getCheckinMetric = function (req, res) {
 	var q = getQueryObject();
@@ -140,12 +141,14 @@ module.exports.getCheckinMetric = function (req, res) {
 		});
 
 		function assembleResult (op) {
+
 			if(!op || op.length < 1) {
 				return [];
 			}
 
 			op.forEach(function (o) {
 				o.actual_date = new Date(o._id.year, o._id.month - 1, o._id.dayOfMonth);
+				o.actual_date = dateFormat(o.actual_date, "yyyy-m-dd");
 				delete o._id;
 			});
 			op = _.sortBy(op, function(o) {

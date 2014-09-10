@@ -6,6 +6,7 @@ var Voucher = mongoose.model('Voucher');
 var Program = mongoose.model('Program');
 
 var _ = require('underscore');
+var dateFormat = require('dateFormat');
 
 module.exports.getRedeemMetric = function (req, res) {
 	var q = getQueryObject();
@@ -107,6 +108,7 @@ module.exports.getRedeemMetric = function (req, res) {
 
 			op.forEach(function (o) {
 				o.actual_date = new Date(o._id.year, o._id.month - 1, o._id.dayOfMonth);
+				o.actual_date = dateFormat(o.actual_date, "yyyy-m-dd");
 				delete o._id;
 			});
 			op = _.sortBy(op, function(o) {
