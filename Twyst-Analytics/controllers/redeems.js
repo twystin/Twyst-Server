@@ -106,7 +106,7 @@ module.exports.getRedeemMetric = function (req, res) {
 			}
 
 			op.forEach(function (o) {
-				o.actual_date = new Date(o._id.year, o._id.month, o._id.dayOfMonth);
+				o.actual_date = new Date(o._id.year, o._id.month - 1, o._id.dayOfMonth);
 				delete o._id;
 			});
 			op = _.sortBy(op, function(o) {

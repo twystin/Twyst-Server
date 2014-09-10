@@ -51,7 +51,7 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 	q.batch_user = obj.batch_user || false;
 	q.message = obj.message;
 	// Get request body and save in Checkin object.
-	_.extend(checkin, obj);
+	checkin = _.extend(checkin, obj);
 	var current_time = Date.now();
 
 	checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date);
