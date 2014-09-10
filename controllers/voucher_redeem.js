@@ -600,7 +600,8 @@ module.exports.redeemVoucherPanel = function(req,res) {
                 var auto_checkin_obj = {
                     'phone': voucher.issue_details.issued_to.phone,
                     'outlet': applicable._id,
-                    'location': 'DINE_IN'
+                    'location': 'DINE_IN',
+                    'created_date': voucher.used_details.used_time
                 };
                 AutoCheckin.autoCheckin(auto_checkin_obj);
                 if(voucher.issue_details &&
