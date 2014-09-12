@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+/*var mongoose = require('mongoose');
 
 var async = require('async');
 
@@ -117,4 +117,4 @@ module.exports.getRedeemMetric = function (req, res) {
 			return op;
 		}
 	}
-}
+}*/

@@ -1,4 +1,4 @@
-var mongoose = require('mongoose');
+/*var mongoose = require('mongoose');
 
 var async = require('async');
 
@@ -157,4 +157,4 @@ module.exports.getCheckinMetric = function (req, res) {
 			return op;
 		}
 	}
-}	
+}	*/
