@@ -6,7 +6,7 @@ var Voucher = mongoose.model('Voucher');
 var Program = mongoose.model('Program');
 
 var _ = require('underscore');
-var dateFormat = require('dateFormat');
+var dateFormat = require('dateformat');
 
 module.exports.getRedeemMetric = function (req, res) {
 	var q = getQueryObject();
