@@ -4,7 +4,8 @@ var M = require('mstring')
 
 var phones_data = M(function(){
   /***
-9999400013
+9871303236
+9871303236
 ***/});
 phones_data = phones_data.split(/\n/);
 
@@ -27,13 +28,13 @@ phones.forEach(function (phone) {
 
 function httpCheckin (phone) {
 	console.log(phone)
-	http.post('http://twyst.in/api/v2/checkins', {
+	http.post('http://localhost:3000/api/v2/batch_checkins', {
 		phone: phone,
-        outlet: "530ef9f502bc583c21000010",
+        outlet: "540ea3d32f61834b5170eb10",
         location: 'DINE_IN',
         created_date: new Date(),
         batch_user: true,
-        message: "We love having you over at the Joint Cafe! Catch the amazing PARK JAZZ QUARTET (Prannai, Abhinav, Rohit and Kartikeya) LIVE from 9 PM onwards tonight (14 Aug). AND courtesy a free check-in to our rewards program on Twyst, get 10% OFF on your bill by showing this voucher code xxxxxx - just for tonight!"
+        message: "We love serving you at Beyond Breads! As a small way of saying thanks, we've enrolled you into our new rewards program on Twyst. Get 15% off on your next order (delivery 5pm-11pm). Mention your voucher code xxxxxx when you call. Order now!"
 	},
 	function(res){
 		console.log(res.statusCode);
