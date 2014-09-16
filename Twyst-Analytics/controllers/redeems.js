@@ -118,3 +118,105 @@ module.exports.getRedeemMetric = function (req, res) {
 		}
 	}
 }
+
+module.exports.getRedeemData = function (req, res) {
+
+	if(!req.body.programs || (req.body.programs.length === 0)) {
+		res.send(400, {
+        	'status': 'error',
+        	'message': 'Error in request.',
+        	'info': ''
+        });
+	}
+	else {
+		getUsersByDate();
+	}
+	
+	function getMatchObject() {
+		var q = {};
+		if(req.body.outlets && req.body.outlet.length > 0) {
+			q = {
+				'issue_details.program' : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				},
+				'issue_details.issued_at': {
+					$in: req.body.outlets.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				}
+			}
+		}
+		else {
+			q = {
+				'issue_details.program' : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				}
+			}
+		}
+		return q;
+	}
+
+	function getUsersByDayOfWeek() {
+		var q = getMatchObject();
+		q['basics.status'] = 'merchant redeemed';
+		Voucher.aggregate({$match: q},
+				{
+					$project: {
+						_id: '$issue_details.issued_to',
+						dayOfWeek: { $dayOfWeek: "$basics.created_at" }
+					}
+				}, {
+					$match: {
+						'dayOfWeek': req.body.day
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
+		});
+	}
+
+	function getUsersByDate () {
+		var q = getMatchObject();
+		q['basics.status'] = 'merchant redeemed';
+		q['basics.created_at'] = {$gt: new Date(req.body.date), $lt: new Date(req.body.date * 1 + 24*60*60*1000)};
+		Voucher.aggregate({$match: q},
+					{ $group: { 
+						_id: '$issue_details.issued_to', 
+						count: { $sum: 1 }}
+					}, function (err, op) {
+						if(err) {
+							res.send(400, {
+					        	'status': 'success',
+					        	'message': 'Error getting data.',
+					        	'info': err
+					        });
+						}
+						else {
+							res.send(200, {
+					        	'status': 'success',
+					        	'message': 'Got data successfully.',
+					        	'info': op
+					        });
+						}
+		});
+	}
+}
