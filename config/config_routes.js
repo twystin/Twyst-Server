@@ -274,7 +274,7 @@ module.exports = function (app) {
         app.get('/api/v2/analytics_summary/checkins/:program/:outlet', CheckinMetric.getCheckinMetric);
         app.get('/api/v2/analytics_summary/redeems/:program/:outlet', RedeemMetric.getRedeemMetric);
         app.post('/api/v2/analytics_data/users', UserMetric.getUserData);
-        //app.post('/api/v2/analytics_data/checkins', CheckinMetric.getCheckinData);
+        app.post('/api/v2/analytics_data/checkins', CheckinMetric.getCheckinData);
         //app.post('/api/v2/analytics_data/redeems', RedeemMetric.getRedeemData);
     })();
 

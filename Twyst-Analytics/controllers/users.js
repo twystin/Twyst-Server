@@ -152,9 +152,7 @@ module.exports.getUserData = function (req, res) {
 	function getUniqueUsers() {
 		Checkin.aggregate({$match: getMatchObject()},
 				{ $group: { 
-						_id: {
-							phone:'$phone'
-						},
+						_id: '$phone',
 						outlets: {
 							$push: '$outlet'
 						}
@@ -180,9 +178,7 @@ module.exports.getUserData = function (req, res) {
 	function getUsersWithGtOneCheckins() {
 		Checkin.aggregate({$match: getMatchObject()},
 				{ $group: { 
-						_id: {
-							phone:'$phone'
-						},
+						_id: '$phone',
 						outlets: {
 							$push: '$outlet'
 						}
@@ -218,9 +214,7 @@ module.exports.getUserData = function (req, res) {
 	function getCrossVisitingUsers() {
 		Checkin.aggregate({$match: getMatchObject()},
 				{ $group: { 
-						_id: {
-							phone:'$phone'
-						}, 
+						_id: '$phone', 
 						unique_outlets: { 
 							$addToSet: '$outlet' 
 						}
