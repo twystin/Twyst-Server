@@ -122,6 +122,10 @@ module.exports.getRedeemMetric = function (req, res) {
 
 module.exports.getRedeemData = function (req, res) {
 
+	var functions = {
+		'date': getUsersByDate(),
+		'week': getUsersByDayOfWeek()
+	};
 	if(!req.body.programs || (req.body.programs.length === 0)) {
 		res.send(400, {
         	'status': 'error',
@@ -130,7 +134,7 @@ module.exports.getRedeemData = function (req, res) {
         });
 	}
 	else {
-		getUsersByDate();
+		functions['data_type'];
 	}
 	
 	function getMatchObject() {
