@@ -270,9 +270,12 @@ module.exports = function (app) {
         var UserMetric = require('../Twyst-Analytics/controllers/users');
         var CheckinMetric = require('../Twyst-Analytics/controllers/checkins');
         var RedeemMetric = require('../Twyst-Analytics/controllers/redeems');
-        app.get('/api/v2/analytics/users/:program/:outlet', UserMetric.getUserMetric);
-        app.get('/api/v2/analytics/checkins/:program/:outlet', CheckinMetric.getCheckinMetric);
-        app.get('/api/v2/analytics/redeems/:program/:outlet', RedeemMetric.getRedeemMetric);
+        app.get('/api/v2/analytics_summary/users/:program/:outlet', UserMetric.getUserMetric);
+        app.get('/api/v2/analytics_summary/checkins/:program/:outlet', CheckinMetric.getCheckinMetric);
+        app.get('/api/v2/analytics_summary/redeems/:program/:outlet', RedeemMetric.getRedeemMetric);
+        app.post('/api/v2/analytics_data/users', UserMetric.getUserData);
+        //app.post('/api/v2/analytics_data/checkins', CheckinMetric.getCheckinData);
+        //app.post('/api/v2/analytics_data/redeems', RedeemMetric.getRedeemData);
     })();
 
     // Analytics route

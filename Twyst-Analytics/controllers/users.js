@@ -104,3 +104,152 @@ module.exports.getUserMetric = function (req, res) {
 		});
 	}
 }
+
+module.exports.getUserData = function (req, res) {
+
+	if(!req.body.programs || (req.body.programs.length === 0)) {
+		res.send(400, {
+        	'status': 'error',
+        	'message': 'Error in request.',
+        	'info': ''
+        });
+	}
+	else {
+		getCrossVisitingUsers();
+	}
+	
+	function getMatchObject() {
+		var q = {};
+		if(req.body.outlets && req.body.outlet.length > 0) {
+			q = {
+				checkin_program : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				},
+				outlet: {
+					$in: req.body.outlets.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				}
+			}
+		}
+		else {
+			q = {
+				checkin_program : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				}
+			}
+		}
+		return q;
+	}
+
+	function getUniqueUsers() {
+		Checkin.aggregate({$match: getMatchObject()},
+				{ $group: { 
+						_id: {
+							phone:'$phone'
+						},
+						outlets: {
+							$push: '$outlet'
+						}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
+		});
+	}
+
+	function getUsersWithGtOneCheckins() {
+		Checkin.aggregate({$match: getMatchObject()},
+				{ $group: { 
+						_id: {
+							phone:'$phone'
+						},
+						outlets: {
+							$push: '$outlet'
+						}
+					}
+				}, {
+					$project: {
+			            numofOutletsChecked: { $size: "$outlets" }
+			         }
+				}, {
+					$match: {
+						numofOutletsChecked: {
+							$gt: 1
+						}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
+		});
+	}
+
+	function getCrossVisitingUsers() {
+		Checkin.aggregate({$match: getMatchObject()},
+				{ $group: { 
+						_id: {
+							phone:'$phone'
+						}, 
+						unique_outlets: { 
+							$addToSet: '$outlet' 
+						}
+					}
+				}, {
+					$project: {
+			            numofOutletsChecked: { $size: "$unique_outlets" }
+			         }
+				}, {
+					$match: {
+						numofOutletsChecked: {
+							$gt: 1
+						}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
+		});
+	}
+}

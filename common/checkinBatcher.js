@@ -7373,7 +7373,7 @@ phones.forEach(function (phone) {
 	setTimeout(function() {
 		//console.log(phone)
 		httpCheckin(phone);
-	}, i * 1000);
+	}, i * 500);
 })
 
 function httpCheckin (phone) {
