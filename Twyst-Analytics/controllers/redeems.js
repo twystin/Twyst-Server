@@ -4,6 +4,7 @@ var async = require('async');
 
 var Voucher = mongoose.model('Voucher');
 var Program = mongoose.model('Program');
+var Account = mongoose.model('Account');
 
 var _ = require('underscore');
 var dateFormat = require('dateformat');
@@ -185,11 +186,13 @@ module.exports.getRedeemData = function (req, res) {
 				        });
 					}
 					else {
-						res.send(200, {
-				        	'status': 'success',
-				        	'message': 'Got data successfully.',
-				        	'info': op
-				        });
+						populateAccounts(op, function (users) {
+							res.send(200, {
+					        	'status': 'success',
+					        	'message': 'Got data successfully.',
+					        	'info': users
+					        });
+						})
 					}
 		});
 	}
@@ -211,12 +214,28 @@ module.exports.getRedeemData = function (req, res) {
 					        });
 						}
 						else {
-							res.send(200, {
-					        	'status': 'success',
-					        	'message': 'Got data successfully.',
-					        	'info': op
-					        });
+							populateAccounts(op, function (users) {
+								res.send(200, {
+						        	'status': 'success',
+						        	'message': 'Got data successfully.',
+						        	'info': users
+						        });
+							})
 						}
 		});
+	}
+
+	function populateAccounts (op, cb) {
+		if(!op || op.length === 0) {
+			cb([]);
+		}
+		else {
+			Account.find({_id: { $in: op.map(
+						function(o){
+							return o._id;
+					})}}).select('phone').exec(function (err, users) {
+						cb(users || []);
+			})
+		}
 	}
 }
