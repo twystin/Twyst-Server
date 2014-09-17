@@ -108,9 +108,9 @@ module.exports.getUserMetric = function (req, res) {
 module.exports.getUserData = function (req, res) {
 
 	var functions = {
-		'unique': getUniqueUsers(),
-		'cross': getCrossVisitingUsers(),
-		'multiple': getUsersWithGtOneCheckins()
+		'unique': getUniqueUsers,
+		'cross': getCrossVisitingUsers,
+		'multiple': getUsersWithGtOneCheckins
 	}
 
 	if(!req.body.programs || (req.body.programs.length === 0)) {
@@ -121,7 +121,7 @@ module.exports.getUserData = function (req, res) {
         });
 	}
 	else {
-		functions[req.body.data_type];
+		functions[req.body.data_type]();
 	}
 	
 	function getMatchObject() {

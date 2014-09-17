@@ -162,10 +162,10 @@ module.exports.getCheckinMetric = function (req, res) {
 module.exports.getCheckinData = function (req, res) {
 
 	var functions = {
-		'date': getUsersByDate(),
-		'week': getUsersByDayOfWeek(),
-		'mode': getUsersByMode(),
-		'location': getUsersByLocation()
+		'date': getUsersByDate,
+		'week': getUsersByDayOfWeek,
+		'mode': getUsersByMode,
+		'location': getUsersByLocation
 	};
 	if(!req.body.programs || (req.body.programs.length === 0)) {
 		res.send(400, {
@@ -175,7 +175,7 @@ module.exports.getCheckinData = function (req, res) {
         });
 	}
 	else {
-		functions['data_type'];
+		functions[req.body.data_type]();
 	}
 	
 	function getMatchObject() {
