@@ -110,7 +110,8 @@ module.exports.getUserData = function (req, res) {
 	var functions = {
 		'unique': getUniqueUsers,
 		'cross': getCrossVisitingUsers,
-		'multiple': getUsersWithGtOneCheckins
+		'multiple': getUsersWithGtOneCheckins,
+		'checkin_number': getUserByCheckinNumber 
 	}
 
 	if(!req.body.programs || (req.body.programs.length === 0)) {
@@ -153,6 +154,36 @@ module.exports.getUserData = function (req, res) {
 			}
 		}
 		return q;
+	}
+
+	function getUserByCheckinNumber () {
+		Checkin.aggregate({$match: getMatchObject()},
+				{ $group: { 
+						_id: '$phone',
+						count: {$sum: 1}
+					}
+				}, {
+					$match: {
+						count: {
+							$eq: req.body.checkin_count
+						}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
+		});
 	}
 
 	function getUniqueUsers() {

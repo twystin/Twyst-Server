@@ -172,11 +172,18 @@ module.exports.getRedeemData = function (req, res) {
 	function getAllUsers () {
 		var q = getMatchObject();
 		q['basics.status'] = 'merchant redeemed';
-		Voucher.aggregate({$match: q},
-				{
+		Voucher.aggregate({$match: q}, { 
+					$sort : { 
+						'basics.created_at' : -1
+					}}, {
 					$group: {
 						_id: '$issue_details.issued_to',
-						count: { $sum: 1}
+						vouchers: {
+							$push: '$basics.code'
+						},
+						rewards: {
+							$push: '$basics.description'
+						}
 					}
 				}, function (err, op) {
 					if(err) {
@@ -201,15 +208,29 @@ module.exports.getRedeemData = function (req, res) {
 	function getUsersByDayOfWeek() {
 		var q = getMatchObject();
 		q['basics.status'] = 'merchant redeemed';
-		Voucher.aggregate({$match: q},
-				{
+		Voucher.aggregate({$match: q}, { 
+					$sort : { 
+						'basics.created_at' : -1
+					}},	{
 					$project: {
 						_id: '$issue_details.issued_to',
+						code: '$basics.code',
+						reward: '$basics.description',
 						dayOfWeek: { $dayOfWeek: "$basics.created_at" }
 					}
 				}, {
 					$match: {
 						'dayOfWeek': req.body.day
+					}
+				},{
+					$group: {
+						_id: '$_id',
+						vouchers: {
+							$push: '$code'
+						},
+						rewards: {
+							$push: '$reward'
+						}
 					}
 				}, function (err, op) {
 					if(err) {
@@ -238,7 +259,13 @@ module.exports.getRedeemData = function (req, res) {
 		Voucher.aggregate({$match: q},
 					{ $group: { 
 						_id: '$issue_details.issued_to', 
-						count: { $sum: 1 }}
+						vouchers: {
+							$push: '$basics.code'
+						},
+						rewards: {
+							$push: '$basics.description'
+						}
+					}
 					}, function (err, op) {
 						if(err) {
 							res.send(400, {
@@ -268,8 +295,22 @@ module.exports.getRedeemData = function (req, res) {
 						function(o){
 							return o._id;
 					})}}).select('phone').exec(function (err, users) {
-						cb(users || []);
+						if(op) {
+							op.forEach(function (o) {
+								o.phone = getPhone(users, o._id);
+							});
+						}
+						cb(op || []);
 			})
 		}
+	}
+
+	function getPhone(users, id) {
+		for(var i = 0; i < users.length; i++) {
+			if(users[i]._id.equals(id)) {
+				return users[i].phone;
+			}
+		}
+		return null;
 	}
 }

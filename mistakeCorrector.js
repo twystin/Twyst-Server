@@ -232,7 +232,7 @@ var Favourite = mongoose.model('Favourite');
 // 	})
 // })
 
-Checkin.find({'outlet': '5318bcfef9a18b685d000348',
+Checkin.find({'outlet': '53142d821c33946a3d000088',
 				'created_date': {
 						$gte: new Date(2014, 6, 12),
 						$lte: new Date(2014, 7, 31)
@@ -250,8 +250,7 @@ Checkin.find({'outlet': '5318bcfef9a18b685d000348',
 					phone: ch.phone,
 					created_date: {
 						$lt: new Date(ch.created_date)
-					},
-					checkin_type: 'QR'
+					}
 				}, function (err, checkin) {
 					if(checkin) {
 						--distinct_checkins;
