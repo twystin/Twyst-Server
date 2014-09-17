@@ -124,7 +124,8 @@ module.exports.getRedeemData = function (req, res) {
 
 	var functions = {
 		'date': getUsersByDate,
-		'week': getUsersByDayOfWeek
+		'week': getUsersByDayOfWeek,
+		'total': getAllUsers
 	};
 	if(!req.body.programs || (req.body.programs.length === 0)) {
 		res.send(400, {
@@ -166,6 +167,35 @@ module.exports.getRedeemData = function (req, res) {
 			}
 		}
 		return q;
+	}
+
+	function getAllUsers () {
+		var q = getMatchObject();
+		q['basics.status'] = 'merchant redeemed';
+		Voucher.aggregate({$match: q},
+				{
+					$group: {
+						_id: '$issue_details.issued_to',
+						count: { $sum: 1}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						populateAccounts(op, function (users) {
+							res.send(200, {
+					        	'status': 'success',
+					        	'message': 'Got data successfully.',
+					        	'info': users
+					        });
+						})
+					}
+		});
 	}
 
 	function getUsersByDayOfWeek() {
