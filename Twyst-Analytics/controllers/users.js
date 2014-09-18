@@ -6,47 +6,65 @@ var Checkin = mongoose.model('Checkin');
 var Program = mongoose.model('Program');
 
 module.exports.getUserMetric = function (req, res) {
-	var q = getQueryObject();
-	function getQueryObject () {
+
+	if(!req.body.programs || (req.body.programs.length === 0)) {
+		res.send(400, {
+        	'status': 'error',
+        	'message': 'Error in request.',
+        	'info': ''
+        });
+	}
+	else {
+		parallelExecutor();
+	}
+	
+	function getMatchObject() {
 		var q = {};
-		if(!req.params.program) {
-			res.send(400, {
-            	'status': 'error',
-            	'message': 'Error in request.',
-            	'info': ''
-            });
+		if(req.body.outlets && req.body.outlets.length > 0) {
+			q = {
+				checkin_program : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				},
+				outlet: {
+					$in: req.body.outlets.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				}
+			}
 		}
 		else {
-			if(req.params.outlet && req.params.outlet !== 'ALL') {
-				q = {
-					checkin_program : mongoose.Types.ObjectId(req.params.program),
-					outlet: mongoose.Types.ObjectId(req.params.outlet)
-				}
-			}
-			else {
-				q = {
-					checkin_program : mongoose.Types.ObjectId(req.params.program)
+			q = {
+				checkin_program : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
 				}
 			}
 		}
-
 		return q;
 	}
 
-	async.parallel({
-	    USER_METRIC: function(callback) {
-	    	getUserMetric(q, callback);
-	    },
-	    USER_BY_CHECKIN_NUMBER_METRIC: function(callback) {
-	    	getCountByCheckinNumber(q, callback);
-	    }
-	}, function(err, results) {
-	    res.send(200, {
-        	'status': 'success',
-        	'message': 'Got data successfully.',
-        	'info': results
-        });
-	});
+	function parallelExecutor() {
+		async.parallel({
+		    USER_METRIC: function(callback) {
+		    	getUserMetric(getMatchObject(), callback);
+		    },
+		    USER_BY_CHECKIN_NUMBER_METRIC: function(callback) {
+		    	getCountByCheckinNumber(getMatchObject(), callback);
+		    }
+		}, function(err, results) {
+		    res.send(200, {
+	        	'status': 'success',
+	        	'message': 'Got data successfully.',
+	        	'info': results
+	        });
+		});
+	}
 
 	function getUserMetric(query, callback) {
 		Checkin.aggregate({$match: query},
@@ -127,7 +145,7 @@ module.exports.getUserData = function (req, res) {
 	
 	function getMatchObject() {
 		var q = {};
-		if(req.body.outlets && req.body.outlet.length > 0) {
+		if(req.body.outlets && req.body.outlets.length > 0) {
 			q = {
 				checkin_program : {
 					$in: req.body.programs.map(
