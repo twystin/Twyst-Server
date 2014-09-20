@@ -25,7 +25,7 @@ var authdb = settings.values.config[settings.values.env].db.auth_db;
 var sessionStore;
 
 sessionStore = new MongoStore({
-    url: 'mongodb://localhost:27017/twyst',
+    url: settings.values.config[settings.values.env].db_address,
     // db: 'session',
     // host: 'mongodb://localhost/twyst',
     clear_interval: 3600
@@ -137,7 +137,7 @@ module.exports = function(app) {
     //         console.log(err);
     //     }
     // });
-    mongoose.connect('mongodb://localhost/twyst');
+    mongoose.connect(settings.values.config[settings.values.env].db_address);
 
     // mongoose.createConnection("mongodb://twyst:Twyst123@localhost:27017/twyst" ,{auth:{authdb:"twyst"}}, function (a, b) {
     //     console.log(a || b)
