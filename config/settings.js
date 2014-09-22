@@ -50,7 +50,7 @@ module.exports.values = {
             "clientID": "763534923659747",
             "clientSecret":"673eceff400c5dde837fdedead53ce20",
             "callbackURL":"/api/v1/auth/facebook/callback",
-            'db_address': 'mongodb://ec2-54-189-109-144.us-west-2.compute.amazonaws.com/twyst',
+            'db_address': 'mongodb://50.112.253.131/twyst',
             'db': {
                 user: 'twyst_code',
                 pwd: 'G5dnmsgs1qsmgacf',
