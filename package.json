@@ -7,7 +7,7 @@
     "compression": "latest",
     "connect-mongo": "latest",
     "cookie-parser": "latest",
-    "csv": "latest",
+    "csv": "^0.3.7",
     "dateformat": "~1.0.7-1.2.3",
     "easy-zip": "0.0.4",
     "emailjs": "0.3.4",
