@@ -52,6 +52,8 @@ var OutletSchema = new Schema({
         facebook_url: {type: String, default: ''},
         twitter_url: {type: String, default: ''},
         youtube_url: {type: String, default: ''},
+        zomato_url: {type: String, default: ''},
+        foodpanda_url: {type: String, default: ''},
         other_urls: [{
             link_name: {type: String, default: ''},
             link_url: {type: String, default: ''}

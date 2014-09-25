@@ -77,6 +77,7 @@ module.exports.getAnonData = function (req, res) {
 	        			{ $group: 
 	        				{ _id: '$checkin_type', count: { $sum: 1 }}
 	        			}, function (err, op) {
+	        				console.log(err)
 	        				assembleResult(op);
 	        });
 		}

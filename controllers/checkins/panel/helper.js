@@ -209,7 +209,7 @@ module.exports.isRewardTime = function (tier, count) {
 						}
 					}
 					if(tier.offers[i].user_eligibility.criteria.condition === 'on every') {
-						if((in_tier_checkin_count + 1) % Number(tier.offers[i].user_eligibility.criteria.value) === 0) {
+						if(((in_tier_checkin_count + 1) > 0) && ((in_tier_checkin_count + 1) % Number(tier.offers[i].user_eligibility.criteria.value) === 0)) {
 							reward = tier.offers[i];
 							break;
 						}

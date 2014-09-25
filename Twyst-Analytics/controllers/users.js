@@ -6,47 +6,65 @@ var Checkin = mongoose.model('Checkin');
 var Program = mongoose.model('Program');
 
 module.exports.getUserMetric = function (req, res) {
-	var q = getQueryObject();
-	function getQueryObject () {
+
+	if(!req.body.programs || (req.body.programs.length === 0)) {
+		res.send(400, {
+        	'status': 'error',
+        	'message': 'Error in request.',
+        	'info': ''
+        });
+	}
+	else {
+		parallelExecutor();
+	}
+	
+	function getMatchObject() {
 		var q = {};
-		if(!req.params.program) {
-			res.send(400, {
-            	'status': 'error',
-            	'message': 'Error in request.',
-            	'info': ''
-            });
+		if(req.body.outlets && req.body.outlets.length > 0) {
+			q = {
+				checkin_program : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				},
+				outlet: {
+					$in: req.body.outlets.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				}
+			}
 		}
 		else {
-			if(req.params.outlet && req.params.outlet !== 'ALL') {
-				q = {
-					checkin_program : mongoose.Types.ObjectId(req.params.program),
-					outlet: mongoose.Types.ObjectId(req.params.outlet)
-				}
-			}
-			else {
-				q = {
-					checkin_program : mongoose.Types.ObjectId(req.params.program)
+			q = {
+				checkin_program : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
 				}
 			}
 		}
-
 		return q;
 	}
 
-	async.parallel({
-	    USER_METRIC: function(callback) {
-	    	getUserMetric(q, callback);
-	    },
-	    USER_BY_CHECKIN_NUMBER_METRIC: function(callback) {
-	    	getCountByCheckinNumber(q, callback);
-	    }
-	}, function(err, results) {
-	    res.send(200, {
-        	'status': 'success',
-        	'message': 'Got data successfully.',
-        	'info': results
-        });
-	});
+	function parallelExecutor() {
+		async.parallel({
+		    USER_METRIC: function(callback) {
+		    	getUserMetric(getMatchObject(), callback);
+		    },
+		    USER_BY_CHECKIN_NUMBER_METRIC: function(callback) {
+		    	getCountByCheckinNumber(getMatchObject(), callback);
+		    }
+		}, function(err, results) {
+		    res.send(200, {
+	        	'status': 'success',
+	        	'message': 'Got data successfully.',
+	        	'info': results
+	        });
+		});
+	}
 
 	function getUserMetric(query, callback) {
 		Checkin.aggregate({$match: query},
@@ -101,6 +119,186 @@ module.exports.getUserMetric = function (req, res) {
 						}
 					}, function (err, op) {
 						callback(null, op || []);
+		});
+	}
+}
+
+module.exports.getUserData = function (req, res) {
+
+	var functions = {
+		'unique': getUniqueUsers,
+		'cross': getCrossVisitingUsers,
+		'multiple': getUsersWithGtOneCheckins,
+		'checkin_number': getUserByCheckinNumber 
+	}
+
+	if(!req.body.programs || (req.body.programs.length === 0)) {
+		res.send(400, {
+        	'status': 'error',
+        	'message': 'Error in request.',
+        	'info': ''
+        });
+	}
+	else {
+		functions[req.body.data_type]();
+	}
+	
+	function getMatchObject() {
+		var q = {};
+		if(req.body.outlets && req.body.outlets.length > 0) {
+			q = {
+				checkin_program : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				},
+				outlet: {
+					$in: req.body.outlets.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				}
+			}
+		}
+		else {
+			q = {
+				checkin_program : {
+					$in: req.body.programs.map(
+						function(id){
+							return mongoose.Types.ObjectId(String(id)); 
+					})
+				}
+			}
+		}
+		return q;
+	}
+
+	function getUserByCheckinNumber () {
+		Checkin.aggregate({$match: getMatchObject()},
+				{ $group: { 
+						_id: '$phone',
+						count: {$sum: 1}
+					}
+				}, {
+					$match: {
+						count: {
+							$eq: req.body.checkin_count
+						}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
+		});
+	}
+
+	function getUniqueUsers() {
+		Checkin.aggregate({$match: getMatchObject()},
+				{ $group: { 
+						_id: '$phone',
+						outlets: {
+							$push: '$outlet'
+						}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
+		});
+	}
+
+	function getUsersWithGtOneCheckins() {
+		Checkin.aggregate({$match: getMatchObject()},
+				{ $group: { 
+						_id: '$phone',
+						outlets: {
+							$push: '$outlet'
+						}
+					}
+				}, {
+					$project: {
+			            numofOutletsChecked: { $size: "$outlets" }
+			         }
+				}, {
+					$match: {
+						numofOutletsChecked: {
+							$gt: 1
+						}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
+		});
+	}
+
+	function getCrossVisitingUsers() {
+		Checkin.aggregate({$match: getMatchObject()},
+				{ $group: { 
+						_id: '$phone', 
+						unique_outlets: { 
+							$addToSet: '$outlet' 
+						}
+					}
+				}, {
+					$project: {
+			            numofOutletsChecked: { $size: "$unique_outlets" }
+			         }
+				}, {
+					$match: {
+						numofOutletsChecked: {
+							$gt: 1
+						}
+					}
+				}, function (err, op) {
+					if(err) {
+						res.send(400, {
+				        	'status': 'success',
+				        	'message': 'Error getting data.',
+				        	'info': err
+				        });
+					}
+					else {
+						res.send(200, {
+				        	'status': 'success',
+				        	'message': 'Got data successfully.',
+				        	'info': op
+				        });
+					}
 		});
 	}
 }

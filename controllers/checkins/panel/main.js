@@ -274,7 +274,7 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				message += ' Take part in the Metro Park Foodie Challenge, weekly meal vouchers worth up to Rs 1500 up for grabs! Click http://twyst.in/metropark for more.';
 			}
 			else {
-				message += ' Click http://twyst.in/download/%23/'+ q.phone +' to get Twyst for Android and stay connected with '+ outlet.basics.name +'.';
+				message += ' Click http://twy.st/app to get Twyst for your phone and stay connected with '+ outlet.basics.name +'.';
 			}
 
 			return message;

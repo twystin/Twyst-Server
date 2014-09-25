@@ -232,7 +232,7 @@ var Favourite = mongoose.model('Favourite');
 // 	})
 // })
 
-Checkin.find({'outlet': '530eff0e02bc583c2100001b',
+Checkin.find({'outlet': '53142d821c33946a3d000088',
 				'created_date': {
 						$gte: new Date(2014, 6, 12),
 						$lte: new Date(2014, 7, 31)

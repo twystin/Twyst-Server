@@ -51,6 +51,7 @@ module.exports = function (app) {
         var AllCheckinCtrl = require('../controllers/analytics/checkins');
         var AllVoucherCtrl = require('../controllers/analytics/vouchers');
         app.post('/api/v2/checkins', checkAuthenticated(), PanelCtrl.checkin);
+        app.post('/api/v2/batch_checkins', PanelCtrl.checkin);
         app.get('/api/v2/allcheckins/:outlet/:program', checkAuthenticated(),  AllCheckinCtrl.getCheckins);
         app.get('/api/v2/allvouchers/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getVouchers);
         app.get('/api/v2/allredeems/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getRedeems);
@@ -270,8 +271,14 @@ module.exports = function (app) {
         var CheckinMetric = require('../Twyst-Analytics/controllers/checkins');
         var RedeemMetric = require('../Twyst-Analytics/controllers/redeems');
         app.get('/api/v2/analytics/users/:program/:outlet', UserMetric.getUserMetric);
-        //app.get('/api/v2/analytics/checkins/:program/:outlet', CheckinMetric.getCheckinMetric);
-        //app.get('/api/v2/analytics/redeems/:program/:outlet', RedeemMetric.getRedeemMetric);
+        app.get('/api/v2/analytics/checkins/:program/:outlet', CheckinMetric.getCheckinMetric);
+        app.get('/api/v2/analytics/redeems/:program/:outlet', RedeemMetric.getRedeemMetric);
+        app.post('/api/v2/analytics_summary/users', UserMetric.getUserMetric);
+        app.post('/api/v2/analytics_summary/checkins', CheckinMetric.getCheckinMetric);
+        app.post('/api/v2/analytics_summary/redeems', RedeemMetric.getRedeemMetric);
+        app.post('/api/v2/analytics_data/users', UserMetric.getUserData);
+        app.post('/api/v2/analytics_data/checkins', CheckinMetric.getCheckinData);
+        app.post('/api/v2/analytics_data/redeems', RedeemMetric.getRedeemData);
     })();
 
     // Analytics route
