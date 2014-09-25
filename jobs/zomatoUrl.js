@@ -5,7 +5,7 @@ require('../config/config_models')();
 var csv = require('csv');
 var fs = require("fs");
 var Outlet = mongoose.model('Outlet');
-mongoose.connect('mongodb://50.112.253.131/twyst');
+mongoose.connect('mongodb://staging.twyst.in/twyst');
 
 csv()
 .from.stream(fs.createReadStream(__dirname + '/urls.csv', { encoding: 'utf8' }))
