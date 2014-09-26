@@ -80,6 +80,7 @@ module.exports.setLocation = function (id, current_loc) {
         else {
             user.locations = user.locations || [];
             var loc_obj = current_loc;
+            user.home = current_loc;
             loc_obj.logged_time = Date.now();
             user.locations.push(loc_obj);
             user.save();
