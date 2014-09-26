@@ -72,6 +72,21 @@ module.exports.setHome = function (req, res) {
     });
 };
 
+module.exports.setLocation = function (id, current_loc) {
+    Account.findOne({_id: id}, function (err, user) {
+        if(err || !user) {
+            // DO NOTHING
+        }
+        else {
+            user.locations = user.locations || [];
+            var loc_obj = current_loc;
+            loc_obj.logged_time = Date.now();
+            user.locations.push(loc_obj);
+            user.save();
+        }
+    });
+}
+
 module.exports.myCheckins = function (req, res) {
     Checkin.find({phone: req.user.phone}).populate('outlet').populate('checkin_for').populate('checkin_program').populate('checkin_tier').exec(function (err, checkins) {
         if(err) {

@@ -32,6 +32,11 @@ var Account = new Schema({
         latitude: {type: Number},
         longitude: {type: Number}
     },
+    locations: [{
+        latitude: Number,
+        longitude: Number,
+        logged_time: Date
+    }],
     gcm: {type: String, default: ''},
     social_graph: {
         provider: {
