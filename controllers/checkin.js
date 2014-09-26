@@ -571,6 +571,10 @@ function createCheckin(req, res, checkin) {
     else {
         program = null;
     }
+
+    if(global_qr) {
+    	checkin.checkin_location = req.user.home;
+    }
     
 	var checkin = new Checkin(checkin);
 	checkin.save(function (err, checkin) {
