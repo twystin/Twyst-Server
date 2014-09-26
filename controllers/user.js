@@ -5,6 +5,7 @@ var Checkin = mongoose.model('Checkin');
 var Outlet = mongoose.model('Outlet');
 var Voucher = mongoose.model('Voucher');
 var Social = mongoose.model('Social');
+var UserLoc = mongoose.model('UserLoc');
 var _ = require('underscore');
 
 var https = require('https');
@@ -72,22 +73,35 @@ module.exports.setHome = function (req, res) {
     });
 };
 
-module.exports.setLocation = function (id, current_loc) {
+module.exports.setLocation = function (id, phone, current_loc) {
+    var loc_obj = current_loc;
     Account.findOne({_id: id}, function (err, user) {
         if(err || !user) {
             // DO NOTHING
         }
         else {
-            if(!user.locations) {
-                user.locations = [];
-            }
-            var loc_obj = current_loc;
             user.home = current_loc;
-            loc_obj.logged_time = Date.now();
-            user.locations.push(loc_obj);
             user.save();
         }
     });
+
+    UserLoc.findOne({account: id}, function (err, user_loc) {
+        if(err) {
+            // DO nothing
+        }
+        else {
+            loc_obj.logged_time = Date.now();
+            if(!user_loc) {
+                var loc = {};
+                loc.account = id;
+                loc.phone = phone;
+                user_loc = new UserLoc(loc);
+            }
+            user_loc.locations = user_loc.locations || [];
+            user_loc.locations.push(loc_obj);
+            user_loc.save();
+        }
+    })
 }
 
 module.exports.myCheckins = function (req, res) {
