@@ -52,7 +52,8 @@ module.exports.getData = function (req, res) {
 		returnRefreshedData();
 	}	
 
-	if(req.isAuthenticated()) {
+	if(req.isAuthenticated() 
+		&& (current_loc.latitude && current_loc.longitude)) {
 		UserCtrl.setLocation(req.user._id, req.user.phone, current_loc);
 	}
 
