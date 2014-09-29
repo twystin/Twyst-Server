@@ -65,6 +65,7 @@ module.exports.sendSms = function (phone, push_message, type) {
 		obj.head = type;
 		obj.body = message;
 		obj.status = 'DRAFT';
+		obj.message_type : "SMS";
 		obj.logged_at = Date.now();
 		obj.scheduled_at = new Date(time);
 		var notif = new Notif(obj);
