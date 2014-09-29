@@ -329,7 +329,7 @@ function detectThirtyMinutesCap(qr, req, res, outlet_id, phone, checkin_type, ch
 		}
 		else {
 			var diff = Date.now() - checkin.created_date;
-			if(diff > 300000) {
+			if(diff > 5 * 60 * 1000) {
 				create(req, res, outlet_id, phone, checkin_type, checkin_code, checkin_location);				
 			}
 			else {
@@ -570,6 +570,10 @@ function createCheckin(req, res, checkin) {
     }
     else {
         program = null;
+    }
+
+    if(global_qr) {
+    	checkin.checkin_location = req.user.home;
     }
     
 	var checkin = new Checkin(checkin);

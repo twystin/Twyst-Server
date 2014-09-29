@@ -6,6 +6,7 @@ var RecoCtrl = require('../../controllers/recommendations/reccoV2custom');
 var RecoCtrl3 = require('../../controllers/recommendations/main');
 var OutletCtrl = require('../../controllers/outlet');
 var CacheCtrl = require('../cacheCtrl');
+var UserCtrl = require('../user.js');
 var CommonUtilities = require('../../common/utilities');
 
 module.exports.getData = function (req, res) {
@@ -50,6 +51,11 @@ module.exports.getData = function (req, res) {
 	else {
 		returnRefreshedData();
 	}	
+
+	if(req.isAuthenticated() 
+		&& (current_loc.latitude && current_loc.longitude)) {
+		UserCtrl.setLocation(req.user._id, req.user.phone, current_loc);
+	}
 
 	function returnRefreshedData () {
 		refreshData(req, function (status) {

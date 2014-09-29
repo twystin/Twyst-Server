@@ -22,7 +22,7 @@ csv()
 })
 .on('end', function (count) {
 	console.log(slugs)
-    createFolders();
+    //createFolders();
 })
 .on('error', function (error) {
     console.log(error.message);

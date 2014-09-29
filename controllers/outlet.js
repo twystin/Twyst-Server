@@ -9,6 +9,29 @@ var async = require('async');
 var TagCtrl = require('../controllers/tag');
 var CommonUtilities = require('../common/utilities');
 
+module.exports.getSlugs = function (req, res) {
+	Outlet.find({}, function (err, outlets) {
+		if(err || !outlets) {
+			res.send(400, {
+				'status': 'error',
+				'message': 'Error getting outlets',
+				'info': err
+			});
+		}
+		else {
+			var slugs = [];
+			outlets.forEach(function (o) {
+				slugs.push(o.basics.slug);
+			})
+			res.send(200, {
+				'status': 'success',
+				'message': 'Successfully got outlets',
+				'info': slugs
+			});
+		}
+	})
+}
+
 module.exports.get = function (req, res) {
 	console.log(getQuery())
 	Outlet.find(getQuery(), function (err, outlets) {

@@ -215,6 +215,7 @@ module.exports = function (app) {
     (function outlet_routes() {
         var OutletCtrl = require('../controllers/outlet');
         app.get('/api/v2/outlets', checkAuthenticated(), checkRole(5), OutletCtrl.get);
+        app.get('/api/v2/outlets/slugs', OutletCtrl.getSlugs);
         app.get('/api/v1/outlets/count/:user_id', checkAuthenticated(), checkRole(5), OutletCtrl.getCount);
         app.get('/api/v1/outlets/programs/:outlet_id', OutletCtrl.getOffersForOutlet);
         app.get('/api/v1/outlets/:user_id', checkAuthenticated(), checkRole(5), OutletCtrl.query);
