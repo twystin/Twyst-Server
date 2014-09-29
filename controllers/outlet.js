@@ -19,14 +19,20 @@ module.exports.getSlugs = function (req, res) {
 			});
 		}
 		else {
-			var slugs = [];
+			var details = [];
 			outlets.forEach(function (o) {
-				slugs.push(o.basics.slug);
+				var obj = {
+					'slug': o.basics.slug,
+					'name': o.basics.name,
+					'location': o.contact.location.locality_1[0],
+					'publicUrl': o.publicUrl
+				};
+				details.push(obj);
 			})
 			res.send(200, {
 				'status': 'success',
 				'message': 'Successfully got outlets',
-				'info': slugs
+				'info': details
 			});
 		}
 	})
