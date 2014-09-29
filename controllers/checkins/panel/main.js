@@ -102,11 +102,13 @@ module.exports.poscheckin = poscheckin = function(req,res){
 	}
 }
 module.exports.checkin = checkin = function(req, res) {
-	console.log(isNumber(req.body.phone))
 	if (req.body.phone.length === 10 && isNumber(req.body.phone)){
 		initCheckin(req.body, function (success_object) {
-			if(success_object.sms) {
-				SMS.sendSms(req.body.phone, success_object.sms);
+			if(success_object.sms && success_object.sms.checkin) {
+				SMS.sendSms(req.body.phone, success_object.sms.checkin, 'CHECKIN_MESSAGE');
+			}
+			if(success_object.sms && success_object.sms.reward) {
+				SMS.sendSms(req.body.phone, success_object.sms.reward, 'VOUCHER_MESSAGE');
 			}
 			responder(success_object.res.statusCode, success_object.res.message);
 		});
@@ -341,32 +343,34 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 		var checkins_to_next_reward = Helper.getNext(history.count, q.program);
 
 		function getMessages() {
-			var message = '';
+			var message = {
+				'checkin': null,
+				'reward': null
+			};
 			if(q.batch_user) {
 				message = q.message;
 				message = message.replace(/code xxxxxx/g, 'code ' + voucher.basics.code);
 				message = message.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
 			}
 			else if(sms.checkin && sms.reward && isNewUser()) {
-				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff on your NEXT VISIT.';
+				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! You checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward - yay! You will receive a message with details of the reward and the voucher code after some time. Check-in and track your rewards on Twyst easily, click http://twy.st/app to get Twyst for your phone.';
+				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +'. Terms- '+ reward.terms +'. To claim, show this SMS to your server on your NEXT VISIT/ORDER. This voucher is VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, click http://twy.st/app to get Twyst for your phone.';
 			}
 			else if(sms.checkin && sms.reward && !isNewUser()) {
-				message = 'Reward unlocked at '+ outlet.basics.name +'. Voucher code is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', ' +  Helper.getTOD(reward.reward_applicability.time_of_day) + ', until '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Terms- '+ reward.terms +'. To claim, please show this SMS to the outlet staff on your NEXT VISIT.';
+				message.checkin = 'You checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward - yay! You will receive a message with details of the reward and the voucher code after some time. Check-in and track your rewards on Twyst easily, click http://twy.st/app to get Twyst for your phone.';
+				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +'. Terms- '+ reward.terms +'. To claim, show this SMS to your server on your NEXT VISIT/ORDER. This voucher is VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, click http://twy.st/app to get Twyst for your phone.';
 			}
 			else if(sms.checkin && !isNewUser()) {
-				message = 'You have checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-ins away from your next reward.';
+				message.checkin = 'You have checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-ins away from your next reward.';
 			}
 			else if(sms.checkin && isNewUser()) {
-				message = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +'.';
+				message.checkin = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +'.';
 			}
 			sms.checkin = false;
 			sms.reward = false;
-			console.log(outlet.contact.location.locality_1[0].toLowerCase())
+
 			if(outlet.contact.location.locality_1[0].toLowerCase() === 'huda city centre metro station') {
 				message += ' Take part in the Metro Park Foodie Challenge, weekly meal vouchers worth up to Rs 1500 up for grabs! Click http://twyst.in/metropark for more.';
-			}
-			else {
-				message += ' Click http://twy.st/app to get Twyst for your phone and stay connected with '+ outlet.basics.name +'.';
 			}
 
 			return message;
