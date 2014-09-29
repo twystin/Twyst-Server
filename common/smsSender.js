@@ -4,8 +4,9 @@ var http = require('http');
 http.post = require('http-post');
 var mongoose = require('mongoose');
 var SmsSentLog = mongoose.model('SmsSentLog');
+var Notif = mongoose.model('Notif');
 
-module.exports.sendSms = function (phone, push_message) {
+module.exports.sendSms = function (phone, push_message, type) {
 
 	push_message = push_message.replace(/(\n)+/g, '');
 	
@@ -13,26 +14,43 @@ module.exports.sendSms = function (phone, push_message) {
 	message = message.replace(/% /g,'%25 ');
 	console.log(message);
 	var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
-	var test_url = 'http://staging.twyst.in/api/v2/sms/status';
-	http.get(send_sms_url, function(res){
-		console.log(res.statusCode);
-		var body = '';
-		res.on('data', function(chunk) {
-            // append chunk to your data
-            body += chunk;
-        });
 
-        res.on('end', function() {
-        	saveSentSms(phone, message, body);
-            console.log(body);
-        });
+	function checkTimeAndType() {
+		if(!type) {
+			send();
+		}
+		if(type === 'CHECKIN_MESSAGE') {
+			send();
+		}
+		if(type === 'VOUCHER_MESSAGE') {
 
-        res.on('error', function(e) {
-        	saveSentSms(phone, message, e);
-            console.log(e.message)
-        });
-	});
-	console.log(push_message);
+		}
+	}
+
+	function schedule() {
+
+	}
+
+	function send() {
+		http.get(send_sms_url, function(res){
+			console.log(res.statusCode);
+			var body = '';
+			res.on('data', function(chunk) {
+	            // append chunk to your data
+	            body += chunk;
+	        });
+
+	        res.on('end', function() {
+	        	saveSentSms(phone, message, body);
+	            console.log(body);
+	        });
+
+	        res.on('error', function(e) {
+	        	saveSentSms(phone, message, e);
+	            console.log("Error message: " + e.message)
+	        });
+		});
+	}
 }
 
 function saveSentSms (phone, message, status) {

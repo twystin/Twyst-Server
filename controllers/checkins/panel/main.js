@@ -82,37 +82,39 @@ module.exports.poscheckin = poscheckin = function(req,res){
 	}
 
 	function validateMobile(data) {
-    if (data.length < 10 || data.length > 12) {
-        return false;
-    }
-    var lastTenChar = data.charAt(data.length - 10);
-    if (lastTenChar == "7" || lastTenChar == "8" || lastTenChar == "9") {
-        return true;
-    }
-    return false;
-}
+	    if (data.length < 10 || data.length > 12) {
+	        return false;
+	    }
+	    var lastTenChar = data.charAt(data.length - 10);
+	    if (lastTenChar == "7" || lastTenChar == "8" || lastTenChar == "9") {
+	        return true;
+	    }
+	    return false;
+	}
 
-function validatePayment(data) {
-    var x = Math.floor(data);
-    if (x >= 100) {
-        return true;
-    } else {
-        return false;
-    }
-}
+	function validatePayment(data) {
+	    var x = Math.floor(data);
+	    if (x >= 100) {
+	        return true;
+	    } else {
+	        return false;
+	    }
+	}
 }
 module.exports.checkin = checkin = function(req, res) {
-	if ((JSON.stringify(req.body.phone)).length==12 && !(isNumber(JSON.stringify(req.body.phone)))){
-	initCheckin(req.body, function (success_object) {
-		if(success_object.sms) {
-			SMS.sendSms(req.body.phone, success_object.sms);
-		}
-		responder(success_object.res.statusCode, success_object.res.message);
-	});
+	console.log(isNumber(req.body.phone))
+	if (req.body.phone.length === 10 && isNumber(req.body.phone)){
+		initCheckin(req.body, function (success_object) {
+			if(success_object.sms) {
+				SMS.sendSms(req.body.phone, success_object.sms);
+			}
+			responder(success_object.res.statusCode, success_object.res.message);
+		});
 	}
-	else{
-		responder("400","Invalid Mobile Number");
+	else {
+		responder(response.message.invalid_mobile_number.statusCode, response.message.invalid_mobile_number);
 	}
+	
 	function responder(statusCode, message) {
 		res.send(statusCode, message);
 	}

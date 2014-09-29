@@ -26,6 +26,12 @@ module.exports.message = {
 		'message': 'Check-in error. User checked-in recently somewhere else. Please try checking-in here after some time.',
 		'info': JSON.stringify(null)
 	},
+	invalid_mobile_number: {
+		'statusCode': 400,
+		'status': 'error',
+		'message': 'Invalid mobile number. Please check the number you have entered.',
+		'info': JSON.stringify(null)
+	},
 	success: {
 		'statusCode': 200,
 		'status': 'success',
