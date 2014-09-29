@@ -1,3 +1,6 @@
+var async = require('async');
+var superagent = require('superagent');
+var agent1 = superagent.agent();
 var _ = require('underscore');
 var mongoose = require('mongoose');
 var Helper = require('./helper');
@@ -8,18 +11,112 @@ var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
 var keygen = require("keygenerator");
 var UserDataCtrl = require('../../user/userDataCtrl');
+var util = require('util');
 
-module.exports.checkin = function(req, res) {
+function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
+
+
+module.exports.poscheckin = poscheckin = function(req,res){
+
+//	console.log(req.body.outlet);
+//	console.log(req.body.rows)
+	var rows = JSON.parse(req.body.rows);
+	var count = req.body.count;
+	console.log(rows);
+	async.waterfall([
+                function one(callback) {
+                    agent1
+                        .post('http://localhost:3000/api/v1/auth/login')
+                        .type('form') // send request in form format
+                        .send({
+                            username: 'theakitchen',
+                            password: 'theakitchen'
+                        })
+                        .end(function(err, res) {
+                            console.log("response for login is ", res.statusCode);
+                            callback();
+                        });
+                        
+                },
+
+                function two(callback) {
+                    for (var i = 0; i < count; i++) {
+                        console.log("i is ", i);
+                        var p = rows[i].Payment;
+                        var m = rows[i].Mobile;
+                        console.log(p);
+                        console.log(m);
+                        console.log(p, validatePayment(p),m,validateMobile(m));
+                        if (validatePayment(rows[i].Payment) == true && validateMobile(rows[i].Mobile) == true && i!=0) {
+                            console.log(rows[i].CustomerID,rows[i].Payment,rows[i].Mobile,rows[i].Email);
+                            agent1
+                                .post('http://localhost:3000/api/v2/checkins')
+                                .send({
+                                    //phone: "8860377473",
+                                    phone: rows[i].Mobile,
+                                    outlet: req.body.outlet
+                                        //outlet: "rishi84902bc583c21000004"
+                                })
+                                .end(function(err, res) {
+                                    //console.log(i);
+                                    //log.info("response for checkins is ", res.statusCode, "for customerid ");
+                                    console.log("response for checkins is ", res.statusCode, "for customerid ");
+                                    callback();
+                                });
+                        }
+                        else{
+//                            log.info("validation failed for CustomerID");
+                            console.log("validation failed for CustomerID ");
+                        }
+                    }
+                    
+                }], 
+                function(err, results) { 
+                	responder("200","recieved");
+                    //console.log(results); 
+                }
+        );
+	function responder(statusCode, message){
+//		res.send("200","recieved");
+		res.send(statusCode, message);
+	}
+
+	function validateMobile(data) {
+    if (data.length < 10 || data.length > 12) {
+        return false;
+    }
+    var lastTenChar = data.charAt(data.length - 10);
+    if (lastTenChar == "7" || lastTenChar == "8" || lastTenChar == "9") {
+        return true;
+    }
+    return false;
+}
+
+function validatePayment(data) {
+    var x = Math.floor(data);
+    if (x >= 100) {
+        return true;
+    } else {
+        return false;
+    }
+}
+}
+module.exports.checkin = checkin = function(req, res) {
+	if ((JSON.stringify(req.body.phone)).length==12 && !(isNumber(JSON.stringify(req.body.phone)))){
 	initCheckin(req.body, function (success_object) {
 		if(success_object.sms) {
 			SMS.sendSms(req.body.phone, success_object.sms);
 		}
 		responder(success_object.res.statusCode, success_object.res.message);
 	});
-
+	}
+	else{
+		responder("400","Invalid Mobile Number");
+	}
 	function responder(statusCode, message) {
 		res.send(statusCode, message);
 	}
+	
 };
 
 module.exports.initCheckin = initCheckin =  function(obj, callback) {

@@ -84,8 +84,12 @@ module.exports.getActiveProgram = function(query, cb) {
 			outlets: query.outlet,
 			'status': 'active'
 		}, function(err, program) {
-
-			populateProgram(program, cb);
+			if (program){
+				populateProgram(program, cb);
+			}
+			else{
+				cb(program);
+			}
 	});
 
 	function populateProgram (program, cb) {
