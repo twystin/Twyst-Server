@@ -10,7 +10,7 @@ var TagCtrl = require('../controllers/tag');
 var CommonUtilities = require('../common/utilities');
 
 module.exports.getSlugs = function (req, res) {
-	Outlet.find({}, function (err, outlets) {
+	Outlet.find({'outlet_meta.status': 'active'}, function (err, outlets) {
 		if(err || !outlets) {
 			res.send(400, {
 				'status': 'error',
@@ -32,10 +32,30 @@ module.exports.getSlugs = function (req, res) {
 			res.send(200, {
 				'status': 'success',
 				'message': 'Successfully got outlets',
-				'info': details
+				'info': shuffle(details)
 			});
 		}
-	})
+	});
+
+	function shuffle(array) {
+	    var counter = array.length, temp, index;
+
+	    // While there are elements in the array
+	    while (counter > 0) {
+	        // Pick a random index
+	        index = Math.floor(Math.random() * counter);
+
+	        // Decrease counter by 1
+	        counter--;
+
+	        // And swap the last element with it
+	        temp = array[counter];
+	        array[counter] = array[index];
+	        array[index] = temp;
+	    }
+
+	    return array;
+	}
 }
 
 module.exports.get = function (req, res) {
