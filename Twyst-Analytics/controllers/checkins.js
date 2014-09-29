@@ -175,6 +175,7 @@ module.exports.getCheckinMetric = function (req, res) {
 		}
 	}
 }	
+}	
 
 module.exports.getCheckinData = function (req, res) {
 
@@ -327,3 +328,4 @@ module.exports.getCheckinData = function (req, res) {
 		});
 	}
 }
+

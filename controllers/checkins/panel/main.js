@@ -11,6 +11,10 @@ var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
 var keygen = require("keygenerator");
 var UserDataCtrl = require('../../user/userDataCtrl');
+var util = require('util');
+
+function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
+
 
 module.exports.poscheckin = poscheckin = function(req,res){
 
@@ -98,13 +102,17 @@ function validatePayment(data) {
 }
 }
 module.exports.checkin = checkin = function(req, res) {
+	if ((JSON.stringify(req.body.phone)).length==12 && !(isNumber(JSON.stringify(req.body.phone)))){
 	initCheckin(req.body, function (success_object) {
 		if(success_object.sms) {
 			SMS.sendSms(req.body.phone, success_object.sms);
 		}
 		responder(success_object.res.statusCode, success_object.res.message);
 	});
-
+	}
+	else{
+		responder("400","Invalid Mobile Number");
+	}
 	function responder(statusCode, message) {
 		res.send(statusCode, message);
 	}

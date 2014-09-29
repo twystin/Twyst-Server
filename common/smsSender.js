@@ -29,9 +29,10 @@ module.exports.sendSms = function (phone, push_message) {
 
         res.on('error', function(e) {
         	saveSentSms(phone, message, e);
-            console.log("Error message: " + e.message)
+            console.log(e.message)
         });
 	});
+	console.log(push_message);
 }
 
 function saveSentSms (phone, message, status) {
