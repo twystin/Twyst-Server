@@ -137,6 +137,7 @@ module.exports.getRedeemMetric = function (req, res) {
 	}
 }
 
+
 module.exports.getRedeemData = function (req, res) {
 
 	var functions = {
