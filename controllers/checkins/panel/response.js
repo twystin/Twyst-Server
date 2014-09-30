@@ -32,6 +32,12 @@ module.exports.message = {
 		'message': 'Invalid mobile number. Please check the number you have entered.',
 		'info': JSON.stringify(null)
 	},
+	record_validation: {
+		'statusCode': 400,
+		'status': 'error',
+		'message': 'Validation failed. Please check Mobile number & Payment.',
+		'info': JSON.stringify(null)
+	},
 	success: {
 		'statusCode': 200,
 		'status': 'success',
