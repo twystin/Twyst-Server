@@ -29,7 +29,10 @@ module.exports.getRedirected = function (req, res) {
 }
 
 module.exports.redirectToOutlet = function (req, res) {
-	Outlet.findOne({shortUrl: req.params.shortUrl}, function (err, outlet) {
+	if(!req.params.shortUrl) {
+		redirect(null);
+	}
+	Outlet.findOne({shortUrl: req.params.shortUrl.toUpperCase()}, function (err, outlet) {
 		if(err || !outlet) {
 			redirect(null);
 		}
