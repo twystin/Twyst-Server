@@ -1,17 +1,7 @@
 var async = require('async');
 var superagent = require('superagent');
 var agent1 = superagent.agent();
-var _ = require('underscore');
-var mongoose = require('mongoose');
-var Helper = require('./helper');
-var response = require('./response');
-var SMS = require('../../../common/smsSender');
-var CommonUtilities = require('../../../common/utilities');
-var Checkin = mongoose.model('Checkin');
-var Voucher = mongoose.model('Voucher');
-var keygen = require("keygenerator");
-var UserDataCtrl = require('../../user/userDataCtrl');
-var util = require('util');
+var settings = require('../../config/settings');
 
 module.exports.poscheckin = poscheckin = function(req,res){
 
@@ -20,47 +10,51 @@ module.exports.poscheckin = poscheckin = function(req,res){
 	var rows = JSON.parse(req.body.rows);
 	var count = req.body.count;
 //	console.log(rows);
+    var root_url = settings.values.config[settings.values.env].server;
+    if(root_url === 'http://localhost') {
+        root_url += ':' + settings.values.config[settings.values.env].port;
+    }
 	async.waterfall([
-                function one(callback) {
+        function one(callback) {
+            agent1
+                .post(root_url + '/api/v1/auth/login')
+                .type('form') // send request in form format
+                .send({
+                    username: 'theakitchen',
+                    password: 'theakitchen'
+                })
+                .end(function(err, res) {
+            //console.log("response for login is ", res.statusCode);
+                    callback(null);
+                });
+                
+        },
+
+        function two(callback) {
+            for (var i = 0; i < count; i++) {
+                // console.log("i is ", i);
+                var p = rows[i].Payment;
+                var m = rows[i].Mobile;
+                if (validatePayment(rows[i].Payment) == true && validateMobile(rows[i].Mobile) == true && i!=0) {
                     agent1
-                        .post('http://localhost:3000/api/v1/auth/login')
-                        .type('form') // send request in form format
+                        .post(root_url + '/api/v2/checkins')
                         .send({
-                            username: 'theakitchen',
-                            password: 'theakitchen'
+                            phone: rows[i].Mobile,
+                            outlet: req.body.outlet,
+                            location: 'HOME_DELIVERY',
+                            checkin_type: 'POS',
+                            checkin_code: 'POS'
                         })
                         .end(function(err, res) {
-//                            console.log("response for login is ", res.statusCode);
-                            callback();
+                            callback(null);
                         });
-                        
-                },
-
-                function two(callback) {
-                    for (var i = 0; i < count; i++) {
-//                        console.log("i is ", i);
-                        var p = rows[i].Payment;
-                        var m = rows[i].Mobile;
-                        if (validatePayment(rows[i].Payment) == true && validateMobile(rows[i].Mobile) == true && i!=0) {
-                            agent1
-                                .post('http://localhost:3000/api/v2/checkins')
-                                .send({
-                                    phone: rows[i].Mobile,
-                                    outlet: req.body.outlet
-                                })
-                                .end(function(err, res) {
-                                    callback();
-                                });
-                        }
-                    }
-                    
-                }], 
-                function(err, results) { 
                 }
-        );
-	function responder(statusCode, message){
-		res.send(statusCode, message);
-	}
+            }
+            
+        }], 
+        function(err, results) { 
+        
+        });
 
 	function validateMobile(data) {
 	    if (data.length < 10 || data.length > 12) {

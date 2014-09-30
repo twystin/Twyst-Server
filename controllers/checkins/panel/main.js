@@ -14,7 +14,10 @@ var util = require('util');
 function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
 
 module.exports.checkin = checkin = function(req, res) {
-	if (req.body.phone.length === 10 && isNumber(req.body.phone)){
+	if ( req.body.phone 
+		&& req.body.phone.length === 10 
+		&& isNumber(req.body.phone)){
+		
 		initCheckin(req.body, function (success_object) {
 			if(success_object.sms && success_object.sms.checkin) {
 				SMS.sendSms(req.body.phone, success_object.sms.checkin, 'CHECKIN_MESSAGE');
@@ -70,8 +73,8 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 	checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date);
 
 	q.checkin_time = checkin.created_date;
-	checkin.checkin_type = "PANEL";
-	checkin.checkin_code = "PANEL";
+	checkin.checkin_type = checkin.checkin_type || "PANEL";
+	checkin.checkin_code = checkin.checkin_code || "PANEL";
 
 	Helper.getActiveProgram(q, function(data) {
 		if(data) {

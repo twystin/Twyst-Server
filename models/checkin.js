@@ -17,7 +17,7 @@ var CheckinSchema = new Schema({
     checkin_date: {type: Date, default: Date.now},
     checkin_validated: {type: Boolean},
     checkin_code: {type: String},
-    checkin_type: {type: String, enum: ['QR', 'SMS', 'PANEL', 'BATCH']},
+    checkin_type: {type: String, enum: ['QR', 'SMS', 'PANEL', 'BATCH', 'POS']},
     location: {type: String, enum: ['DINE_IN', 'HOME_DELIVERY']},
     checkin_location: {
         latitude: Number,
