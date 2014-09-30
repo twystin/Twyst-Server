@@ -59,6 +59,43 @@ var OutletSchema = new Schema({
             link_url: {type: String, default: ''}
         }]
     },
+    business_hours: {
+        sunday: {closed: {type:Boolean, trim: true},
+            timings: [{
+                open: {type:Number, default: '', trim: true},
+                close: {type:Number, default: '', trim: true}
+            }]},
+        monday: {closed: {type:Boolean, trim: true},
+            timings: [{
+                open: {type:Number, default: '', trim: true},
+                close: {type:Number, default: '', trim: true}
+            }]},
+        tuesday: {closed: {type:Boolean, trim: true},
+            timings: [{
+                open: {type:Number, default: '', trim: true},
+                close: {type:Number, default: '', trim: true}
+            }]},
+        wednesday: {closed: {type:Boolean, trim: true},
+            timings: [{
+                open: {type:Number, default: '', trim: true},
+                close: {type:Number, default: '', trim: true}
+            }]},
+        thursday: {closed: {type:Boolean, trim: true},
+            timings: [{
+                open: {type:Number, default: '', trim: true},
+                close: {type:Number, default: '', trim: true}
+            }]},
+        friday: {closed: {type:Boolean, trim: true},
+            timings: [{
+                open: {type:Number, default: '', trim: true},
+                close: {type:Number, default: '', trim: true}
+            }]},
+        saturday: {closed: {type:Boolean, trim: true},
+            timings: [{
+                open: {type:Number, default: '', trim: true},
+                close: {type:Number, default: '', trim: true}
+            }]}
+    },
     attributes: {
         home_delivery: {type: Boolean},
         dine_in: {type: Boolean},
