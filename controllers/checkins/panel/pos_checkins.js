@@ -1,7 +1,7 @@
 var async = require('async');
 var superagent = require('superagent');
 var agent1 = superagent.agent();
-var settings = require('../../config/settings');
+var settings = require('../../../config/settings');
 
 module.exports.poscheckin = poscheckin = function(req,res){
 
