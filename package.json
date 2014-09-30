@@ -32,6 +32,7 @@
     "qrpng": "~0.1.1",
     "serve-favicon": "latest",
     "string": "~1.8.0",
+    "superagent": "^0.19.0",
     "underscore": "latest"
   },
   "devDependencies": {
