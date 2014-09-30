@@ -361,10 +361,10 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +'. Terms- '+ reward.terms +'. To claim, show this SMS to your server on your NEXT VISIT/ORDER. This voucher is VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, click http://twy.st/app to get Twyst for your phone.';
 			}
 			else if(sms.checkin && !isNewUser()) {
-				message.checkin = 'You have checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-ins away from your next reward.';
+				message.checkin = 'You have checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-ins away from your next reward, click http://twy.st/app to get Twyst for your phone.';
 			}
 			else if(sms.checkin && isNewUser()) {
-				message.checkin = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +'.';
+				message.checkin = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +', click http://twy.st/app to get Twyst for your phone.';
 			}
 			sms.checkin = false;
 			sms.reward = false;
