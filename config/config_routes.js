@@ -48,9 +48,10 @@ module.exports = function (app) {
     (function panel_route() {
         
         var PanelCtrl = require('../controllers/checkins/panel/main');
+        var PosCtrl = require('../controllers/checkins/panel/pos_checkins');
         var AllCheckinCtrl = require('../controllers/analytics/checkins');
         var AllVoucherCtrl = require('../controllers/analytics/vouchers');
-        app.post('/api/v2/pos_checkins', PanelCtrl.poscheckin);
+        app.post('/api/v2/pos_checkins', PosCtrl.poscheckin);
         app.post('/api/v2/checkins', checkAuthenticated(), PanelCtrl.checkin);
         app.post('/api/v2/batch_checkins', PanelCtrl.checkin);
         app.get('/api/v2/allcheckins/:outlet/:program', checkAuthenticated(),  AllCheckinCtrl.getCheckins);
@@ -386,11 +387,6 @@ module.exports = function (app) {
         app.post('/api/v1/user/gcm', UserCtrl.setGCM) ;//User authentication to be added here
     })();
 
-    (function typeahead_routes() {
-        var RedirectCtrl = require('../controllers/redirect');
-        app.get('/r/:key', RedirectCtrl.getRedirected);
-    })();
-
     (function notify_routes() {
         var VoucherNotifyCtrl = require('../controllers/notifications/voucher');
         var CommonNotifyCtrl = require('../controllers/notifications/common');
@@ -401,6 +397,12 @@ module.exports = function (app) {
     (function testing_routes (){
         var OutletRender = require('../controllers/render/outlet');
         app.get('/:type(ncr|mumbai|banglore)/*', OutletRender.render);
+    })();
+
+    (function redirect_routes() {
+        var RedirectCtrl = require('../controllers/redirect');
+        app.get('/r/:key', RedirectCtrl.getRedirected);
+        app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet)
     })();
 
     (function handle_defaults() {
