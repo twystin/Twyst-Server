@@ -17,7 +17,6 @@ module.exports.sendSms = function (phone, push_message, type) {
 	function checkType() {
 		var time = null;
 		time = Date.now();
-		time += (5 * 60 * 60 * 1000 + 30 * 60 * 1000);
 		if(type === 'VOUCHER_MESSAGE') {
 			time = time + 3 * 60 * 60 * 1000;
 		}
@@ -41,18 +40,20 @@ module.exports.sendSms = function (phone, push_message, type) {
 		var month = new Date(time).getMonth();
 		var date = new Date(time).getDate();
 		var hours = new Date(time).getHours();
-		if(hours > 23) {
-			return new Date(year, month, date).getTime() + 35 * 60 * 60 * 1000;
+		var minutes = new Date(time).getMinutes();
+		if(hours > 19) {
+			return new Date(year, month, date).getTime() + 30 * 60 * 60 * 1000;
 		}
 		else {
-			hours = 11;
-			return new Date(year, month, date, hours);
+			hours = 5;
+			minutes = 30;
+			return new Date(year, month, date, hours, minutes);
 		}
 	}
 
 	function isAccurateTime (time) {
 		var hours = new Date(time).getHours();
-		if(hours > 23 || hours < 9) {
+		if(hours > 19 || hours < 4) {
 			return false;
 		}
 		return true;
