@@ -4,6 +4,7 @@ var SmsSentLog = mongoose.model('SmsSentLog');
 var keygen = require("keygenerator");
 var Account = mongoose.model('Account');
 var CommonUtilities = require('../common/utilities');
+var SMS = require('../common/smsSender');
 
 var _ = require('underscore');
 
@@ -78,7 +79,7 @@ module.exports.getOTP = function (req, res) {
 				}
 				else {
 					var push_message = "The TWYST OTP code is " + otp_code;
-					responder(phone, push_message);
+					SMS.sendSms(phone, push_message, 'OTP_MESSAGE');
 					res.send(200, {
 						'status': "success",
 						'message': "Successfully generated OTP",
