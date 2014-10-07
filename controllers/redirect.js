@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Redirect = mongoose.model('Redirect');
+var Outlet = mongoose.model('Outlet');
 var _ = require('underscore');
 var url = require('url');
 
@@ -25,4 +26,28 @@ module.exports.getRedirected = function (req, res) {
 			}
 		}
 	});
+}
+
+module.exports.redirectToOutlet = function (req, res) {
+	if(!req.params.shortUrl) {
+		redirect(null);
+	}
+	Outlet.findOne({shortUrl: req.params.shortUrl.toUpperCase()}, function (err, outlet) {
+		if(err || !outlet) {
+			redirect(null);
+		}
+		else {
+			console.log(outlet)
+			redirect(outlet.publicUrl[0])
+		}
+	})
+
+	function redirect(url) {
+		if(!url) {
+			res.redirect('/');
+		}
+		else {
+			res.redirect('/outlets/#/' + url);
+		}
+	}
 }

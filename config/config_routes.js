@@ -387,11 +387,6 @@ module.exports = function (app) {
         app.post('/api/v1/user/gcm', UserCtrl.setGCM) ;//User authentication to be added here
     })();
 
-    (function typeahead_routes() {
-        var RedirectCtrl = require('../controllers/redirect');
-        app.get('/r/:key', RedirectCtrl.getRedirected);
-    })();
-
     (function notify_routes() {
         var VoucherNotifyCtrl = require('../controllers/notifications/voucher');
         var CommonNotifyCtrl = require('../controllers/notifications/common');
@@ -402,6 +397,12 @@ module.exports = function (app) {
     (function testing_routes (){
         var OutletRender = require('../controllers/render/outlet');
         app.get('/:type(ncr|mumbai|banglore)/*', OutletRender.render);
+    })();
+
+    (function redirect_routes() {
+        var RedirectCtrl = require('../controllers/redirect');
+        app.get('/r/:key', RedirectCtrl.getRedirected);
+        app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet)
     })();
 
     (function handle_defaults() {
