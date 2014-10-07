@@ -6,7 +6,7 @@ module.exports.tenDigitPhone = function (phone_number) {
 };
 
 module.exports.formatDate = function(date) {
-    return dateFormat(date, "d mmmm yyyy");
+    return dateFormat(date, "dd mmm yyyy");
 };
 
 module.exports.calculateDistance = function(a, b) {

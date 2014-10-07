@@ -41,7 +41,7 @@ module.exports.sendSms = function (phone, push_message, type) {
 		var date = new Date(time).getDate();
 		var hours = new Date(time).getHours();
 		var minutes = new Date(time).getMinutes();
-		if(hours > 19) {
+		if(hours > 16) {
 			return new Date(year, month, date).getTime() + 30 * 60 * 60 * 1000;
 		}
 		else {
@@ -53,7 +53,7 @@ module.exports.sendSms = function (phone, push_message, type) {
 
 	function isAccurateTime (time) {
 		var hours = new Date(time).getHours();
-		if(hours > 19 || hours < 4) {
+		if(hours > 16 || hours < 4) {
 			return false;
 		}
 		return true;

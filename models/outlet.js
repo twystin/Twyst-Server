@@ -141,6 +141,13 @@ var OutletSchema = new Schema({
             }
         ],
         recommend_list: [{type: Schema.ObjectId, ref: 'Outlet'}]
+    },
+    sms_off: {
+        value: {type: Boolean},
+        time: {
+            start: {type: Number, default: 23},
+            end: {type: Number, default: 9}
+        }
     }
 });
 

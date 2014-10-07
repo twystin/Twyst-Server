@@ -179,16 +179,29 @@ module.exports.getAllOutlets = function (req, res) {
 
 module.exports.getAllPrograms = function (req, res) {
 	var skip = 0, limit = 0, q;
+	initQuery();
 	if(req.query.q) {
-		q = {
-			'name': new RegExp(req.query.q, "i")
+		var outlet_q = {
+			'basics.name': new RegExp(req.query.q, "i")
 		}
+		getOutlets(outlet_q, function (outlets) {
+			q = {
+				$or: [
+					{'name': new RegExp(req.query.q, "i")},
+					{'outlets': {
+						$in: outlets.map(function (obj) {
+							return obj._id;
+						})
+					}}
+				]
+			}
+			runInParallel();
+		});
 	}
 	else {
 		q = {};
+		runInParallel();
 	}
-
-	initQuery();
 
 	function initQuery () {
 		if(!req.query.totalCountPerPage) {
@@ -205,20 +218,22 @@ module.exports.getAllPrograms = function (req, res) {
 		}
 	}
 
-	async.parallel({
-	    PROGRAMS: function(callback) {
-	    	getPrograms(q, callback);
-	    },
-	    totalCount: function(callback) {
-	    	getCount(q, callback);
-	    }
-	}, function(err, results) {
-	    res.send(200, {
-	    	'status' : 'success',
-            'message' : 'Got programs.',
-            'info': results
-        });
-	});
+	function runInParallel() {
+		async.parallel({
+		    PROGRAMS: function(callback) {
+		    	getPrograms(q, callback);
+		    },
+		    totalCount: function(callback) {
+		    	getCount(q, callback);
+		    }
+		}, function(err, results) {
+		    res.send(200, {
+		    	'status' : 'success',
+	            'message' : 'Got programs.',
+	            'info': results
+	        });
+		});
+	}
 
 	function getPrograms (q, callback) {
 		Program.find(q, 
@@ -237,6 +252,13 @@ module.exports.getAllPrograms = function (req, res) {
 	function getCount (q, callback) {
 		Program.count(q, function (err, count) {
 			callback(null, count || 0);
+		})
+	}
+
+	function getOutlets (q, callback) {
+		Outlet.find(q).select({'basics.name': 1}).exec(function (err, outlets) {
+
+			callback(outlets || []);
 		})
 	}
 }
