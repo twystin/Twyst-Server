@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Account = mongoose.model('Account');
+var UserLoc = mongoose.model('UserLoc');
 
 var async = require('async');
 
@@ -58,9 +59,8 @@ module.exports.getAllUsers = function (req, res) {
 				},
 				skip: skip, 
 				limit: limit
-			}, function (err, users) {
-
-			callback(null, users || []);
+			}).lean().exec(function (err, users) {
+				getUsersLastSeen(users, callback);
 		})
 	}
 
@@ -68,5 +68,44 @@ module.exports.getAllUsers = function (req, res) {
 		Account.count(q, function (err, count) {
 			callback(null, count || 0);
 		})
+	}
+
+	function getUsersLastSeen(users, callback) {
+		var length = users.length;
+		if(!length) {
+			callback(null, users || []);
+		}
+		users.forEach(function (user) {
+			getLastSeenLocation(user, function (time) {
+				length--;
+				user.last_seen = time;
+				if(!length) {
+					callback(null, users || []);
+				}
+			});
+		})
+	}
+
+	function getLastSeenLocation(user, cb) {
+		if(!isAppUser(user)) {
+			cb(null);
+		}
+		else {
+			UserLoc.findOne({account: user._id}, function (err, loc) {
+				if(err || !loc) {
+					cb(null);
+				}
+				else {
+					cb(loc.locations[loc.locations.length - 1].logged_time);
+				}
+			})
+		}
+	}
+
+	function isAppUser(user) {
+		if(user.role === 7) {
+			return true;
+		}
+		return false;
 	}
 }
