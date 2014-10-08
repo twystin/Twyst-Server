@@ -45,6 +45,11 @@ module.exports = function (app) {
         app.post('/api/v3/sitemap', SitemapCtrl.initSitemap);
     })();
 
+    (function seo_route () {
+        var NearByCtrl = require('../controllers/user/nearBy');
+        app.get('/api/v3/near', NearByCtrl.getNearby);
+    })();
+
     (function panel_route() {
         
         var PanelCtrl = require('../controllers/checkins/panel/main');
