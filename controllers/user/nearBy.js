@@ -9,20 +9,46 @@ var CommonUtils = require('../../common/utilities');
 module.exports.getNearby = function (req, res) {
 	var lat = req.query.lat,
 		lon = req.query.lon,
-		distance = req.query.distance || 5;
+		distance = req.query.distance || 500;
 
-	getOutlets(lat, lon, distance, function (outlets) {
-		getProgramsForOutlets(outlets, function (objects) {
-			getOtherInfos(req.user, 
-				objects, 
-				{
-					latitude: lat, 
-					longitude: lon
-				}, function (results) {
-					res.send(200, results);
-			})
+	if(!lat || !lon) {
+		res.send(400, {
+			'status': 'error',
+			'message': 'Error getting nearby data.',
+			'info': null
 		});
-	})
+	}
+	else {
+		getInfo();
+	}
+
+	function getInfo() {
+		getOutlets(lat, lon, distance, function (outlets) {
+			if(!outlets.length) {
+				res.send(200, {
+					'status': 'success',
+					'message': 'Got no outlets',
+					'info': []
+				});
+			} 
+			else {
+				getProgramsForOutlets(outlets, function (objects) {
+					getOtherInfos(req.user, 
+						objects, 
+						{
+							latitude: lat, 
+							longitude: lon
+						}, function (results) {
+							res.send(200, {
+								'status': 'success',
+								'message': 'Got nearby data successfully',
+								'info': results
+							});
+					})
+				});
+			}
+		})
+	}
 }
 
 function getOtherInfos(user, objects, loc, cb) {
@@ -188,11 +214,7 @@ function getPrograms(outlets, callback) {
 
 function getOutlets (lat, lon, distance, callback) {
 	Outlet.find({
-		'contact.location.coords': {
-			$near: [lon, lat], 
-			$maxDistance: distance/112,
-			spherical: true
-		}
+		
 	}).
 	select({
 		'basics.name':1, 
