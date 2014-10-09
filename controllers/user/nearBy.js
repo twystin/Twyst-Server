@@ -13,8 +13,13 @@ module.exports.getNearby = function (req, res) {
 
 	getOutlets(lat, lon, distance, function (outlets) {
 		getProgramsForOutlets(outlets, function (objects) {
-			getOtherInfos(req.user, objects, {latitude: lat, longitude: lon}, function (results) {
-				res.send(200, results);
+			getOtherInfos(req.user, 
+				objects, 
+				{
+					latitude: lat, 
+					longitude: lon
+				}, function (results) {
+					res.send(200, results);
 			})
 		});
 	})
@@ -23,7 +28,7 @@ module.exports.getNearby = function (req, res) {
 function getOtherInfos(user, objects, loc, cb) {
 	var length = objects.length;
 	if(!length) {
-		callback([]);
+		cb([]);
 	}
 	if(!user) {
 		objects.forEach(function (obj) {
@@ -31,104 +36,167 @@ function getOtherInfos(user, objects, loc, cb) {
 			obj.distance = CommonUtils.calculateDistance(loc, outlet_loc);
 			obj.checkin_count = 0;
 	    	obj.active_reward = false;
-	    	if(--length == 0) {
-	    		cb(objects);
-	    	}
-		})
+		});
+		cb(objects);
 	}
 	else {
-		objects.forEach(function (obj) {
-			var outlet_loc = obj.outlet_summary.contact.location.coords;
-			obj.distance = CommonUtils.calculateDistance(loc, outlet_loc);
-			getInfoForAuthUser(obj, user, function (data) {
-				obj.checkin_count = data.checkin_count;
-	    		obj.active_reward = data.active_reward;
-	    		if(--length == 0) {
-		    		cb(objects);
-		    	}
+		getInfoForAuthUser(objects, user, function (data) {
+			objects.forEach(function (o) {
+				var outlet_loc = o.outlet_summary.contact.location.coords;
+				o.distance = CommonUtils.calculateDistance(loc, outlet_loc);
+				o.checkin_count = getCheckinCount(o.program_summary, data.checkin_counts);
+				o.active_reward = hasActiveVoucher(o.program_summary, data.active_rewards)
 			})
+    		cb(objects);
 		})
 	}
 }
 
-function getInfoForAuthUser(obj, user, cb) {
+function getCheckinCount(program, checkin_counts) {
+	if(!program || !checkin_counts.length) {
+		return 0;
+	}
+	for(var i = 0; i < checkin_counts; i++) {
+		if(checkin_counts[i] && checkin_counts[i].equals(program._id)) {
+			return checkin_counts[i].count;
+		}
+	}
+	return 0;
+}
+
+function hasActiveVoucher(program, active_rewards) {
+	if(!program || !active_rewards.length) {
+		return false;
+	}
+	for(var i = 0; i < active_rewards; i++) {
+		if(active_rewards[i] && active_rewards[i].equals(program._id)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function getInfoForAuthUser(objects, user, cb) {
 	async.parallel({
-	    checkin_count: function(callback) {
-	    	if(!obj.program_summary) {
-	    		callback(null, 0);
-	    	}
-	    	else {
-	    		var q = {
-		    		outlet: obj.outlet_summary._id, 
-		    		checkin_program: obj.program_summary._id,
-		    		phone: user.phone
-		    	};
-		    	getCheckinCount(q, callback);
-	    	}
+	    checkin_counts: function(callback) {
+	    	var q = {
+	    		match: {
+	    			$match: { 
+			    		checkin_program: {$in:
+			    			objects.map(function (obj) {
+			    				return mongoose.Types.ObjectId(obj.program_summary ? obj.program_summary._id : null);
+			    			})
+			    		},
+			    		phone: user.phone
+		    		}
+	    		},
+	    		group: {
+	    			$group: {
+		    			_id: '$checkin_program',
+		    			count: { $sum: 1 }
+		    		}
+	    		}
+	    	};
+	    	getCheckinCountAggregate(q, callback);
 	    },
-	    active_reward: function(callback) {
-	    	if(!obj.program_summary) {
-	    		callback(null, false);
-	    	}
-	    	else {
-	    		var q = { 
-		    		'issue_details.program': obj.program_summary._id,
-		    		'issue_details.issued_to': user._id
-		    	};
-		    	hasActiveVoucher(q, callback);
-	    	}
+	    active_rewards: function(callback) {
+	    	var q = {
+	    		match: {
+	    			$match: { 
+			    		'issue_details.program': {$in: 
+			    			objects.map(function (obj) {
+			    				return mongoose.Types.ObjectId(obj.program_summary ? obj.program_summary._id : null);
+			    			})
+			    		},
+			    		'basics.status': 'active',
+			    		'issue_details.issued_to': user._id
+		    		}
+	    		},
+	    		group: {
+	    			$group: {
+		    			_id: '$issue_details.program',
+		    			count: { $sum: 1 }
+		    		}
+	    		}
+	    	};
+	    	hasActiveVouchersAggregate(q, callback);
 	    }
 	}, function(err, results) {
-	    obj.checkin_count = results.checkin_count;
-	    obj.active_reward = results.active_reward;
-	    cb(obj);
+	    cb(results);
 	});
 }
 
-function hasActiveVoucher(q, callback) {
-	Voucher.findOne(q, function (err, voucher) {
-		callback(null, voucher ? true : false);
+function hasActiveVouchersAggregate(q, callback) {
+	Voucher.aggregate(q.match, q.group, function (err, results) {
+		callback(null, results || []);
 	})
 }
 
-function getCheckinCount(q, callback) {
-	Checkin.count(q, function (err, count) {
-		callback(null, count || 0);
+function getCheckinCountAggregate(q, callback) {
+	Checkin.aggregate(q.match, q.group, function (err, results) {
+		callback(null, results || []);
 	})
 }
 
 function getProgramsForOutlets(outlets, callback) {
-	var length = outlets.length,
-		objects = [];
+	var length = outlets.length;
 	if(!length) {
-		callback(objects);
+		callback([]);
 	}
-	outlets.forEach(function (outlet) {
-		var obj = {};
-		obj.outlet_summary = outlet;
-		getProgram(outlet._id, function (program) {
-			obj.program_summary = program;
-			objects.push(obj);
-			if(--length == 0) {
-				callback(objects);
-			}
-		})
-	});
+	getPrograms(outlets, function (programs) {
+		callback(buildDataObject(outlets, programs));
+	})
 }
 
-function getProgram(outlet_id, callback) {
-	Program.findOne({outlets: outlet_id}, function(err, program) {
-		callback(program || null);
+function buildDataObject(outlets, programs) {
+	var objects = [];
+	outlets.forEach(function (o) {
+		var obj = {};
+		obj.outlet_summary = o;
+		obj.program_summary = getMatchedProgram(programs, o._id);
+		objects.push(obj);
 	});
+	return objects;
+}
+
+function getMatchedProgram(programs, outlet_id) {
+	if(!programs.length) return null;
+	for(var i = 0; i < programs.length; i++) {
+		if(programs[i].outlets && programs[i].outlets.length > 0) {
+			for(var j = 0; j < programs[i].outlets.length; j++) {
+				if(outlet_id.equals(programs[i].outlets[j])) {
+					return programs[i];
+				}
+			}
+		}
+	}
+	return null;
+}
+
+function getPrograms(outlets, callback) {
+	Program.find({
+		'status': 'active',
+		'outlets': {
+			$in: outlets.map(function (obj){
+				return obj._id;
+			})
+		}
+	}, function (err, programs) {
+		callback(programs)
+	})
 }
 
 function getOutlets (lat, lon, distance, callback) {
 	Outlet.find({
 		'contact.location.coords': {
 			$near: [lat, lon], 
-			$maxDistance: distance/69 
+			$maxDistance: distance/112 
 		}
-	}).select({'basics.name':1, 'contact.location': 1}).exec(function (err, outlets) {
+	}).limit(30)
+	.select({
+		'basics.name':1, 
+		'contact.location': 1
+	}).exec(function (err, outlets) {
 		callback(outlets || []);
 	})
 }
