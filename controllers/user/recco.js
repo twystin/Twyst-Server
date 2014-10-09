@@ -3,6 +3,7 @@ var Outlet = mongoose.model('Outlet');
 var Program = mongoose.model('Program');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
+var Favourite = mongoose.model('Favourite');
 var async = require('async');
 var _ = require("underscore");
 var CommonUtils = require('../../common/utilities');
@@ -17,11 +18,168 @@ module.exports.getRecco = function (req, res) {
 		getProgramsForOutlets(outlets, function (objects) {
 			getIndependentUserData(function (results) {
 				var unordered_set = computeReccoWeight(objects, results, lat, lon);
-				var sorted_set = sortRecco(unordered_set);
-				res.send(200, sorted_set)
+				if(req.user) {
+					getUserHistory(req.user, function (history) {
+						var relevant_set = addUserRelevance(unordered_set, history);
+						var sorted_set = sortRecco(unordered_set);
+						res.send(200, getNumberOfRecco(sorted_set, start, end));
+					})
+				}
+				else {
+					var sorted_set = sortRecco(unordered_set);
+					res.send(200, getNumberOfRecco(sorted_set, start, end));
+				}
 			})
 		});
 	})
+}
+
+function addUserRelevance(unordered_set, history) {
+	unordered_set.forEach(function (s) {
+		var checkin_data = getCheckinRelevance(history.my_checkins, s.outlet_summary, s.program_summary);
+		s.checkin_relevance = checkin_data.checkin_on_outlet * 5;
+		s.checkin_count = checkin_data.checkin_in_program;
+		s.fav_relevance = 10 * getFavsRelevance(history.my_favs, s.outlet_summary);
+		s.reward_relevance = 5 * getActiveVoucherRelevance(history.my_rewards, s.program_summary);
+		if(s.reward_relevance > 0) {
+			s.active_reward = true;
+		}
+		s.total += (s.checkin_relevance + s.fav_relevance + s.reward_relevance);
+	})
+	return unordered_set;
+}
+
+function getCheckinRelevance (checkins, outlet, program) {
+	if(!outlet || !checkins.length) {
+		return 0;
+	}
+	var checkin_on_outlet = 0,
+		checkin_in_program = 0;
+	for(var i = 0; i < checkins.length; i++) {
+		if(checkins[i]._id 
+			&& checkins[i]._id.outlet
+			&& checkins[i]._id.outlet.equals(outlet._id)) {
+			checkin_on_outlet += checkins[i].count;
+		}
+		if(program 
+			&& checkins[i]._id 
+			&& checkins[i]._id.program
+			&& checkins[i]._id.program.equals(program._id)) {
+			checkin_in_program += checkins[i].count;
+		}
+	}
+	return {
+		checkin_on_outlet: checkin_on_outlet, 
+		checkin_in_program: checkin_in_program
+	};
+}
+
+function getActiveVoucherRelevance (rewards, program) {
+	if(!program || !rewards.length) {
+		return 0;
+	}
+	for(var i = 0; i < rewards.length; i++) {
+		if(rewards[i]._id && rewards[i]._id.equals(program._id)) {
+			return rewards[i].count;
+		}
+	}
+	return 0;
+}
+
+function getFavsRelevance (favs, outlet) {
+	if(!outlet || !favs.length) {
+		return 0;
+	}
+	for(var i = 0; i < favs.length; i++) {
+		if(favs[i]._id && favs[i]._id.equals(outlet._id)) {
+			return 1;
+		}
+	}
+	return 0;
+}
+
+function getUserHistory(user, cb) {
+	async.parallel({
+	    my_checkins: function(callback) {
+	    	getMyCheckins(user, callback);
+	    },
+	    my_favs: function(callback) {
+	    	getMyFavs(user, callback);
+	    },
+	    my_rewards: function(callback) {
+	    	getMyRewards(user, callback);
+	    }
+	}, function(err, results) {
+	    cb(results);
+	});
+}
+
+function getMyFavs(user, callback) {
+	var q = {
+		match: {
+			$match: {
+				'account': user._id
+			}
+		},
+		group: {
+			$group: {
+    			_id: '$outlets',
+    			count: { $sum: 1 }
+    		}
+		}
+	};
+	Favourite.aggregate(q.match, q.group, function (err, results) {
+		callback(null, results || []);
+	});
+}
+
+function getMyRewards(user, callback) {
+	var q = {
+		match: {
+			$match: {
+				'issue_details.issued_to': user._id,
+				'basics.status': 'active'
+			}
+		},
+		group: {
+			$group: {
+    			_id: '$issue_details.program',
+    			count: { $sum: 1 }
+    		}
+		}
+	};
+	Voucher.aggregate(q.match, q.group, function (err, results) {
+		callback(null, results || []);
+	});
+}
+
+function getMyCheckins(user, callback) {
+	var q = {
+		match: {
+			$match: {
+				'phone': user.phone,
+				'checkin_type': {
+					'$ne': 'BATCH'
+				}
+			}
+		},
+		group: {
+			$group: {
+    			_id: {
+    				'outlet': '$outlets',
+    				'program': '$checkin_program'
+    			},
+    			count: { $sum: 1 }
+    		}
+		}
+	};
+	Checkin.aggregate(q.match, q.group, function (err, results) {
+		callback(null, results || []);
+	});
+}
+
+function getNumberOfRecco(sorted_set, start, end) {
+	return sorted_set.slice(start - 1, end);
 }
 
 function sortRecco(unordered_set) {
