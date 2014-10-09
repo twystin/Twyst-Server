@@ -47,7 +47,9 @@ module.exports = function (app) {
 
     (function v3_user_data_routes () {
         var NearByCtrl = require('../controllers/user/nearBy');
+        var ReccoCtrl = require('../controllers/user/recco');
         app.get('/api/v3/near', NearByCtrl.getNearby);
+        app.get('/api/v3/recco', ReccoCtrl.getRecco);
     })();
 
     (function panel_route() {
