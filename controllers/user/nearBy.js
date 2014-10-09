@@ -53,11 +53,11 @@ function getOtherInfos(user, objects, loc, cb) {
 }
 
 function getCheckinCount(program, checkin_counts) {
-	if(!program || !checkin_counts.length) {
+	if(!program || checkin_counts.length === 0) {
 		return 0;
 	}
-	for(var i = 0; i < checkin_counts; i++) {
-		if(checkin_counts[i] && checkin_counts[i].equals(program._id)) {
+	for(var i = 0; i < checkin_counts.length; i++) {
+		if(checkin_counts[i] && checkin_counts[i]._id.equals(program._id)) {
 			return checkin_counts[i].count;
 		}
 	}
@@ -68,8 +68,8 @@ function hasActiveVoucher(program, active_rewards) {
 	if(!program || !active_rewards.length) {
 		return false;
 	}
-	for(var i = 0; i < active_rewards; i++) {
-		if(active_rewards[i] && active_rewards[i].equals(program._id)) {
+	for(var i = 0; i < active_rewards.length; i++) {
+		if(active_rewards[i] && active_rewards[i]._id.equals(program._id)) {
 			return true;
 		}
 	}
@@ -189,11 +189,12 @@ function getPrograms(outlets, callback) {
 function getOutlets (lat, lon, distance, callback) {
 	Outlet.find({
 		'contact.location.coords': {
-			$near: [lat, lon], 
-			$maxDistance: distance/112 
+			$near: [lon, lat], 
+			$maxDistance: distance/112,
+			spherical: true
 		}
-	}).limit(30)
-	.select({
+	}).
+	select({
 		'basics.name':1, 
 		'contact.location': 1
 	}).exec(function (err, outlets) {

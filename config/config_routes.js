@@ -45,7 +45,7 @@ module.exports = function (app) {
         app.post('/api/v3/sitemap', SitemapCtrl.initSitemap);
     })();
 
-    (function seo_route () {
+    (function v3_user_data_routes () {
         var NearByCtrl = require('../controllers/user/nearBy');
         app.get('/api/v3/near', NearByCtrl.getNearby);
     })();
