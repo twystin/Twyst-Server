@@ -166,7 +166,7 @@ function getMyCheckins(user, callback) {
 		group: {
 			$group: {
     			_id: {
-    				'outlet': '$outlets',
+    				'outlet': '$outlet',
     				'program': '$checkin_program'
     			},
     			count: { $sum: 1 }
