@@ -15,6 +15,13 @@ module.exports.getRecco = function (req, res) {
 		end = req.query.end || 20;
 
 	getOutlets({}, function (outlets) {
+		if(!outlets.length) {
+			res.send(200, {
+				'status': 'success',
+				'message': 'Got no reccos',
+				'info': []
+			});
+		}
 		getProgramsForOutlets(outlets, function (objects) {
 			getIndependentUserData(function (results) {
 				var unordered_set = computeReccoWeight(objects, results, lat, lon);
@@ -22,12 +29,20 @@ module.exports.getRecco = function (req, res) {
 					getUserHistory(req.user, function (history) {
 						var relevant_set = addUserRelevance(unordered_set, history);
 						var sorted_set = sortRecco(unordered_set);
-						res.send(200, getNumberOfRecco(sorted_set, start, end));
+						res.send(200, {
+							'status': 'success',
+							'message': 'Got recco data successfully',
+							'info': getNumberOfRecco(sorted_set, start, end)
+						});
 					})
 				}
 				else {
 					var sorted_set = sortRecco(unordered_set);
-					res.send(200, getNumberOfRecco(sorted_set, start, end));
+					res.send(200, {
+						'status': 'success',
+						'message': 'Got recco data successfully',
+						'info': getNumberOfRecco(sorted_set, start, end)
+					});
 				}
 			})
 		});
