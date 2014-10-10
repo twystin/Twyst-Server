@@ -335,7 +335,7 @@ module.exports.update = function(req,res) {
 			if(program !== null) {
 				program.name = updated_program.name;
 				program.outlets = updated_program.outlets;
-				
+				program.status = updated_program.status;
 				program.validity.earn_start = updated_program.validity.earn_start;
 				program.validity.earn_end = updated_program.validity.earn_end;
 				program.validity.burn_start = updated_program.validity.burn_start;

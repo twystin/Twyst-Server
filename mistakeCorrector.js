@@ -232,10 +232,10 @@ var Favourite = mongoose.model('Favourite');
 // 	})
 // })
 
-Checkin.find({'outlet': '53142d821c33946a3d000088',
+Checkin.find({'outlet': '531b2a86fada152b630002b4',
 				'created_date': {
-						$gte: new Date(2014, 6, 12),
-						$lte: new Date(2014, 7, 31)
+						$gte: new Date(2014, 8, 1),
+						$lte: new Date(2014, 8, 30)
 				},
 				'checkin_type': 'QR'
 	}, function (err, checkins) {
