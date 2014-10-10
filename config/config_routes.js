@@ -55,7 +55,7 @@ module.exports = function (app) {
     (function panel_route() {
         
         var PanelCtrl = require('../controllers/checkins/panel/main');
-        var PosCtrl = require('../controllers/checkins/panel/pos_checkins');
+        var PosCtrl = require('../controllers/checkins/panel/pos');
         var AllCheckinCtrl = require('../controllers/analytics/checkins');
         var AllVoucherCtrl = require('../controllers/analytics/vouchers');
         app.post('/api/v2/pos_checkins', PosCtrl.poscheckin);
