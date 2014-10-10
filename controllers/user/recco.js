@@ -9,13 +9,13 @@ var _ = require("underscore");
 var CommonUtils = require('../../common/utilities');
 
 module.exports.getRecco = function (req, res) {
-	var lat = req.query.lat,
-		lon = req.query.lon,
+	var lat = req.query.lat || 28.47178,
+		lon = req.query.lon ||  77.1016,
 		start = req.query.start || 1,
 		end = req.query.end || 20;
 
 	getOutlets({}, function (outlets) {
-		if(!outlets.length) {
+		if(!outlets || !outlets.length) {
 			res.send(200, {
 				'status': 'success',
 				'message': 'Got no reccos',
