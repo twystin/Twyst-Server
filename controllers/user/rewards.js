@@ -11,6 +11,7 @@ module.exports.getRewards = function (req, res) {
 	})
 	.skip(start - 1)
 	.limit(end - start + 1)
+	.populate('issue_details.issued_at')
 	.exec(function (err, vouchers) {
 		if(err) {
 			res.send(400, {
