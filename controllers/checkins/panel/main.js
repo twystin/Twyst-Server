@@ -14,7 +14,6 @@ var util = require('util');
 function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
 
 module.exports.checkin = checkin = function(req, res) {
-	console.log(req.body)
 	if ( req.body.phone 
 		&& req.body.phone.length === 10 
 		&& isNumber(req.body.phone)){
