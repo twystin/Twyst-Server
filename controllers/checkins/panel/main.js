@@ -263,9 +263,11 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				'reward': null
 			};
 			if(q.batch_user) {
-				message = q.message;
-				message = message.replace(/code xxxxxx/g, 'code ' + voucher.basics.code);
-				message = message.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
+				message.checkin = q.message;
+				if(voucher) {
+					message.checkin = message.replace(/code xxxxxx/g, 'code ' + voucher.basics.code);
+				}
+				message.checkin = message.checkin.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
 			}
 			else if(sms.checkin && sms.reward && isNewUser()) {
 				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! You checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward - yay! You will receive a message with details of the reward and the voucher code after some time. Check-in and track your rewards on Twyst easily, click http://twy.st/app to get Twyst for your phone.';
