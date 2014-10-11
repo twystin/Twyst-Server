@@ -5,11 +5,13 @@ var fs = require("fs");
 csv()
 .from.stream(fs.createReadStream(__dirname + '/cb_batch.csv', { encoding: 'utf8' }))
 .on('record', function (row, index) {
-    if (index == 0) {
-    	var phone = row[0];
-    	console.log(phone)
-    	console.log(index);
-        httpCheckin(phone);
+    if (index <= 5000) {
+    	setTimeout(function() {
+    		var phone = row[0];
+	    	console.log(phone)
+	    	console.log(index);
+	        httpCheckin(phone);
+    	}, index * 200);
     }
 })
 .on('end', function (count) {
@@ -18,7 +20,7 @@ csv()
 
 function httpCheckin (phone) {
 	console.log(phone)
-	rest.post('http://localhost:3000/api/v2/batch_checkins', {
+	rest.post('http://twyst.in/api/v2/batch_checkins', {
 		data: {
 			phone: phone,
 	        outlet: "5402cc64ad0d0ffd5aa44817",
