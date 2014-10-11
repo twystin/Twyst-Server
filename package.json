@@ -30,6 +30,7 @@
     "passport-local": "latest",
     "passport-local-mongoose": "latest",
     "qrpng": "~0.1.1",
+    "restler": "^3.2.2",
     "serve-favicon": "latest",
     "string": "~1.8.0",
     "superagent": "^0.19.0",
