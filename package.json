@@ -34,7 +34,8 @@
     "serve-favicon": "latest",
     "string": "~1.8.0",
     "superagent": "^0.19.0",
-    "underscore": "latest"
+    "underscore": "latest",
+    "validator": "^3.19.1"
   },
   "devDependencies": {
     "mocha": "latest",
