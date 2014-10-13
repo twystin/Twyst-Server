@@ -166,7 +166,6 @@ function populateTiers(program, cb) {
 			cb(err, program);
 		}
 		else {
-			console.log(tiers)
 			program.tiers = tiers;
 			cb(null, program);
 		}
