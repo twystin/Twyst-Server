@@ -126,6 +126,8 @@ module.exports.readOne = function (req, res) {
 			if(program) {
 				program = program.toObject();
 				populateTiers(program, function (err, populated_program) {
+					var p = [];
+					p.push(populated_program);
 					if(err) {
 						res.send(400, {
 							'status': 'error',
@@ -137,7 +139,7 @@ module.exports.readOne = function (req, res) {
 						res.send(200, {
                             'status': 'success',
                             'message': 'Got all programs',
-                            'info': populated_program
+                            'info': p
                         });
 					}
 				})
@@ -161,7 +163,6 @@ function populateTiers(program, cb) {
 	})
 	.populate('offers')
 	.exec(function (err, tiers) {
-		console.log(err)
 		if(err) {
 			cb(err, program);
 		}
