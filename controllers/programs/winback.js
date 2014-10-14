@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Winback = mongoose.model('Winback');
 var Offer = mongoose.model('Offer');
 var async = require('async');
+var _ = require("underscore");
 
 module.exports.create = function (req, res) {
     var created_winback = {};
@@ -21,6 +22,7 @@ module.exports.create = function (req, res) {
                 created_winback.accounts = [];
                 created_winback.accounts.push(req.user._id);
                 var winback = new Winback(created_winback);
+                
                 saveWinback(winback, function (err) {
                     if(err) {
                         res.send(400, { 'status': 'error',
@@ -88,37 +90,34 @@ module.exports.update = function (req, res) {
     }
 }
 
-function saveWinback(winback) {
+function saveWinback(winback, cb) {
     winback.save(function (err) {
         cb(err);
     })
 }
 
 function saveOffers (offers, cb) {
+    var ids = [];
     async.each(offers, function (o, callback) {
         var created_offer = {};
         created_offer = _.extend(created_offer, o);
         if(!o._id) {
-            var offer = new Winback(created_offer);
+            var offer = new Offer(created_offer);
         }
         offer.save(function (err, offer) {
-            if(err) {
-                callback(err, null);
+            if(offer) {
+                ids.push(offer._id);
             }
+            callback(err, offer);
         });
-    }, function (err, results) {
-        if(err) {
-            callback(err, null);
-        }
-        else {
-            cb(null, results);
-        }
+    }, function (err) {
+        cb(err, ids);
     })
 }
 
 module.exports.read = function (req, res) {
     var user_id = req.user._id;
-    readWinback(user_id, function (err, winback) {
+    readWinbacks(user_id, function (err, winbacks) {
         if(err) {
             res.send(400, { 'status': 'error',
                         'message': 'Error getting winbacks.',
@@ -128,21 +127,21 @@ module.exports.read = function (req, res) {
         else {
             res.send(200, { 'status': 'success',
                         'message': 'Got winbacks successfully.',
-                        'info': ''
+                        'info': winbacks
             });
         }
     })
 
-    function readWinback(user_id, callback) {
-        Winback.findOne({
+    function readWinbacks(user_id, callback) {
+        Winback.find({
             'accounts': user_id,
             'status': {
                 $ne: 'archived'
             }
         })
         .populate('outlets')
-        .exec(function (err, winback) {
-            callback(err, winback);
+        .exec(function (err, winbacks) {
+            callback(err, winbacks);
         })
     }
 }
@@ -168,7 +167,7 @@ module.exports.readOne = function (req, res) {
             else {
                 res.send(200, { 'status': 'success',
                             'message': 'Got winback successfully.',
-                            'info': ''
+                            'info': winback
                 });
             }
         })

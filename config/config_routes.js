@@ -45,7 +45,7 @@ module.exports = function (app) {
         app.post('/api/v3/sitemap', SitemapCtrl.initSitemap);
     })();
 
-    (function seo_route () {
+    (function winback_route () {
         var WinbackCtrl = require('../controllers/programs/winback');
         app.post('/api/v3/winback', checkAuthenticated(), WinbackCtrl.create);
         app.get('/api/v3/winback', checkAuthenticated(), WinbackCtrl.read);

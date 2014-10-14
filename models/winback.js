@@ -9,8 +9,7 @@ var WinbackSchema = new Schema ({
     validity: {
         earn_start: {type: Date, default: Date.now},
         earn_end: {type: Date, default: Date.now},
-        burn_start: {type: Date, default: Date.now},
-        burn_end: {type: Date, default: Date.now}
+        voucher_valid_days: {type: Number, default: 30} 
     },
     min_historical_checkins: {type: Number},
     days_since_last_visit: {type: Number},
