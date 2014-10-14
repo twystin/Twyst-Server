@@ -56,26 +56,15 @@ function getOtherInfos(user, objects, loc, cb) {
 	if(!length) {
 		cb([]);
 	}
-	if(!user) {
-		objects.forEach(function (obj) {
-			var outlet_loc = obj.outlet_summary.contact.location.coords;
-			obj.distance = CommonUtils.calculateDistance(loc, outlet_loc);
-			obj.checkin_count = 0;
-	    	obj.active_reward = false;
+	getInfoForAuthUser(objects, user, function (data) {
+		objects.forEach(function (o) {
+			var outlet_loc = o.outlet_summary.contact.location.coords;
+			o.distance = CommonUtils.calculateDistance(loc, outlet_loc);
+			o.checkin_count = getCheckinCount(o.program_summary, data.checkin_counts);
+			o.active_reward = hasActiveVoucher(o.program_summary, data.active_rewards)
 		});
 		cb(objects);
-	}
-	else {
-		getInfoForAuthUser(objects, user, function (data) {
-			objects.forEach(function (o) {
-				var outlet_loc = o.outlet_summary.contact.location.coords;
-				o.distance = CommonUtils.calculateDistance(loc, outlet_loc);
-				o.checkin_count = getCheckinCount(o.program_summary, data.checkin_counts);
-				o.active_reward = hasActiveVoucher(o.program_summary, data.active_rewards)
-			})
-    		cb(objects);
-		})
-	}
+	})
 }
 
 function getCheckinCount(program, checkin_counts) {
@@ -103,53 +92,58 @@ function hasActiveVoucher(program, active_rewards) {
 }
 
 function getInfoForAuthUser(objects, user, cb) {
-	async.parallel({
-	    checkin_counts: function(callback) {
-	    	var q = {
-	    		match: {
-	    			$match: { 
-			    		checkin_program: {$in:
-			    			objects.map(function (obj) {
-			    				return mongoose.Types.ObjectId(obj.program_summary ? obj.program_summary._id : null);
-			    			})
-			    		},
-			    		phone: user.phone
+	if(!user) {
+		cb({checkin_counts: [], active_rewards: []});
+	}
+	else {
+		async.parallel({
+		    checkin_counts: function(callback) {
+		    	var q = {
+		    		match: {
+		    			$match: { 
+				    		checkin_program: {$in:
+				    			objects.map(function (obj) {
+				    				return mongoose.Types.ObjectId(obj.program_summary ? obj.program_summary._id : null);
+				    			})
+				    		},
+				    		phone: user.phone
+			    		}
+		    		},
+		    		group: {
+		    			$group: {
+			    			_id: '$checkin_program',
+			    			count: { $sum: 1 }
+			    		}
 		    		}
-	    		},
-	    		group: {
-	    			$group: {
-		    			_id: '$checkin_program',
-		    			count: { $sum: 1 }
+		    	};
+		    	getCheckinCountAggregate(q, callback);
+		    },
+		    active_rewards: function(callback) {
+		    	var q = {
+		    		match: {
+		    			$match: { 
+				    		'issue_details.program': {$in: 
+				    			objects.map(function (obj) {
+				    				return mongoose.Types.ObjectId(obj.program_summary ? obj.program_summary._id : null);
+				    			})
+				    		},
+				    		'basics.status': 'active',
+				    		'issue_details.issued_to': user._id
+			    		}
+		    		},
+		    		group: {
+		    			$group: {
+			    			_id: '$issue_details.program',
+			    			count: { $sum: 1 }
+			    		}
 		    		}
-	    		}
-	    	};
-	    	getCheckinCountAggregate(q, callback);
-	    },
-	    active_rewards: function(callback) {
-	    	var q = {
-	    		match: {
-	    			$match: { 
-			    		'issue_details.program': {$in: 
-			    			objects.map(function (obj) {
-			    				return mongoose.Types.ObjectId(obj.program_summary ? obj.program_summary._id : null);
-			    			})
-			    		},
-			    		'basics.status': 'active',
-			    		'issue_details.issued_to': user._id
-		    		}
-	    		},
-	    		group: {
-	    			$group: {
-		    			_id: '$issue_details.program',
-		    			count: { $sum: 1 }
-		    		}
-	    		}
-	    	};
-	    	hasActiveVouchersAggregate(q, callback);
-	    }
-	}, function(err, results) {
-	    cb(results);
-	});
+		    	};
+		    	hasActiveVouchersAggregate(q, callback);
+		    }
+		}, function(err, results) {
+		    cb(results);
+		});
+	}
 }
 
 function hasActiveVouchersAggregate(q, callback) {

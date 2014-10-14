@@ -48,8 +48,10 @@ module.exports = function (app) {
     (function v3_user_data_routes () {
         var NearByCtrl = require('../controllers/user/nearBy');
         var ReccoCtrl = require('../controllers/user/recco');
+        var RewardCtrl = require('../controllers/user/rewards');
         app.get('/api/v3/near', NearByCtrl.getNearby);
         app.get('/api/v3/recco', ReccoCtrl.getRecco);
+        app.get('/api/v3/rewards', checkAuthenticated(), RewardCtrl.getRewards);
     })();
 
     (function panel_route() {

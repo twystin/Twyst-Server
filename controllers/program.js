@@ -112,7 +112,9 @@ module.exports.query = function (req, res) {
 };
 
 module.exports.readOne = function (req, res) {
-	Program.find({_id: req.params.program_id}, function (err, programs) {
+	Program.findOne({_id: req.params.program_id})
+	.populate('outlets')
+	.exec(function (err, program) {
 		if(err) {
 			res.send(400, {
 				'status': 'error',
@@ -121,8 +123,26 @@ module.exports.readOne = function (req, res) {
 			})
 		}
 		else {
-			if(programs.length > 0) {
-				read(programs,res);
+			if(program) {
+				program = program.toObject();
+				populateTiers(program, function (err, populated_program) {
+					var p = [];
+					p.push(populated_program);
+					if(err) {
+						res.send(400, {
+							'status': 'error',
+							'message': 'Error populating tiers',
+							'info': JSON.stringify(err)
+						})
+					}
+					else {
+						res.send(200, {
+                            'status': 'success',
+                            'message': 'Got all programs',
+                            'info': p
+                        });
+					}
+				})
 			}
 			else {
 				res.send(200, {
@@ -135,66 +155,23 @@ module.exports.readOne = function (req, res) {
 	})
 };
 
-
-//module.exports.read = function (req, res) {
-function read(programs, res) {
-
-	var errs = [];
-	var tiers = [];
-	var recommended_programs = [];
-	var num_programs = programs.length;
-	programs.forEach(function (program) {
-		Program.findOne({_id: program.id}).populate('outlets').populate('tiers').exec(function (err, dummy_program) {
-			if(err) {
-				errs.push(err);
-			}
-			else {
-				var num_tiers = dummy_program.tiers.length;
-				if(num_tiers === 0) {
-					dummy_program.tiers = tiers;
-					recommended_programs.push(dummy_program);
-					dummy_program = {};
-					num_programs--;
-					if(num_programs === 0) {
-						res.send(200, {
-                            'status': 'success',
-                            'message': 'Got all programs',
-                            'info': recommended_programs
-                        });
-					}
-				}
-				else {
-					dummy_program.tiers.forEach(function (item) {
-					Tier.findOne({_id: item._id}).populate('offers').exec(function (err, tier) {
-						num_tiers--;
-						if(err) {
-							errs.push(err);
-						}
-						else {
-							tiers.push(tier);
-							tier = {};
-							if(num_tiers === 0) {
-								dummy_program.tiers = tiers;
-								recommended_programs.push(dummy_program);
-								dummy_program = {};
-								num_programs--;
-								tiers = [];
-								if(num_programs === 0) {
-									res.send(200, {
-                                        'status': 'success',
-                                        'message': 'Got all programs',
-                                        'info': recommended_programs
-                                    });
-								}
-							}
-						}
-					})
-				})
-				}
-			}
-		})
+function populateTiers(program, cb) {
+	Tier.find({
+		_id: {
+			$in: program.tiers
+		}
 	})
-};
+	.populate('offers')
+	.exec(function (err, tiers) {
+		if(err) {
+			cb(err, program);
+		}
+		else {
+			program.tiers = tiers;
+			cb(null, program);
+		}
+	})
+}
 
 module.exports.publicQuery = function (req, res) {
 	Program.find({}, function (err, programs) {
@@ -335,7 +312,7 @@ module.exports.update = function(req,res) {
 			if(program !== null) {
 				program.name = updated_program.name;
 				program.outlets = updated_program.outlets;
-				
+				program.status = updated_program.status;
 				program.validity.earn_start = updated_program.validity.earn_start;
 				program.validity.earn_end = updated_program.validity.earn_end;
 				program.validity.burn_start = updated_program.validity.burn_start;
