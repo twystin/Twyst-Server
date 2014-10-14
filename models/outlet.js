@@ -61,41 +61,97 @@ var OutletSchema = new Schema({
         }]
     },
     business_hours: {
-        sunday: {closed: {type:Boolean, trim: true},
+        sunday: {
+            closed: {type: Boolean, default: false},
             timings: [{
-                open: {type:Number, default: '', trim: true},
-                close: {type:Number, default: '', trim: true}
-            }]},
-        monday: {closed: {type:Boolean, trim: true},
+                open: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                },
+                close: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                }
+            }]
+        },
+        monday: {
+            closed: {type: Boolean, default: false},
             timings: [{
-                open: {type:Number, default: '', trim: true},
-                close: {type:Number, default: '', trim: true}
-            }]},
-        tuesday: {closed: {type:Boolean, trim: true},
+                open: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                },
+                close: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                }
+            }]
+        },
+        tuesday: {
+            closed: {type: Boolean, default: false},
             timings: [{
-                open: {type:Number, default: '', trim: true},
-                close: {type:Number, default: '', trim: true}
-            }]},
-        wednesday: {closed: {type:Boolean, trim: true},
+                open: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                },
+                close: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                }
+            }]
+        },
+        wednesday: {
+            closed: {type: Boolean, default: false},
             timings: [{
-                open: {type:Number, default: '', trim: true},
-                close: {type:Number, default: '', trim: true}
-            }]},
-        thursday: {closed: {type:Boolean, trim: true},
+                open: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                },
+                close: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                }
+            }]
+        },
+        thursday: {
+            closed: {type: Boolean, default: false},
             timings: [{
-                open: {type:Number, default: '', trim: true},
-                close: {type:Number, default: '', trim: true}
-            }]},
-        friday: {closed: {type:Boolean, trim: true},
+                open: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                },
+                close: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                }
+            }]
+        },
+        friday: {
+            closed: {type: Boolean, default: false},
             timings: [{
-                open: {type:Number, default: '', trim: true},
-                close: {type:Number, default: '', trim: true}
-            }]},
-        saturday: {closed: {type:Boolean, trim: true},
+                open: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                },
+                close: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                }
+            }]
+        },
+        saturday: {
+            closed: {type: Boolean, default: false},
             timings: [{
-                open: {type:Number, default: '', trim: true},
-                close: {type:Number, default: '', trim: true}
-            }]}
+                open: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                },
+                close: {
+                    hr: {type: Number},
+                    min: {type: Number}
+                }
+            }]
+        }
     },
     attributes: {
         home_delivery: {type: Boolean},
