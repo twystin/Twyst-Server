@@ -54,7 +54,7 @@ module.exports.update = function (req, res) {
     updated_winback = _.extend(updated_winback, req.body);
 
     if(updated_winback.offers.length > 0) {
-        saveOffers(created_winback.offers, function (err, offers) {
+        saveOffers(updated_winback.offers, function (err, offers) {
             if(err) {
                 res.send(400, { 
                     'status': 'error',
