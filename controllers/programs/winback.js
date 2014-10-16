@@ -64,7 +64,7 @@ module.exports.update = function (req, res) {
             }
             else {
                 updated_winback.offers = offers;
-                saveWinback(updated_winback, function (err) {
+                updateWinback(updated_winback, function (err) {
                     if(err) {
                         res.send(400, { 'status': 'error',
                                     'message': 'Error updating winback.',
@@ -90,6 +90,20 @@ module.exports.update = function (req, res) {
     }
 }
 
+function updateWinback(winback, cb) {
+    var id = winback._id;
+    delete winback._id;
+    Winback.findOneAndUpdate({
+        _id: id
+    }, {
+        $set: winback
+    }, {
+        upsert: true
+    }, function (err, winback) {
+        cb(err, winback);
+    })
+}
+
 function saveWinback(winback, cb) {
     winback.save(function (err) {
         cb(err);
@@ -103,16 +117,50 @@ function saveOffers (offers, cb) {
         created_offer = _.extend(created_offer, o);
         if(!o._id) {
             var offer = new Offer(created_offer);
+            saveOffer(offer, function (err, offer) {
+                if(err) {
+                    callback(err, null);
+                }
+                else {
+                    ids.push(offer._id);
+                    callback();
+                }
+            });
         }
-        offer.save(function (err, offer) {
-            if(offer) {
-                ids.push(offer._id);
-            }
-            callback(err, offer);
-        });
+        else {
+            updateOffer(o, function (err, offer) {
+                if(err) {
+                    callback(err, null);
+                }
+                else {
+                    ids.push(offer._id);
+                    callback();
+                }
+            });
+        }
     }, function (err) {
         cb(err, ids);
     })
+}
+
+function updateOffer(offer, cb) {
+    var id = offer._id;
+    delete offer._id;
+    Offer.findOneAndUpdate({
+        _id: id
+    }, {
+        $set: offer
+    }, {
+        upsert: true
+    }, function (err, offer) {
+        cb(err, offer);
+    })
+}
+
+function saveOffer(offer, cb) {
+    offer.save(function (err, offer) {
+        cb(err, offer);
+    });
 }
 
 module.exports.read = function (req, res) {
@@ -140,6 +188,7 @@ module.exports.read = function (req, res) {
             }
         })
         .populate('outlets')
+        .populate('offers')
         .exec(function (err, winbacks) {
             callback(err, winbacks);
         })

@@ -18,6 +18,7 @@ var WinbackSchema = new Schema ({
         push: {type: String},
         email: {type: String}
     },
+    first_run: {type: Boolean, default: false},
     accounts: [{type: Schema.ObjectId, ref: 'Account'}],
     outlets: [{type: Schema.ObjectId, ref: 'Outlet'}],
     offers: [{type: Schema.ObjectId, ref: 'Offer'}],
