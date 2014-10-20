@@ -118,10 +118,22 @@ function getMatchedReward(rewards, program_id, count) {
 
 function getRewards(cut_reccos, cb) {
 	Reward.find({
-		
+		program: {
+			$in: getProgramIds(cut_reccos)
+		}
 	}, function (err, rewards) {
 		cb(err, rewards);
 	})
+}
+
+function getProgramIds(objects) {
+	var ids = [];
+	objects.forEach(function (o) {
+		if(o.program_summary && o.program_summary._id) {
+			ids.push(o.program_summary._id);
+		}
+	})
+	return ids;
 }
 
 function addUserRelevance(unordered_set, history) {
