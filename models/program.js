@@ -18,7 +18,7 @@ var ProgramSchema = new Schema ({
     accounts: [{type: Schema.ObjectId, ref: 'Account'}],
     outlets: [{type: Schema.ObjectId, ref: 'Outlet'}],
     tiers : [{type: Schema.ObjectId, ref: 'Tier'}],
-    icon :{type:String}
+    icon : {type:String}
 });
 
 function slugify(name) {
