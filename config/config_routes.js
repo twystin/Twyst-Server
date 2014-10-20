@@ -49,8 +49,10 @@ module.exports = function (app) {
         var NearByCtrl = require('../controllers/user/nearBy');
         var ReccoCtrl = require('../controllers/user/recco');
         var RewardCtrl = require('../controllers/user/rewards');
+        var DetailCtrl = require('../controllers/user/detail');
         app.get('/api/v3/near', NearByCtrl.getNearby);
         app.get('/api/v3/recco', ReccoCtrl.getRecco);
+        app.get('/api/v3/outlet_detail', DetailCtrl.getDetails);
         app.get('/api/v3/rewards', checkAuthenticated(), RewardCtrl.getRewards);
     })();
 

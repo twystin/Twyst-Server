@@ -97,7 +97,7 @@ function getMatchedReward(rewards, program_id, count) {
 					return o.rewards[0];
 				}
 				else {					
-					for (var i = 1; i < o.rewards.length; i++) {
+					for (var i = 0; i < o.rewards.length; i++) {
 				        if(o.rewards[i].count > count) {
 					        return o.rewards[i];
 					    }
