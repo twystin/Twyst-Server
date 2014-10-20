@@ -1,6 +1,7 @@
 var mongoose = require("mongoose");
 var Outlet = mongoose.model('Outlet');
 var Program = mongoose.model('Program');
+var Tier = mongoose.model('Tier');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
 var Reward = mongoose.model('Reward');
@@ -51,7 +52,6 @@ module.exports.getDetails = function (req, res) {
 								result.distance = calculateDistance(result.outlet_details, lat, lon);
 							}
 							getOtherInfo(req.user, result, function (err, data) {
-								console.log(data)
 								result.active_reward = data.active_reward;
 								result.checkin_count = data.checkin_count;
 								result.checkins_to_next_reward = checkinsToReward(reward, data.checkin_count);
@@ -110,7 +110,6 @@ function getCheckinCount(user, result, cb) {
 			'checkin_program': result.programs_details._id,
 			'phone': user.phone
 		}, function (err, count) {
-			console.log(count)
 			cb(err, count);
 		})
 	}
@@ -125,7 +124,6 @@ function hasActiveReward(user, result, cb) {
 			'issue_details.program': result.programs_details._id,
 			'issue_details.issued_to': user._id
 		}, function (err, voucher) {
-			console.log(voucher)
 			cb(voucher ? true :  false);
 		})
 	}
@@ -194,6 +192,32 @@ function getProgram(outlet_id, cb) {
 	Program.findOne({
 		outlets: outlet_id
 	}, function (err, program) {
-		cb(err, program);
+		if(err || !program) {
+			cb(err, program);
+		}
+		else {
+			populateTiers(program, function (err, populated_program) {
+				cb(err, populated_program);
+			})
+		}
+	})
+}
+
+function populateTiers(program, cb) {
+	Tier.find({
+		_id: {
+			$in: program.tiers
+		}
+	})
+	.populate('offers')
+	.exec(function (err, tiers) {
+		if(err) {
+			cb(err, program);
+		}
+		else {
+			program = program.toObject();
+			program.tiers = tiers;
+			cb(null, program);
+		}
 	})
 }
