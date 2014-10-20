@@ -12,14 +12,14 @@ var WinbackSchema = new Schema ({
         voucher_valid_days: {type: Number, default: 30} 
     },
     min_historical_checkins: {type: Number},
-    days_since_last_visit: {type: Number},
+    weeks_since_last_visit: {type: Number},
     messages: {
         sms: {type: String},
         push: {type: String},
         email: {type: String}
     },
     description: {type: String},
-    first_run: {type: Boolean, default: false},
+    last_run_date: {type: Date},
     accounts: [{type: Schema.ObjectId, ref: 'Account'}],
     outlets: [{type: Schema.ObjectId, ref: 'Outlet'}],
     offers: [{type: Schema.ObjectId, ref: 'Offer'}],
