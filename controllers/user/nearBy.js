@@ -3,6 +3,7 @@ var Outlet = mongoose.model('Outlet');
 var Program = mongoose.model('Program');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
+var Reward = mongoose.model('Reward');
 var async = require('async');
 var CommonUtils = require('../../common/utilities');
 
@@ -39,16 +40,93 @@ module.exports.getNearby = function (req, res) {
 							latitude: lat, 
 							longitude: lon
 						}, function (results) {
-							res.send(200, {
-								'status': 'success',
-								'message': 'Got nearby data successfully',
-								'info': results
-							});
+							var result = {
+								total: results.length,
+								near: results
+							}
+							getMatchedRewards(result.near, function (err, near) {
+								if(!err) {
+									result.near = near;
+								}
+								res.send(200, {
+									'status': 'success',
+									'message': 'Got nearby data successfully',
+									'info': result
+								});
+							})
 					})
 				});
 			}
 		})
 	}
+}
+
+function getMatchedRewards(nearby, cb) {
+	if(!nearby || !nearby.length) {
+		cb(null, nearby);
+	}
+	getRewards(nearby, function (err, rewards) {
+		if(err) {
+			cb(err, nearby);
+		}
+		else {
+			cb(null, getReccosWithMatchedRewars(nearby, rewards));
+		}
+	})
+}
+
+function getReccosWithMatchedRewars(nearby, rewards) {
+	nearby.forEach(function (c) {
+		c.relevant_reward = null;
+		if(c.program_summary) {
+			c.relevant_reward = getMatchedReward(rewards, c.program_summary._id, c.checkin_count);
+		}
+	})
+	return nearby;
+}
+
+function getMatchedReward(rewards, program_id, count) {
+	if(!program_id || !rewards) {
+		return null;
+	}
+	else {
+		for(var k = 0; k < rewards.length; k++) {
+			var o = rewards[k];
+			if(o.program.equals(program_id)) {
+				if(!count) {
+					return o.rewards[0];
+				}
+				else {					
+					for (var i = 1; i < o.rewards.length; i++) {
+				        if(o.rewards[i].count > count) {
+					        return o.rewards[i];
+					    }
+				    };
+				}
+			}
+		}
+	}
+	return null;
+}
+
+function getRewards(nearby, cb) {
+	Reward.find({
+		program: {
+			$in: getProgramIds(nearby)
+		}
+	}, function (err, rewards) {
+		cb(err, rewards);
+	})
+}
+
+function getProgramIds(objects) {
+	var ids = [];
+	objects.forEach(function (o) {
+		if(o.program_summary && o.program_summary._id) {
+			ids.push(o.program_summary._id);
+		}
+	})
+	return ids;
 }
 
 function getOtherInfos(user, objects, loc, cb) {
@@ -212,7 +290,9 @@ function getOutlets (lat, lon, distance, callback) {
 	}).
 	select({
 		'basics.name':1, 
-		'contact.location': 1
+		'contact.location': 1,
+		'basics.is_a': 1,
+		'contact.phones.mobile': 1
 	}).exec(function (err, outlets) {
 		callback(outlets || []);
 	})
