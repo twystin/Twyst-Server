@@ -1,6 +1,4 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/twyst');
-require('../config/config_models')();
 var Program = mongoose.model('Program');
 var Offer = mongoose.model('Offer');
 var Tier = mongoose.model('Tier');
@@ -8,9 +6,9 @@ var _ = require('underscore');
 var async = require('async');
 var Reward = mongoose.model('Reward');
 var CommonUtilities = require('../common/utilities');
-createRewardTable()
- function createRewardTable(program_id) {
-    var program_id = "537b648fc1844b7c5400000f"
+
+module.exports.createRewardTable =  function(program_id) {
+
     if(!program_id) {
         console.log("I can t do anything");
     }
@@ -35,7 +33,7 @@ createRewardTable()
                                     console.log(err);
                                 }
                                 else {
-                                    console.log("Program exited successfully");
+                                    console.log("Program exited successfully for: " + program.name);
                                 }
                             })
                         }

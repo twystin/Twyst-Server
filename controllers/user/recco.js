@@ -4,6 +4,7 @@ var Program = mongoose.model('Program');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
 var Favourite = mongoose.model('Favourite');
+var Reward = mongoose.model('Reward');
 var async = require('async');
 var _ = require("underscore");
 var CommonUtils = require('../../common/utilities');
@@ -26,26 +27,100 @@ module.exports.getRecco = function (req, res) {
 			getIndependentUserData(function (results) {
 				var unordered_set = computeReccoWeight(objects, results, lat, lon);
 				if(req.user) {
-					getUserHistory(req.user, function (history) {
+					getUserHistory(req.user, function (err, history) {
 						var relevant_set = addUserRelevance(unordered_set, history);
 						var sorted_set = sortRecco(unordered_set);
-						res.send(200, {
-							'status': 'success',
-							'message': 'Got recco data successfully',
-							'info': getNumberOfRecco(sorted_set, start, end)
-						});
+						var result = {
+							total: sorted_set.length,
+							reccos: getNumberOfRecco(sorted_set, start, end)
+						}
+						getMatchedRewards(result.reccos, function (err, reccos) {
+							if(!err) {
+								result.reccos = reccos;
+							}
+							res.send(200, {
+								'status': 'success',
+								'message': 'Got recco data successfully',
+								'info': result
+							});
+						})
 					})
 				}
 				else {
 					var sorted_set = sortRecco(unordered_set);
-					res.send(200, {
-						'status': 'success',
-						'message': 'Got recco data successfully',
-						'info': getNumberOfRecco(sorted_set, start, end)
-					});
+					var result = {
+						total: sorted_set.length,
+						reccos: getNumberOfRecco(sorted_set, start, end)
+					}
+					getMatchedRewards(result.reccos, function (err, reccos) {
+						if(!err) {
+							result.reccos = reccos;
+						}
+						res.send(200, {
+							'status': 'success',
+							'message': 'Got recco data successfully',
+							'info': result
+						});
+					})
 				}
 			})
 		});
+	})
+}
+
+function getMatchedRewards(cut_reccos, cb) {
+	if(!cut_reccos || !cut_reccos.length) {
+		cb(null, cut_reccos);
+	}
+	getRewards(cut_reccos, function (err, rewards) {
+		if(err) {
+			cb(err, cut_reccos);
+		}
+		else {
+			cb(null, getReccosWithMatchedRewars(cut_reccos, rewards));
+		}
+	})
+}
+
+function getReccosWithMatchedRewars(cut_reccos, rewards) {
+	cut_reccos.forEach(function (c) {
+		c.relevant_reward = null;
+		if(c.program_summary) {
+			c.relevant_reward = getMatchedReward(rewards, c.program_summary._id, c.checkin_count);
+		}
+	})
+	return cut_reccos;
+}
+
+function getMatchedReward(rewards, program_id, count) {
+	if(!program_id || !rewards) {
+		return null;
+	}
+	else {
+		for(var k = 0; k < rewards.length; k++) {
+			var o = rewards[k];
+			if(o.program.equals(program_id)) {
+				if(!count) {
+					return o.rewards[0];
+				}
+				else {					
+					for (var i = 1; i < o.rewards.length; i++) {
+				        if(o.rewards[i].count > count) {
+					        return o.rewards[i];
+					    }
+				    };
+				}
+			}
+		}
+	}
+	return null;
+}
+
+function getRewards(cut_reccos, cb) {
+	Reward.find({
+		
+	}, function (err, rewards) {
+		cb(err, rewards);
 	})
 }
 
@@ -125,7 +200,7 @@ function getUserHistory(user, cb) {
 	    	getMyRewards(user, callback);
 	    }
 	}, function(err, results) {
-	    cb(results);
+	    cb(err, results);
 	});
 }
 
@@ -345,7 +420,9 @@ function getOutlets (q, callback) {
 	}).
 	select({
 		'basics.name':1, 
-		'contact.location': 1
+		'contact.location': 1,
+		'basics.is_a': 1,
+		'contact.phones.mobile': 1
 	}).exec(function (err, outlets) {
 		callback(outlets || []);
 	})
