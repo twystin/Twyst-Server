@@ -7,6 +7,36 @@ var async = require('async');
 var Reward = mongoose.model('Reward');
 var CommonUtilities = require('../common/utilities');
 
+module.exports.readOne = function (req, res) {
+    var program_id = req.params.program_id;
+    if(!program_id) {
+        res.send(400, {
+            'status': 'error',
+            'message': 'Error reading reward.',
+            'info': null
+        });
+    }
+
+    Reward.findOne({
+        program: program_id
+    }, function (err, reward) {
+        if(err) {
+            res.send(400, {
+                'status': 'error',
+                'message': 'Error reading reward.',
+                'info': null
+            });
+        }
+        else {
+            res.send(200, {
+                'status': 'success',
+                'message': 'Got reward successfully',
+                'info': reward
+            });
+        }
+    })
+}
+
 module.exports.createRewardTable =  function(program_id) {
 
     if(!program_id) {

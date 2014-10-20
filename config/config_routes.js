@@ -45,6 +45,11 @@ module.exports = function (app) {
         app.post('/api/v3/sitemap', SitemapCtrl.initSitemap);
     })();
 
+    (function reward_route () {
+        var RewardCtrl = require('../controllers/rewardPopulate');
+        app.get('/api/v3/reward_details/:program_id', RewardCtrl.readOne);
+    })();
+
     (function v3_user_data_routes () {
         var NearByCtrl = require('../controllers/user/nearBy');
         var ReccoCtrl = require('../controllers/user/recco');
