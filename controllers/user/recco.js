@@ -432,7 +432,8 @@ function getOutlets (q, callback) {
 		'basics.name':1, 
 		'contact.location': 1,
 		'basics.is_a': 1,
-		'contact.phones.mobile': 1
+		'contact.phones.mobile': 1,
+		'publicUrl': 1
 	}).exec(function (err, outlets) {
 		callback(outlets || []);
 	})
