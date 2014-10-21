@@ -55,6 +55,7 @@ module.exports.getDetails = function (req, res) {
 								result.active_reward = data.active_reward;
 								result.checkin_count = data.checkin_count;
 								result.checkins_to_next_reward = checkinsToReward(reward, data.checkin_count);
+								result.relevant_reward = getActiveReward(reward, data.checkin_count);
 								res.send(200, {
 									'status': 'success',
 									'message': 'Got details successfully',
@@ -81,6 +82,20 @@ function checkinsToReward(reward, count) {
 	    };
 	}
 	return 0;
+}
+
+function getActiveReward(reward, count) {
+	if(!reward || !reward.rewards.length) {
+		return null;
+	}
+	else {
+		for (var i = 0; i < reward.rewards.length; i++) {
+	        if(reward.rewards[i].count > count) {
+		        return reward.rewards[i];
+		    }
+	    };
+	}
+	return null;
 }
 
 function getOtherInfo(user, result, cb) {
