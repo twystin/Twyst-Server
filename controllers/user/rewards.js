@@ -7,7 +7,10 @@ module.exports.getRewards = function (req, res) {
 		user = req.user;
 
 	Voucher.find({
-		'issue_details.issued_to': user._id
+		'issue_details.issued_to': user._id,
+		'basics.created_at': {
+			$lt: new Date(Date.now() - 10800000)
+		}
 	})
 	.skip(start - 1)
 	.limit(end - start + 1)

@@ -55,10 +55,12 @@ module.exports = function (app) {
         var ReccoCtrl = require('../controllers/user/recco');
         var RewardCtrl = require('../controllers/user/rewards');
         var DetailCtrl = require('../controllers/user/detail');
+        var TimelineCtrl = require('../controllers/user/timeline');
         app.get('/api/v3/near', NearByCtrl.getNearby);
         app.get('/api/v3/recco', ReccoCtrl.getRecco);
         app.get('/api/v3/outlet_detail', DetailCtrl.getDetails);
         app.get('/api/v3/rewards', checkAuthenticated(), RewardCtrl.getRewards);
+        app.get('/api/v3/timeline', checkAuthenticated(), TimelineCtrl.getTimeline);
     })();
 
     (function panel_route() {
