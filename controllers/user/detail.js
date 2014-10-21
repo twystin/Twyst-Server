@@ -190,7 +190,8 @@ function getOutlet(outlet_id, cb) {
 
 function getProgram(outlet_id, cb) {
 	Program.findOne({
-		outlets: outlet_id
+		outlets: outlet_id,
+		status: 'active'
 	}, function (err, program) {
 		if(err || !program) {
 			cb(err, program);
