@@ -177,7 +177,7 @@ function getCheckinRelevance (checkins, outlet, program) {
 }
 
 function getActiveVoucherRelevance (rewards, program) {
-	if(!program || !rewards.length) {
+	if(!program || !rewards || !rewards.length) {
 		return 0;
 	}
 	for(var i = 0; i < rewards.length; i++) {

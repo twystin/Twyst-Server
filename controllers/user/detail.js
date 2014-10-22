@@ -152,7 +152,7 @@ function calculateDistance(outlet, lat, lon) {
 
 function getRewardTree(result, cb) {
 	if(!result.programs_details) {
-		cb(null, []);
+		cb(null, null);
 	}
 	else {
 		getReward(result.programs_details, function (err, reward) {
