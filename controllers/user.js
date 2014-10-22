@@ -81,6 +81,9 @@ module.exports.setLocation = function (id, phone, current_loc) {
         }
         else {
             user.home = current_loc;
+            if(!user.role || user.role === 6) {
+                user.role = 7;
+            }
             user.save();
         }
     });
