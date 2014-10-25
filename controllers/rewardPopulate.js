@@ -115,7 +115,8 @@ function getRewards(program) {
                             tier: null,
                             offer: null,
                             count: null,
-                            reward: null
+                            reward: null,
+                            rewardified: null
                         };
 
                         if (program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
@@ -123,7 +124,8 @@ function getRewards(program) {
                                 reward.count = lim + 1;
                                 reward.tier = program.tiers[i]._id;
                                 reward.offer = program.tiers[i].offers[j]._id;
-                                reward.reward = CommonUtilities.rewardify(program.tiers[i].offers[j]);
+                                reward.reward = program.tiers[i].offers[j].basics.description;
+                                reward.rewardified = CommonUtilities.rewardify(program.tiers[i].offers[j]);
                                 rewards.push(reward);
                             }
                         }
@@ -133,7 +135,8 @@ function getRewards(program) {
                                 reward.count = lim + 1;
                                 reward.tier = program.tiers[i]._id;
                                 reward.offer = program.tiers[i].offers[j]._id;
-                                reward.reward = CommonUtilities.rewardify(program.tiers[i].offers[j]);
+                                reward.reward = program.tiers[i].offers[j].basics.description;
+                                reward.rewardified = CommonUtilities.rewardify(program.tiers[i].offers[j]);
                                 rewards.push(reward);
                             }
                         }
@@ -142,7 +145,8 @@ function getRewards(program) {
                                 reward.count = lim + 1;
                                 reward.tier = program.tiers[i]._id;
                                 reward.offer = program.tiers[i].offers[j]._id;
-                                reward.reward = CommonUtilities.rewardify(program.tiers[i].offers[j]);
+                                reward.reward = program.tiers[i].offers[j].basics.description;
+                                reward.rewardified = CommonUtilities.rewardify(program.tiers[i].offers[j]);
                                 rewards.push(reward);
                             }
                         }
