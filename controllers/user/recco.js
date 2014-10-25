@@ -144,6 +144,7 @@ function addUserRelevance(unordered_set, history) {
 		s.fav_relevance = 10 * getFavsRelevance(history.my_favs, s.outlet_summary);
 		s.reward_relevance = 5 * getActiveVoucherRelevance(history.my_rewards, s.program_summary);
 		s.active_reward = false;
+		s.closed = CommonUtils.isOpen(s.outlet_summary);
 		if(s.reward_relevance > 0) {
 			s.active_reward = true;
 		}
@@ -433,8 +434,9 @@ function getOutlets (q, callback) {
 		'basics.name':1, 
 		'contact.location': 1,
 		'basics.is_a': 1,
-		'contact.phones.mobile': 1,
-		'publicUrl': 1
+		'contact.phones': 1,
+		'publicUrl': 1,
+		'business_hours': 1
 	}).exec(function (err, outlets) {
 		callback(outlets || []);
 	})

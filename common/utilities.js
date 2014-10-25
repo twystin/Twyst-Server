@@ -1,6 +1,47 @@
 var _ = require('underscore');
 var dateFormat = require('dateformat');
 
+module.exports.isOpen = function (outlet) {
+    var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    if(!outlet || !outlet.business_hours) {
+        return false;
+    }
+    var time = new Date(Date.now() + 5 * 60 * 60 * 1000 + 30 * 60 * 1000);
+    var day = days[time.getDay()];
+    var today = outlet.business_hours[day];
+    console.log(today)
+    if(!today.timings) {
+        return false;
+    }
+    if(today.closed) {
+        return true;
+    }
+    var minutes = time.getHours() * 60 + time.getMinutes();
+    for(var i = 0; i < today.timings.length; i++) {
+        var t = today.timings[i];
+        console.log(t)
+        var open_min = 0,
+            close_min = 0;
+        if(t 
+            && t.open.hr 
+            && t.open.min) {
+            open_min = t.open.hr * 60 + t.open.min;
+        }
+        if(t 
+            && t.close.hr 
+            && t.close.min) {
+            close_min = t.close.hr * 60 + t.close.min;
+        }
+        console.log(minutes);
+        console.log(open_min);
+        console.log(close_min)
+        if(minutes >= open_min && minutes <= close_min) {
+            return false;
+        }
+    }
+    return true;
+}
+
 module.exports.tenDigitPhone = function (phone_number) {
     return phone_number.substring(phone_number.length-10, phone_number.length);
 };
