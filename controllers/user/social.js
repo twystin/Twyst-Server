@@ -17,44 +17,26 @@ module.exports.update = function (req, res) {
 	}
 
 	function updateUser() {
-		Account.findOne({
+		var social_graph = {};
+		social_graph[key] = data;
+		Account.findOneAndUpdate({
 			_id: user._id
-		}, function (err, user) {
+		}, {
+			$set: social_graph
+		}, {upsert: true}, function (err, user){
 			if(err) {
 				res.send(400, {
 					'status': 'error',
-					'message': 'Error getting user.',
+					'message': 'Error updating user.',
 					'info': null
 				});
 			}
 			else {
-				if(!user) {
-					res.send(400, {
-						'status': 'error',
-						'message': 'User not registered.',
-						'info': null
-					});
-				}
-				else {
-					user.social_graph = user.social_graph || {};
-					user.social_graph[key] = data;
-					user.save(function (err) {
-						if(err) {
-							res.send(400, {
-								'status': 'error',
-								'message': 'Error updating user.',
-								'info': null
-							});
-						}
-						else {
-							res.send(200, {
-								'status': 'success',
-								'message': 'Successfully updated user.',
-								'info': user
-							});
-						}
-					})
-				}
+				res.send(200, {
+					'status': 'success',
+					'message': 'Successfully updated user.',
+					'info': user
+				});
 			}
 		})
 	}
