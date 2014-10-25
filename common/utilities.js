@@ -6,7 +6,7 @@ module.exports.isOpen = function (outlet) {
     if(!outlet || !outlet.business_hours) {
         return false;
     }
-    var time = new Date(Date.now() + 5 * 60 * 60 * 1000 + 30 * 60 * 1000);
+    var time = new Date(Date.now() + 19800000);
     var day = days[time.getDay()];
     var today = outlet.business_hours[day];
     if(!today.timings || !today.timings.length) {
@@ -20,25 +20,19 @@ module.exports.isOpen = function (outlet) {
         var t = today.timings[i];
         var open_min = 0,
             close_min = 0;
-        if(t 
-            && t.open.hr 
-            && t.open.min) {
+        if(t && t.open) {
             open_min = t.open.hr * 60 + t.open.min;
         }
         else {
             return false;
         }
-        if(t 
-            && t.close.hr 
-            && t.close.min) {
+        
+        if(t && t.close) {
             close_min = t.close.hr * 60 + t.close.min;
         }
         else {
             return false;
         }
-        console.log(minutes)
-        console.log(open_min)
-        console.log(close_min)
         if(minutes >= open_min && minutes <= close_min) {
             return false;
         }
