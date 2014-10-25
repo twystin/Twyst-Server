@@ -143,6 +143,7 @@ function addUserRelevance(unordered_set, history) {
 		s.checkin_count = checkin_data.checkin_in_program;
 		s.fav_relevance = 10 * getFavsRelevance(history.my_favs, s.outlet_summary);
 		s.reward_relevance = 5 * getActiveVoucherRelevance(history.my_rewards, s.program_summary);
+		s.active_reward = false;
 		if(s.reward_relevance > 0) {
 			s.active_reward = true;
 		}
