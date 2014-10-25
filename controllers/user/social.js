@@ -36,6 +36,7 @@ module.exports.update = function (req, res) {
 					});
 				}
 				else {
+					user.social_graph = user.social_graph || {};
 					user.social_graph[key] = data;
 					user.save(function (err) {
 						if(err) {
