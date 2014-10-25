@@ -34,7 +34,9 @@ var Account = new Schema({
     },
     gcm: {type: String, default: ''},
     social_graph: {
-        
+        facebook: {},
+        google: {},
+        email: {}
     },
     device_id: {type: String, default: ''},
     otp_validated: Boolean,
