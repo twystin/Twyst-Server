@@ -16,7 +16,8 @@ var RewardSchema = new Schema({
     	tier: {type: Schema.ObjectId, ref: 'Tier'},
     	offer: {type: Schema.ObjectId, ref: 'Offer'},
     	count : {type: Number},
-    	reward: {type: String}
+    	reward: {type: String},
+    	rewardified: {type: String}
     }]
 });
 
