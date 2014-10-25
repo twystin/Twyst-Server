@@ -9,7 +9,6 @@ module.exports.isOpen = function (outlet) {
     var time = new Date(Date.now() + 5 * 60 * 60 * 1000 + 30 * 60 * 1000);
     var day = days[time.getDay()];
     var today = outlet.business_hours[day];
-    console.log(today)
     if(!today.timings) {
         return false;
     }
@@ -19,7 +18,6 @@ module.exports.isOpen = function (outlet) {
     var minutes = time.getHours() * 60 + time.getMinutes();
     for(var i = 0; i < today.timings.length; i++) {
         var t = today.timings[i];
-        console.log(t)
         var open_min = 0,
             close_min = 0;
         if(t 
@@ -32,9 +30,6 @@ module.exports.isOpen = function (outlet) {
             && t.close.min) {
             close_min = t.close.hr * 60 + t.close.min;
         }
-        console.log(minutes);
-        console.log(open_min);
-        console.log(close_min)
         if(minutes >= open_min && minutes <= close_min) {
             return false;
         }

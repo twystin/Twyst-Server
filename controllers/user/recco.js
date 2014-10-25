@@ -144,7 +144,6 @@ function addUserRelevance(unordered_set, history) {
 		s.fav_relevance = 10 * getFavsRelevance(history.my_favs, s.outlet_summary);
 		s.reward_relevance = 5 * getActiveVoucherRelevance(history.my_rewards, s.program_summary);
 		s.active_reward = false;
-		s.closed = CommonUtils.isOpen(s.outlet_summary);
 		if(s.reward_relevance > 0) {
 			s.active_reward = true;
 		}
@@ -393,6 +392,7 @@ function buildDataObject(outlets, programs) {
 	outlets.forEach(function (o) {
 		var obj = {};
 		obj.outlet_summary = o;
+		obj.closed_now = CommonUtils.isOpen(obj.outlet_summary);
 		obj.program_summary = getMatchedProgram(programs, o._id);
 		objects.push(obj);
 	});
