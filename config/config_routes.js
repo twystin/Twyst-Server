@@ -50,6 +50,15 @@ module.exports = function (app) {
         app.get('/api/v3/reward_details/:program_id', RewardCtrl.readOne);
     })();
 
+    (function winback_route () {
+        var WinbackCtrl = require('../controllers/programs/winback');
+        app.post('/api/v3/winback', checkAuthenticated(), WinbackCtrl.create);
+        app.get('/api/v3/winback', checkAuthenticated(), WinbackCtrl.read);
+        app.get('/api/v3/winback/:winback_id', checkAuthenticated(), WinbackCtrl.readOne);
+        app.put('/api/v3/winback', checkAuthenticated(), WinbackCtrl.update);
+        app.delete('/api/v3/winback/:winback_id', checkAuthenticated(), WinbackCtrl.delete);
+    })();
+
     (function v3_user_data_routes () {
         var NearByCtrl = require('../controllers/user/nearBy');
         var ReccoCtrl = require('../controllers/user/recco');

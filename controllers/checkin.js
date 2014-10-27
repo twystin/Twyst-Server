@@ -705,7 +705,6 @@ function responder(checkin, offer, program, res) {
 			});
 		}
 		else {
-			triggerSmsForMetro(checkin.phone, outlet);
 			checkin_object.outlet = outlet;
 			checkin_object.offer = offer;
             checkin_object.program = program;
@@ -715,14 +714,6 @@ function responder(checkin, offer, program, res) {
 			});
 		}
 	});
-}
-
-function triggerSmsForMetro(mobile, outlet) {
-	if(outlet &&
-		outlet.contact.location.locality_1[0].toLowerCase() === 'huda city centre metro station') {
-		var message = 'Thanks for checking-in. Also sign up for the Twyst Metro Park Foodie Challenge, weekly meal vouchers worth up to Rs 1500 up for grabs! Click http://twyst.in/metropark to sign up.';
-		SMS.sendSms(mobile, message);
-	}
 }
 
 function smsResponder(phone, push_message) {
