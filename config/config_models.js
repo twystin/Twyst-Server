@@ -25,7 +25,7 @@ module.exports = function () {
         rating = require('../models/rating'),
         recco_config = require('../models/recco_config'),
         user_loc = require('../models/userLoc.js'),
-        reward = require('../models/rewards');
+        reward = require('../models/rewards'),
         winback = require('../models/winback.js'),
         beta_merchants = require('../models/beta_merchants');
 
