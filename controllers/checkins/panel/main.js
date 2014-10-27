@@ -286,10 +286,6 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			sms.checkin = false;
 			sms.reward = false;
 
-			if(outlet.contact.location.locality_1[0].toLowerCase() === 'huda city centre metro station') {
-				message.checkin += ' Take part in the Metro Park Foodie Challenge, weekly meal vouchers worth up to Rs 1500 up for grabs! Click http://twyst.in/metropark for more.';
-			}
-
 			return message;
 		}
 	}
