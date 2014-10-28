@@ -27,7 +27,8 @@ module.exports = function () {
         user_loc = require('../models/userLoc.js'),
         reward = require('../models/rewards'),
         winback = require('../models/winback.js'),
-        beta_merchants = require('../models/beta_merchants');
+        beta_merchants = require('../models/beta_merchants'),
+        group_program = require('../models/group_program');
 
     mongoose.model('Account').schema.add({
         account: {type: Schema.ObjectId, ref: 'Account'}
