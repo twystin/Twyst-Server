@@ -4,7 +4,7 @@ var _ = require('underscore');
 require('./config/config_models')();
 
 var Outlet = mongoose.model('Outlet');
-mongoose.connect('mongodb://localhost/twyst');
+mongoose.connect('mongodb://50.112.253.131/twyst');
 
 Outlet.find({}, function (err, outlets) {
 	outlets.forEach(function (o) {

@@ -1,6 +1,6 @@
 'use strict';
 var mongoose = require('mongoose');
-var SmsCheckinModule = require('./sms');
+var SmsCheckinModule = require('./checkins/sms/main');
 var SmsCheckinCodeModule = require('./getSMSCheckinCode');
 var VoucherRedeemModule = require('./voucher_redeem');
 var SmsSentLog = mongoose.model('SmsSentLog');
@@ -37,7 +37,7 @@ function smsParser(req, res, sms_text, phone) {
 	if(signal === 'CHK' && sms_text.length > 1) {
 		var code = sms_text[1];
 
-		handleCheckin(req, res, code, phone);
+		handleCheckin(code, phone);
 	}
 	else if(
 		signal === 'CODE' &&
@@ -60,12 +60,14 @@ function smsParser(req, res, sms_text, phone) {
 	}
 }
 
-function handleCheckin (req, res, code, phone) {
+function handleCheckin (code, phone) {
+	var checkin = {
+		phone: phone,
+		checkin_type: "SMS",
+		checkin_code: code
+	};
 
-	var checkin_type = "SMS";
-	var checkin_code = code;
-
-	SmsCheckinModule.smsCheckin(req, res, phone, code, checkin_type, checkin_code);
+	SmsCheckinModule.smsCheckin(checkin);
 }
 
 function sendSmsCode (req, res, num, phone) {

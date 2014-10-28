@@ -6,7 +6,7 @@ var VoucherGenCtrl = require('../controllers/voucher-gen');
 var Program = mongoose.model('Program');
 var Outlet = mongoose.model('Outlet');
 var SmsSentLog = mongoose.model('SmsSentLog');
-var Tier = mongoose.model('Tier');
+var Tier = mongoose.model('Tier'); 
 
 var _ = require('underscore');
 

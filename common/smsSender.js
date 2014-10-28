@@ -13,7 +13,7 @@ module.exports.sendSms = function (phone, push_message, type) {
 	var message = push_message.replace(/&/g,'%26');
 	message = message.replace(/% /g,'%25 ');
 	console.log(message);
-	checkType();
+	//checkType();
 	function checkType() {
 		var time = null;
 		time = Date.now();
