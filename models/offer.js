@@ -1,7 +1,8 @@
 'use strict';
 
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    avail_hours = require("../common/operatingHours");
 
 var OfferSchema = new Schema({
     username: {type: String},
@@ -14,6 +15,7 @@ var OfferSchema = new Schema({
         modified_at: {type: Date, default: Date.now}
     },
     terms: {type: String},
+    avail_hours: avail_hours.hours,
     reward: {
         discount: {
             max: String,

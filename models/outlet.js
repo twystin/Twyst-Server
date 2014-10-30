@@ -1,7 +1,8 @@
 'use strict';
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var Account = mongoose.model('Account');
+var mongoose = require('mongoose'),
+    Schema = mongoose.Schema,
+    Account = mongoose.model('Account'),
+    business_hours = require("../common/operatingHours")
 
 var OutletSchema = new Schema({
     username: {type: String},
@@ -60,99 +61,7 @@ var OutletSchema = new Schema({
             link_url: {type: String, default: ''}
         }]
     },
-    business_hours: {
-        sunday: {
-            closed: {type: Boolean, default: false},
-            timings: [{
-                open: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                },
-                close: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                }
-            }]
-        },
-        monday: {
-            closed: {type: Boolean, default: false},
-            timings: [{
-                open: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                },
-                close: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                }
-            }]
-        },
-        tuesday: {
-            closed: {type: Boolean, default: false},
-            timings: [{
-                open: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                },
-                close: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                }
-            }]
-        },
-        wednesday: {
-            closed: {type: Boolean, default: false},
-            timings: [{
-                open: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                },
-                close: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                }
-            }]
-        },
-        thursday: {
-            closed: {type: Boolean, default: false},
-            timings: [{
-                open: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                },
-                close: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                }
-            }]
-        },
-        friday: {
-            closed: {type: Boolean, default: false},
-            timings: [{
-                open: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                },
-                close: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                }
-            }]
-        },
-        saturday: {
-            closed: {type: Boolean, default: false},
-            timings: [{
-                open: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                },
-                close: {
-                    hr: {type: Number},
-                    min: {type: Number}
-                }
-            }]
-        }
-    },
+    business_hours: business_hours.hours,
     attributes: {
         home_delivery: {type: Boolean},
         dine_in: {type: Boolean},
