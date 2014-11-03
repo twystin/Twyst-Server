@@ -17,10 +17,13 @@ module.exports.sendSms = function (phone, push_message, type) {
 	function checkType() {
 		var time = null;
 		time = Date.now();
-		if(type === 'VOUCHER_MESSAGE') {
+		if(type === 'OTP_MESSAGE') {
+			send();
+		}
+		else if(type === 'VOUCHER_MESSAGE') {
 			time = time + 3 * 60 * 60 * 1000;
 		}
-		if(isAccurateTime(time)) {
+		else if(isAccurateTime(time)) {
 			if(type !== 'VOUCHER_MESSAGE') {
 				send();
 			}
