@@ -244,6 +244,7 @@ module.exports = function (app) {
     //Outlet CRUD routes
     (function outlet_routes() {
         var OutletCtrl = require('../controllers/outlet');
+        app.get('/api/v3/outlets', checkAuthenticated(), OutletCtrl.getOutletsByAuth);
         app.get('/api/v2/outlets', checkAuthenticated(), checkRole(5), OutletCtrl.get);
         app.get('/api/v2/outlets/slugs', OutletCtrl.getSlugs);
         app.get('/api/v1/outlets/count/:user_id', checkAuthenticated(), checkRole(5), OutletCtrl.getCount);
@@ -268,6 +269,7 @@ module.exports = function (app) {
     //Program CRUD routes
     (function program_routes() {
         var ProgramCtrl = require('../controllers/program');
+        var GroupProgramCtrl = require('../controllers/group_program')
         app.get('/api/v2/programs', checkAuthenticated(), checkRole(5), ProgramCtrl.get);
         app.get('/api/v1/programs/count/:user_id', checkAuthenticated(), checkRole(5), ProgramCtrl.getCount);
         app.get('/api/v1/programs/offer/:offer_id', checkAuthenticated(), checkRole(4), ProgramCtrl.getProgramByOffer);
@@ -275,9 +277,15 @@ module.exports = function (app) {
         app.get('/api/v1/programs/only/:user_id', checkAuthenticated(), checkRole(4), ProgramCtrl.onlyPrograms);
         app.get('/api/v1/public/programs/', ProgramCtrl.publicQuery);
         app.get('/api/v1/programs/view/:program_id', ProgramCtrl.readOne);
+        app.get('/api/v1/group_program/:outlet_id', checkAuthenticated(), GroupProgramCtrl.get);
+        app.get('/api/v2/group_program/:group_program_id',checkAuthenticated(), GroupProgramCtrl.getGroupProgram);
         app.post('/api/v1/programs', checkAuthenticated(), checkRole(4), ProgramCtrl.create);
+        app.post('/api/v1/group_program/', checkAuthenticated(), GroupProgramCtrl.create);
+        app.put('/api/v1/group_program/update/', checkAuthenticated(), GroupProgramCtrl.update);
         app.put('/api/v1/programs/:program_id', checkAuthenticated(), checkRole(4), ProgramCtrl.update);
+        app.put('/api/v1/group_program/:group_program_id', checkAuthenticated(), GroupProgramCtrl.update);
         app.delete('/api/v1/programs/:program_id', checkAuthenticated(), checkRole(4), ProgramCtrl.delete);
+        app.delete('/api/v1/group_program/:group_program_id', checkAuthenticated(), GroupProgramCtrl.delete);
     })();
 
 
