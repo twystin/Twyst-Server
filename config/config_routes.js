@@ -244,6 +244,7 @@ module.exports = function (app) {
     //Outlet CRUD routes
     (function outlet_routes() {
         var OutletCtrl = require('../controllers/outlet');
+        app.get('/api/v3/outlets', checkAuthenticated(), OutletCtrl.getOutletsByAuth);
         app.get('/api/v2/outlets', checkAuthenticated(), checkRole(5), OutletCtrl.get);
         app.get('/api/v2/outlets/slugs', OutletCtrl.getSlugs);
         app.get('/api/v1/outlets/count/:user_id', checkAuthenticated(), checkRole(5), OutletCtrl.getCount);
@@ -278,6 +279,14 @@ module.exports = function (app) {
         app.post('/api/v1/programs', checkAuthenticated(), checkRole(4), ProgramCtrl.create);
         app.put('/api/v1/programs/:program_id', checkAuthenticated(), checkRole(4), ProgramCtrl.update);
         app.delete('/api/v1/programs/:program_id', checkAuthenticated(), checkRole(4), ProgramCtrl.delete);
+    })();
+
+    (function group_program_routes() {        
+        var GroupProgramCtrl = require('../controllers/group_program');
+        app.get('/api/v1/group_program/:group_program_id',checkAuthenticated(), GroupProgramCtrl.getGroupProgram);
+        app.post('/api/v1/group_program/', checkAuthenticated(), GroupProgramCtrl.create);
+        app.put('/api/v1/group_program', checkAuthenticated(), GroupProgramCtrl.update);
+        app.delete('/api/v1/group_program/:group_program_id', checkAuthenticated(), GroupProgramCtrl.delete);
     })();
 
 

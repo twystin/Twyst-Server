@@ -571,7 +571,28 @@ module.exports.getOffersForOutlet = function (req, res) {
 	})
 };
 
+module.exports.getOutletsByAuth = function (req, res){
 
+	Outlet.find({
+		'outlet_meta.accounts': req.user._id
+	}, function (err, outlets) {
+		if(err || !outlets) {
+			res.send(400, {
+				'status': 'error',
+				'message': 'Error getting outlets',
+				'info': err
+			});
+		}
+		else {
+			res.send(200, {
+				'status': 'success',
+				'message': 'Successfully got outlets',
+				'info': outlets
+			});
+		}
+	});
+
+}
 //module.exports.read = function (req, res) {
 function read(programs, res) {
 
