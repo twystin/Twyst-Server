@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Account = mongoose.model('Account');
 var UserLoc = mongoose.model('UserLoc');
-
+var sortObj = require('sort-object');
 var async = require('async');
 
 module.exports.getAllUsers = function (req, res) {
@@ -52,11 +52,11 @@ module.exports.getAllUsers = function (req, res) {
 	});
 
 	function getUsers (q, callback) {
+		var sortQuery={};
+		sortQuery[req.query.sortBy] = req.query.sortOrder;
 		Account.find(q, 
 				{},  
-				{sort: { 
-					'created_at' : -1 
-				},
+				{sort: sortQuery,
 				skip: skip, 
 				limit: limit
 			}).lean().exec(function (err, users) {
