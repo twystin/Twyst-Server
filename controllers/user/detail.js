@@ -52,7 +52,7 @@ module.exports.getDetails = function (req, res) {
 								result.distance = calculateDistance(result.outlet_details, lat, lon);
 							}
 							getOtherInfo(req.user, result, function (err, data) {
-								result.active_reward = data.active_reward;
+								result.active_rewards = data.active_rewards;
 								result.checkin_count = data.checkin_count;
 								result.checkins_to_next_reward = checkinsToReward(reward, data.checkin_count);
 								result.relevant_reward = getActiveReward(reward, data.checkin_count);
@@ -100,8 +100,8 @@ function getActiveReward(reward, count) {
 
 function getOtherInfo(user, result, cb) {
 	async.parallel({
-	    active_reward: function(callback) {
-	    	hasActiveReward(user, result, function (has_active) {
+	    active_rewards: function(callback) {
+	    	getActiveRewards(user, result, function (has_active) {
 	    		callback(null, has_active);
 	    	});
 	    },
@@ -130,16 +130,16 @@ function getCheckinCount(user, result, cb) {
 	}
 }
 
-function hasActiveReward(user, result, cb) {
+function getActiveRewards(user, result, cb) {
 	if(!user || !result.programs_details) {
-		cb(false);
+		cb([]);
 	}
 	else {
-		Voucher.findOne({
+		Voucher.find({
 			'issue_details.program': result.programs_details._id,
 			'issue_details.issued_to': user._id
-		}, function (err, voucher) {
-			cb(voucher ? true :  false);
+		}, function (err, vouchers) {
+			cb(vouchers || []);
 		})
 	}
 }

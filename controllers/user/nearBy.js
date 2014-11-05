@@ -139,7 +139,8 @@ function getOtherInfos(user, objects, loc, cb) {
 			var outlet_loc = o.outlet_summary.contact.location.coords;
 			o.distance = CommonUtils.calculateDistance(loc, outlet_loc);
 			o.checkin_count = getCheckinCount(o.program_summary, data.checkin_counts);
-			o.active_reward = hasActiveVoucher(o.program_summary, data.active_rewards)
+			o.num_of_active_vouchers = numOfActiveVouchers(o.program_summary, data.active_rewards)
+			o.active_rewards = o.num_of_active_vouchers ? true : false;
 		});
 		cb(objects);
 	})
@@ -157,16 +158,16 @@ function getCheckinCount(program, checkin_counts) {
 	return 0;
 }
 
-function hasActiveVoucher(program, active_rewards) {
+function numOfActiveVouchers(program, active_rewards) {
 	if(!program || !active_rewards.length) {
-		return false;
+		return 0;
 	}
 	for(var i = 0; i < active_rewards.length; i++) {
 		if(active_rewards[i] && active_rewards[i]._id.equals(program._id)) {
-			return true;
+			return active_rewards[i].count;
 		}
 	}
-	return false;
+	return 0;
 }
 
 function getInfoForAuthUser(objects, user, cb) {

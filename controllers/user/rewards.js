@@ -1,13 +1,16 @@
 var mongoose = require("mongoose");
 var Voucher = mongoose.model('Voucher');
 var async = require("async");
+var CommonUtils = require('../../common/utilities');
 
 module.exports.getRewards = function (req, res) {
 	var start = req.query.start || 1,
 		end = req.query.end || 20,
-		user = req.user;
+		user = req.user,
+		lat = req.query.lat,
+		lon = req.query.lon;
 
-	getInfo(user, function (err, vouchers) {
+	getVoucher(user, function (err, vouchers) {
 		if(err) {
 			res.send(400, {
 				'status': 'error',
@@ -20,10 +23,11 @@ module.exports.getRewards = function (req, res) {
 				total: 0,
 				vouchers: []
 			};
-			result.total += vouchers.ACTIVE.length;
-			result.total += vouchers.USER_REDEEMED.length;
-			result.total += vouchers.MERCHANT_REDEEMED.length;
+			result.total += (vouchers.ACTIVE.length + vouchers.MERCHANT_REDEEMED.length + vouchers.USER_REDEEMED.length);
 			result.vouchers = vouchers;
+			var filtered_vouchers = filterExpired(vouchers.ACTIVE);
+			result.vouchers.ACTIVE = getInfo(filtered_vouchers.ACTIVE, lat, lon);
+			result.vouchers.EXPIRED = filtered_vouchers.EXPIRED;
 			res.send(200, {
 				'status': 'success',
 				'message': 'Got vouchers successfully.',
@@ -33,7 +37,70 @@ module.exports.getRewards = function (req, res) {
 	})
 }
 
-function getInfo (user, cb) {
+function getInfo(active_vouchers, lat, lon) {
+	var vouchers = [];
+	if(!active_vouchers || !active_vouchers.length) {
+		return [];
+	}
+	for(var i = 0; i < active_vouchers.length; i++) {
+		var temp_obj = {
+			voucher: active_vouchers[i],
+			distance: -1,
+			avail_in: -1
+		}
+		if(active_vouchers[i].issue_details.issued_at
+			&& active_vouchers[i].issue_details.issued_at.length) {
+			var MAX_DISTANCE = 20038; // MAX DISTANCE ON EARTH
+			for(var j = 0; j < active_vouchers[i].issue_details.issued_at.length; j++) {
+				var distance = calculateDistance(active_vouchers[i].issue_details.issued_at[j], lat, lon)
+				if(distance < MAX_DISTANCE) {
+					MAX_DISTANCE = distance;
+					temp_obj.distance = distance;
+				}
+			}
+		}
+		temp_obj.avail_in = getAvailability(active_vouchers[i].issue_details.issued_for);
+		vouchers.push(temp_obj);
+	}
+	return vouchers;
+}
+
+function getAvailability(offer) {
+	return -1;
+}
+
+function calculateDistance(outlet, lat, lon) {
+	var outlet_loc = outlet.contact.location.coords;
+	var current_loc = {latitude: lat, longitude: lon};
+	return CommonUtils.calculateDistance(outlet_loc, current_loc);
+}
+
+function filterExpired(vouchers) {
+	var v = {
+		ACTIVE: [],
+		EXPIRED: []
+	}
+	if(!vouchers || !vouchers.length) {
+		return v;
+	}
+	for(var i = 0; i < vouchers.length; i++) {
+		if(isExpired(vouchers[i].issue_details.program)) {
+			v.EXPIRED.push(vouchers[i]);
+		}
+		else {
+			v.ACTIVE.push(vouchers[i]);
+		}
+	}
+	return v;
+}
+
+function isExpired(program) {
+	var time_now = new Date();
+	return (new Date(program.validity.burn_start) < time_now
+		&& time_now < new Date(program.validity.burn_end));
+}
+
+function getVoucher (user, cb) {
 	async.parallel({
 	    ACTIVE: function(callback) {
 	    	getActiveVoucher(user, callback);
@@ -55,8 +122,10 @@ function getUserRedeemed(user, cb) {
 		'basics.status': 'user redeemed'
 	})
 	.populate('issue_details.issued_at')
+	.populate('issue_details.issued_for')
+	.populate('issue_details.program')
 	.exec(function (err, vouchers) {
-		cb(err, vouchers);
+		cb(null, vouchers || []);
 	})
 }
 
@@ -69,8 +138,10 @@ function getActiveVoucher(user, cb) {
 		'basics.status': 'active'
 	})
 	.populate('issue_details.issued_at')
+	.populate('issue_details.issued_for')
+	.populate('issue_details.program')
 	.exec(function (err, vouchers) {
-		cb(err, vouchers);
+		cb(null, vouchers || []);
 	})
 }
 
@@ -80,7 +151,9 @@ function getRedeemed(user, cb) {
 		'basics.status': 'merchant redeemed'
 	})
 	.populate('issue_details.issued_at')
+	.populate('issue_details.issued_for')
+	.populate('issue_details.program')
 	.exec(function (err, vouchers) {
-		cb(err, vouchers);
+		cb(null, vouchers || []);
 	})
 }

@@ -10,7 +10,7 @@ var TagCtrl = require('../controllers/tag');
 var CommonUtilities = require('../common/utilities');
 
 module.exports.getSlugs = function (req, res) {
-	Outlet.find({'outlet_meta.status': {$ne: 'draft'}}, function (err, outlets) {
+	Outlet.find({'outlet_meta.status': 'active'}, function (err, outlets) {
 		if(err || !outlets) {
 			res.send(400, {
 				'status': 'error',
@@ -59,7 +59,6 @@ module.exports.getSlugs = function (req, res) {
 }
 
 module.exports.get = function (req, res) {
-	console.log(getQuery())
 	Outlet.find(getQuery(), function (err, outlets) {
 		if(err) {
 			res.send(400, {

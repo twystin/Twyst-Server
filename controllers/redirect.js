@@ -32,12 +32,14 @@ module.exports.redirectToOutlet = function (req, res) {
 	if(!req.params.shortUrl) {
 		redirect(null);
 	}
-	Outlet.findOne({shortUrl: req.params.shortUrl.toUpperCase()}, function (err, outlet) {
+	Outlet.findOne({
+		shortUrl: req.params.shortUrl.toUpperCase(),
+		'outlet_meta.status': 'active'
+	}, function (err, outlet) {
 		if(err || !outlet) {
 			redirect(null);
 		}
 		else {
-			console.log(outlet)
 			redirect(outlet.publicUrl[0])
 		}
 	})

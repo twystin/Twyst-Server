@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var VoucherSchema = new Schema({
-    basics: { 
+    basics: {
         code: {type: String, trim: true, required: true, unqiue: true, index: true},
         description: {type: String, default: '', trim: true},
         type: {type: String, default: '', trim: true},
@@ -29,10 +29,13 @@ var VoucherSchema = new Schema({
     used_details: {
         used_by: {type: Schema.ObjectId, ref: 'Account'},
         used_at: {type: Schema.ObjectId, ref: 'Outlet'},
-        used_date: {type: Date, default: Date.now},
+        used_date: {type: Date},
         used_time: {type: Date}
     },
-    gen_type: {type: String, enum: ['QR', 'SMS', 'PANEL', 'BATCH', 'NA']},
+    checkin_details: {
+        checkin_id: {type: Schema.ObjectId, ref: 'Checkin'},
+        batch: {type: Boolean, default: false}
+    },
     redemption_phone_number: {type: String, default: ''},
     free_text: String
 });
