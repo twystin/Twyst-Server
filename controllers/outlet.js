@@ -320,18 +320,15 @@ module.exports.publicview = function(req,res) {
 	});
 	
 	function getData (outlet_id) {
-		console.log(outlet_id)
 		async.parallel({
 		    OUTLET: function(callback) {
 		    	getOutlet(outlet_id, callback);
 		    },
 		    REWARDS: function(callback) {
 		    	getRewards(outlet_id, callback);
-		    },
-		    UNIQUE: function (callback) {
-		    	getUniqueCustomers(outlet_id, callback);
 		    }
 		}, function(err, results) {
+			results.closed_now = CommonUtilities.isOpen(results.OUTLET);
 		    res.send(200,  {
 		    	'status': 'success',
 		    	'message': 'Got details successfully.',
@@ -344,15 +341,6 @@ module.exports.publicview = function(req,res) {
 		Outlet.findOne({_id: outlet_id}, function(err, outlet) {
 			callback (null, outlet || {});
 		}); 
-	}
-
-	function getUniqueCustomers (outlet_id, callback) {
-		Checkin.
-			find({outlet: outlet_id}).
-			distinct('phone').
-			count().exec(function (err, count) {
-				callback(null, count || 0);
-		});
 	}
 
 	function getRewards (outlet_id, callback) {
