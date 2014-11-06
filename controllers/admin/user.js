@@ -1,7 +1,6 @@
 var mongoose = require('mongoose');
 var Account = mongoose.model('Account');
 var UserLoc = mongoose.model('UserLoc');
-var sortObj = require('sort-object');
 var async = require('async');
 
 module.exports.getAllUsers = function (req, res) {
