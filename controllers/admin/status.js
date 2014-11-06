@@ -236,11 +236,11 @@ module.exports.getAllPrograms = function (req, res) {
 	}
 
 	function getPrograms (q, callback) {
+		var sortQuery={};
+		sortQuery[req.query.sortBy] = req.query.sortOrder;
 		Program.find(q, 
 				{}, 
-				{sort: { 
-					'created_at' : -1 
-				},
+				{sort: sortQuery,
 				skip: skip, 
 				limit: limit
 			}, function (err, programs) {
