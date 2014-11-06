@@ -40,6 +40,57 @@ module.exports.isOpen = function (outlet) {
     return true;
 }
 
+module.exports.opensAt = function (outlet) {
+    var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    if(!outlet || !outlet.business_hours) {
+        return false;
+    }
+    var opens = {
+        'day': null,
+        'time': null
+    }
+    var time = new Date(Date.now() + 19800000);
+    var minutes = time.getHours() * 60 + time.getMinutes();
+    var day = days[time.getDay()];
+    var today = outlet.business_hours[day];
+    if(today.closed || !today.timings || !today.timings.length) {
+        return checkNextDays();
+    }
+    else {
+        for(var i = 0; i < today.timings.length; i++) {
+            var open_min = today.timings[i].open.hr * 60 + today.timings[i].open.min;
+            if(open_min > minutes) {
+                opens.time = today.timings[i].open.hr + ':' + (today.timings[i].open.min ? today.timings[i].open.min : '00');
+                return opens;
+            }
+        }
+        return checkNextDays();
+    }
+    
+    function checkNextDays() {
+        for(var j = 0; j < 7; j++) {
+            time = new Date(time.getTime() + 86400000);
+            var minutes = time.getHours() * 60 + time.getMinutes();
+            var day = days[time.getDay()];
+            var today = outlet.business_hours[day];
+            if(today.closed || !today.timings || !today.timings.length) {
+                
+            }
+            else {
+                for(var i = 0; i < today.timings.length; i++) {
+                    var open_min = today.timings[i].open.hr * 60 + today.timings[i].open.min;
+                    if(open_min > minutes) {
+                        opens.time = today.timings[i].open.hr + ':' + (today.timings[i].open.min ? today.timings[i].open.min : '00');
+                        opens.day = day;
+                        return opens;
+                    }
+                }
+            }
+        }
+        return opens;
+    }
+}
+
 module.exports.tenDigitPhone = function (phone_number) {
     return phone_number.substring(phone_number.length-10, phone_number.length);
 };
