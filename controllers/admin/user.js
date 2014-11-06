@@ -53,12 +53,12 @@ module.exports.getAllUsers = function (req, res) {
 	function getUsers (q, callback) {
 		var sortQuery={};
 		sortQuery[req.query.sortBy] = req.query.sortOrder;
-		Account.find(q, 
-				{},  
-				{sort: sortQuery,
-				skip: skip, 
-				limit: limit
-			}).lean().exec(function (err, users) {
+		Account.find(q)
+				.sort(sortQuery)
+				.skip(skip)
+				.limit(limit)
+				.lean()
+				.exec(function (err, users) {
 				getUsersLastSeen(users, callback);
 		})
 	}
