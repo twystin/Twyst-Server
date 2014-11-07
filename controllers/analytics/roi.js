@@ -69,7 +69,6 @@ module.exports.get = function(req, res) {
 }
 
 module.exports.getByTime = function(req, res) {
-	console.log("here");
 	var timeSpan = req.query.timespan;
 	var current = new Date(Date.now());
 	var dFirst = new Date(Date.now() - timeSpan);
@@ -79,11 +78,9 @@ module.exports.getByTime = function(req, res) {
 	waterfallExecutor();
 
 	function waterfallExecutor() {
-		console.log("inside async");
 		async.waterfall([
 
 			function getOutlets(callback) {
-				console.log("inside getOutlets");
 				Outlet.find({
 					'outlet_meta.accounts': req.user._id
 				}, function(err, outlets) {
@@ -94,14 +91,12 @@ module.exports.getByTime = function(req, res) {
 							'info': err
 						});
 					} else {
-						console.log(outlets.length);
+						callback(null, outlets);
 					}
-					callback(null, outlets);
 
 				});
 			},
 			function getCheckinsRecent(outlets, callback) {
-				console.log("inside getCheckinsRecent");
 				Checkin.find({
 					'outlet': {
 						$in: outlets.map(function(o) {
@@ -120,19 +115,15 @@ module.exports.getByTime = function(req, res) {
 							'info': err
 						});
 					} else {
-						console.log(checkins.length);
 						var recentUnique = _.map(_.indexBy(checkins, 'phone'), function(obj) {
 							return obj
 						});
-						console.log(recentUnique.length);
 						recentCheckinsPerUser = checkins.length / recentUnique.length;
-						console.log("rc", recentCheckinsPerUser);
 					}
 					callback(null, outlets, recentCheckinsPerUser);
 				})
 			},
 			function getCheckinsOld(outlets, recentCheckinsPerUser, callback) {
-				console.log("inside getCheckinsOld");
 				Checkin.find({
 					'outlet': {
 						$in: outlets.map(function(o) {
@@ -151,13 +142,10 @@ module.exports.getByTime = function(req, res) {
 							'info': err
 						});
 					} else {
-						console.log(checkins.length);
 						var oldUnique = _.map(_.indexBy(checkins, 'phone'), function(obj) {
 							return obj
 						});
-						console.log(oldUnique.length);
 						oldCheckinsPerUser = checkins.length / oldUnique.length;
-						console.log("oc", oldCheckinsPerUser);
 					}
 					callback(null, recentCheckinsPerUser / oldCheckinsPerUser);
 				})
