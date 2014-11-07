@@ -232,6 +232,7 @@ module.exports = function (app) {
 
         app.get("/api/v1/sms", SMSRCtrl.reciever);
         app.get("/api/v1/download/app", GetAppCtrl.getApp);
+        app.get('/api/v3/app_downloads', GetAppCtrl.getDownloads);
         app.get('/api/v1/sms/provider', function (req,res) {
             res.send(200, {
                 status: 'success',
