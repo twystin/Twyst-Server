@@ -341,7 +341,11 @@ module.exports = function (app) {
         app.get('/api/v1/analytics/voucher_count', checkAuthenticated(), checkRole(4), VoucherCtrl.getAllVoucherCount);
     })();
 
-
+    //ROI route
+    (function roi_routes() {
+        var ROICtrl = require('../controllers/analytics/roi');
+        app.get('/api/v3/roi', checkAuthenticated(), checkRole(5), ROICtrl.get);
+    })();
     //Voucher CRUD routes
     (function program_edit_routes() {
         var TierCtrl = require('../controllers/tier');
