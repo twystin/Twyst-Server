@@ -2,6 +2,7 @@
   "dependencies": {
     "adm-zip": "~0.4.4",
     "async": "latest",
+    "async-waterfall": "^0.1.5",
     "aws-sdk": "~1.13.0",
     "body-parser": "latest",
     "compression": "latest",

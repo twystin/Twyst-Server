@@ -345,6 +345,7 @@ module.exports = function (app) {
     (function roi_routes() {
         var ROICtrl = require('../controllers/analytics/roi');
         app.get('/api/v3/roi', checkAuthenticated(), checkRole(5), ROICtrl.get);
+        app.get('/api/v3/repeat_rate', checkAuthenticated(), checkRole(5), ROICtrl.getByTime);
     })();
     //Voucher CRUD routes
     (function program_edit_routes() {
