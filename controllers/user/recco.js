@@ -14,9 +14,22 @@ module.exports.getRecco = function (req, res) {
 		lon = req.query.lon ||  77.1016,
 		start = req.query.start || 1,
 		end = req.query.end || 20,
-		q = {
-			'basics.name': new RegExp(req.query.q, "i")
-		} || {};
+		q = req.query.q ? {
+			$or:[ 
+				{
+					'basics.name': new RegExp(req.query.q, "i")
+				}, 
+				{
+					'contact.location.locality_1': new RegExp(req.query.q, "i")
+				},
+				{
+					'contact.location.locality_2': new RegExp(req.query.q, "i")
+				},
+				{
+					'contact.location.city': new RegExp(req.query.q, "i")
+				}
+			]
+		} : {};
 
 	getOutlets(q, function (outlets) {
 		if(!outlets || !outlets.length) {

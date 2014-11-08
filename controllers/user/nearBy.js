@@ -10,10 +10,23 @@ var CommonUtils = require('../../common/utilities');
 module.exports.getNearby = function (req, res) {
 	var lat = req.query.lat,
 		lon = req.query.lon,
-		distance = req.query.distance || 500,
-		q = {
-			'basics.name': new RegExp(req.query.q, "i")
-		} || {};;
+		distance = req.query.distance || 500, 
+		q = req.query.q ? {
+			$or:[ 
+				{
+					'basics.name': new RegExp(req.query.q, "i")
+				}, 
+				{
+					'contact.location.locality_1': new RegExp(req.query.q, "i")
+				},
+				{
+					'contact.location.locality_2': new RegExp(req.query.q, "i")
+				},
+				{
+					'contact.location.city': new RegExp(req.query.q, "i")
+				}
+			]
+		} : {};
 
 	if(!lat || !lon) {
 		res.send(400, {
