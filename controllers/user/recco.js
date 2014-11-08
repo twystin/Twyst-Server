@@ -13,9 +13,12 @@ module.exports.getRecco = function (req, res) {
 	var lat = req.query.lat || 28.47178,
 		lon = req.query.lon ||  77.1016,
 		start = req.query.start || 1,
-		end = req.query.end || 20;
+		end = req.query.end || 20,
+		q = {
+			'basics.name': new RegExp(req.query.q, "i")
+		} || {};
 
-	getOutlets({}, function (outlets) {
+	getOutlets(q, function (outlets) {
 		if(!outlets || !outlets.length) {
 			res.send(200, {
 				'status': 'success',
@@ -428,9 +431,7 @@ function getPrograms(outlets, callback) {
 }
 
 function getOutlets (q, callback) {
-	Outlet.find({
-		
-	}).
+	Outlet.find(q).
 	select({
 		'basics.name':1, 
 		'contact.location': 1,

@@ -10,7 +10,10 @@ var CommonUtils = require('../../common/utilities');
 module.exports.getNearby = function (req, res) {
 	var lat = req.query.lat,
 		lon = req.query.lon,
-		distance = req.query.distance || 500;
+		distance = req.query.distance || 500,
+		q = {
+			'basics.name': new RegExp(req.query.q, "i")
+		} || {};;
 
 	if(!lat || !lon) {
 		res.send(400, {
@@ -24,7 +27,7 @@ module.exports.getNearby = function (req, res) {
 	}
 
 	function getInfo() {
-		getOutlets(lat, lon, distance, function (outlets) {
+		getOutlets(q, lat, lon, distance, function (outlets) {
 			if(!outlets.length) {
 				res.send(200, {
 					'status': 'success',
@@ -285,10 +288,8 @@ function getPrograms(outlets, callback) {
 	})
 }
 
-function getOutlets (lat, lon, distance, callback) {
-	Outlet.find({
-		
-	}).
+function getOutlets (q, lat, lon, distance, callback) {
+	Outlet.find(q).
 	select({
 		'basics.name':1, 
 		'contact.location': 1,
