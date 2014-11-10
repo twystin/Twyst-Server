@@ -1,6 +1,5 @@
 var AWS = require('aws-sdk'),
 	fs = require('fs'),
-	UUID = require('node-uuid'),
 	Settings = require('../../config/settings');
 
 AWS.config.update(Settings.values.aws_config);
@@ -8,11 +7,11 @@ AWS.config.update(Settings.values.aws_config);
 module.exports.upload = function(req, res) {
 	
   	var image_path = req.files.file.path,
-  		key = UUID.v4(),
-  		bucket = 'twyst-outlets',
+  		bucketName = req.body.bucketName,
+  		imageName = req.body.imageName,
   		ContentType = req.files.file.mimetype;
 
-  	if(!image_path || !key || !ContentType) {
+  	if(!image_path || !ContentType || !bucketName || !imageName) {
   		res.send(400,{
 	        'status': 'error',
 	        'message': 'Not a valid image file',
@@ -22,9 +21,9 @@ module.exports.upload = function(req, res) {
   	else {
   		var upload_object = {
 		    ACL : 'public-read',
-		    Bucket: bucket,
+		    Bucket: bucketName,
 		    ContentType: ContentType,
-		    Key: key,
+		    Key: imageName,
 		    Body: fs.readFileSync(image_path)
 	  	}
 
@@ -38,7 +37,7 @@ module.exports.upload = function(req, res) {
 	  		}
 	  		else {
 	  			data = data || {};
-	  			data.key = key;
+	  			data.key = bucketName + '/' + imageName;
 	  			res.send(200,{
 		    		'status': 'success',
 		    		'message': 'image uploaded successfully',
