@@ -68,7 +68,7 @@ module.exports.get = function(req, res) {
 	}
 }
 
-module.exports.getByTime = function(req, res) {
+module.exports.repeatRate = function(req, res) {
 	var timeSpan = req.query.timespan;
 	var current = new Date(Date.now());
 	var dFirst = new Date(Date.now() - timeSpan);
@@ -84,18 +84,10 @@ module.exports.getByTime = function(req, res) {
 				Outlet.find({
 					'outlet_meta.accounts': req.user._id
 				}, function(err, outlets) {
-					if (err || !outlets) {
-						res.send(400, {
-							'status': 'error',
-							'message': 'Error getting outlets',
-							'info': err
-						});
-					} else {
-						callback(null, outlets);
-					}
-
+					callback(null, outlets);
 				});
 			},
+
 			function getCheckinsRecent(outlets, callback) {
 				Checkin.find({
 					'outlet': {
@@ -104,58 +96,45 @@ module.exports.getByTime = function(req, res) {
 						})
 					},
 					'checkin_date': {
-						$gte: dFirst,
+						$gte: dSecond,
 						$lte: current
 					}
 				}, function(err, checkins) {
-					if (err || !checkins) {
-						res.send(400, {
-							'status': 'error',
-							'message': 'No recent checkins found',
-							'info': err
-						});
-					} else {
-						var recentUnique = _.map(_.indexBy(checkins, 'phone'), function(obj) {
-							return obj
-						});
-						recentCheckinsPerUser = checkins.length / recentUnique.length;
+					checkins = _.sortBy(checkins, function(obj) { return obj.checkin_date;});
+					var index = 0;
+					for (var i = 0; i<checkins.length; i++){
+						if (checkins[i].checkin_date > dFirst){
+							index = i;
+							break;
+						}
 					}
-					callback(null, outlets, recentCheckinsPerUser);
-				})
-			},
-			function getCheckinsOld(outlets, recentCheckinsPerUser, callback) {
-				Checkin.find({
-					'outlet': {
-						$in: outlets.map(function(o) {
-							return o._id;
-						})
-					},
-					'checkin_date': {
-						$gte: dSecond,
-						$lte: dFirst
-					}
-				}, function(err, checkins) {
-					if (err || !checkins) {
-						res.send(400, {
-							'status': 'error',
-							'message': 'No old checkins found',
-							'info': err
-						});
-					} else {
-						var oldUnique = _.map(_.indexBy(checkins, 'phone'), function(obj) {
-							return obj
-						});
-						oldCheckinsPerUser = checkins.length / oldUnique.length;
-					}
+					var old = checkins.slice(0,index);
+					var recent = checkins.slice(index); 
+					var recentUnique = _.uniq(recent, function(obj) {
+						return obj.phone
+					});
+					var oldUnique = _.uniq(old, function(obj) {
+						return obj.phone
+					});
+					recentCheckinsPerUser = recent.length / recentUnique.length;
+					oldCheckinsPerUser = old.length / oldUnique.length;
 					callback(null, recentCheckinsPerUser / oldCheckinsPerUser);
 				})
 			}
 		], function(err, results) {
-			res.send(200, {
-				'status': 'success',
-				'message': 'Repeat user rate is ',
-				'info': results
-			})
+			if (err) {
+				res.send(400, {
+					'status': 'error',
+					'message': 'Error',
+					'info': err
+				});
+			} else {
+				res.send(200, {
+					'status': 'success',
+					'message': 'Repeat user rate is ',
+					'info': results
+				})
+			}
 		})
 	}
 }
