@@ -4,7 +4,7 @@ var SmsCheckinModule = require('./checkins/sms/main');
 var SmsCheckinCodeModule = require('./getSMSCheckinCode');
 var VoucherRedeemModule = require('./voucher_redeem');
 var SmsSentLog = mongoose.model('SmsSentLog');
-
+var BlackLister = require('./blacklister');
 var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";
 
 var http = require('http');
@@ -53,6 +53,10 @@ function smsParser(req, res, sms_text, phone) {
 		var code = sms_text[1];
 
 		handleVoucher(req, res, code, phone);
+	}
+	else if(signal === 'STOP' && sms_text.length > 2) {
+		var code = sms_text[1];
+		BlackLister.blacklister(code, phone,'SMS');
 	}
 	else {
 		var message = 'Sorry, the message format is incorrect. Please try again.';
