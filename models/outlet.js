@@ -84,12 +84,15 @@ var OutletSchema = new Schema({
         payment_options: [{type: String, enum: ['cash', 'visa', 'master', 'amex', 'sodexho']}],
         tags: [{type: String, default: '', trim: true}]
     },
-    photos: [{
-        title: {type: String, default: '', trim: ''},
-        image: {type: String, default: '', trim: ''},
-        thumbnail: {type: String, default: '', trim: ''},
-        alt_text: {type: String, default: '', trim: ''}
-    }],
+    photos: {
+        logo: {type: String, trim: ''},
+        logo_gray: {type: String, trim: ''},
+        background: {type: String, trim: ''},
+        others:[{
+            title: {type: String, default: '', trim: ''},
+            image: {type: String, default: '', trim: ''}
+        }]
+    },
     outlet_meta: {
         accounts: [{type: Schema.ObjectId, ref: 'Account'}],
         status: {type: String, enum: ['active', 'archived', 'draft'], default: 'draft'},

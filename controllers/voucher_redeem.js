@@ -4,8 +4,8 @@ var Outlet = mongoose.model('Outlet');
 var _ = require('underscore');
 var CommonUtilities = require('../common/utilities');
 var Reward = require('../models/reward_applicability');
-var SmsSentLog = mongoose.model('SmsSentLog');
 var AutoCheckin = require('./checkins/auto_checkin');
+var SMS = require('../common/smsSender');
 
 var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";
 
@@ -29,12 +29,12 @@ function checkForOutlet (code, phone) {
 		
         if(err) {
             push_message = 'Unable to Identify Outlet. Please use the Mobile Phone Registered with Twyst to send this SMS.';
-            responder(phone, push_message);
+            SMS.sendSms(phone, push_message);
 		}
 		else {
 			if(outlet === null) {
                 push_message = 'Unable to Identify Outlet. Please use the Mobile Phone Registered with Twyst to send this SMS.';
-                responder(phone,push_message);
+                SMS.sendSms(phone,push_message);
 			}
 			else {
 				redeemVoucherSms(code, phone, outlet._id);
@@ -54,12 +54,12 @@ function redeemVoucherSms (code, phone, outlet_id) {
         .exec(function(err,voucher) {
         if(err) {
 			push_message = 'Sorry, the voucher '+ code +' is invalid.';
-            responder(phone,push_message);
+            SMS.sendSms(phone,push_message);
 		}
 		else {
 			if(voucher === null) {
 				push_message = 'Sorry, the voucher '+ code +' is invalid.';
-                responder(phone,push_message);
+                SMS.sendSms(phone,push_message);
 			}
 			else {
 				isVoucherApplicableToThisOutlet(voucher);
@@ -82,7 +82,7 @@ function redeemVoucherSms (code, phone, outlet_id) {
         }
         else {
             push_message = 'Sorry, the voucher '+voucher.basics.code+' is invalid.';
-            responder(phone, push_message);
+            SMS.sendSms(phone, push_message);
         }
     }
 
@@ -91,15 +91,15 @@ function redeemVoucherSms (code, phone, outlet_id) {
         var push_message = '';
         if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
             push_message = 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.';
-            responder(phone, push_message);
+            SMS.sendSms(phone, push_message);
         }
         else if(voucher.basics.status === 'merchant redeemed') {
             push_message = 'Sorry, the voucher '+voucher.basics.code+' has already been redeemed at '+voucher.used_details.used_at.basics.name+', '+voucher.used_details.used_at.contact.location.locality_1+' at '+voucher.used_details.used_time+', '+voucher.used_details.used_time+'.';
-            responder(phone, push_message);
+            SMS.sendSms(phone, push_message);
         }
         else  if(voucher.basics.status === 'user redeemed') {
             push_message = 'User '+voucher.used_details.used_by.phone+' requested redemption of voucher '+voucher.basics.code+' at '+voucher.used_details.used_time+', '+voucher.used_details.used_time+' at '+voucher.used_details.used_at.basics.name+', '+voucher.used_details.used_at.contact.location.locality_1+'. Reward details-  '+voucher.basics.description+', valid '+getCheckinApplicabilityDay(voucher.issue_details.issued_for.reward_applicability.day_of_week)+', '+getCheckinApplicabilityTime(voucher.issue_details.issued_for.reward_applicability.time_of_day)+'. '+voucher.issue_details.issued_for.terms+'. .';
-            responder(phone, push_message);
+            SMS.sendSms(phone, push_message);
         }
         else {
             checkApplicabilityDay(voucher);
@@ -134,12 +134,12 @@ function redeemVoucherSms (code, phone, outlet_id) {
     		}
     		else {
     			var push_message = 'Sorry, the voucher '+voucher.basics.code+' is valid only '+getCheckinApplicabilityDay(voucher.issue_details.issued_for.reward_applicability.day_of_week)+'.';
-                responder(phone, push_message);
+                SMS.sendSms(phone, push_message);
             }
     	}
     	else {
     		var push_message = 'Voucher '+ voucher.basics.code +' is not valid at this time. Reward may be given only on '+ voucher.issue_details.issued_for.reward_applicability.day_of_week.join(' ') +' .'
-            responder(phone, push_message);
+            SMS.sendSms(phone, push_message);
     	}
     }
 
@@ -171,12 +171,12 @@ function redeemVoucherSms (code, phone, outlet_id) {
     		}
     		else {
     			 var push_message = 'Sorry, the voucher '+voucher.basics.code+' is valid only '+getCheckinApplicabilityTime(voucher.issue_details.issued_for.reward_applicability.time_of_day)+'.'
-                 responder(phone, push_message);
+                 SMS.sendSms(phone, push_message);
     		}
     	}
   		else {
   			var push_message = 'Voucher '+ voucher.basics.code +' is not valid at this time. Reward may be given only on '+ voucher.issue_details.issued_for.reward_applicability.time_of_day.join(' ') +' .'
-            responder(phone, push_message);
+            SMS.sendSms(phone, push_message);
   		}
     }
 
@@ -195,7 +195,7 @@ function redeemVoucherSms (code, phone, outlet_id) {
         	}
         	else {
                 var push_message = 'Voucher '+voucher.basics.code+' is VALID. Reward details-  '+ voucher.basics.description +'. '+ voucher.issue_details.issued_for.terms +'. .';
-                responder(phone, push_message);
+                SMS.sendSms(phone, push_message);
         	}
         });
     }
@@ -408,7 +408,7 @@ module.exports.redeemVoucherApp = function(req, res) {
                 var current_time = new Date();
                 outlet.contact.phones.reg_mobile.forEach (function (phone) {
                     var push_message = 'User '+req.user.phone+' has redeemed voucher '+voucher.basics.code+' at '+current_time+', '+current_time.getDate()+' at '+outlet.basics.name+', '+outlet.contact.location.locality_1.toString()+'. Voucher is VALID. Reward details-  '+voucher.basics.description+'. '+voucher.issue_details.issued_for.terms+'. .';
-                    responder(phone.num, push_message);
+                    SMS.sendSms(phone, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE');
                 });
             }
         })
@@ -609,7 +609,7 @@ module.exports.redeemVoucherPanel = function(req,res) {
                     voucher.issue_details.issued_to.phone) {
                     var date = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
                     var message = 'Voucher code '+ check_voucher.basics.code +' redeemed at '+ applicable.basics.name +' on '+ CommonUtilities.formatDate(new Date(used_time)) +' at '+ date.getHours() + ':' + date.getMinutes() +'. Keep checking-in at '+ applicable.basics.name +' on Twyst for more rewards! Get Twyst http://twy.st/app';
-                    responder(voucher.issue_details.issued_to.phone, message);    
+                    SMS.sendSms(voucher.issue_details.issued_to.phone, message, 'VOUCHER_REDEEM_MESSAGE');  
 
                 }   
                 
@@ -621,36 +621,6 @@ module.exports.redeemVoucherPanel = function(req,res) {
         });
     }
 };
-
-function responder(phone, push_message) {
-    
-    push_message = push_message.replace(/(\n)+/g, '');
-    
-    var message = push_message.replace(/&/g,'%26');
-    message = message.replace(/% /g,'%25 ');
-    saveSentSms (phone, message);
-    console.log("Message sent to " + phone + ' MESSAGE: '+ message);
-    var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
-    
-    http.post(send_sms_url, function(res){
-        console.log(res);
-    });
-}
-
-function saveSentSms (phone, message) {
-
-    var sms_log = {};
-    sms_log.phone = phone;
-    sms_log.message = message;
-
-    var sms_log = new SmsSentLog(sms_log);
-
-    sms_log.save(function (err) {
-        if(err) {
-            console.log(err);
-        }
-    });
-}
 
 function getCheckinApplicabilityDay (array) {
     
