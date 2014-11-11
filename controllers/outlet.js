@@ -577,6 +577,33 @@ module.exports.getOutletsByAuth = function (req, res){
 	});
 
 }
+
+module.exports.getRandom = function(req, res){
+	var num = req.query.number || 6;
+	Outlet.find({
+	})
+	.select({'basics.name':1, 'contact.location': 1})
+	.exec(function (err, outlets) {
+		if(err || !outlets) {
+			res.send(400, {
+				'status': 'error',
+				'message': 'Error getting outlets',
+				'info': err
+			});
+		}
+		else {
+			outlets = CommonUtilities.shuffleArray(outlets);
+			outlets = _.uniq(outlets, function(obj) {
+				return obj.basics.name
+			});
+			res.send(200, {
+				'status': 'success',
+				'message': 'Successfully got outlets',
+				'info': outlets.slice(0,num)
+			});
+		}
+	});
+}
 //module.exports.read = function (req, res) {
 function read(programs, res) {
 

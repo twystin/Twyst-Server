@@ -83,23 +83,28 @@ module.exports.repeatRate = function(req, res) {
 			function getOutlets(callback) {
 				Outlet.find({
 					'outlet_meta.accounts': req.user._id
-				}, function(err, outlets) {
+				})
+				.select()
+				.exec(function(err, outlets) {
+					//console.log(outlets);
 					callback(null, outlets);
 				});
 			},
 
 			function getCheckinsRecent(outlets, callback) {
+				outlets = _.map(outlets, function(currentObject) {
+				    return _.pick(currentObject, "_id");
+				});
 				Checkin.find({
 					'outlet': {
-						$in: outlets.map(function(o) {
-							return o._id;
-						})
+						$in: outlets
 					},
 					'checkin_date': {
-						$gte: dSecond,
-						$lte: current
+						$gte: dSecond
 					}
-				}, function(err, checkins) {
+				})
+				.select({'phone':1, 'checkin_date':1})
+				.exec(function(err, checkins) {
 					checkins = _.sortBy(checkins, function(obj) { return obj.checkin_date;});
 					var index = 0;
 					for (var i = 0; i<checkins.length; i++){
