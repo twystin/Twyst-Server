@@ -346,12 +346,6 @@ module.exports = function (app) {
         app.get('/api/v1/analytics/voucher_count', checkAuthenticated(), checkRole(4), VoucherCtrl.getAllVoucherCount);
     })();
 
-    //Data routes
-    /*(function date_routes(){
-        var DataCtrl = require('../controllers/analytics/pos'){
-            app.get('/api/v3/get')
-        }
-    })();*/
     //ROI route
     (function roi_routes() {
         var ROICtrl = require('../controllers/analytics/roi');
