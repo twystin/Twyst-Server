@@ -346,7 +346,18 @@ module.exports = function (app) {
         app.get('/api/v1/analytics/voucher_count', checkAuthenticated(), checkRole(4), VoucherCtrl.getAllVoucherCount);
     })();
 
-
+    //Data routes
+    /*(function date_routes(){
+        var DataCtrl = require('../controllers/analytics/pos'){
+            app.get('/api/v3/get')
+        }
+    })();*/
+    //ROI route
+    (function roi_routes() {
+        var ROICtrl = require('../controllers/analytics/roi');
+        app.get('/api/v3/roi', checkAuthenticated(), checkRole(5), ROICtrl.get);
+        app.get('/api/v3/repeat_rate', checkAuthenticated(), checkRole(5), ROICtrl.repeatRate);
+    })();
     //Voucher CRUD routes
     (function program_edit_routes() {
         var TierCtrl = require('../controllers/tier');
