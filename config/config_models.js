@@ -7,7 +7,7 @@ module.exports = function () {
     var models = [
         'account', 'offer', 'outlet', 'program', 'voucher', 'tier', 'recommendation',
         'checkin', 'favourite', 'qr_code', 'tag', 'beta_users', 'log', 'smslog',
-        'smsMessageSentLogs', 'redirect', 'temp_otp', 'notif', 'social', 'rating',
+        'smsMessageSentLogs', 'redirect', 'temp_otp', 'notif', 'social', 'rating', 'unsubscribe',
         'recco_config', 'userLoc', 'rewards', 'winback', 'beta_merchants', 'group_program'
     ];
 
