@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var passport = require('passport');
+var Routes = require('./routes');
 
 module.exports = function (app) {
     //Check if a User is authenticated
@@ -146,7 +147,10 @@ module.exports = function (app) {
     //Image uploader to upload images to S3
     (function image_routes() {
         var ImageCtrl = require('../controllers/image_uploader');
-        app.put('/api/v1/image/upload/', ImageCtrl.upload);
+        var ImageCtrlV3 = require('../controllers/images/images');
+        app.put(Routes.IMAGE_ROUTE_V1, ImageCtrl.upload);
+        app.put(Routes.IMAGE_ROUTE_V3, ImageCtrlV3.upload);
+        app.delete(Routes.IMAGE_ROUTE_V3, ImageCtrlV3.delete);
     })();
     //Register user and login as well as other auth routes
     (function authentication_routes() {
@@ -342,12 +346,6 @@ module.exports = function (app) {
         app.get('/api/v1/analytics/voucher_count', checkAuthenticated(), checkRole(4), VoucherCtrl.getAllVoucherCount);
     })();
 
-    //Data routes
-    /*(function date_routes(){
-        var DataCtrl = require('../controllers/analytics/pos'){
-            app.get('/api/v3/get')
-        }
-    })();*/
     //ROI route
     (function roi_routes() {
         var ROICtrl = require('../controllers/analytics/roi');
