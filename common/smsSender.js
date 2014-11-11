@@ -5,15 +5,33 @@ http.post = require('http-post');
 var mongoose = require('mongoose');
 var SmsSentLog = mongoose.model('SmsSentLog');
 var Notif = mongoose.model('Notif');
+var Account = mongoose.model('Account');
 
 module.exports.sendSms = function (phone, push_message, type) {
-
-	push_message = push_message.replace(/(\n)+/g, '');
-	
+	push_message = push_message.replace(/(\n)+/g, '');	
 	var message = push_message.replace(/&/g,'%26');
 	message = message.replace(/% /g,'%25 ');
-	console.log(message);
-	checkType();
+
+	isBlackListedUser(phone, function (err, isBlackListed) {
+		console.log(message);
+		console.log("------------------------");
+		if(err || isBlackListed) {
+			console.log("Blacklisted user here...issse na hoga...Twyst tere liye nahi hai babua...");
+		}
+		else {
+			checkType();
+		}
+	});
+
+	function isBlackListedUser(phone, cb) {
+		Account.findOne({
+			phone: phone,
+			blacklisted: true
+		}, function (err, user) {
+			cb(err, user ? true : false);
+		})
+	}
+
 	function checkType() {
 		var time = null;
 		time = Date.now();

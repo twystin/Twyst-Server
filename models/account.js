@@ -41,6 +41,7 @@ var Account = new Schema({
     device_id: {type: String, default: ''},
     otp_validated: Boolean,
     batch_user: {type: Boolean, default: false},
+    blacklisted: {type: Boolean, default: false},
     created_at: {type: Date, default: Date.now}
 });
 
