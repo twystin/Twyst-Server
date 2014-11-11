@@ -258,6 +258,7 @@ module.exports = function (app) {
         app.get('/api/v1/near/:latitude/:longitude', OutletCtrl.nearbyOutlets);
         app.get('/api/v1/outlet/console', checkRole(1), OutletCtrl.consoleQuery);
         app.get('/api/v1/outlets/view/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.read);
+        app.get(Routes.RANDOM_OUTLETS, OutletCtrl.getRandom);
         app.post('/api/v1/outlets', checkAuthenticated(), checkRole(4), OutletCtrl.create);
         app.put('/api/v1/outlets/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.update);
         app.delete('/api/v1/outlets/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.archived);
