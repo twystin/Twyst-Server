@@ -329,6 +329,10 @@ module.exports.publicview = function(req,res) {
 		    }
 		}, function(err, results) {
 			results.closed_now = CommonUtilities.isOpen(results.OUTLET);
+			results.opensAt = null;
+			if(results.closed_now) {
+				results.opensAt = CommonUtilities.opensAt(results.OUTLET);
+			}
 		    res.send(200,  {
 		    	'status': 'success',
 		    	'message': 'Got details successfully.',

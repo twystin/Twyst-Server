@@ -1,6 +1,8 @@
 var mongoose = require('mongoose');
 var SmsLog = mongoose.model('SmsLog');
+var Checkin = mongoose.model('Checkin');
 var _ = require('underscore');
+var async = require('async');
 
 var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";
 
@@ -62,4 +64,66 @@ function createLog (created_log) {
 			console.log("Message logged.");
 		}				
 	});
+}
+
+module.exports.getDownloads = function (req, res) {
+	var outlet_id = req.query.outlet,
+		start_date = req.query.start_date,
+		end_date = req.query.end_date;
+	Checkin.find({
+		'outlet': outlet_id,
+		'created_date': {
+				$gte: new Date(start_date),
+				$lte: new Date(end_date)
+		},
+		'checkin_type': 'QR'
+	}, function (err, checkins) {		
+		if(err) {
+			res.send(400, {	
+				'status': 'error',
+				'message': 'Error getting count',
+				'info': err
+			});
+		}
+		else {
+			checkins = _.uniq(checkins, function (c) {
+				return c.phone;
+			})
+			getDownloaders(checkins, function (err, count) {
+				if(err) {
+					res.send(400, {	
+						'status': 'error',
+						'message': 'Error getting count',
+						'info': err
+					});
+				}
+				else {
+					res.send(200, {	
+						'status': 'error',
+						'message': 'Got count successfully',
+						'info': count
+					});
+				}
+			})
+		}
+	})
+}
+
+function getDownloaders(checkins, cb) {
+	var distinct_checkins = checkins.length;
+	async.each(checkins, function (ch, callback) {
+        Checkin.findOne({
+			phone: ch.phone,
+			created_date: {
+				$lt: new Date(ch.created_date)
+			}
+		}, function (err, checkin) {
+			if(checkin) {
+				--distinct_checkins;
+			}
+			callback(err, null);
+		})
+    }, function (err) {
+        cb(err, distinct_checkins);
+    })
 }

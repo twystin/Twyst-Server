@@ -238,12 +238,11 @@ module.exports.getAllPrograms = function (req, res) {
 	function getPrograms (q, callback) {
 		var sortQuery={};
 		sortQuery[req.query.sortBy] = req.query.sortOrder;
-		Program.find(q, 
-				{}, 
-				{sort: sortQuery,
-				skip: skip, 
-				limit: limit
-			}, function (err, programs) {
+		Program.find(q)
+				.sort(sortQuery)
+				.skip(skip)
+				.limit(limit)
+				.exec(function (err, programs) {
 
 			callback(null, programs || []);
 		})
