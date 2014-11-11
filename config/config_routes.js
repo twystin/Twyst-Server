@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose');
 var passport = require('passport');
+var Routes = require('./routes');
 
 module.exports = function (app) {
     //Check if a User is authenticated
@@ -146,7 +147,10 @@ module.exports = function (app) {
     //Image uploader to upload images to S3
     (function image_routes() {
         var ImageCtrl = require('../controllers/image_uploader');
-        app.put('/api/v1/image/upload/', ImageCtrl.upload);
+        var ImageCtrlV3 = require('../controllers/images/images');
+        app.put(Routes.IMAGE_ROUTE_V1, ImageCtrl.upload);
+        app.put(Routes.IMAGE_ROUTE_V3, ImageCtrlV3.upload);
+        app.delete(Routes.IMAGE_ROUTE_V3, ImageCtrlV3.delete);
     })();
     //Register user and login as well as other auth routes
     (function authentication_routes() {
@@ -254,6 +258,7 @@ module.exports = function (app) {
         app.get('/api/v1/near/:latitude/:longitude', OutletCtrl.nearbyOutlets);
         app.get('/api/v1/outlet/console', checkRole(1), OutletCtrl.consoleQuery);
         app.get('/api/v1/outlets/view/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.read);
+        app.get(Routes.RANDOM_OUTLETS, OutletCtrl.getRandom);
         app.post('/api/v1/outlets', checkAuthenticated(), checkRole(4), OutletCtrl.create);
         app.put('/api/v1/outlets/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.update);
         app.delete('/api/v1/outlets/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.archived);
@@ -342,7 +347,12 @@ module.exports = function (app) {
         app.get('/api/v1/analytics/voucher_count', checkAuthenticated(), checkRole(4), VoucherCtrl.getAllVoucherCount);
     })();
 
-
+    //ROI route
+    (function roi_routes() {
+        var ROICtrl = require('../controllers/analytics/roi');
+        app.get('/api/v3/roi', checkAuthenticated(), checkRole(5), ROICtrl.get);
+        app.get('/api/v3/repeat_rate', checkAuthenticated(), checkRole(5), ROICtrl.repeatRate);
+    })();
     //Voucher CRUD routes
     (function program_edit_routes() {
         var TierCtrl = require('../controllers/tier');

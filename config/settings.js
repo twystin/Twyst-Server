@@ -66,5 +66,10 @@ module.exports.values = {
             "description": "some description",
             "additional": "additional info"
         }
+    },
+    'aws_config': {
+        region: 'us-west-2',
+        accessKeyId: 'AKIAJTAQ7XF55TQMK5FA',
+        secretAccessKey: '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'
     }
 };

@@ -1,6 +1,26 @@
 var _ = require('underscore');
 var dateFormat = require('dateformat');
 
+module.exports.shuffleArray = function(array) {
+    var counter = array.length, temp, index;
+
+    // While there are elements in the array
+    while (counter > 0) {
+        // Pick a random index
+        index = Math.floor(Math.random() * counter);
+
+        // Decrease counter by 1
+        counter--;
+
+        // And swap the last element with it
+        temp = array[counter];
+        array[counter] = array[index];
+        array[index] = temp;
+    }
+
+    return array;
+}
+
 module.exports.isOpen = function (outlet) {
     var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     if(!outlet || !outlet.business_hours) {
