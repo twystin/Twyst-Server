@@ -90,7 +90,8 @@ var OutletSchema = new Schema({
         background: {type: String, trim: ''},
         others:[{
             title: {type: String, default: '', trim: ''},
-            image: {type: String, default: '', trim: ''}
+            image: {type: String, default: '', trim: ''},
+            approved: {type: Boolean, default: false}
         }]
     },
     outlet_meta: {
