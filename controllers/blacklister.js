@@ -5,65 +5,71 @@ require('../config/config_models')();
 var Account = mongoose.model('Account');
 var Unsbs = mongoose.model('Unsbs');
 var Outlet = mongoose.model('Outlet');
+var smsSender = require('../common/smsSender');
 
-blacklister('CCC', '9871303236','sms');
-//function blacklister (code, phone, type){
+blacklister('ALL', 8860377473,'sms', 'promotional');
+function blacklister (code, phone, type, subtype){
 
-module.exports.blacklister = function (code, phone){
-	var unsbsObject = new Unsbs();
+//module.exports.blacklister = function (code, phone){
 	if (!code){
-
+		console.log("Invalid Code");
 	}
 	else {
-		console.log("here");
 		Unsbs.findOne({
 			'phone' : phone
 		}, function (err, unsbs){
 			if (!unsbs){
 				console.log(phone);
-				Account.findOne({
-					'phone' : phone
-				},function(err, account){
-					console.log(err || account);
-					unsbsObject.user_id = account._id;
-					unsbsObject.phone = phone;
-					changeStatus(code, unsbsObject, type, 0);
+				getAccount(function (data){
+					changeStatus(code, data, type, subtype);
 				});
 			}
+			else if (unsbs && err){
+				console.log(err);
+			}
 			else {
-				changeStatus(code, unsbs, type, 1);
+				changeStatus(code, unsbs, type, subtype);
 			}
 		})
 	}
+
+	function getAccount(cb){
+		Account.findOne({
+			'phone' : phone
+		},function(err, account){
+			if (!account){
+				console.log("account does not exist");
+			}
+			else if (err && account){
+				console.log(err);
+			}
+			else {
+				var unsbsObject = new Unsbs();
+				unsbsObject.user_id = account._id;
+				unsbsObject.phone = phone;
+				cb(unsbsObject);
+			}
+		});
+	}
 }
 
-function changeStatus(code, unsbsObject, type, flag){
+function changeStatus(code, unsbsObject, type, subtype){
 	if (code === 'ALL'){
-		unsbsObject[type].reminders.all = true;
-		saveDoc(unsbsObject, flag);
+		unsbsObject[type][subtype].all = true;
+		unsbsObject.save(function (err){
+			var message = "You have unsubscribed from all the outlets at Twyst.";
+			smsSender.sendSms(unsbsObject.phone, message, 'UNSUB_MESSAGE');
+		});
 	}
 	else {
 		Outlet.findOne({
 			'shortUrl' : code
 		}, function (err, outlet){
-			unsbsObject[type].reminders.outlets.push(outlet._id);
-			saveDoc(unsbsObject, flag);
+			unsbsObject[type][subtype].outlets.push(outlet._id);
+			unsbsObject.save(function (err){
+				var message = "You have unsubscribed from " + outlet.basics.slug +" outlet at Twyst.";
+				smsSender.sendSms(unsbsObject.phone, message, 'UNSUB_MESSAGE');	
+			});
 		})		
-	}
-}
-
-function saveDoc(unsbsObject, flag){
-	if (flag === 1){
-		console.log("I am here")
-		unsbsObject.save(function(err){
-			console.log(err || "document saved");
-		});
-	}
-	else {
-		unsbsObject = new Unsbs(unsbsObject);
-		unsbsObject.save(function (err, unsbsObject, affected){
-			console.log("affected 2");
-			console.log("docuement saved 2");
-		})
 	}
 }

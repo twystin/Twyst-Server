@@ -41,6 +41,9 @@ module.exports.sendSms = function (phone, push_message, type) {
 		if(type === 'OTP_MESSAGE') {
 			send();
 		}
+		if (type === 'UNSUB_MESSAGE') {
+			send();
+		}
 		else if(isAccurateTime(time)) {
 			if(type !== 'VOUCHER_MESSAGE') {
 				send();
