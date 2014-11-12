@@ -15,7 +15,7 @@ module.exports.create = function(req,res) {
 						'info': JSON.stringify(err)
 			});
 		} else {
-			var to ='<jayram.chandan@gmail.com>'
+			var to ='jayram.chandan@gmail.com, mayankyadav@twyst.in, rc@twyst.in, al@twyst.in, sanjay@twyst.in, dk@twyst.in'
 			MailSender.sendEmail(to, created_merchant)
 			res.send(200, {	'status': 'success',
 						'message': 'Saved merchant',
