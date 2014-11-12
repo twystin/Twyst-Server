@@ -37,7 +37,7 @@ module.exports.upload = function(req, res) {
 	  		}
 	  		else {
 	  			data = data || {};
-	  			data.key = bucketName + '/' + imageName;
+	  			data.key = imageName;
 	  			res.send(200,{
 		    		'status': 'success',
 		    		'message': 'image uploaded successfully',
@@ -57,9 +57,9 @@ function uploader(upload_object, cb) {
 
 module.exports.delete = function(req, res) {
 	var key = req.query.key,
-  		bucket = 'twyst-outlets';
+  		bucket = req.query.bucket;
 
-  	if(!key) {
+  	if(!key || !bucket) {
   		res.send(400,{
 	        'status': 'error',
 	        'message': 'Request is incomplete',
