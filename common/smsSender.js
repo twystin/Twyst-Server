@@ -19,7 +19,7 @@ module.exports.sendSms = function (phone, push_message, type) {
 			console.log("Blacklisted user here...issse na hoga...Twyst tere liye nahi hai babua...");
 		}
 		else {
-			checkType();
+			//checkType();
 		}
 	});
 
