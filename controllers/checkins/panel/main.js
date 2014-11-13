@@ -90,6 +90,7 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 
 	function getCheckinHistory(query) {
 		Helper.getCheckinHistory(query, function(data) {
+			console.log(data);
 			history = data;
 			if(history.last) {
 				isValidCheckin(history.last_checkin, history.last_checkin_today);

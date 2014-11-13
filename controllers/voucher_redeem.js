@@ -51,6 +51,7 @@ function redeemVoucherSms (code, phone, outlet_id) {
         .populate('issue_details.issued_for')
         .populate('used_details.used_at')
         .populate('used_details.used_by')
+        .populate('issue_details.program')
         .exec(function(err,voucher) {
         if(err) {
 			push_message = 'Sorry, the voucher '+ code +' is invalid.';

@@ -7,10 +7,9 @@ var Unsbs = mongoose.model('Unsbs');
 var Outlet = mongoose.model('Outlet');
 var smsSender = require('../common/smsSender');
 
-blacklister('ALL', 8860377473,'sms', 'promotional');
-function blacklister (code, phone, type, subtype){
-
-//module.exports.blacklister = function (code, phone){
+//blacklister('ALL', 8860377473, 'sms', 'promotional');
+//function blacklister (code, phone, type, subtype){
+module.exports.blacklister = function (code, phone){
 	if (!code){
 		console.log("Invalid Code");
 	}
