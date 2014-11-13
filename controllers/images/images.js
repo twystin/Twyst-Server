@@ -1,6 +1,7 @@
 var AWS = require('aws-sdk'),
 	fs = require('fs'),
-	Settings = require('../../config/settings');
+	Settings = require('../../config/settings'),
+	Utils = require('../../common/utilities');
 
 AWS.config.update(Settings.values.aws_config);
 
@@ -19,32 +20,42 @@ module.exports.upload = function(req, res) {
 	    })
   	}
   	else {
-  		var upload_object = {
-		    ACL : 'public-read',
-		    Bucket: bucketName,
-		    ContentType: ContentType,
-		    Key: imageName,
-		    Body: fs.readFileSync(image_path)
-	  	}
-
-	  	uploader(upload_object, function (err, data) {
-	  		if(err) {
-	  			res.send(400,{
+  		Utils.readFile(image_path, function (err, image_data) {
+  			if(err) {
+  				res.send(400,{
 			        'status': 'error',
-			        'message': 'Error uploading the image',
+			        'message': 'Error reading the image content',
 			        'info': err
 			    })
-	  		}
-	  		else {
-	  			data = data || {};
-	  			data.key = imageName;
-	  			res.send(200,{
-		    		'status': 'success',
-		    		'message': 'image uploaded successfully',
-		    		'info': data
-		    	})
-	  		}
-	  	})
+  			}
+  			else {
+  				var upload_object = {
+				    ACL : 'public-read',
+				    Bucket: bucketName,
+				    ContentType: ContentType,
+				    Key: imageName,
+				    Body: image_data
+			  	}
+			  	uploader(upload_object, function (err, data) {
+			  		if(err) {
+			  			res.send(400,{
+					        'status': 'error',
+					        'message': 'Error uploading the image',
+					        'info': err
+					    })
+			  		}
+			  		else {
+			  			data = data || {};
+			  			data.key = imageName;
+			  			res.send(200,{
+				    		'status': 'success',
+				    		'message': 'image uploaded successfully',
+				    		'info': data
+				    	})
+			  		}
+			  	})
+  			}
+  		});
   	}
 }
 

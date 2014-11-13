@@ -1,5 +1,15 @@
-var _ = require('underscore');
-var dateFormat = require('dateformat');
+var fs = require('fs'),
+    _ = require('underscore'),
+    dateFormat = require('dateformat');
+
+// Common module to read any file
+// params {path to the image to read, callback}
+// Returns error or file(read data in buffer)
+module.exports.readFile = function (image_path, cb) {
+    fs.readFile(image_path, function (err, file_data) {
+        cb(err, file_data);
+    })
+}
 
 module.exports.shuffleArray = function(array) {
     var counter = array.length, temp, index;
