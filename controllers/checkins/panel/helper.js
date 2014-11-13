@@ -277,7 +277,7 @@ module.exports.getTOD = function(array) {
     for(var i = 0; i < array.length; i++ ) {
 
         if(array[i] !== 'all day') {
-            return 'at '+array.join(',');
+            return 'at ' + array.join(',');
         }
         if(array[i] === 'all day') {
             return 'all day long';

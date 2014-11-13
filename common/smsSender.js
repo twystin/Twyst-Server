@@ -19,7 +19,7 @@ module.exports.sendSms = function (phone, push_message, type) {
 			console.log("Blacklisted user here...issse na hoga...Twyst tere liye nahi hai babua...");
 		}
 		else {
-			checkType();
+			//checkType();
 		}
 	});
 
@@ -39,6 +39,9 @@ module.exports.sendSms = function (phone, push_message, type) {
 			time = time + 3 * 60 * 60 * 1000;
 		}
 		if(type === 'OTP_MESSAGE') {
+			send();
+		}
+		if (type === 'UNSUB_MESSAGE') {
 			send();
 		}
 		else if(isAccurateTime(time)) {
