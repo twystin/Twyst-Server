@@ -191,7 +191,6 @@ function getCheckinRelevance (checkins, outlet, program) {
 }
 
 function getActiveVouchersHere (rewards, program) {
-	console.log(rewards)
 	var active_vouchers = [];
 	if(!program || !rewards || !rewards.length) {
 		return active_vouchers;
