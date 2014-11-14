@@ -33,7 +33,7 @@ module.exports.shuffleArray = function(array) {
 
 module.exports.isOpen = function (business_hours) {
     var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    if(!business_hours || !business_hours.length) {
+    if(!business_hours) {
         return false;
     }
     var time = new Date(Date.now() + 19800000);
@@ -72,7 +72,7 @@ module.exports.isOpen = function (business_hours) {
 
 module.exports.opensAt = function (business_hours) {
     var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    if(!business_hours || !business_hours.length) {
+    if(!business_hours) {
         return false;
     }
     var opens = {
