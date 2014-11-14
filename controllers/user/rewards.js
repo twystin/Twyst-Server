@@ -100,6 +100,13 @@ function filterExpired(vouchers) {
 			v.EXPIRED.push(vouchers[i]);
 		}
 		else {
+			var results = {};
+			results.off_now = CommonUtils.isOpen(vouchers[i].issue_details.issued_for.avail_hours);
+			results.availAt = null;
+			if(results.closed_now) {
+				results.availAt = CommonUtils.opensAt(results.OUTLET.issued_for.avail_hours);
+			}
+			console.log(results)
 			v.ACTIVE.push(vouchers[i]);
 		}
 	}

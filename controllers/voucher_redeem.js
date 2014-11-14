@@ -189,6 +189,7 @@ function redeemVoucherSms (code, phone, outlet_id) {
         voucher.used_details.used_at = outlet_id;
         voucher.used_details.used_by = voucher.issue_details.issued_to;
         voucher.used_details.used_time = Date.now();
+        voucher.basics.type = voucher.basics.type || 'CHECKIN';
         voucher.save(function (err, voucher) {
         	if(err) {
         		
@@ -380,6 +381,7 @@ module.exports.redeemVoucherApp = function(req, res) {
         voucher.used_details.used_by = req.user._id;
         voucher.used_details.used_time = Date.now();
         voucher.used_details.used_date = Date.now();
+        voucher.basics.type = voucher.basics.type || 'CHECKIN';
         voucher.save(function (err, voucher) {
         	if(err) {
         		res.send(400, {'status': 'error',
@@ -589,6 +591,7 @@ module.exports.redeemVoucherPanel = function(req,res) {
         voucher.used_details.used_by = voucher.issue_details.issued_to;
         voucher.used_details.used_time = CommonUtilities.setCurrentTime(used_time);
         voucher.used_details.used_date = Date.now();
+        voucher.basics.type = voucher.basics.type || 'CHECKIN';
         voucher.save(function (err, voucher) {
         	if(err) { 
         		res.send(400, {'status': 'error',

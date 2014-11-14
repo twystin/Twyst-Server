@@ -398,7 +398,7 @@ function buildDataObject(outlets, programs) {
 	outlets.forEach(function (o) {
 		var obj = {};
 		obj.outlet_summary = o;
-		obj.closed_now = CommonUtils.isOpen(obj.outlet_summary);
+		obj.closed_now = CommonUtils.isOpen(obj.outlet_summary.business_hours);
 		obj.program_summary = getMatchedProgram(programs, o._id);
 		objects.push(obj);
 	});

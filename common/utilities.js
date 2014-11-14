@@ -31,14 +31,14 @@ module.exports.shuffleArray = function(array) {
     return array;
 }
 
-module.exports.isOpen = function (outlet) {
+module.exports.isOpen = function (business_hours) {
     var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    if(!outlet || !outlet.business_hours) {
+    if(!business_hours || !business_hours.length) {
         return false;
     }
     var time = new Date(Date.now() + 19800000);
     var day = days[time.getDay()];
-    var today = outlet.business_hours[day];
+    var today = business_hours[day];
     if(!today.timings || !today.timings.length) {
         return false;
     }
@@ -70,9 +70,9 @@ module.exports.isOpen = function (outlet) {
     return true;
 }
 
-module.exports.opensAt = function (outlet) {
+module.exports.opensAt = function (business_hours) {
     var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-    if(!outlet || !outlet.business_hours) {
+    if(!business_hours || !business_hours.length) {
         return false;
     }
     var opens = {
@@ -82,7 +82,7 @@ module.exports.opensAt = function (outlet) {
     var time = new Date(Date.now() + 19800000);
     var minutes = time.getHours() * 60 + time.getMinutes();
     var day = days[time.getDay()];
-    var today = outlet.business_hours[day];
+    var today = business_hours[day];
     if(today.closed || !today.timings || !today.timings.length) {
         return checkNextDays();
     }
@@ -102,7 +102,7 @@ module.exports.opensAt = function (outlet) {
             time = new Date(time.getTime() + 86400000);
             var minutes = 0;
             var day = days[time.getDay()];
-            var today = outlet.business_hours[day];
+            var today = business_hours[day];
             if(today.closed || !today.timings || !today.timings.length) {
                 
             }

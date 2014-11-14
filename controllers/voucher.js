@@ -239,7 +239,7 @@ module.exports.changeStatus  = function (req, res){
             if(err || voucher === null) {
                 res.send(400, { 'status': 'error',
                                'message': 'Error serving your request',
-                               'info': ''
+                               'info': err
                 });
             }
             else {
@@ -250,11 +250,12 @@ module.exports.changeStatus  = function (req, res){
                 };
                 triggerAutoCheckin(auto_checkin_obj, voucher);
                 voucher.basics.status = 'merchant redeemed';
+                voucher.basics.type = voucher.basics.type || 'CHECKIN';
                 voucher.save(function(err) {
                     if(err) {
                         res.send(400, { 'status': 'error',
                                        'message': 'Error serving your request',
-                                       'info': ''
+                                       'info': err
                         });
                     }
                     else {
