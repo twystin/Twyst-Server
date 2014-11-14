@@ -110,8 +110,6 @@ module.exports.opensAt = function (business_hours) {
 
                 for(var i = 0; i < today.timings.length; i++) {
                     var open_min = today.timings[i].open.hr * 60 + today.timings[i].open.min;
-                    console.log(open_min)
-                    console.log(minutes)
                     if(minutes < open_min) {
                         opens.time = today.timings[i].open.hr + ':' + (today.timings[i].open.min ? today.timings[i].open.min : '00');
                         opens.day = day;
