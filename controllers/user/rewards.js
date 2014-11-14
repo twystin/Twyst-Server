@@ -103,7 +103,7 @@ function filterExpired(vouchers) {
 			var results = {};
 			results.off_now = CommonUtils.isOpen(vouchers[i].issue_details.issued_for.avail_hours);
 			results.availAt = null;
-			if(results.closed_now) {
+			if(results.off_now) {
 				results.availAt = CommonUtils.opensAt(results.OUTLET.issued_for.avail_hours);
 			}
 			console.log(results)
