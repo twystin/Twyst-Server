@@ -84,7 +84,19 @@ function filterExpired(vouchers) {
 		return v;
 	}
 	for(var i = 0; i < vouchers.length; i++) {
-		if(isExpired(vouchers[i].issue_details.program)) {
+		var program_validity, program_type;
+		if(vouchers[i].issue_details.program) {
+			program_validity = vouchers[i].issue_details.program.validity;
+			program_type = 'CHECKIN';
+		}
+		else if(vouchers[i].issue_details.winback) {
+			program_validity = vouchers[i].validity;
+			program_type = 'WINBACK';
+		}
+		else {
+			// Other programs
+		}
+		if(isExpired(program_validity)) {
 			v.EXPIRED.push(vouchers[i]);
 		}
 		else {
@@ -94,10 +106,17 @@ function filterExpired(vouchers) {
 	return v;
 }
 
-function isExpired(program) {
+function isExpired(program_validity, program_type) {
 	var time_now = new Date();
-	return (new Date(program.validity.burn_start) < time_now
-		&& time_now < new Date(program.validity.burn_end));
+	if(program_type === 'CHECKIN') {
+		return (new Date(program_validity.burn_start) < time_now
+			&& time_now < new Date(program_validity.burn_end));
+	}
+	else if(program_type === 'WINBACK') {
+		return (new Date(program_validity.start_date) < time_now
+			&& time_now < new Date(program_validity.end_date));
+	}
+	return null;
 }
 
 function getVoucher (user, cb) {
