@@ -158,12 +158,8 @@ function addUserRelevance(unordered_set, history) {
 		s.checkin_relevance = checkin_data.checkin_on_outlet * 5;
 		s.checkin_count = checkin_data.checkin_in_program;
 		s.fav_relevance = 10 * getFavsRelevance(history.my_favs, s.outlet_summary);
-		s.num_of_active_vouchers = getActiveVoucherRelevance(history.my_rewards, s.program_summary);
-		s.reward_relevance = 5 * s.num_of_active_vouchers;
-		s.active_reward = false;
-		if(s.reward_relevance > 0) {
-			s.active_reward = true;
-		}
+		s.active_rewards = getActiveVouchersHere(history.my_rewards, s.program_summary);
+		s.reward_relevance = 5 * s.active_rewards.length;
 		s.total += (s.checkin_relevance + s.fav_relevance + s.reward_relevance);
 	})
 	return unordered_set;
@@ -194,16 +190,18 @@ function getCheckinRelevance (checkins, outlet, program) {
 	};
 }
 
-function getActiveVoucherRelevance (rewards, program) {
+function getActiveVouchersHere (rewards, program) {
+	console.log(rewards)
+	var active_vouchers = [];
 	if(!program || !rewards || !rewards.length) {
-		return 0;
+		return active_vouchers;
 	}
 	for(var i = 0; i < rewards.length; i++) {
-		if(rewards[i]._id && rewards[i]._id.equals(program._id)) {
-			return rewards[i].count;
+		if(rewards[i].issue_details.program.equals(program._id)) {
+			active_vouchers.push(rewards[i]);
 		}
 	}
-	return 0;
+	return active_vouchers;
 }
 
 function getFavsRelevance (favs, outlet) {
@@ -255,20 +253,10 @@ function getMyFavs(user, callback) {
 
 function getMyRewards(user, callback) {
 	var q = {
-		match: {
-			$match: {
-				'issue_details.issued_to': user._id,
-				'basics.status': 'active'
-			}
-		},
-		group: {
-			$group: {
-    			_id: '$issue_details.program',
-    			count: { $sum: 1 }
-    		}
-		}
+		'issue_details.issued_to': user._id,
+		'basics.status': 'active'
 	};
-	Voucher.aggregate(q.match, q.group, function (err, results) {
+	Voucher.find(q, function (err, results) {
 		callback(null, results || []);
 	});
 }
