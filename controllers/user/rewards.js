@@ -100,10 +100,12 @@ function filterExpired(vouchers) {
 			v.EXPIRED.push(vouchers[i]);
 		}
 		else {
+			var results = {
+				off_now: false,
+				availAt: null
+			};
 			if(vouchers[i].issue_details.issued_for) {
-				var results = {};
 				results.off_now = CommonUtils.isOpen(vouchers[i].issue_details.issued_for.avail_hours);
-				results.availAt = null;
 				if(results.off_now) {
 					results.availAt = CommonUtils.opensAt(vouchers[i].issue_details.issued_for.avail_hours);
 				}

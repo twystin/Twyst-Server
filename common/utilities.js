@@ -71,7 +71,6 @@ module.exports.isOpen = function (business_hours) {
 }
 
 module.exports.opensAt = function (business_hours) {
-    console.log(business_hours)
     var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     if(!business_hours) {
         return false;
