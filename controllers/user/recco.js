@@ -196,7 +196,9 @@ function getActiveVouchersHere (rewards, program) {
 		return active_vouchers;
 	}
 	for(var i = 0; i < rewards.length; i++) {
-		if(rewards[i].issue_details.program.equals(program._id)) {
+		if(rewards[i].issue_details 
+			&& rewards[i].issue_details.program
+			&& rewards[i].issue_details.program.equals(program._id)) {
 			active_vouchers.push(rewards[i]);
 		}
 	}
