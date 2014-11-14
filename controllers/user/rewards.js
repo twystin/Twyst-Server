@@ -61,10 +61,10 @@ function getInfo(active_vouchers, lat, lon) {
 		}
 		temp_obj.off_now = false;
 		temp_obj.avail_in = null
-		if(vouchers[i].issue_details.issued_for) {
-			temp_obj.off_now = CommonUtils.isOpen(vouchers[i].issue_details.issued_for.avail_hours);
+		if(active_vouchers[i].issue_details.issued_for) {
+			temp_obj.off_now = CommonUtils.isOpen(active_vouchers[i].issue_details.issued_for.avail_hours);
 			if(temp_obj.off_now) {
-				temp_obj.avail_in = CommonUtils.opensAt(vouchers[i].issue_details.issued_for.avail_hours);
+				temp_obj.avail_in = CommonUtils.opensAt(active_vouchers[i].issue_details.issued_for.avail_hours);
 			}
 		}
 		vouchers.push(temp_obj);
