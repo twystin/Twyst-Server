@@ -124,6 +124,7 @@ function getUserRedeemed(user, cb) {
 	.populate('issue_details.issued_at')
 	.populate('issue_details.issued_for')
 	.populate('issue_details.program')
+	.populate('issue_details.winback')
 	.exec(function (err, vouchers) {
 		cb(null, vouchers || []);
 	})
@@ -140,6 +141,7 @@ function getActiveVoucher(user, cb) {
 	.populate('issue_details.issued_at')
 	.populate('issue_details.issued_for')
 	.populate('issue_details.program')
+	.populate('issue_details.winback')
 	.exec(function (err, vouchers) {
 		cb(null, vouchers || []);
 	})
@@ -152,7 +154,8 @@ function getRedeemed(user, cb) {
 	})
 	.populate('issue_details.issued_at')
 	.populate('issue_details.issued_for')
-	.populate('issue_details.program')
+	.populate('issue_details.program')	
+	.populate('issue_details.winback')
 	.exec(function (err, vouchers) {
 		cb(null, vouchers || []);
 	})
