@@ -98,18 +98,21 @@ module.exports.opensAt = function (outlet) {
     }
     
     function checkNextDays() {
-        for(var j = 0; j < 7; j++) {
+        for(var j = 1; j < 7; j++) {
             time = new Date(time.getTime() + 86400000);
-            var minutes = time.getHours() * 60 + time.getMinutes();
+            var minutes = 0;
             var day = days[time.getDay()];
             var today = outlet.business_hours[day];
             if(today.closed || !today.timings || !today.timings.length) {
                 
             }
             else {
+
                 for(var i = 0; i < today.timings.length; i++) {
                     var open_min = today.timings[i].open.hr * 60 + today.timings[i].open.min;
-                    if(open_min > minutes) {
+                    console.log(open_min)
+                    console.log(minutes)
+                    if(minutes < open_min) {
                         opens.time = today.timings[i].open.hr + ':' + (today.timings[i].open.min ? today.timings[i].open.min : '00');
                         opens.day = day;
                         return opens;
