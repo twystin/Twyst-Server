@@ -22,10 +22,11 @@ module.exports.getSlugs = function (req, res) {
 			var details = [];
 			outlets.forEach(function (o) {
 				var obj = {
-					'slug': o.basics.slug,
+					'_id': o._id,
 					'name': o.basics.name,
 					'location': o.contact.location.locality_1[0],
-					'publicUrl': o.publicUrl
+					'publicUrl': o.publicUrl,
+					'shortUrl': o.shortUrl
 				};
 				details.push(obj);
 			})

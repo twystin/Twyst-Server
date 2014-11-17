@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 var Redirect = mongoose.model('Redirect');
 var Outlet = mongoose.model('Outlet');
 var _ = require('underscore');
-var url = require('url');
+var url = require('url'),
+	M = require('mstring');
 
 module.exports.getRedirected = function (req, res) {
 	
@@ -29,27 +30,42 @@ module.exports.getRedirected = function (req, res) {
 }
 
 module.exports.redirectToOutlet = function (req, res) {
+	console.log(req.url)
 	if(!req.params.shortUrl) {
-		redirect(null);
+		redirect(null, null);
 	}
 	Outlet.findOne({
 		shortUrl: req.params.shortUrl.toUpperCase(),
 		'outlet_meta.status': 'active'
 	}, function (err, outlet) {
 		if(err || !outlet) {
-			redirect(null);
+			redirect(null, null);
 		}
 		else {
-			redirect(outlet.publicUrl[0])
+			redirect(outlet, outlet.publicUrl[0])
 		}
 	})
 
-	function redirect(url) {
-		if(!url) {
+	function redirect(outlet, url) {
+		var city = getCityName(outlet);
+		if(!url || !city) {
 			res.redirect('/');
 		}
 		else {
-			res.redirect('/outlets/#/' + url);
+			res.redirect(city + '/' + url);
 		}
+	}
+
+	function getCityName (outlet) {
+		if(!outlet.contact && !outlet.contact.location.city) {
+			return null;
+		}
+		var city_name = outlet.contact.location.city.toLowerCase();
+		if(city_name === 'gurgaon'
+			|| city_name === 'noida'
+			|| city_name === 'delhi') {
+			return 'ncr';
+		}
+		return city_name.toLowerCase();
 	}
 }

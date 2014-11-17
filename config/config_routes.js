@@ -443,15 +443,15 @@ module.exports = function (app) {
         app.get('/api/v2/notify/merchants/:skip',checkAuthenticated(),checkRole(5), CommonNotifyCtrl.getNotifs);
     })();
 
-    (function testing_routes (){
-        var OutletRender = require('../controllers/render/outlet');
-        app.get('/:type(ncr|mumbai|banglore)/*', OutletRender.render);
+    (function outlet_page_routes (){
+        var OutletRender = require('../controllers/outletPage/main');
+        app.get('/:type(ncr|mumbai|banglore)/:outletUrl(*)', OutletRender.render);
     })();
 
     (function redirect_routes() {
         var RedirectCtrl = require('../controllers/redirect');
         app.get('/r/:key', RedirectCtrl.getRedirected);
-        app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet)
+        app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet);
     })();
 
     (function handle_defaults() {
