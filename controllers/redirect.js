@@ -30,8 +30,8 @@ module.exports.getRedirected = function (req, res) {
 }
 
 module.exports.redirectToOutlet = function (req, res) {
-	console.log(req.url)
-	if(!req.params.shortUrl) {
+	// Assuming outlet shorturl wont be bigger than 6 characres
+	if(!req.params.shortUrl && !req.params.shortUrl.length > 6) {
 		redirect(null, null);
 	}
 	Outlet.findOne({
@@ -49,7 +49,7 @@ module.exports.redirectToOutlet = function (req, res) {
 	function redirect(outlet, url) {
 		var city = getCityName(outlet);
 		if(!url || !city) {
-			res.redirect('/');
+			res.send(200);
 		}
 		else {
 			res.redirect(city + '/' + url);
@@ -57,7 +57,7 @@ module.exports.redirectToOutlet = function (req, res) {
 	}
 
 	function getCityName (outlet) {
-		if(!outlet.contact && !outlet.contact.location.city) {
+		if(!outlet && !outlet.contact && !outlet.contact.location.city) {
 			return null;
 		}
 		var city_name = outlet.contact.location.city.toLowerCase();

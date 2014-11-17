@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
-var Outlet = mongoose.model('Outlet');
+var Outlet = mongoose.model('Outlet'),
+	Reward = mongoose.model('Reward');
 
 var _ = require('underscore'),
 	M = require('mstring');
@@ -8,47 +9,65 @@ var _ = require('underscore'),
 module.exports.render = function (req, res) {
 	console.log(req.params.outletUrl)
 	if(!req.params.outletUrl) {
-		redirect(null);
+		res.send(400);
 	}
 	Outlet.findOne({
 		publicUrl: req.params.outletUrl,
 		'outlet_meta.status': 'active'
 	}, function (err, outlet) {
 		if(err || !outlet) {
-			res.redirect('/');
+			res.send(400);
 		}
 		else {
-			res.send(servePage(outlet));
+			servePage(outlet, function (err, data) {
+				if(err) {
+					res.send(400);
+				}
+				else {
+					res.send(data);
+				}
+			});
 		}
 	})
 
-	function servePage(outlet) {
+	function servePage(outlet, cb) {
 		if(!outlet) {
-			res.redirect('/');
+			cb(true, null);
 		}
 		else {
-			var data = '';
-			data += getHead();
-			data += getMeta(outlet);
-			data += getCss();
-			data += getController(outlet.publicUrl[0]);
-			data += getScripts();
-			return data;
+			getReward(outlet, function (err, reward) {
+				var data = '';
+				data += getHead();
+				data += getMeta(outlet, reward);
+				data += getCss();
+				data += getController(outlet.publicUrl[0]);
+				data += getScripts();
+				cb(null, data);
+			})
 		}
 	}
+}
+
+function getReward(outlet, cb) {
+	Reward.findOne({
+		outlets: outlet,
+		status: 'active'
+	}, function (err, reward) {
+		cb(err, reward);
+	})
 }
 
 function getController(url) {
 	return "<div ng-view ng-controller='OutletCtrl' ng-init=" + '"' + "getOutlet('" + url + "')" +'"'+"></div>";
 }
 
-function getMeta(outlet) {
+function getMeta(outlet, reward) {
 	var data = '';
 	data += "<title>" + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] + ", " +outlet.contact.location.locality_2[0] + "," + outlet.contact.location.city +" - Twyst</title>";
 	data += '<meta charset="utf-8">';
 	data += '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
-	data += '<meta name="description" content="' + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] +', ' + 'Twyst">';
-	data += '<meta name="keywords" content="medical help, free diagnosis" />';
+	data += '<meta name="description" content="Unlock exclusive rewards for being a regular! ' + getRewardText(reward) + '">';
+	data += '<meta name="keywords" content="Gurgaon restaurant rewards, Delhi restaurant rewards, Noida restaurant rewards, loyality, offers, deals, check-in, twyst rewards, restaurant vouchers, check-in vouchers." />';
 	data += '<meta name="author" content="Twyst Technologies Pvt. Ltd.">';
 	data += '<meta property="og:site_name" content="'+ outlet.basics.name +' on Twyst"/>'
 	data += '<meta property="og:title" content="' + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] + ' - Twyst" />';
@@ -56,6 +75,17 @@ function getMeta(outlet) {
 	data += '<meta property="og:description" content="Unlock exclusive rewards for being a regular! Check in on Twyst every time you visit us or order." />';
 	data += '<meta property="og:image" content="https://s3-us-west-2.amazonaws.com/twyst-outlets/' + outlet._id + '/logo_gray" />';
 	return data;
+}
+
+function getRewardText(reward) {
+	if(!reward || !reward.rewards) {
+		return '';
+	}
+	var reward_text = '';
+	for(var i = 1; i < reward.rewards.length; i++) {
+		reward_text += reward.rewards[i].reward + ' on Check-in #' + reward.rewards[i].count + ', ';
+	}
+	return reward_text;
 }
 
 function getCss() {

@@ -92,6 +92,8 @@ function saveReward(program, rewards, cb) {
             }
             else {
                 reward.rewards = rewards;
+                reward.outlets = program.outlets;
+                reward.status = program.status;
                 reward.modified_date = Date.now();
             }
             reward.save(function (err, reward) {

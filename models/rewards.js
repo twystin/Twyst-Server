@@ -10,6 +10,8 @@ var Tier = mongoose.model('Tier');
 
 var RewardSchema = new Schema({
     program: {type: Schema.ObjectId, ref: 'Program'},
+    outlets: [{type: Schema.ObjectId, ref: 'Outlet'}],
+    status: {type: String},
     created_date: {type: Date, default: Date.now},
     modified_date: {type: Date, default: Date.now},
     rewards: [{
