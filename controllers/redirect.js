@@ -57,7 +57,7 @@ module.exports.redirectToOutlet = function (req, res) {
 	}
 
 	function getCityName (outlet) {
-		if(!outlet && !outlet.contact && !outlet.contact.location.city) {
+		if(!outlet || !outlet.contact || !outlet.contact.location.city) {
 			return null;
 		}
 		var city_name = outlet.contact.location.city.toLowerCase();
