@@ -45,7 +45,8 @@ module.exports.upload = function(req, res) {
   		image_class: req.body.image_class,
   		ContentType: req.files.file.mimetype,
   		folder_name: req.body.folder_name,
-  		bucketName: req.body.bucketName
+  		bucketName: req.body.bucketName,
+  		size: req.files.file.size
   	};
 
   	var err = imageValidator(img_obj);
@@ -57,42 +58,31 @@ module.exports.upload = function(req, res) {
 	    })
   	}
   	else {
-  		Images.getFilesizeInMb(img_obj.image_path, function (err, file_size) {
-			if(err) {
+  		if(img_obj.image_for === 'outlet') {
+			if(!image_sizes[img_obj.image_class] 
+				|| image_sizes[img_obj.image_class] <= img_obj.size / 1000000.0) {
 				res.send(400, {
 			        'status': 'error',
-			        'message': 'Image path is not valid',
-			        'info': err
+			        'message': 'Image size must not exceed ' + image_sizes[img_obj.image_class] + ' mb',
+			        'info': null
 			    })
 			}
 			else {
-				if(img_obj.image_for === 'outlet') {
-					if(!image_sizes[img_obj.image_class] 
-						|| image_sizes[img_obj.image_class] <= file_size) {
-						res.send(400, {
-					        'status': 'error',
-					        'message': 'Image size must not exceed ' + image_sizes[img_obj.image_class] + ' mb',
-					        'info': null
-					    })
-					}
-					else {
-						if(img_obj.image_class === 'others') {
-							outletOtherImagesHandler();
-						}
-						else {
-							outletImagesHandler();
-						}
-					}
+				if(img_obj.image_class === 'others') {
+					outletOtherImagesHandler();
 				}
 				else {
-					res.send(400, {
-				        'status': 'error',
-				        'message': 'Only outlet images allowed currently',
-				        'info': null
-				    })
+					outletImagesHandler();
 				}
 			}
-		});
+		}
+		else {
+			res.send(400, {
+		        'status': 'error',
+		        'message': 'Only outlet images allowed currently',
+		        'info': null
+		    })
+		}
   	}
 
   	function outletImagesHandler() {
