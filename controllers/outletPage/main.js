@@ -49,8 +49,8 @@ function getMeta(outlet) {
 	data += '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
 	data += '<meta name="description" content="' + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] +', ' + 'Twyst">';
 	data += '<meta name="author" content="">';
-	data += '<meta property="og:site_name" content="Twyst Outlet"/>'
-	data += '<meta property="og:title" content="' + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] + ', ' + 'Twyst" />';
+	data += '<meta property="og:site_name" content="'+ outlet.basics.name +' on Twyst"/>'
+	data += '<meta property="og:title" content="' + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] + ', - Twyst" />';
 	data += '<meta property="og:url" content="http://twyst.in/'+ outlet.shortUrl[0] +'" />';
 	data += '<meta property="og:description" content="Unlock exclusive rewards for being a regular! Check in on Twyst every time you visit us or order." />';
 	data += '<meta property="og:image" content="https://s3-us-west-2.amazonaws.com/twyst-outlets/' + outlet._id + '/logo_gray.png" />';
