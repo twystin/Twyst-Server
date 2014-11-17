@@ -10,21 +10,33 @@ module.exports.initSitemap = function (req, res) {
 	var yyyy = today.getFullYear();
 	var formatedDate = yyyy + '-' + mm + '-' + dd;
 
-	Outlet.find({}, function (err, outlets) {
+	Outlet.find({
+		'outlet_meta.status': 'active'
+	}, function (err, outlets) {
 		if(err) {
 			res.send(400, {
 				'status': 'error',
 				'message': 'Error generating sitemap.',
-				'info': JSON.stringify(err)
+				'info': err
 			});
 		}
 		else {
 			var sitemap = generateSitemap(outlets);
-			fs.writeFileSync('../Twyst-Web-Apps/sitemap.xml', sitemap);
-			res.send(200, {
-				'status': 'success',
-				'message': 'Successfully generated sitemap.',
-				'info': ''
+			fs.writeFile('../Twyst-Web-Apps/sitemap.xml', sitemap, function (err, doc) {
+				if(err) {
+					res.send(400, {
+						'status': 'error',
+						'message': 'Error generating sitemap.',
+						'info': err
+					});
+				}
+				else {
+					res.send(200, {
+						'status': 'success',
+						'message': 'Successfully generated sitemap.',
+						'info': ''
+					});
+				}
 			});
 		}
 	});
@@ -35,7 +47,7 @@ module.exports.initSitemap = function (req, res) {
 		sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
 		sitemap += getUrlTag("http://twyst.in", changefreq, 1);
 		outlets.forEach(function (o) {
-			var outletUrl = 'http://twyst.in/' + o.publicUrl;
+			var outletUrl = 'http://twyst.in/' + getUrl(o);
 			sitemap += getUrlTag(outletUrl, changefreq, 0.8, formatedDate);
 		});
 		sitemap += '\n</urlset>';
@@ -43,11 +55,28 @@ module.exports.initSitemap = function (req, res) {
 		return sitemap;
 	}
 
+	function getUrl(outlet) {
+		return getCityName(outlet) + '/' + outlet.publicUrl[0];
+	}
+
+	function getCityName (outlet) {
+		if(!outlet.contact && !outlet.contact.location.city) {
+			return null;
+		}
+		var city_name = outlet.contact.location.city.toLowerCase();
+		if(city_name === 'gurgaon'
+			|| city_name === 'noida'
+			|| city_name === 'delhi') {
+			return 'ncr';
+		}
+		return city_name.toLowerCase();
+	}
+
 	function getUrlTag (url, changefreq, priority, formatedDate) {
 		var data = '';
 		data += '\n\t<url>';
 		data += '\n\t\t<loc>';
-		data += '\n\t\t' + url;
+		data += '\n\t\t\t' + url;
 		data += '\n\t\t</loc>';
 		if(formatedDate) {
 			data += '\n\t\t<lastmod>' + formatedDate + '</lastmod>';

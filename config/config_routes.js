@@ -43,7 +43,7 @@ module.exports = function (app) {
 
     (function seo_route () {
         var SitemapCtrl = require('../controllers/sitemapGen');
-        app.post('/api/v3/sitemap', SitemapCtrl.initSitemap);
+        app.get('/api/v3/sitemap', SitemapCtrl.initSitemap);
     })();
 
     (function reward_route () {

@@ -48,7 +48,8 @@ function getMeta(outlet) {
 	data += '<meta charset="utf-8">';
 	data += '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
 	data += '<meta name="description" content="' + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] +', ' + 'Twyst">';
-	data += '<meta name="author" content="">';
+	data += '<meta name="keywords" content="medical help, free diagnosis" />';
+	data += '<meta name="author" content="Twyst Technologies Pvt. Ltd.">';
 	data += '<meta property="og:site_name" content="'+ outlet.basics.name +' on Twyst"/>'
 	data += '<meta property="og:title" content="' + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] + ' - Twyst" />';
 	// data += '<meta property="og:url" content="http://twyst.in/'+ outlet.shortUrl[0] +'" />';
