@@ -26,7 +26,7 @@ module.exports.isSupportedImage = function(content_type) {
 // returns callback with error or upload data
 
 module.exports.deleter = function(delete_object, cb) {
-	s3.client.deleteObject(delete_object, function (err, data) {
+	s3.client.deleteObjects(delete_object, function (err, data) {
 	    cb(err, data)
   	});
 }
