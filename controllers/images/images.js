@@ -1,11 +1,6 @@
-var AWS = require('aws-sdk'),
-	fs = require('fs'),
-	async = require('async'),
-	Settings = require('../../config/settings'),
+var async = require('async'),
 	Images = require('../../modules/images/image'),
 	Resizer = require('../../modules/images/resizer');
-
-AWS.config.update(Settings.values.aws_config);
 
 var image_sizes = {
 	'logo': 0.2,
