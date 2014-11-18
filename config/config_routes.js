@@ -138,6 +138,11 @@ module.exports = function (app) {
         app.put('/api/v1/resend/validation/', MailerCtrl.validationEmail);
         app.post('/api/v1/sendfeedback', checkAuthenticated(), MailerCtrl.feedbackEmail);
     })();
+    //feedback route
+    (function feedback_route(){
+        var FeedbackCtrl = require('../controllers/feedback');
+        app.post('/api/v3/feedback', checkAuthenticated(), checkRole(7), FeedbackCtrl.create);
+    })();
     //Change password and reset passwords
     (function password_reset_routes() {
         var ResetCtrl = require('../controllers/reset_password');
