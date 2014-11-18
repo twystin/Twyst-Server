@@ -59,6 +59,7 @@ module.exports.upload = function(req, res) {
   	}
   	else {
   		if(img_obj.image_for === 'outlet') {
+  			console.log(img_obj.size / 1000000.0)
 			if(!image_sizes[img_obj.image_class] 
 				|| image_sizes[img_obj.image_class] <= img_obj.size / 1000000.0) {
 				res.send(400, {
@@ -214,8 +215,6 @@ module.exports.delete = function(req, res) {
   	};
 
   	var err = delValidator(del_obj);
-  	console.log(del_obj)
-  	console.log(err)
   	if(err) {
   		res.send(400,{
 	        'status': 'error',
