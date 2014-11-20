@@ -63,7 +63,7 @@ function getController(url) {
 
 function getMeta(outlet, reward) {
 	var data = '';
-	data += "<title>" + outlet.basics.name + ', ' + outlet.contact.location.locality_1[0] + ", " +outlet.contact.location.locality_2[0] + "," + outlet.contact.location.city +" - Twyst</title>";
+	data += "<title>" + outlet.basics.name + ', ' + (outlet.contact.location.locality_1[0] ? outlet.contact.location.locality_1[0] + ", " : ' ') + (outlet.contact.location.locality_2[0] ? outlet.contact.location.locality_2[0] + ", " : ' ') + outlet.contact.location.city +" - Twyst</title>";
 	data += '<meta charset="utf-8">';
 	data += '<meta name="viewport" content="width=device-width, initial-scale=1.0">';
 	data += '<meta name="description" content="Unlock exclusive rewards for being a regular! ' + getRewardText(reward) + '">';
