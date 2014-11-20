@@ -68,14 +68,16 @@ module.exports = function (app) {
         var TimelineCtrl = require('../controllers/user/timeline');
         var SocialCtrl = require('../controllers/user/social');
         var FollowCtrl = require('../controllers/user/follow');
-        app.get('/api/v3/near', NearByCtrl.getNearby);
-        app.get('/api/v3/recco', ReccoCtrl.getRecco);
-        app.get('/api/v3/outlet_detail', DetailCtrl.getDetails);
-        app.get('/api/v3/rewards', checkAuthenticated(), RewardCtrl.getRewards);
-        app.get('/api/v3/timeline', checkAuthenticated(), TimelineCtrl.getTimeline);
-        app.post('/api/v3/social', checkAuthenticated(), SocialCtrl.update);
-        app.post('/api/v3/follow', checkAuthenticated(), FollowCtrl.follow);
-        app.post('/api/v3/unfollow', checkAuthenticated(), FollowCtrl.unfollow);
+        var FeedbackCtrl = require('../controllers/user/feedback');
+        app.get(Routes.USER_NEAR_V3, NearByCtrl.getNearby);
+        app.get(Routes.USER_RECCO_V3, ReccoCtrl.getRecco);
+        app.get(Routes.USER_OUTLET_DETAIL_v3, DetailCtrl.getDetails);
+        app.get(Routes.USER_REWARDS_V3, checkAuthenticated(), RewardCtrl.getRewards);
+        app.get(Routes.USER_TIMELINE_V3, checkAuthenticated(), TimelineCtrl.getTimeline);
+        app.post(Routes.USER_SOCIAL_v3, checkAuthenticated(), SocialCtrl.update);
+        app.post(Routes.USER_FOLLOW_V3, checkAuthenticated(), FollowCtrl.follow);
+        app.post(Routes.USER_UNFOLLOW_V3, checkAuthenticated(), FollowCtrl.unfollow);
+        app.post(Routes.USER_FEEDBACK_V3, checkAuthenticated(), FeedbackCtrl.save);
     })();
 
     (function panel_route() {
@@ -141,11 +143,7 @@ module.exports = function (app) {
         app.put('/api/v1/resend/validation/', MailerCtrl.validationEmail);
         app.post('/api/v1/sendfeedback', checkAuthenticated(), MailerCtrl.feedbackEmail);
     })();
-    //feedback route
-    (function feedback_route(){
-        var FeedbackCtrl = require('../controllers/feedback');
-        app.post('/api/v3/feedback', checkAuthenticated(), checkRole(7), FeedbackCtrl.create);
-    })();
+
     //Change password and reset passwords
     (function password_reset_routes() {
         var ResetCtrl = require('../controllers/reset_password');

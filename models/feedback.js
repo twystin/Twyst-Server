@@ -8,7 +8,11 @@ var Outlet = mongoose.model('Outlet');
 var FeedbackSchema = new Schema({
 	account: {type: Schema.ObjectId, ref: 'Account'},
 	outlet: {type: Schema.ObjectId, ref: 'Outlet'},
-	feedback: {},
+	feedback: {
+		comment: {type: String},
+		photo: {type: String},
+		type: {type: String}
+	},
 	created_date: {type: Date, default: Date.now()},
 	modified_date: {type: Date, default: Date.now()}
 })
