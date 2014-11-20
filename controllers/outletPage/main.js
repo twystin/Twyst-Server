@@ -74,6 +74,7 @@ function getMeta(outlet, reward) {
 	// data += '<meta property="og:url" content="http://twyst.in/'+ outlet.shortUrl[0] +'" />';
 	data += '<meta property="og:description" content="Unlock exclusive rewards for being a regular! Check in on Twyst every time you visit us or order." />';
 	data += '<meta property="og:image" content="https://s3-us-west-2.amazonaws.com/twyst-outlets/' + outlet._id + '/logo_gray" />';
+	data += '<meta name="apple-itunes-app" content="app-id=907877732, affiliate-data=myAffiliateData, app-argument=myURL">';
 	return data;
 }
 

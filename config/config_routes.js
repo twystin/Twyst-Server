@@ -67,12 +67,15 @@ module.exports = function (app) {
         var DetailCtrl = require('../controllers/user/detail');
         var TimelineCtrl = require('../controllers/user/timeline');
         var SocialCtrl = require('../controllers/user/social');
+        var FollowCtrl = require('../controllers/user/follow');
         app.get('/api/v3/near', NearByCtrl.getNearby);
         app.get('/api/v3/recco', ReccoCtrl.getRecco);
         app.get('/api/v3/outlet_detail', DetailCtrl.getDetails);
         app.get('/api/v3/rewards', checkAuthenticated(), RewardCtrl.getRewards);
         app.get('/api/v3/timeline', checkAuthenticated(), TimelineCtrl.getTimeline);
         app.post('/api/v3/social', checkAuthenticated(), SocialCtrl.update);
+        app.post('/api/v3/follow', checkAuthenticated(), FollowCtrl.follow);
+        app.post('/api/v3/unfollow', checkAuthenticated(), FollowCtrl.unfollow);
     })();
 
     (function panel_route() {
