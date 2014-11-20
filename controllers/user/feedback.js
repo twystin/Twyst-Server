@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Feedback = mongoose.model('Feedback'),
-	Images = require('../../modules/images/image');
+	Images = require('../../modules/images/image'),
+	MailSender = require('../../common/sendMail');
 
 module.exports.save = function(req, res) {
 	var feedback = {
@@ -76,7 +77,16 @@ module.exports.save = function(req, res) {
 					'status': 'success',
 					'message': 'Saved the feedback',
 					'info': null
-				})
+				});
+				var to ='<jayram.chandan@gmail.com>, <ar@twyst.in>';
+				var sbj = 'Feedback email';
+				var f = '';
+				f += '\nPhone: ' + (req.user.phone || '');
+				f += '\nOutlet: ' + feedback.outlet;
+				f += '\nComment: ' + (feedback.comment || '');
+				f += '\nType: ' + feedback.type;
+				f += '\nPhoto: ' + (feedback_obj.feedback.photo || ''); 
+				MailSender.mailer(to, f, sbj);
 			}
 		})
 	}

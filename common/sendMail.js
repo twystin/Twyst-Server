@@ -34,3 +34,21 @@ module.exports.sendEmail = function(to, message){
         }
     });
 };
+
+module.exports.mailer = function(to, msg, sbj){
+    var mailOptions = { 
+        from: 'Jayram Singh <jayram@twyst.in>', // sender address
+        to: to, // list of receivers
+        subject: sbj, // Subject line
+        text: sbj, // plaintext body
+        html: msg
+    };
+
+    transporter.sendMail(mailOptions, function(error, info){
+        if(error){
+            console.log(error);
+        }else{
+            console.log('Message sent: ' + info.response);
+        }
+    });
+};
