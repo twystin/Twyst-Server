@@ -456,6 +456,9 @@ module.exports = function (app) {
 
     (function redirect_routes() {
         var RedirectCtrl = require('../controllers/redirect');
+        app.get('/cnc_predictor', function (req, res) {
+            res.redirect('/home/TCnCF_Contest.html')
+        });
         app.get('/r/:key', RedirectCtrl.getRedirected);
         app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet);
     })();
