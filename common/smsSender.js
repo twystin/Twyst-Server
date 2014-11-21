@@ -12,16 +12,21 @@ module.exports.sendSms = function (phone, push_message, type) {
 	var message = push_message.replace(/&/g,'%26');
 	message = message.replace(/% /g,'%25 ');
 
-	isBlackListedUser(phone, function (err, isBlackListed) {
-		console.log(message);
-		console.log("------------------------");
-		if(err || isBlackListed) {
-			console.log("Blacklisted user here...issse na hoga...Twyst tere liye nahi hai babua...");
-		}
-		else {
-			checkType();
-		}
-	});
+	console.log(message);
+	console.log("------------------------");
+	if(type === 'OTP_MESSAGE' || type === 'UNSBS_MESSAGE') {
+		send();
+	}
+	else {
+		isBlackListedUser(phone, function (err, isBlackListed) {
+			if(err || isBlackListed) {
+				console.log("Blacklisted user here...issse na hoga...Twyst tere liye nahi hai babua...");
+			}
+			else {
+				checkType();
+			}
+		});
+	}
 
 	function isBlackListedUser(phone, cb) {
 		Account.findOne({
@@ -37,9 +42,6 @@ module.exports.sendSms = function (phone, push_message, type) {
 		time = Date.now();
 		if(type === 'VOUCHER_MESSAGE') {
 			time = time + 3 * 60 * 60 * 1000;
-		}
-		if(type === 'OTP_MESSAGE') {
-			send();
 		}
 		else if(isAccurateTime(time)) {
 			if(type !== 'VOUCHER_MESSAGE') {
