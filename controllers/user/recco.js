@@ -16,8 +16,7 @@ module.exports.getRecco = function (req, res) {
 		end = req.query.end || 20,
 		q = req.query.q ? {
 			'outlet_meta.status': 'active',
-			$or:[ 
-				{
+			$or:[{
 					'basics.name': new RegExp(req.query.q, "i")
 				}, 
 				{

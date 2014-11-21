@@ -12,6 +12,7 @@ module.exports.getNearby = function (req, res) {
 		lon = req.query.lon,
 		distance = req.query.distance || 500, 
 		q = req.query.q ? {
+			'outlet_meta.status': 'active',
 			$or:[ 
 				{
 					'basics.name': new RegExp(req.query.q, "i")
@@ -26,7 +27,7 @@ module.exports.getNearby = function (req, res) {
 					'contact.location.city': new RegExp(req.query.q, "i")
 				}
 			]
-		} : {};
+		} : {'outlet_meta.status': 'active',};
 
 	if(!lat || !lon) {
 		res.send(400, {
