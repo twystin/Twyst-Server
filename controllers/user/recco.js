@@ -15,6 +15,7 @@ module.exports.getRecco = function (req, res) {
 		start = req.query.start || 1,
 		end = req.query.end || 20,
 		q = req.query.q ? {
+			'outlet_meta.status': 'active',
 			$or:[ 
 				{
 					'basics.name': new RegExp(req.query.q, "i")
@@ -29,7 +30,7 @@ module.exports.getRecco = function (req, res) {
 					'contact.location.city': new RegExp(req.query.q, "i")
 				}
 			]
-		} : {};
+		} : {'outlet_meta.status': 'active'};
 
 	getOutlets(q, function (outlets) {
 		if(!outlets || !outlets.length) {
