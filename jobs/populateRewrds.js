@@ -1,5 +1,5 @@
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://50.112.253.131/twyst');
+mongoose.connect('mongodb://localhost/twyst');
 require('../config/config_models')();
 var Populator = require("../controllers/rewardPopulate");
 var Program = mongoose.model('Program');

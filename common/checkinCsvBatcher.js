@@ -2,15 +2,25 @@ var rest = require('restler');
 var csv = require('csv');
 var fs = require("fs");
 readCsv(0)
+var phones = '';
 function readCsv(data_index) {
 	csv()
-	.from.stream(fs.createReadStream(__dirname + '/0.csv', { encoding: 'utf8' }))
+	.from.stream(fs.createReadStream(__dirname + '/aaa.csv', { encoding: 'utf8' }))
 	.on('record', function (row, index) {
-	    if (index === data_index) {
-	    	httpCheckin(index, row[0]);
-	    }
+		console.log(row.length)
+		row.forEach(function (r) {
+			phones += (r + '\r\n');
+		})
+		
+	    // if (index === data_index) {
+	    // 	httpCheckin(index, row[0]);
+	    // }
 	})
 	.on('end', function (count) {
+		fs.writeFile('data.csv', phones, function (err) {
+
+		})
+		//console.log(count)
 		console.log("I am finished.")
 	})
 }

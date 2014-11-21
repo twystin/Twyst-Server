@@ -50,6 +50,7 @@ function redeemVoucherSms (code, phone, outlet_id) {
     Voucher.findOne({'basics.code': code})
         .populate('issue_details.issued_for')
         .populate('used_details.used_at')
+        .populate('used_details.program')
         .populate('used_details.used_by')
         .exec(function(err,voucher) {
         if(err) {
