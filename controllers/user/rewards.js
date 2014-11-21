@@ -100,6 +100,7 @@ function filterExpired(vouchers) {
 			// Other programs
 		}
 		if(isExpired(program_validity)) {
+			console.log("he")
 			v.EXPIRED.push(vouchers[i]);
 		}
 		else {
@@ -111,15 +112,14 @@ function filterExpired(vouchers) {
 
 function isExpired(program_validity, program_type) {
 	var time_now = new Date();
-	if(program_type === 'CHECKIN') {
-		return (new Date(program_validity.burn_start) < time_now
-			&& time_now < new Date(program_validity.burn_end));
+	console.log(new Date(program_validity.burn_start))
+	if(!program_type || program_type === 'CHECKIN') {
+		return new Date(program_validity.burn_end) < time_now;
 	}
 	else if(program_type === 'WINBACK') {
-		return (new Date(program_validity.start_date) < time_now
-			&& time_now < new Date(program_validity.end_date));
+		return new Date(program_validity.end_date) < time_now;
 	}
-	return null;
+	return false;
 }
 
 function getVoucher (user, cb) {
