@@ -442,6 +442,7 @@ module.exports.all = function(req,res) {
 module.exports.create = function(req,res) {
 	var created_outlet = {};
 	created_outlet = _.extend(created_outlet, req.body);
+	created_outlet.publicUrl = getPublicUrl(created_outlet);
 	var outlet = new Outlet(created_outlet);
 	outlet.save(function(err) {
 		if (err) {
@@ -458,7 +459,31 @@ module.exports.create = function(req,res) {
 						'info': ''
 			});
 		}				
-	})
+	});
+
+	function getPublicUrl(o) {
+		var publicUrl = [];
+		if(!o.contact
+			|| !o.contact.location
+			|| !o.contact.location.city
+			|| !(o.contact.location.locality_1 
+					&& o.contact.location.locality_1.length)
+			|| !(o.contact.location.locality_1 
+					&& o.contact.location.locality_1.length)) {
+			return publicUrl;
+		}
+		var url = o.basics.name 
+			+ ' ' 
+			+ o.contact.location.locality_1
+			+ ' ' 
+			+ o.contact.location.city;
+
+		url = url.replace(/[^a-zA-Z0-9 ]/g, "");
+		url = url.replace(/\s{1,}/g, '-');
+		url = url.toLowerCase();
+		publicUrl.push(url);
+		return publicUrl;
+	}
 };
 
 module.exports.update = function(req,res) {
