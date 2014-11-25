@@ -283,6 +283,9 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			else if(sms.checkin && isNewUser()) {
 				message.checkin = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +', click http://twy.st/app to get Twyst for your phone.';
 			}
+			if(outlet.basics.slug === 'thecupncakefactory') {
+				message.checkin += ' TCnCF Predict and Win contest closes 10th Dec - hurry! Visit http://twy.st/cnc_predictor to participate.';
+			}
 			sms.checkin = false;
 			sms.reward = false;
 
