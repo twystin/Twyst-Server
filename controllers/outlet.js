@@ -604,11 +604,17 @@ module.exports.getOutletsByAuth = function (req, res){
 
 }
 
-module.exports.getRandom = function(req, res){
-	var num = req.query.number || 6;
+module.exports.getFeatured = function(req, res){
+	var num = req.query.num || 6;
 	Outlet.find({
+		'outlet_meta.status': 'active'
 	})
-	.select({'basics.name':1, 'contact.location': 1})
+	.select({
+		'basics': 1,
+		'contact.location': 1,
+		'photos': 1,
+		'shortUrl': 1
+	})
 	.exec(function (err, outlets) {
 		if(err || !outlets) {
 			res.send(400, {
@@ -625,7 +631,7 @@ module.exports.getRandom = function(req, res){
 			res.send(200, {
 				'status': 'success',
 				'message': 'Successfully got outlets',
-				'info': outlets.slice(0,num)
+				'info': outlets.slice(0, num)
 			});
 		}
 	});
