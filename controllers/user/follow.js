@@ -23,7 +23,7 @@ module.exports.follow = function (req, res) {
 				})
 			}
 			else {
-				if(follow) {
+				if(f) {
 					res.send(200, {
 						'status': 'success',
 						'message': 'Outlet already followed',
