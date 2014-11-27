@@ -148,15 +148,17 @@ module.exports.refreshData = refreshData = function (req, cbRefresh) {
 	}
 
 	function getCheckins (callback) {
+		data.CHECKINS.info = [];
+		callback(null, true);
 		
-		RecoCtrl.myCheckins(req, function (obj) {
-			data.CHECKINS = obj;
-			if(data.CHECKINS.info && (typeof data.CHECKINS.info) == 'string') {
-		    	data.CHECKINS.info = JSON.parse(data.CHECKINS.info);
-		    }
-		    data.CHECKINS.info = [];
-		    callback(null, true);
-		});
+		// RecoCtrl.myCheckins(req, function (obj) {
+		// 	data.CHECKINS = obj;
+		// 	if(data.CHECKINS.info && (typeof data.CHECKINS.info) == 'string') {
+		//     	data.CHECKINS.info = JSON.parse(data.CHECKINS.info);
+		//     }
+		//     data.CHECKINS.info = [];
+		//     callback(null, true);
+		// });
 	}
 
 	function getVouchers (callback) {
@@ -171,14 +173,16 @@ module.exports.refreshData = refreshData = function (req, cbRefresh) {
 	}
 
 	function getFavourites (callback) {
+		data.FAVOURITES.info = [];
+		callback(null, true);
 		
-		RecoCtrl.myFavourites(req, function (obj) {
-			data.FAVOURITES = obj;
-			if(data.FAVOURITES.info && (typeof data.FAVOURITES.info) == 'string') {
-		    	data.FAVOURITES.info = JSON.parse(data.FAVOURITES.info);
-		    }
-		    data.FAVOURITES.info = [];
-		    callback(null, true);
-		});
+		// RecoCtrl.myFavourites(req, function (obj) {
+		// 	data.FAVOURITES = obj;
+		// 	if(data.FAVOURITES.info && (typeof data.FAVOURITES.info) == 'string') {
+		//     	data.FAVOURITES.info = JSON.parse(data.FAVOURITES.info);
+		//     }
+		//     data.FAVOURITES.info = [];
+		//     callback(null, true);
+		// });
 	}
 }
