@@ -11,7 +11,7 @@ module.exports.values = {
             "clientID": "1437891089774348",
             "clientSecret":"91fd1408e1a0ae47a6542d6e043bacb8",
             "callbackURL":"/api/v1/auth/facebook/callback",
-            'db_address': 'mongodb://localhost/twyst',
+            'db_uri': 'mongodb://localhost/twyst',
             'db': {
                 user: 'twyst',
                 pwd: 'Twyst123',
@@ -24,7 +24,7 @@ module.exports.values = {
             "clientID": "1437891089774348",
             "clientSecret":"91fd1408e1a0ae47a6542d6e043bacb8",
             "callbackURL":"/api/v1/auth/facebook/callback",
-            'db_address': 'mongodb://localhost/twyst',
+            'db_uri': 'mongodb://localhost/twyst',
             'db': {
                 user: 'twyst',
                 pwd: 'Twyst123',
@@ -37,7 +37,7 @@ module.exports.values = {
             "clientID": "1397475420510454",
             "clientSecret":"ff3a95d056a5adf670022a741f65582f",
             "callbackURL":"/api/v1/auth/facebook/callback",
-            'db_address': 'mongodb://localhost/twyst',
+            'db_uri': 'mongodb://localhost/twyst',
             'db': {
                 user: 'twyst_code',
                 pwd: 'G1nkgnss6ndagrom',
@@ -50,7 +50,7 @@ module.exports.values = {
             "clientID": "763534923659747",
             "clientSecret":"673eceff400c5dde837fdedead53ce20",
             "callbackURL":"/api/v1/auth/facebook/callback",
-            'db_address': 'mongodb://50.112.253.131/twyst',
+            'db_uri': 'mongodb://50.112.253.131/twyst',
             'db': {
                 user: 'twyst_code',
                 pwd: 'G5dnmsgs1qsmgacf',

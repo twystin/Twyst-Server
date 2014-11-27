@@ -14,7 +14,7 @@ module.exports.follow = function (req, res) {
 			account: req.user._id,
 			outlets: req.body.outlet
 		};
-		follow.findOne(follow, function (err, f) {
+		Follow.findOne(follow, function (err, f) {
 			if(err) {
 				res.send(400, {
 					'status': 'error',
