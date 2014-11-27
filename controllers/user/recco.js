@@ -3,7 +3,7 @@ var Outlet = mongoose.model('Outlet');
 var Program = mongoose.model('Program');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
-var Favourite = mongoose.model('Favourite');
+var Follow = mongoose.model('Favourite');
 var Reward = mongoose.model('Reward');
 var async = require('async');
 var _ = require("underscore");
@@ -157,10 +157,11 @@ function addUserRelevance(unordered_set, history) {
 		var checkin_data = getCheckinRelevance(history.my_checkins, s.outlet_summary, s.program_summary);
 		s.checkin_relevance = checkin_data.checkin_on_outlet * 5;
 		s.checkin_count = checkin_data.checkin_in_program;
-		s.fav_relevance = 10 * getFavsRelevance(history.my_favs, s.outlet_summary);
+		s.follow_relevance = 20 * getFollowRelevance(history.my_follows, s.outlet_summary);
 		s.active_rewards = getActiveVouchersHere(history.my_rewards, s.program_summary);
 		s.reward_relevance = 5 * s.active_rewards.length;
-		s.total += (s.checkin_relevance + s.fav_relevance + s.reward_relevance);
+		s.total += (s.checkin_relevance + s.follow_relevance + s.reward_relevance);
+		s.is_following = s.follow_relevance ? true : false;
 	})
 	return unordered_set;
 }
@@ -205,16 +206,16 @@ function getActiveVouchersHere (rewards, program) {
 	return active_vouchers;
 }
 
-function getFavsRelevance (favs, outlet) {
-	if(!outlet || !favs.length) {
-		return 0;
+function getFollowRelevance (follows, outlet) {
+	if(!outlet || !follows || !follows.length) {
+		return false;
 	}
-	for(var i = 0; i < favs.length; i++) {
-		if(favs[i]._id && favs[i]._id.equals(outlet._id)) {
-			return 1;
+	for(var i = 0; i < follows.length; i++) {
+		if(follows[i].outlets && follows[i].outlets.equals(outlet._id)) {
+			return true;
 		}
 	}
-	return 0;
+	return false;
 }
 
 function getUserHistory(user, cb) {
@@ -222,8 +223,8 @@ function getUserHistory(user, cb) {
 	    my_checkins: function(callback) {
 	    	getMyCheckins(user, callback);
 	    },
-	    my_favs: function(callback) {
-	    	getMyFavs(user, callback);
+	    my_follows: function(callback) {
+	    	getMyFollows(user, callback);
 	    },
 	    my_rewards: function(callback) {
 	    	getMyRewards(user, callback);
@@ -233,22 +234,16 @@ function getUserHistory(user, cb) {
 	});
 }
 
-function getMyFavs(user, callback) {
-	var q = {
-		match: {
-			$match: {
-				'account': user._id
-			}
-		},
-		group: {
-			$group: {
-    			_id: '$outlets',
-    			count: { $sum: 1 }
-    		}
-		}
-	};
-	Favourite.aggregate(q.match, q.group, function (err, results) {
-		callback(null, results || []);
+function getMyFollows(user, callback) {
+	Follow.find({
+		account: user._id
+	})
+	.select({
+		'account': 1,
+		'outlets': 1
+	})
+	.exec(function (err, results) {
+		callback(null, results);
 	});
 }
 

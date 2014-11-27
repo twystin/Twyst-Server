@@ -114,7 +114,6 @@ function getOtherInfo(user, result, cb) {
 	    	})
 	    },
 	    is_following: function(callback) {
-	    	console.log(user._id)
 	    	isFollowing(user, result, function (err, follow) {
 	    		var value = follow ? true : false;
 	    		callback(null, value);
