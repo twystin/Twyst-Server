@@ -53,6 +53,7 @@ module.exports.getDetails = function (req, res) {
 								result.distance = calculateDistance(result.outlet_details, lat, lon);
 							}
 							getOtherInfo(req.user, result, function (err, data) {
+								result.is_following = data.is_following;
 								result.active_rewards = data.active_rewards;
 								result.checkin_count = data.checkin_count;
 								result.checkins_to_next_reward = checkinsToReward(reward, data.checkin_count);
@@ -111,10 +112,31 @@ function getOtherInfo(user, result, cb) {
 	    		count = count || 0;
 	    		callback(null, count);
 	    	})
+	    },
+	    is_following: function(callback) {
+	    	console.log(user._id)
+	    	isFollowing(user, result, function (err, follow) {
+	    		var value = follow ? true : false;
+	    		callback(null, value);
+	    	})
 	    }
 	}, function(err, results) {
 	    cb(err, results);
 	});
+}
+
+function isFollowing(user, result, cb) {
+	if(!user || !user.phone || !result.outlet_details) {
+		cb(null, false);
+	}
+	else {
+		Follow.findOne({
+			'outlets': result.outlet_details._id,
+			'account': user._id
+		}, function (err, follow) {
+			cb(err, follow);
+		})
+	}
 }
 
 function getCheckinCount(user, result, cb) {
