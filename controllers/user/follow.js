@@ -54,7 +54,7 @@ module.exports.follow = function (req, res) {
 	}
 }
 
-module.exports.unfollow = function () {
+module.exports.unfollow = function (req, res) {
 	if(!req.body.outlet) {
 		res.send(400, {
 			'status': 'error',

@@ -3,7 +3,8 @@ var Outlet = mongoose.model('Outlet');
 var Program = mongoose.model('Program');
 var Tier = mongoose.model('Tier');
 var Tag = mongoose.model('Tag');
-var Checkin = mongoose.model('Checkin');
+var Checkin = mongoose.model('Checkin'),
+	Reward = mongoose.model('Reward');
 var _ = require('underscore');
 var async = require('async');
 var TagCtrl = require('../controllers/tag');
@@ -628,6 +629,12 @@ module.exports.getFeatured = function(req, res){
 			outlets = _.uniq(outlets, function(obj) {
 				return obj.basics.name
 			});
+			outlets = outlets.slice(0, num);
+			getRewards(outlets, function (err, rewards) {
+				if(err) {
+					formatResults()
+				}
+			})
 			res.send(200, {
 				'status': 'success',
 				'message': 'Successfully got outlets',
@@ -635,7 +642,26 @@ module.exports.getFeatured = function(req, res){
 			});
 		}
 	});
+
+	function formatResults() {
+		return null;
+	}
+
+	function getRewards(outlets, cb) {
+		Reward.find({
+			outlets: {
+				$in: outlets.map(function (o) {
+					return o._id;
+				})
+			}
+		}, function (err, rewards) {
+			cb(err, rewards);
+		})
+	}
 }
+
+
+
 //module.exports.read = function (req, res) {
 function read(programs, res) {
 
