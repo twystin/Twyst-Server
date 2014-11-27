@@ -154,6 +154,7 @@ module.exports.refreshData = refreshData = function (req, cbRefresh) {
 			if(data.CHECKINS.info && (typeof data.CHECKINS.info) == 'string') {
 		    	data.CHECKINS.info = JSON.parse(data.CHECKINS.info);
 		    }
+		    data.CHECKINS.info = [];
 		    callback(null, true);
 		});
 	}
@@ -176,6 +177,7 @@ module.exports.refreshData = refreshData = function (req, cbRefresh) {
 			if(data.FAVOURITES.info && (typeof data.FAVOURITES.info) == 'string') {
 		    	data.FAVOURITES.info = JSON.parse(data.FAVOURITES.info);
 		    }
+		    data.FAVOURITES.info = [];
 		    callback(null, true);
 		});
 	}
