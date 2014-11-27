@@ -629,33 +629,37 @@ module.exports.getFeatured = function(req, res){
 			outlets = _.uniq(outlets, function(obj) {
 				return obj.basics.name
 			});
-			outlets = outlets.slice(0, num);
-			getRewards(outlets, function (err, rewards) {
-				if(err) {
-					formatResults()
-				}
+			outlets = outlets.slice(0, num)
+			getRewards(outlets, function (results) {
+				res.send(200, {
+					'status': 'success',
+					'message': 'Successfully got outlets',
+					'info': results
+				});
 			})
-			res.send(200, {
-				'status': 'success',
-				'message': 'Successfully got outlets',
-				'info': outlets.slice(0, num)
-			});
 		}
 	});
 
-	function formatResults() {
-		return null;
-	}
-
 	function getRewards(outlets, cb) {
-		Reward.find({
-			outlets: {
-				$in: outlets.map(function (o) {
-					return o._id;
-				})
-			}
-		}, function (err, rewards) {
-			cb(err, rewards);
+		var results = [];
+		async.each(outlets, function (o, callback) {
+			Reward.findOne({
+				outlets: o._id,
+				status: 'active'
+			}, function (err, reward) {
+				var result = {};
+				if(err || !reward || !reward.rewards || !reward.rewards.length) {
+					result.reward = null;
+				}
+				else {
+					result.reward = reward.rewards[reward.rewards.length - 1];
+				}
+				result.outlet = o;
+				results.push(result);
+				callback();
+			});
+		}, function (err) {
+			cb(results);
 		})
 	}
 }
