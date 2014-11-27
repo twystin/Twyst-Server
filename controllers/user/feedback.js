@@ -24,7 +24,10 @@ module.exports.save = function(req, res) {
 	}
 
 	function handleFeedback() {
+		console.log(feedback.photo)
+		console.log(typeof feedback.photo)
 		if(feedback.photo) {
+			feedback.photo = decodeBase64Image(feedback.photo);
 			feedback.photo_type = feedback.photo_type || 'image/jpeg';
 			var bucketName = 'twyst-feedbacks',
 				image_name = feedback.outlet + '/' + req.user._id + '_' + Date.now(),
@@ -50,6 +53,20 @@ module.exports.save = function(req, res) {
 		else {
 			save(null);
 		}
+	}
+
+	function decodeBase64Image(dataString) {
+		var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
+		response = {};
+
+		if (matches.length !== 3) {
+			return new Error('Invalid input string');
+		}
+
+		response.type = matches[1];
+		response.data = new Buffer(matches[2], 'base64');
+
+		return response;
 	}
 
 	function save (image_name) {
