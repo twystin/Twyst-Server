@@ -4,7 +4,8 @@ var Program = mongoose.model('Program');
 var Tier = mongoose.model('Tier');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
-var Reward = mongoose.model('Reward');
+var Reward = mongoose.model('Reward'),
+	Follow = mongoose.model('Favourite');
 var async = require('async');
 var CommonUtils = require('../../common/utilities');
 
@@ -189,10 +190,44 @@ function getInfo(outlet_id, cb) {
 	    		}
 	    		callback(null, program);
 	    	})
+	    },
+	    total_checkin: function(callback) {
+	    	getTotalCheckinCount(outlet_id, function (err, count) {
+	    		if(err) {
+	    			console.log("Error in checkin count get at async");
+	    			// No need to handle this.
+	    		}
+	    		callback(null, count);
+	    	})
+	    },
+	    total_follow: function(callback) {
+	    	getTotalFollowCount(outlet_id, function (err, count) {
+	    		if(err) {
+	    			console.log("Error in follow count get at async");
+	    			// No need to handle this.
+	    		}
+	    		callback(null, count);
+	    	})
 	    }
 	}, function(err, results) {
 	    cb(err, results);
 	});
+}
+
+function getTotalCheckinCount(outlet_id, cb) {
+	Checkin.count({
+		outlet: outlet_id
+	}, function (err, count) {
+		cb(err, count);
+	})
+}
+
+function getTotalFollowCount(outlet_id, cb) {
+	Follow.count({
+		outlets: outlet_id
+	}, function (err, count) {
+		cb(err, count);
+	})
 }
 
 function getOutlet(outlet_id, cb) {
