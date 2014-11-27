@@ -24,8 +24,6 @@ module.exports.save = function(req, res) {
 	}
 
 	function handleFeedback() {
-		console.log(feedback.photo)
-		console.log(typeof feedback.photo)
 		if(feedback.photo) {
 			feedback.photo = decodeBase64Image(feedback.photo);
 			feedback.photo_type = feedback.photo_type || 'image/jpeg';
@@ -56,14 +54,7 @@ module.exports.save = function(req, res) {
 	}
 
 	function decodeBase64Image(dataString) {
-		dataString = "data:image/jpeg;base64" + dataString;
-		var matches = dataString.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/),
-		response = {};
-
-		response.type = matches[1];
-		response.data = new Buffer(matches[2], 'base64');
-
-		return response;
+		return (new Buffer(dataString, 'base64'));
 	}
 
 	function save (image_name) {
