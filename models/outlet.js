@@ -15,8 +15,8 @@ var OutletSchema = new Schema({
         merchant_name: {type: String, default: ''},
         contact_person_name: {type: String, default: ''},
         size: {type: String, default: '', trim: true}, // size of the establishament
-        is_a: {type: String, enum: ['restaurant','biryani','chinese','conntinental','north_indian','fast_food','burgers','pizza','wraps','pub','beer','bakery','cake','cafe','bistro','takeaway','other']},
-        icon: {type: String, enum: ['restaurant','biryani','chinese','conntinental','north_indian','fast_food','burgers','pizza','wraps','pub','beer','bakery','cake','cafe','bistro','takeaway','other']},
+        is_a: {type: String, enum: ['desserts', 'restaurant','biryani','chinese','conntinental','north_indian','fast_food','burgers','pizza','wraps','pub','beer','bakery','cake','cafe','bistro','takeaway','other']},
+        icon: {type: String, enum: ['desserts', 'restaurant','biryani','chinese','conntinental','north_indian','fast_food','burgers','pizza','wraps','pub','beer','bakery','cake','cafe','bistro','takeaway','other']},
         franchise: {type: Boolean},
         images: [{type: String}],
         created_at : {type: Date, default: Date.now},

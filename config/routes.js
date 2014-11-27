@@ -1,7 +1,7 @@
 var routes = {
 	IMAGE_ROUTE_V3 : '/api/v3/images',
 	IMAGE_ROUTE_V1 : '/api/v1/image/upload/',
-	RANDOM_OUTLETS :'/api/v3/random_outlets',
+	FEATURED_OUTLETS :'/api/v3/featured_outlets',
 	USER_NEAR_V3: '/api/v3/near',
 	USER_RECCO_V3: '/api/v3/recco',
 	USER_OUTLET_DETAIL_v3: '/api/v3/outlet_detail',

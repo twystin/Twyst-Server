@@ -5,21 +5,13 @@ readCsv(0)
 var phones = '';
 function readCsv(data_index) {
 	csv()
-	.from.stream(fs.createReadStream(__dirname + '/aaa.csv', { encoding: 'utf8' }))
-	.on('record', function (row, index) {
-		console.log(row.length)
-		row.forEach(function (r) {
-			phones += (r + '\r\n');
-		})
-		
-	    // if (index === data_index) {
-	    // 	httpCheckin(index, row[0]);
-	    // }
+	.from.stream(fs.createReadStream(__dirname + '/fnz.csv', { encoding: 'utf8' }))
+	.on('record', function (row, index) {		
+	    if (index === data_index) {
+	    	httpCheckin(index, row[0]);
+	    }
 	})
 	.on('end', function (count) {
-		fs.writeFile('data.csv', phones, function (err) {
-
-		})
 		//console.log(count)
 		console.log("I am finished.")
 	})
@@ -30,11 +22,11 @@ function httpCheckin (index, phone) {
 	rest.post('http://twyst.in/api/v2/batch_checkins', {
 		data: {
 			phone: phone,
-	        outlet: "5316d59326b019ee59000026",
-	        location: 'HOME_DELIVERY',
+	        outlet: "5445f7c247f75ed312fc91e3",
+	        location: 'DINE_IN',
 	        created_date: new Date(),
 	        batch_user: true,
-	        message: "Crusty Pizza turns 1 year old today! As a small way of saying thanks for helping us reach here, we have checked you in to our Rewards program on Twyst (http://twy.st/app). Get 10% off at lunch (order between 1130am – 3pm). Mention your voucher xxxxxx when you call. ONLY FOR TODAY – call us, say Happy Birthday and we’ll send you a Free Pizza OR Gelato along with your order!!"
+	        message: "We hope you had fun at the FrenZone event! As a small way of saying thanks for participating, we've enrolled you into our new rewards program on Twyst. You get 15% off on your next visit (Voucher code: xxxxxx). The more you visit, the bigger your rewards! Get Twyst (http://twy.st/app) to track your rewards easily and stay connected to FrenZone."
 		}
 	}).on('complete', function(data, response) {
 	  	console.log(data)
