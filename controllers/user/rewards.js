@@ -100,7 +100,6 @@ function filterExpired(vouchers) {
 			// Other programs
 		}
 		if(isExpired(program_validity)) {
-			console.log("he")
 			v.EXPIRED.push(vouchers[i]);
 		}
 		else {
@@ -112,7 +111,6 @@ function filterExpired(vouchers) {
 
 function isExpired(program_validity, program_type) {
 	var time_now = new Date();
-	console.log(new Date(program_validity.burn_start))
 	if(!program_type || program_type === 'CHECKIN') {
 		return new Date(program_validity.burn_end) < time_now;
 	}

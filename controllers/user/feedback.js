@@ -67,7 +67,6 @@ module.exports.save = function(req, res) {
 				'type': feedback.type
 			}
 		};
-		console.log(feedback_obj)
 		feedback_obj = new Feedback(feedback_obj);
 		feedback_obj.save(function (err) {
 			if(err) {
@@ -90,7 +89,9 @@ module.exports.save = function(req, res) {
 				f += '\nOutlet: ' + feedback.outlet;
 				f += '\nComment: ' + (feedback.comment || '');
 				f += '\nType: ' + feedback.type;
-				f += '\nPhoto: ' + (feedback_obj.feedback.photo || ''); 
+				if(feedback.photo) {
+					f += '\nPhoto link: ' + ("https://s3-us-west-2.amazonaws.com/twyst-feedbacks/" + feedback_obj.feedback.photo);
+				} 
 				MailSender.mailer(to, f, sbj);
 			}
 		})
