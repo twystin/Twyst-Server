@@ -605,67 +605,6 @@ module.exports.getOutletsByAuth = function (req, res){
 
 }
 
-module.exports.getFeatured = function(req, res){
-	var num = req.query.num || 6;
-	Outlet.find({
-		'outlet_meta.status': 'active'
-	})
-	.select({
-		'basics': 1,
-		'contact.location': 1,
-		'photos': 1,
-		'shortUrl': 1
-	})
-	.exec(function (err, outlets) {
-		if(err || !outlets) {
-			res.send(400, {
-				'status': 'error',
-				'message': 'Error getting outlets',
-				'info': err
-			});
-		}
-		else {
-			outlets = CommonUtilities.shuffleArray(outlets);
-			outlets = _.uniq(outlets, function(obj) {
-				return obj.basics.name
-			});
-			outlets = outlets.slice(0, num)
-			getRewards(outlets, function (results) {
-				res.send(200, {
-					'status': 'success',
-					'message': 'Successfully got outlets',
-					'info': results
-				});
-			})
-		}
-	});
-
-	function getRewards(outlets, cb) {
-		var results = [];
-		async.each(outlets, function (o, callback) {
-			Reward.findOne({
-				outlets: o._id,
-				status: 'active'
-			}, function (err, reward) {
-				var result = {};
-				if(err || !reward || !reward.rewards || !reward.rewards.length) {
-					result.reward = null;
-				}
-				else {
-					result.reward = reward.rewards[reward.rewards.length - 1];
-				}
-				result.outlet = o;
-				results.push(result);
-				callback();
-			});
-		}, function (err) {
-			cb(results);
-		})
-	}
-}
-
-
-
 //module.exports.read = function (req, res) {
 function read(programs, res) {
 
@@ -725,3 +664,138 @@ function read(programs, res) {
 		})
 	})
 };
+
+module.exports.getFeatured = function(req, res){
+	var num = req.query.num || 6;
+	Outlet.find({
+		'outlet_meta.status': 'active'
+	})
+	.select({
+		'basics': 1,
+		'contact.location': 1,
+		'photos': 1,
+		'shortUrl': 1
+	})
+	.exec(function (err, outlets) {
+		if(err || !outlets) {
+			res.send(400, {
+				'status': 'error',
+				'message': 'Error getting outlets',
+				'info': err
+			});
+		}
+		else {
+			outlets = CommonUtilities.shuffleArray(outlets);
+			outlets = _.uniq(outlets, function(obj) {
+				return obj.basics.name
+			});
+			outlets = outlets.slice(0, num)
+			getRewards(outlets, function (results) {
+				res.send(200, {
+					'status': 'success',
+					'message': 'Successfully got outlets',
+					'info': results
+				});
+			})
+		}
+	});
+}
+
+module.exports.getDiscovered = function (req, res) {
+	var start = req.query.start || 1,
+		end = req.query.end || 10,
+		q = req.query.q ? {
+			'outlet_meta.status': 'active',
+			$or:[{
+					'basics.name': new RegExp(req.query.q, "i")
+				}, 
+				{
+					'contact.location.locality_1': new RegExp(req.query.q, "i")
+				},
+				{
+					'contact.location.locality_2': new RegExp(req.query.q, "i")
+				},
+				{
+					'contact.location.city': new RegExp(req.query.q, "i")
+				}
+			]
+		} : {'outlet_meta.status': 'active'};
+
+	async.parallel({
+	    total: function(callback) {
+	    	getOutletCount(q, callback);
+	    },
+	    results: function(callback) {
+	    	getOutlets(q, start, end, callback);
+	    }
+	}, function(err, data) {
+	    if(err) {
+	    	res.send(400, {
+				'status': 'error',
+				'message': 'Error getting outlets',
+				'info': err
+			});
+	    }
+	    else if(!data || !data.results) {
+	    	res.send(200, {
+				'status': 'success',
+				'message': 'Got no outlets',
+				'info': []
+			});
+	    }
+	    else {
+	    	getRewards(data.results, function (results) {
+	    		data.results = results;
+				res.send(200, {
+					'status': 'success',
+					'message': 'Successfully got outlets',
+					'info': data
+				});
+			})
+	    }
+	});
+
+	function getOutlets(q, start, end, callback) {
+		Outlet.find(q)
+		.select({
+			'basics': 1,
+			'contact.location': 1,
+			'photos': 1,
+			'shortUrl': 1
+		})
+		.skip(start - 1)
+		.limit(end - start)
+		.exec(function (err, outlets) {
+			callback(err, outlets);
+		});
+	}
+
+	function getOutletCount(q, callback) {
+		Outlet.count(q, function (err, count) {
+			callback(err, count);
+		})
+	}
+}
+
+function getRewards(outlets, cb) {
+	var results = [];
+	async.each(outlets, function (o, callback) {
+		Reward.findOne({
+			outlets: o._id,
+			status: 'active'
+		}, function (err, reward) {
+			var result = {};
+			if(err || !reward || !reward.rewards || !reward.rewards.length) {
+				result.reward = null;
+			}
+			else {
+				result.reward = reward.rewards[reward.rewards.length - 1];
+			}
+			result.outlet = o;
+			results.push(result);
+			callback();
+		});
+	}, function (err) {
+		cb(results);
+	})
+}
