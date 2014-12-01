@@ -799,3 +799,78 @@ function getRewards(outlets, cb) {
 		cb(results);
 	})
 }
+
+module.exports.getDiscoveredNear = function (req, res) {
+	var loc = {
+			latitude: req.query.lat,
+			longitude: req.query.lon,
+		},
+		dis = req.query.distance,
+		q = req.query.q ? {
+			'outlet_meta.status': 'active',
+			$or:[{
+					'basics.name': new RegExp(req.query.q, "i")
+				}, 
+				{
+					'contact.location.locality_1': new RegExp(req.query.q, "i")
+				},
+				{
+					'contact.location.locality_2': new RegExp(req.query.q, "i")
+				},
+				{
+					'contact.location.city': new RegExp(req.query.q, "i")
+				}
+			]
+		} : {'outlet_meta.status': 'active'};
+
+	getOutlets(q, function (err, outlets) {
+		if(err) {
+			res.send(400, {
+				'status': 'error',
+				'message': 'Error getting outlets',
+				'info': err
+			});
+		}
+		else if(!outlets || !outlets.length) {
+			res.send(200, {
+				'status': 'success',
+				'message': 'Got no outlets.',
+				'info': []
+			});
+		}
+		else {
+			outlets = filterOutletsNear(outlets);
+			getRewards(outlets, function (results) {
+				res.send(200, {
+					'status': 'success',
+					'message': 'Successfully got outlets',
+					'info': results
+				});
+			})
+		}
+	});
+
+	function filterOutletsNear(outlets) {
+		var results = [];
+		outlets.forEach(function (o) {
+			var distance = CommonUtilities.calculateDistance(o.contact.location.coords, loc);
+			if(distance <= dis) {
+				results.push(o);
+			}
+		});
+		return results;
+	}
+
+	function getOutlets(q, callback) {
+		Outlet.find(q)
+		.select({
+			'basics': 1,
+			'contact.location': 1,
+			'photos': 1,
+			'shortUrl': 1
+		})
+		.exec(function (err, outlets) {
+			callback(err, outlets);
+		});
+	}
+}

@@ -266,6 +266,7 @@ module.exports = function (app) {
         app.get('/api/v1/outlets/view/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.read);
         app.get(Routes.FEATURED_OUTLETS, OutletCtrl.getFeatured);
         app.get(Routes.DISCOVERED_OUTLETS, OutletCtrl.getDiscovered);
+        app.get(Routes.DISCOVERED_NEAR_OUTLETS, OutletCtrl.getDiscoveredNear);
         app.post('/api/v1/outlets', checkAuthenticated(), checkRole(4), OutletCtrl.create);
         app.put('/api/v1/outlets/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.update);
         app.delete('/api/v1/outlets/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.archived);
