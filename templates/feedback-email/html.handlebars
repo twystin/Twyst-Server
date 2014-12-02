@@ -1,21 +1,131 @@
-<html>
-  <body>
-    <p>Hi </p>
-    <p>You have got a new feedback your outlet {{outlet_name}}, {{outlet_location}}. <br/>
-    <h3>User Details:</h3>
-    <ol type="1">
-      <li>Email: {{user_email}}</li>
-      <li>Phone: {{user_phone}}</li>
-      <li>Total Checkins at {{outlet_name}}, {{outlet_location}} : {{outlet_checkins}}</li>
-      <li>Total Checkins at your all outlets: {{across_outlet_checkins}}</li>
-    </ol>
-    <h4>Feedback Details:</h4>
-    <ol type="1">
-      <li>Type: {{feedback_type}}</li>
-      <li>Comments: {{feedback_comment}}</li>
-    </ol>
-    Please find pics if any in attachments.</p><a href="mailto:{{user_email}}?subject=Reply to feedback on Twyst&cc=contactus@twyst.in">Click here to reply to Customer</a>
-    <p>Thank you,<br/>Team Twyst</p>
-    <img src="http://twyst.in/home/assets/img/twyst_logo_2.png">
-  </body>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+
+<body style="font-family: calibri;">
+  <style type="text/css">
+.button a {
+  background: #72ac48;
+  color: #fff;
+  font-size: 16px;
+  font-weight: normal;
+  border-radius: 3px;
+  text-decoration: none;
+  display: block;
+  width: 236px;
+  cursor: pointer
+}
+
+.button a:hover {
+  background: #80bf52;
+  color: #fff;
+  font-size: 16px;
+  font-weight: normal;
+  border-radius: 3px;
+  text-decoration: none;
+  display: block;
+  width: 236px;
+  cursor: pointer
+}
+
+.follow_button a {
+  margin: 0;
+  border: 0 none;
+  padding: 0;
+  background: #72ac48;
+  color: #fff;
+  font-size: 10px;
+  padding: 3px 4px;
+  font-weight: 700;
+  border-radius: 3px;
+  text-decoration: none;
+  float: left
+}
+
+.follow_button a:hover {
+  margin: 0;
+  border: 0 none;
+  padding: 0;
+  background: #80bf52;
+  color: #fff;
+  font-size: 10px;
+  padding: 3px 4px;
+  font-weight: 700;
+  border-radius: 3px;
+  text-decoration: none;
+  float: left
+}
+</style>
+
+  <table width="100%">
+    <tbody>
+      <tr>
+        <td align="center" valign="top">
+          <div
+            style="width: 662px; text-align: left; border: 15px solid #f5f5f5; border-radius: 10px 10px 10px 10px">
+            <div
+              style="background-color: #D1CECE; border-radius: 10px 10px 0 0">
+              <div style="float: left;">
+                <img src="http://medistreet.in/images/logo_tag.png"
+                  alt="MediStreet"
+                  style="width: 186px; min-height: 30px; color: #fff; font-size: 30px; line-height: 30px; margin: 16px 30px">
+              </div>
+              <div
+                style="float: right; color: #0088CC; font-family: Georgia, 'Times New Roman', Times, serif; padding: 30px 30px 0px 0px;">
+                Well-being Delivered!</div>
+              <div style="clear: both; line-height: 0px;">&nbsp;</div>
+              <div style="clear: both"></div>
+            </div>
+            <div
+              style="border: 1px solid #939292; background: #fff; padding: 14px 34px 28px; font-family: Georgia, 'Times New Roman', Times, serif; color: #5a5a5a">
+
+                      <div
+          style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 19px; line-height: 34px;">
+          <div>
+            <div style="float: left">
+              <strong> <span id="salutation">Dear </span> <span id="name"> Store Admin (Test store No: 1)</span>,
+              </strong>
+            </div>
+            <div style="clear: both; line-height: 10px;">&nbsp;</div>
+          </div>
+          <div style="clear: both; line-height: 0px">&nbsp;</div>
+        
+          <div
+            style="font-family: calibri, Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.3em; padding-top: 0; margin-top: 0; padding-right: 10px">
+            
+            <span id="messageParagraph1"> 
+            Customer "Manish Singh"" have placed an order via MediStreet to your store.
+
+            <div style="clear: both; line-height: 14px">&nbsp;</div>
+            <span id="messageParagraph2"> View Order details here <a title='Order Details'  href='http://medistreet.in//store/admin/#/orders/11'>Order Details</a>
+            </span> <br/>
+            </div>
+
+            
+            <div style="clear: both; line-height: 14px">&nbsp;</div>
+            <br />Thank you,<br /> The MediStreet Team<br /> <a
+              href="http://www.medistreet.in"  target="_blank" style="color: #0088CC;">http://www.medistreet.in</a>
+          </div>
+        
+          <div style="clear: both; line-height: 10px;"></div>
+
+              <div style="clear: both; height: 10px;"></div>
+
+              <div align="center"
+                style="font-family: calibri, Arial, Helvetica, sans-serif; font-size: 12px; margin: 10px 0; padding: 0 40px">
+                <a href="http://www.facebook.com/medistreet" target="_blank"
+                  style="color: #0088CC;"> Like us on Facebook </a>
+                &nbsp;&nbsp;|&nbsp;&nbsp; <a
+                  href="http://twitter.com/medistreet" target="_blank"
+                  style="color: #0088CC;"> Follow us on Twitter </a>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</body>
 </html>
