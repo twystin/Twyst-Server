@@ -182,8 +182,13 @@ function getCss() {
 		          Home
 		        </a>
 		      </li>
+		      <li> 
+		        <a href="/home">
+		          Discover
+		        </a>
+		      </li>
 		      <li>
-		        <a href="/home/#how">
+		        <a href="/home/how">
 		          How it works
 		        </a>                       
 		      </li>
@@ -216,25 +221,106 @@ function getCss() {
 function getScripts() {
 	return M(function(){
 		/***
-		<!--=== Copyright ===-->
-		<div class="copyright row">
-		  <div class="container">
-		    <div class="row">
-		      <div class="col-md-6">                      
-		        <p class="copyright-space">
-		          2013 &copy; Twyst Technologies Pvt. Ltd. 
-		          <a href="http://twyst.in/legal/Privacy_Policy.pdf">Privacy Policy</a> | <a href="http://twyst.in/legal/terms_of_use.pdf">Terms of Service</a>
-		        </p>
-		      </div>
-		      <div class="col-md-6">  
-		        <a href="/">
-		          <img id="logo-footer" src="/home/assets/img/twyst_logo_2.png" class="pull-right" height="39px" width="110px" alt="" />
-		        </a>
-		      </div>
-		    </div><!--/row-->
-		  </div><!--/container--> 
-		</div><!--/copyright--> 
-		<!--=== End Copyright ===-->
+		<div class="footer">
+	        <div class="container">
+	            <div class="row">
+	                <div class="col-md-4 col-sm-12 col-xs-12">
+	                    <!-- About -->
+	                    <div class="headline">
+	                        <h2>About</h2>
+	                    </div>
+	                    <p>Twyst is a start-up based out of Gurgaon, started by a team with a combined experience of 40 years across product, strategy, operations and marketing. <a href="about.html">More</a></p>
+	                </div>
+	                    <!--/col-md-4-->
+
+	                <div class="col-md-4 col-sm-12 col-xs-12">      
+
+	                    <!-- Stay Connected -->
+	                    <div class="headline">
+	                        <h2>Follow</h2>
+	                    </div>
+	                    <ul class="social-icons">
+	                        <li>
+	                            <a href="http://blog.twyst.in" data-original-title="Feed" class="social_rss"></a>
+	                        </li>
+	                        <li>
+	                            <a href="https://www.facebook.com/twystin" data-original-title="Facebook" class="social_facebook"></a>
+	                        </li>
+	                        <li>
+	                            <a href="https://twitter.com/twystin" data-original-title="Twitter" class="social_twitter"></a>
+	                        </li>
+	                    </ul>
+	                </div>
+	                    <!--/col-md-4-->
+
+	                <div class="col-md-4 col-sm-12 col-xs-12 connect-margin">
+	                    <!-- Monthly Newsletter -->
+	                    
+
+	                    <!-- Stay Connected -->
+	                    <div class="headline">
+	                        <h2>Connect</h2>
+	                    </div>
+	                    <a class="btn btn-warning" href="/home/contact.html" style="color: white;line-height: 1;">Get in touch</a>
+	                    <a class="btn btn-warning" href="/home/careers.html" style="color: white;line-height: 1;">Work with Us</a>
+	                </div>
+	                    <!--/col-md-4-->
+	            </div>
+	                <!--/row-->
+	        </div>
+	            <!--/container-->
+	    </div>
+	    <!--/footer-->
+	    <!--=== End Footer ===-->
+
+	    <!--=== Copyright ===-->
+	    <div class="copyright">
+	        <div class="container">
+	            <div class="row">
+	                <div class="col-md-6">
+	                    <p class="copyright-space">
+	                        2013 &copy; Twyst Technologies Pvt. Ltd.
+	                        <a href="http://twyst.in/legal/Privacy_Policy.pdf">Privacy Policy</a> | <a href="http://twyst.in/legal/terms_of_use.pdf">Terms of Service</a>
+	                    </p>
+	                </div>
+	                <div class="col-md-6">
+	                    <a href="/">
+	                        <img id="logo-footer" src="/home/assets/img/twyst_logo_2.png" class="pull-right" height="39px" width="110px" alt="" />
+	                    </a>
+	                </div>
+	            </div>
+	            <!--/row-->
+	        </div>
+	        <!--/container-->
+	        <div class="get_the_app_module row">
+	            <div class="col-md-12">
+
+	            </div>
+	        </div>
+	    </div>
+	    <div class="footer navbar-fixed-bottom hidden-md hidden-lg twyst-background" ng-if="getMobileOperatingSystem() === 'Android'">
+	        <a href="https://play.google.com/store/apps/details?id=com.twyst.app.android">
+	            <div class="text-center download-footer">
+	              <span class="color_white">GET THE APP </span>              
+	                <img src="/outlets/assets/img/images/googleplay.png" class="google-play-xs">
+	            </div>
+	        </a>
+	        <style type="text/css">
+	            .twyst-background {
+	                background-color: #f6921e;
+	            }
+	            .color_white {
+	                color: white;
+	            }
+	            .google-play-xs {
+	                height: 2.7em;
+	            }
+	            .download-footer {
+	                height: 0.3em;
+	                margin-top: -0.9em;
+	            }
+	        </style>
+	    </div>
 
 		<!-- JS Global Compulsory --> 
 		<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.20/angular.min.js"></script>
