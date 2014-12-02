@@ -107,24 +107,26 @@ module.exports.save = function(req, res) {
 		    }
 		}, function(err, results) {
 				//console.log(results);
+				var options = {};
 				var outlet = results.OUTLET_DETAILS;
 				var user = results.USER_DETAILS;
-				var msg = '<html><body><p>Hi '+ outlet.basics.contact_person_name +'</p><p>You have got a new feedback your outlet '+ outlet.basics.name +', '+outlet.contact.location.locality_1[0] +'<br/><h3>User Details:</h3><ol type="1"><li>Email: '+ user.email +'</li><li>Phone: '+ req.body.phone +'</li><li>Total Checkins at '+ outlet.basics.name +', '+outlet.contact.location.locality_1[0] +' : '+ results.OUTLET_CHECKINS +'</li><li>Total Checkins at your all outlets: '+ results.ACROSS_OUTLETS_CHECKINS +'</li></ol><h4>Feedback Details:</h4><ol type="1"><li>Type: '+ feedback.type +'</li><li>Comments: '+ feedback.comment +'</li></ol>Please find pics if any in attachments.</p><a href="mailto:'+ user.email +'?subject=Reply to feedback on Twyst&cc=contactus@twyst.in">Click here to reply to Customer</a><p>Thank you,<br/>Team Twyst</p><img src="http://twyst.in/home/assets/img/twyst_logo_2.png"></body></html>';
-				var mailOptions = {
-					from: 'Jayram Singh <jayram@twyst.in>',
-					to: 'Rishi <rishi@twyst.in>, Jayram <jayram@twyst.in>, Rahul <rc@twyst.in>',
-					//to: '<'+results.OUTLET_DETAILS.contact.emails.email+'>',
-					cc:  'Contact Us <contactus@twyst.in>',
-					subject: 'Sample Feedback Email',
-					text: 'Feedback Email',
-					html: msg,
-					type: feedback.type,
-					attachments: [{
+				options.outlet_name = outlet.basics.name;
+				options.outlet_location = outlet.contact.location.locality_1[0];
+				options.user_email = user.email;
+				options.user_phone = req.body.phone;
+				options.outlet_checkins = results.OUTLET_CHECKINS;
+				options.across_outlet_checkins = results.ACROSS_OUTLETS_CHECKINS;
+				options.feedback_type = feedback.type;
+				options.feedback_comment = feedback.comment;
+				options.from = 'Jayram Singh <jayram@twyst.in>';
+				options.to = 'Rishi <rishi@twyst.in>';
+				options.subject = 'Sample Feedback Email';
+				options.text ='Feedback Email';
+				options.attachments = [{
 						filename: 'Feedback_Photo_1.jpeg',
 						content: 'https://s3-us-west-2.amazonaws.com/twyst-feedbacks/' + feedback.photo
-					}]	
-				}
-				MailSender.optionMailer(mailOptions);
+					}]	;
+				MailSender.templateMailer('feedback-email', options);
 		});
 	}
 

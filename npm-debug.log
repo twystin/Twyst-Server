@@ -1,0 +1,27 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'remove', 'jade' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.33
+4 verbose node symlink /usr/bin/node
+5 verbose node_modules/jade unbuild
+6 info preuninstall jade@1.8.1
+7 info uninstall jade@1.8.1
+8 verbose true,/home/rishi/Desktop/Twyst/Twyst-Server/node_modules,/home/rishi/Desktop/Twyst/Twyst-Server/node_modules unbuild jade@1.8.1
+9 verbose /home/rishi/Desktop/Twyst/Twyst-Server/node_modules/.bin,[object Object] binRoot
+10 info postuninstall jade@1.8.1
+11 error Error: EACCES, unlink '/home/rishi/Desktop/Twyst/Twyst-Server/node_modules/jade/node_modules/.bin/mkdirp'
+11 error  { [Error: EACCES, unlink '/home/rishi/Desktop/Twyst/Twyst-Server/node_modules/jade/node_modules/.bin/mkdirp']
+11 error   errno: 3,
+11 error   code: 'EACCES',
+11 error   path: '/home/rishi/Desktop/Twyst/Twyst-Server/node_modules/jade/node_modules/.bin/mkdirp' }
+12 error Please try running this command again as root/Administrator.
+13 error System Linux 3.2.0-69-generic
+14 error command "/usr/bin/node" "/usr/bin/npm" "remove" "jade"
+15 error cwd /home/rishi/Desktop/Twyst/Twyst-Server
+16 error node -v v0.10.33
+17 error npm -v 1.4.28
+18 error path /home/rishi/Desktop/Twyst/Twyst-Server/node_modules/jade/node_modules/.bin/mkdirp
+19 error code EACCES
+20 error errno 3
+21 error stack Error: EACCES, unlink '/home/rishi/Desktop/Twyst/Twyst-Server/node_modules/jade/node_modules/.bin/mkdirp'
+22 verbose exit [ 3, true ]

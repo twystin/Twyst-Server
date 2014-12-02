@@ -1,0 +1,21 @@
+<html>
+  <body>
+    <p>Hi </p>
+    <p>You have got a new feedback your outlet {{outlet_name}}, {{outlet_location}}. <br/>
+    <h3>User Details:</h3>
+    <ol type="1">
+      <li>Email: {{user_email}}</li>
+      <li>Phone: {{user_phone}}</li>
+      <li>Total Checkins at {{outlet_name}}, {{outlet_location}} : {{outlet_checkins}}</li>
+      <li>Total Checkins at your all outlets: {{across_outlet_checkins}}</li>
+    </ol>
+    <h4>Feedback Details:</h4>
+    <ol type="1">
+      <li>Type: {{feedback_type}}</li>
+      <li>Comments: {{feedback_comment}}</li>
+    </ol>
+    Please find pics if any in attachments.</p><a href="mailto:{{user_email}}?subject=Reply to feedback on Twyst&cc=contactus@twyst.in">Click here to reply to Customer</a>
+    <p>Thank you,<br/>Team Twyst</p>
+    <img src="http://twyst.in/home/assets/img/twyst_logo_2.png">
+  </body>
+</html>
