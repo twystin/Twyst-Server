@@ -715,8 +715,11 @@ module.exports.getDiscovered = function (req, res) {
 				{
 					'contact.location.locality_2': new RegExp(req.query.q, "i")
 				},
-				{
+				{ 
 					'contact.location.city': new RegExp(req.query.q, "i")
+				},
+				{ 
+					'attributes.tags': new RegExp(req.query.q, "i")
 				}
 			]
 		} : {'outlet_meta.status': 'active'};
@@ -819,6 +822,9 @@ module.exports.getDiscoveredNear = function (req, res) {
 				},
 				{
 					'contact.location.city': new RegExp(req.query.q, "i")
+				},
+				{ 
+					'attributes.tags': new RegExp(req.query.q, "i")
 				}
 			]
 		} : {'outlet_meta.status': 'active'};
