@@ -162,7 +162,7 @@ function getCss() {
 		        <span class="icon-bar"></span>
 		        <span class="icon-bar"></span>
 		      </button>
-		      <a class="navbar-brand" href="index.html">
+		      <a class="navbar-brand" href="/">
 		        <img id="logo-header" src="/home/assets/img/twyst_logo_2.png" alt="Logo" height="50px" width="auto">                
 		      </a>
 		    </div>
@@ -227,7 +227,7 @@ function getScripts() {
 		        </p>
 		      </div>
 		      <div class="col-md-6">  
-		        <a href="index.html">
+		        <a href="/">
 		          <img id="logo-footer" src="/home/assets/img/twyst_logo_2.png" class="pull-right" height="39px" width="110px" alt="" />
 		        </a>
 		      </div>
