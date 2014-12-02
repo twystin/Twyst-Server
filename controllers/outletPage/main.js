@@ -152,65 +152,88 @@ function getCss() {
 
 		<!--=== Header ===-->    
 		<div class="header">
-		<div class="navbar navbar-default navbar-fixed-top" role="navigation">
-		  <div class="container">
-		    <!-- Brand and toggle get grouped for better mobile display -->
-		    <div class="navbar-header page-scroll">
-		      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-		        <span class="sr-only">Toggle navigation</span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		        <span class="icon-bar"></span>
-		      </button>
-		      <a class="navbar-brand" href="/">
-		        <img id="logo-header" src="/home/assets/img/twyst_logo_2.png" alt="Logo" height="50px" width="auto">                
-		      </a>
-		    </div>
+	        <style type="text/css">
+	            .padding-top-100 {
+	                padding-top: 3.5em;
+	            }
+	            .header .navbar-default .navbar-nav > li > a {
+	                color: #fff !important;
+	            }
+	            #logo-header {
+	                height: 1.7em;
+	                width: auto;
+	            }
+
+	            .app-button {
+	                height: 2.5em;
+	            }
+	            .header .navbar {
+	                background-color: #000 !important;
+	            }
+	            .margin-top-pt6em {
+	                margin-top: -0.8em;
+	                margin-left: -1em;
+	            }
+	        </style>
+	        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+	          <div class="container">
+	            <!-- Brand and toggle get grouped for better mobile display -->
+	            <div class="navbar-header page-scroll">
+	              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+	                <span class="sr-only">Toggle navigation</span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	                <span class="icon-bar"></span>
+	              </button>
+	              <a class="navbar-brand" href="/">
+	                <img id="logo-header" src="/home/assets/img/twyst_logo_2.png" alt="Logo">       
+	              </a>
+	            </div>
 
 
-		    <!-- Collect the nav links, forms, and other content for toggling -->
+	            <!-- Collect the nav links, forms, and other content for toggling -->
 
-		    <ul class="nav navbar-nav navbar-right navbar-collapse collapse" id="header_sprite_badges_right_margin">
-		      <li style="margin-top: -0.6em" class="hidden-xs hidden-sm">
-		        <span style="height: 45px; width: 290px;" class="header_badges_sprite">
-		          <a href="https://play.google.com/store/apps/details?id=com.twyst.app.android" class="android_button"></a>
-		          <a href="https://itunes.apple.com/in/app/twyst.in/id907877732?mt=8&uo=4" target="itunes_store" class="ios_button"></a>
-		        </span>
-		      </li>
-		      <li> 
-		        <a href="/home">
-		          Home
-		        </a>
-		      </li>
-		      <li> 
-		        <a href="/home">
-		          Discover
-		        </a>
-		      </li>
-		      <li>
-		        <a href="/home/how">
-		          How it works
-		        </a>                       
-		      </li>
+	            <ul class="nav navbar-nav navbar-right navbar-collapse collapse">
+	              <li class="margin-top-pt6em hidden-xs hidden-sm" >
+	                <a href="https://play.google.com/store/apps/details?id=com.twyst.app.android"><img class="app-button" src="/outlets/assets/img/images/googleplay.png"></a>
+	              </li>
+	              <li class="margin-top-pt6em hidden-xs hidden-sm">
+	                  <a href="https://itunes.apple.com/in/app/twyst.in/id907877732?mt=8&uo=4" target="itunes_store"><img class="app-button" src="/outlets/assets/img/images/appstore.png"></a>
+	              </li>
+	              <li> 
+	                <a href="/home">
+	                  Home
+	                </a>
+	              </li>
+	              <li> 
+	                <a href="/discover">
+	                  Discover
+	                </a>
+	              </li>
+	              <li>
+	                <a href="/home/how">
+	                  How it works
+	                </a>                       
+	              </li>
 
-		      <li>
-		        <a href="http://twyst.in/merchant/">
-		          For merchants
-		        </a>
-		      </li>               
+	              <li>
+	                <a href="http://twyst.in/merchant/">
+	                  For merchants
+	                </a>
+	              </li>               
 
-		    </ul>
-		    <div class="search-open">
-		      <div class="input-group">
-		        <input type="text" class="form-control" placeholder="Search">
-		        <span class="input-group-btn">
-		          <button class="btn-u" type="button">Go</button>
-		        </span>
-		      </div><!-- /input-group -->
-		    </div>                
-		  </div><!-- /navbar-collapse -->
-		</div>    
-		</div>    
+	            </ul>
+	            <div class="search-open">
+	              <div class="input-group">
+	                <input type="text" class="form-control" placeholder="Search">
+	                <span class="input-group-btn">
+	                  <button class="btn-u" type="button">Go</button>
+	                </span>
+	              </div><!-- /input-group -->
+	            </div>                
+	          </div><!-- /navbar-collapse -->
+	        </div>    
+	    </div>   
 
 		</div><!--/header-->
 		<!--=== End Header ===-->
