@@ -668,7 +668,8 @@ function read(programs, res) {
 module.exports.getFeatured = function(req, res){
 	var num = req.query.num || 6;
 	Outlet.find({
-		'outlet_meta.status': 'active'
+		'outlet_meta.status': 'active',
+		'outlet_meta.featured': true
 	})
 	.select({
 		'basics': 1,
