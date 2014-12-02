@@ -111,7 +111,7 @@ function getCss() {
 
 		<!-- CSS Global Compulsory -->
 		<link rel="stylesheet" href="/outlets/assets/plugins/bootstrap/css/bootstrap.min.css">
-		<link rel="stylesheet" href="/outlets/assets/css/style.css">
+		
 
 		<!-- CSS Implementing Plugins -->
 		<link rel="stylesheet" href="/outlets/assets/plugins/line-icons/line-icons.css">
@@ -160,7 +160,7 @@ function getCss() {
 	                color: #fff !important;
 	            }
 	            #logo-header {
-	                height: 1.7em;
+	                height: 2.7em;
 	                width: auto;
 	            }
 
