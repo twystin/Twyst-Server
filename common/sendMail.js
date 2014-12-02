@@ -52,3 +52,14 @@ module.exports.mailer = function(to, msg, sbj){
         }
     });
 };
+
+module.exports.optionMailer = function(mailOptions){
+    transporter.sendMail(mailOptions, function(error, info){
+        if (error){
+            console.log(error);
+        }
+        else{
+            console.log('Message sent: ' + info.response);
+        }
+    })
+}
