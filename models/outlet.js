@@ -102,7 +102,8 @@ var OutletSchema = new Schema({
     outlet_meta: {
         accounts: [{type: Schema.ObjectId, ref: 'Account'}],
         status: {type: String, enum: ['active', 'archived', 'draft'], default: 'draft'},
-        links: [{type: Schema.ObjectId, ref: 'Outlet'}]
+        links: [{type: Schema.ObjectId, ref: 'Outlet'}],
+        featured: {type: Boolean, default: false}
     },
     twyst_meta: {
         rating: {
