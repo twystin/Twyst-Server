@@ -97,6 +97,7 @@ module.exports = function (app) {
     (function admin_route() {
         var DataCtrl = require('../controllers/admin/dataCtrl');
         var StatusCtrl = require('../controllers/admin/status');
+        var FeatureCtrl = require('../controllers/admin/feature')
         var UserCtrl = require('../controllers/admin/user');
         var QrCtrl = require('../controllers/admin/qr');
         var AnonDataCtrl = require('../controllers/admin/dataCtrlAnonymous');
@@ -111,6 +112,7 @@ module.exports = function (app) {
         app.get('/api/v2/allusers', UserCtrl.getAllUsers);
         app.get('/api/v2/allqrs', QrCtrl.getAllQrs);
         app.post('/api/v2/changestatus/outlet', StatusCtrl.changeOutletStatus);
+        app.post('/api/v2/changefeatured/outlet', FeatureCtrl.changeOutletFeatured);
         app.post('/api/v2/changestatus/program', StatusCtrl.changeProgramStatus);
         app.post('/api/v2/changevalidity/qr', QrCtrl.updateValidity);
     })();
