@@ -265,7 +265,7 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			if(q.batch_user) {
 				message.checkin = q.message;
 				if(voucher) {
-					message.checkin = message.checkin.replace(/xxxxxx/g, 'code ' + voucher.basics.code);
+					message.checkin = message.checkin.replace(/xxxxxx/g, voucher.basics.code);
 				}
 				message.checkin = message.checkin.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
 			}
