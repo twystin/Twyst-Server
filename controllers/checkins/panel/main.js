@@ -286,6 +286,9 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			if(outlet.basics.slug === 'thecupncakefactory') {
 				message.checkin += ' TCnCF Predict and Win contest closes 10th Dec - hurry! Visit http://twy.st/cnc_predictor to participate.';
 			}
+			if(outlet.basics.slug === 'cocktailsanddreamsspeakeasy') {
+				message.checkin += ' Join the WYS contest - name your favourite whatever-you-say at Speaks, and it may make our menu in your name! Post your entries on Speakeasy’s Facebook page!';
+			}
 			sms.checkin = false;
 			sms.reward = false;
 
