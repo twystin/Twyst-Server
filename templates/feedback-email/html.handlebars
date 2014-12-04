@@ -1,140 +1,108 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-</head>
-
-<body style="font-family: calibri;">
-  <style type="text/css">
-.button a {
-  background: #72ac48;
-  color: #fff;
-  font-size: 16px;
-  font-weight: normal;
-  border-radius: 3px;
-  text-decoration: none;
-  display: block;
-  width: 236px;
-  cursor: pointer
-}
-
-.button a:hover {
-  background: #80bf52;
-  color: #fff;
-  font-size: 16px;
-  font-weight: normal;
-  border-radius: 3px;
-  text-decoration: none;
-  display: block;
-  width: 236px;
-  cursor: pointer
-}
-
-.follow_button a {
-  margin: 0;
-  border: 0 none;
-  padding: 0;
-  background: #72ac48;
-  color: #fff;
-  font-size: 10px;
-  padding: 3px 4px;
-  font-weight: 700;
-  border-radius: 3px;
-  text-decoration: none;
-  float: left
-}
-
-.follow_button a:hover {
-  margin: 0;
-  border: 0 none;
-  padding: 0;
-  background: #80bf52;
-  color: #fff;
-  font-size: 10px;
-  padding: 3px 4px;
-  font-weight: 700;
-  border-radius: 3px;
-  text-decoration: none;
-  float: left
-}
-</style>
-
-  <table width="100%">
-    <tbody>
-      <tr>
-        <td align="center" valign="top">
-          <div
-            style="width: 662px; text-align: left; border: 15px solid orange; border-radius: 10px 10px 10px 10px">
-            <div
-              style="background-color: black; border-radius: 10px 10px 0 0">
-              <div style="float: left;">
-                <img src="http://twyst.in/home/assets/img/twyst_logo_2.png"
-                  alt="Twyst"
-                  style="width: 186px; min-height: 30px; color: #fff; font-size: 30px; line-height: 30px; margin: 16px 30px">
-              </div>
-              <div
-                style="float: right; color: #0088CC; font-family: Georgia, 'Times New Roman', Times, serif; padding: 30px 30px 0px 0px;">
-                EAT.DRINK.REWARDS</div>
-              <div style="clear: both; line-height: 0px;">&nbsp;</div>
-              <div style="clear: both"></div>
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <!--CSS files-->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
+   </head>
+   <body>
+      <div class="container">
+        <div class="row background-twyst">
+          <div class="col-md-8 col-xs-6">
+               <img src="http://www.twyst.in/common/images/logo.png" class="logo" />
             </div>
-            <div
-              style="border: 1px solid #939292; background: #fff; padding: 14px 34px 28px; font-family: Georgia, 'Times New Roman', Times, serif; color: #5a5a5a">
-
-                      <div
-          style="font-family: Georgia, 'Times New Roman', Times, serif; font-size: 19px; line-height: 34px;">
-          <div>
-            <div style="float: left">
-              <strong> <span id="salutation">Hi </span>,
-              </strong>
+          <div class="col-md-4 col-xs-6 feedback">
+            <span class="feedback-font">Customer Feedback</span>
+          </div>
+        </div>
+         <div class="row">
+            &nbsp;
+         </div>
+         <div class="row">
+            <div class="col-md-12">
+               <span class="greeting"><b>Hi Rahul,</b></span>
             </div>
-            <div style="clear: both; line-height: 10px;">&nbsp;</div>
-          </div>
-          <div style="clear: both; line-height: 0px">&nbsp;</div>
-        
-          <div
-            style="font-family: calibri, Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.3em; padding-top: 0; margin-top: 0; padding-right: 10px">
-            
-            <span id="messageParagraph1"> 
-            You have got a new feedback for your outlet {{outlet_name}}, {{outlet_location}}.
-
-            <h3>User Details:</h3>
-    <ol type="1">
-      <li>Email: {{user_email}}</li>
-      <li>Phone: {{user_phone}}</li>
-      <li>Total Checkins at {{outlet_name}}, {{outlet_location}} : {{outlet_checkins}}</li>
-      <li>Total Checkins at your all outlets: {{across_outlet_checkins}}</li>
-    </ol>
-    <h4>Feedback Details:</h4>
-    <ol type="1">
-      <li>Type: {{feedback_type}}</li>
-      <li>Comments: {{feedback_comment}}</li>
-    </ol>
-    Please find pics if any in attachments.</p><br /><a href="mailto:{{user_email}}?subject=Reply to feedback on Twyst&cc=contactus@twyst.in">Click here to reply to Customer</a>
-
-            
-            <div style="clear: both; line-height: 14px">&nbsp;</div>
-            <br />Thank you,<br /> Twyst Team<br /> <a
-              href="http://www.twyst.in"  target="_blank" style="color: #0088CC;">http://www.twyst.in</a>
-          </div>
-        
-          <div style="clear: both; line-height: 10px;"></div>
-
-              <div style="clear: both; height: 10px;"></div>
-
-              <div align="center"
-                style="font-family: calibri, Arial, Helvetica, sans-serif; font-size: 12px; margin: 10px 0; padding: 0 40px">
-                <a href="http://www.facebook.com/twystin" target="_blank"
-                  style="color: #0088CC;"> Like us on Facebook </a>
-                &nbsp;&nbsp;|&nbsp;&nbsp; <a
-                  href="http://twitter.com/twystin" target="_blank"
-                  style="color: #0088CC;"> Follow us on Twitter </a>
-              </div>
+            <div class="col-md-12">
+               &nbsp;
             </div>
-          </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</body>
+            <div class="col-md-12 feedback-text">
+               You have new feedback for your outlet <span class="twyst-orange">Biryani Blues, Supermart 1</span>.
+            </div>
+            <div class="col-md-12">
+               &nbsp;
+            </div>
+            <div class="col-md-12">
+               <h3 class="user-details"><span class="user-details-bottom">User Details</span></h3>
+               <div class="col-md-12">
+                  &nbsp;
+               </div>
+               <div class="col-md-12">
+                  <table class="table table-bordered table-responsive col-xs-10">
+                     <tr class="text-size">
+                        <th class="text-center" id ="table-details" rowspan="2">Email</th>
+                        <th class="text-center" id="table-details" rowspan="2">Phone</th>
+                        <th class="text-center" id="table-details" colspan="2">Check-ins at</th>
+                     </tr>
+                     <tr>
+                        <td class="text-center" >This Outlet</td>
+                        <td class="text-center" >All your outlets</td>
+                     </tr>
+                     <tr>
+                        <td class="text-center">rishiag.iitd@gmail.com</td>
+                        <td class="text-center">8860377473</td>
+                        <td class="text-center">10</td>
+                        <td class="text-center">30</td>
+                     </tr>
+                  </table>
+               </div>
+            </div>
+            <div class="col-md-12">
+               &nbsp;
+            </div>
+            <div class="col-md-12">
+               <h3 class="user-details"><span class="user-details-bottom">Feedback Details</span></h3>
+               <div>
+                  &nbsp;
+               </div>
+               <ul id="bullet">
+                  <li><span>Type: Appreciation / Suggestion / Complaint</span></li>
+                  <li><span>Comment: Cool Outlet</span></li>
+               </ul>
+               <div class="col-md-12 text-size">
+                  Please find photos if any in attachments.
+               </div>
+               <div class="col-md-12 text-center">
+                  <br/>
+                  <button class="btn btn-lg btn-twyst">
+                     <img src="http://www.twyst.in/common/images/click.png" class="click-image">
+                     Click here to respond to Customer
+                  </button>
+                  <div>
+                     <br/>
+                  </div>
+               </div>
+            </div>
+            <div class="col-md-12 text-size">
+               <div>
+                  Thank you,
+                  <br/>
+                  Team Twyst!
+               </div>
+            </div>
+            <div class="col-md-12">
+               &nbsp;
+               <br/>
+            </div>
+            <div class="col-md-12 text-size">
+               <div> 
+                  <img class="click-image" src="http://www.twyst.in/common/images/merchant.png"/> Log in to your account on Twyst: <a href="http://www.twyst.in/merchant">www.twyst.in</a>
+                  <br/>
+                  <img class="click-image" src="http://www.twyst.in/common/images/web.png"/> Find Biryani Blues on Twyst: <a href="http://www.twyst.in/bb1">http://www.twyst.in/bb1</a>
+               </div>
+            </div>
+            <div class="col-md-12">
+               &nbsp;
+            </div>
+         </div>
+      </div>
+   </body>
 </html>

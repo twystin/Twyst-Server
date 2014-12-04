@@ -75,15 +75,14 @@ module.exports.templateMailer = function(templateName, locals) {
             if (err) {
                 console.log(err);
             }
-
             transporter.sendMail({
                 from: locals.from,
-               to: locals.to,
-               cc: locals.cc || null,
-               subject: locals.subject ||  null,
-               html: html,
-               // generateTextFromHTML: true,
-               text: locals.text || null
+                to: locals.to,
+                cc: locals.cc || null,
+                subject: locals.subject || null,
+                html: html,
+                // generateTextFromHTML: true,
+                text: locals.text || null
             }, function(error, info) {
                 if (error) {
                     console.log(error);

@@ -159,8 +159,13 @@ module.exports.getAllCheckins = function (req, res) {
 }
 
 module.exports.getAllCheckinCount = function (req, res) { 
-
-	Outlet.find({'outlet_meta.accounts': req.user._id}, function (err, outlets) {
+	console.time("db call");
+	Outlet.find({'outlet_meta.accounts': req.user._id
+	}).select({
+		'basics.name':1
+	})
+	.exec(function (err, outlets) {
+		console.timeEnd("db call");
 		if(err || outlets.length < 1) {
 			res.send(400,{
 				'status': 'error',
@@ -169,20 +174,7 @@ module.exports.getAllCheckinCount = function (req, res) {
 			});
 		}
 		else {
-			
-			getTotalCheckins(outlets);
-		}
-	});
-
-	function getTotalCheckins(outlets) {
-
-		Checkin.distinct('phone',{
-			outlet: {
-    				$in: outlets.map(
-    					function(outlet){ 
-    						return mongoose.Types.ObjectId(String(outlet._id)); 
-    				})}}, function (err, data) {
-				
+			getTotalCheckins(outlets, function (err, data) {
 				if(err) {
 					res.send(400,{
 						'status': 'error',
@@ -198,6 +190,20 @@ module.exports.getAllCheckinCount = function (req, res) {
 						'info': count
 					});
 				}
+			});
+		}
+	});
+
+	function getTotalCheckins(outlets, callback) {
+		console.time("checkin db");
+		Checkin.distinct('phone',{
+			outlet: {
+    				$in: outlets.map(
+    					function(outlet){ 
+    						return outlet._id; 
+    				})}}, function (err, data) {
+				console.timeEnd("checkin db");
+				callback(err, data);
 		});
 	}
 }

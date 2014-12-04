@@ -11,7 +11,7 @@ var FeedbackSchema = new Schema({
 	feedback: {
 		comment: {type: String},
 		photo: {type: String},
-		type: {type: String}
+		type: {type: String, enum: ['Appreciation', 'Suggestion', 'Complaint']}
 	},
 	created_date: {type: Date, default: Date.now()},
 	modified_date: {type: Date, default: Date.now()}

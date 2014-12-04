@@ -61,9 +61,7 @@ module.exports.get = function(req, res) {
 		res.send(200, {
 			'status': 'success',
 			'message': 'Successfully calculated ROI',
-			'info': 'ROI for last 3 months is ' + roi,
-			'outlet': outlets[0],
-			'VoucherCount': VoucherCount
+			'info': roi,
 		});
 	}
 }
@@ -123,7 +121,7 @@ module.exports.repeatRate = function(req, res) {
 					});
 					recentCheckinsPerUser = recent.length / recentUnique.length;
 					oldCheckinsPerUser = old.length / oldUnique.length;
-					callback(null, recentCheckinsPerUser / oldCheckinsPerUser);
+					callback(null, (recentCheckinsPerUser - 1 ) * 100);
 				})
 			}
 		], function(err, results) {
