@@ -31,12 +31,8 @@ module.exports.get = function(req, res) {
 	});
 
 	function getVouchers(outlets) {
-		var d = new Date(Date.now() - 2592000000 * 3);
 		Voucher.count({
 			'basics.status': 'merchant redeemed',
-			'used_details.used_time': {
-				$gte: d
-			},
 			'used_details.used_at': {
 				$in: outlets.map(function(o) {
 					return o._id;
