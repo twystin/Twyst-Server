@@ -12,7 +12,13 @@ var costs = [100, 300, 500, 1000, 1500, 2000, 2500, 3000, 3500];
 module.exports.get = function(req, res) {
 	Outlet.find({
 		'outlet_meta.accounts': req.user._id
-	}, function(err, outlets) {
+	})
+	.select({
+		'basics.name': 1,
+		'attributes.cost_for_two': 1
+	})
+	.exec(function(err, outlets) {
+		console.log(err)
 		if (err || !outlets) {
 			res.send(400, {
 				'status': 'error',
@@ -38,6 +44,7 @@ module.exports.get = function(req, res) {
 				})
 			}
 		}, function(err, VoucherCount) {
+			console.log(VoucherCount)
 			if (err) {
 				res.send(400, {
 					'status': 'error',
@@ -61,9 +68,7 @@ module.exports.get = function(req, res) {
 		res.send(200, {
 			'status': 'success',
 			'message': 'Successfully calculated ROI',
-			'info': 'ROI for last 3 months is ' + roi,
-			'outlet': outlets[0],
-			'VoucherCount': VoucherCount
+			'info': roi
 		});
 	}
 }
