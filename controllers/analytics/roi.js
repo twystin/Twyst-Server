@@ -18,7 +18,6 @@ module.exports.get = function(req, res) {
 		'attributes.cost_for_two': 1
 	})
 	.exec(function(err, outlets) {
-		console.log(err)
 		if (err || !outlets) {
 			res.send(400, {
 				'status': 'error',
@@ -44,7 +43,6 @@ module.exports.get = function(req, res) {
 				})
 			}
 		}, function(err, VoucherCount) {
-			console.log(VoucherCount)
 			if (err) {
 				res.send(400, {
 					'status': 'error',
@@ -89,7 +87,6 @@ module.exports.repeatRate = function(req, res) {
 					'basics.name': 1
 				})
 				.exec(function(err, outlets) {
-					//console.log(outlets);
 					callback(null, outlets);
 				});
 			},
