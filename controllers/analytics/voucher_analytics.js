@@ -157,7 +157,11 @@ module.exports.getAllVouchers = function (req, res) {
 
 module.exports.getAllVoucherCount = function (req, res) { 
 
-	Outlet.find({'outlet_meta.accounts': req.user._id}, function (err, outlets) {
+	Outlet.find({
+		'outlet_meta.accounts': req.user._id
+	}).select({
+		'basics.name': 1
+	}).exec(function (err, outlets) {
 		if(err || outlets.length < 1) {
 			res.send(400,{
 				'status': 'error',
@@ -173,12 +177,13 @@ module.exports.getAllVoucherCount = function (req, res) {
 
 	function getTotalVouchers(outlets) {
 
-		Voucher.count({
+		Voucher.find({
 			'issue_details.issued_at': {
     				$in: outlets.map(
     					function(outlet){ 
-    						return mongoose.Types.ObjectId(String(outlet._id)); 
-    				})}, 'basics.status': {$ne: 'active'}}, function (err, count) {
+    						return outlet._id 
+    				})}, 'basics.status': 'merchant redeemed'
+    	}).count(function (err, count) {
 				
 				if(err) {
 					res.send(400,{

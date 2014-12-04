@@ -160,7 +160,11 @@ module.exports.getAllCheckins = function (req, res) {
 
 module.exports.getAllCheckinCount = function (req, res) { 
 
-	Outlet.find({'outlet_meta.accounts': req.user._id}, function (err, outlets) {
+	Outlet.find({
+		'outlet_meta.accounts': req.user._id
+	}).select({
+		'basics.name': 1
+	}).exec(function (err, outlets) {
 		if(err || outlets.length < 1) {
 			res.send(400,{
 				'status': 'error',
@@ -176,12 +180,12 @@ module.exports.getAllCheckinCount = function (req, res) {
 
 	function getTotalCheckins(outlets) {
 
-		Checkin.distinct('phone',{
+		Checkin.find({
 			outlet: {
     				$in: outlets.map(
     					function(outlet){ 
-    						return mongoose.Types.ObjectId(String(outlet._id)); 
-    				})}}, function (err, data) {
+    						return outlet._id     				
+    	})}}).distinct('phone').exec(function (err, data) {
 				
 				if(err) {
 					res.send(400,{

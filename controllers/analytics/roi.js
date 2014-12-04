@@ -26,7 +26,7 @@ module.exports.get = function(req, res) {
 	});
 
 	function getVouchers(outlets) {
-		var d = new Date(Date.now() - 7776000000);
+		var d = new Date(Date.now() - 2592000000 * 3);
 		Voucher.count({
 			'basics.status': 'merchant redeemed',
 			'used_details.used_time': {
@@ -70,11 +70,7 @@ module.exports.get = function(req, res) {
 
 module.exports.repeatRate = function(req, res) {
 	var timeSpan = req.query.timespan;
-	var current = new Date(Date.now());
-	var dFirst = new Date(Date.now() - timeSpan);
-	var dSecond = new Date(Date.now() - 2 * timeSpan);
-	var recentCheckinsPerUser;
-	var oldCheckinsPerUser;
+	var checkinsPerUser;
 	waterfallExecutor();
 
 	function waterfallExecutor() {
@@ -84,7 +80,9 @@ module.exports.repeatRate = function(req, res) {
 				Outlet.find({
 					'outlet_meta.accounts': req.user._id
 				})
-				.select()
+				.select({
+					'basics.name': 1
+				})
 				.exec(function(err, outlets) {
 					//console.log(outlets);
 					callback(null, outlets);
@@ -100,30 +98,16 @@ module.exports.repeatRate = function(req, res) {
 						$in: outlets
 					},
 					'checkin_date': {
-						$gte: dSecond
+						$gte: new Date(Date.now() - timeSpan)
 					}
 				})
 				.select({'phone':1, 'checkin_date':1})
 				.exec(function(err, checkins) {
-					checkins = _.sortBy(checkins, function(obj) { return obj.checkin_date;});
-					var index = 0;
-					for (var i = 0; i<checkins.length; i++){
-						if (checkins[i].checkin_date > dFirst){
-							index = i;
-							break;
-						}
-					}
-					var old = checkins.slice(0,index);
-					var recent = checkins.slice(index); 
-					var recentUnique = _.uniq(recent, function(obj) {
+					var unique_checkins = _.uniq(checkins, function(obj) {
 						return obj.phone
 					});
-					var oldUnique = _.uniq(old, function(obj) {
-						return obj.phone
-					});
-					recentCheckinsPerUser = recent.length / recentUnique.length;
-					oldCheckinsPerUser = old.length / oldUnique.length;
-					callback(null, recentCheckinsPerUser / oldCheckinsPerUser);
+					checkinsPerUser = checkins.length / unique_checkins.length;
+					callback(null, (checkinsPerUser - 1) * 100);
 				})
 			}
 		], function(err, results) {
