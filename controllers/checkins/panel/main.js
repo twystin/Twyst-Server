@@ -270,24 +270,24 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				message.checkin = message.checkin.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
 			}
 			else if(sms.checkin && sms.reward && isNewUser()) {
-				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! You checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward - yay! You will receive a message with details of the reward and the voucher code after some time. Check-in and track your rewards on Twyst easily, click http://twy.st/app to get Twyst for your phone.';
-				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +'. Terms- '+ reward.terms +'. To claim, show this SMS to your server on your NEXT VISIT/ORDER. This voucher is VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, click http://twy.st/app to get Twyst for your phone.';
+				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0] +'.';
+				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app.';
 			}
 			else if(sms.checkin && sms.reward && !isNewUser()) {
-				message.checkin = 'You checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +' and unlocked a reward - yay! You will receive a message with details of the reward and the voucher code after some time. Check-in and track your rewards on Twyst easily, click http://twy.st/app to get Twyst for your phone.';
-				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +', valid '+ Helper.getDOW(reward.reward_applicability.day_of_week) +', '+ Helper.getTOD(reward.reward_applicability.time_of_day) +'. Terms- '+ reward.terms +'. To claim, show this SMS to your server on your NEXT VISIT/ORDER. This voucher is VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, click http://twy.st/app to get Twyst for your phone.';
+				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0] +'.';
+				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app.';
 			}
 			else if(sms.checkin && !isNewUser()) {
-				message.checkin = 'You have checked-in at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-ins away from your next reward, click http://twy.st/app to get Twyst for your phone.';
+				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0] +'.'
 			}
 			else if(sms.checkin && isNewUser()) {
-				message.checkin = 'Welcome to the '+ outlet.basics.name +' loyalty program on Twyst. You have checked-in on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +', and are '+ checkins_to_next_reward +' check-ins away from your next reward at '+ outlet.basics.name +', click http://twy.st/app to get Twyst for your phone.';
+				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0] +'.'
 			}
 			if(outlet.basics.slug === 'thecupncakefactory') {
 				message.checkin += ' TCnCF Predict and Win contest closes 10th Dec - hurry! Visit http://twy.st/cnc_predictor to participate.';
 			}
 			if(outlet.basics.slug === 'cocktailsanddreamsspeakeasy') {
-				message.checkin += ' Join the WYS contest - name your favourite whatever-you-say at Speaks, and it may make our menu in your name! Post your entries on Speakeasy’s Facebook page!';
+				message.checkin += " Join the WYS contest - name your favourite whatever-you-say at Speaks, and it may make our menu in your name! Post your entries on Speakeasy's Facebook page!";
 			}
 			sms.checkin = false;
 			sms.reward = false;
