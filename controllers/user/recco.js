@@ -435,7 +435,8 @@ function getOutlets (q, callback) {
 		'basics.is_a': 1,
 		'contact.phones': 1,
 		'publicUrl': 1,
-		'business_hours': 1
+		'business_hours': 1,
+		'shortUrl': 1
 	}).exec(function (err, outlets) {
 		callback(outlets || []);
 	})
