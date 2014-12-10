@@ -8,6 +8,12 @@ var OutletSchema = new Schema({
     username: {type: String},
     publicUrl: [{type: String}],
     shortUrl: [{type: String}],
+    ny_2015: {
+        featured: {type: Boolean, default: false},
+        on_twyst: {type: String, trim: true},
+        off_twyst: {type: String, trim: true},
+        desc: {type: String, trim: true}
+    },
     basics : {
         name: {type: String, trim: true, required: true},
         slug: {type: String, trim: true, required: true, index: true},

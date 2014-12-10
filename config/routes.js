@@ -4,6 +4,7 @@ var routes = {
 	FEATURED_OUTLETS :'/api/v3/featured_outlets',
 	DISCOVERED_OUTLETS :'/api/v3/discovered_outlets',
 	DISCOVERED_NEAR_OUTLETS : '/api/v3/discovered_near_outlets',
+	NEW_YEAR_OUTLETS: '/api/v3/new_year_outlets',
 	USER_NEAR_V3: '/api/v3/near',
 	USER_RECCO_V3: '/api/v3/recco',
 	USER_OUTLET_DETAIL_v3: '/api/v3/outlet_detail',
