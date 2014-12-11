@@ -1,6 +1,7 @@
 'use strict';
 var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+var Schema = mongoose.Schema,
+    avail_hours = require("../common/operatingHours");
 
 var WinbackSchema = new Schema ({
     name: {type: String, trim: true, required: true},
@@ -13,16 +14,18 @@ var WinbackSchema = new Schema ({
     },
     min_historical_checkins: {type: Number},
     weeks_since_last_visit: {type: Number},
-    messages: {
+    messages: { 
         sms: {type: String},
         push: {type: String},
         email: {type: String}
     },
     description: {type: String},
+    reward: {type: String},
+    terms: {type: String},
+    avail_hours: avail_hours.hours,
     last_run_date: {type: Date},
     accounts: [{type: Schema.ObjectId, ref: 'Account'}],
     outlets: [{type: Schema.ObjectId, ref: 'Outlet'}],
-    offers: [{type: Schema.ObjectId, ref: 'Offer'}],
     images: [{type: String}],
     icon :{type:String},
     created_at : {type: Date, default: Date.now},

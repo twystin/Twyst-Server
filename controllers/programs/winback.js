@@ -8,86 +8,44 @@ module.exports.create = function (req, res) {
     var created_winback = {};
     created_winback = _.extend(created_winback, req.body);
 
-    if(created_winback.offers.length > 0) {
-        saveOffers(created_winback.offers, function (err, offers) {
-            if(err) {
-                res.send(400, { 
-                    'status': 'error',
-                    'message': 'Unable to create offers in winback.',
-                    'info': err
-                });
-            }
-            else {
-                created_winback.offers = offers;
-                created_winback.accounts = [];
-                created_winback.accounts.push(req.user._id);
-                var winback = new Winback(created_winback);
-                
-                saveWinback(winback, function (err) {
-                    if(err) {
-                        res.send(400, { 'status': 'error',
-                                    'message': 'Error saving winback.',
-                                    'info': err
-                        });
-                    }
-                    else {
-                        res.send(200, { 'status': 'success',
-                                    'message': 'Saved winback successfully.',
-                                    'info': ''
-                        });
-                    }
-                })
-            }
-        })
-    }
-    else {
-        res.send(400, { 
-            'status': 'error',
-            'message': 'Winback must have atleast one offer.',
-            'info': null
-        });
-    }
+    created_winback.accounts = [];
+    created_winback.accounts.push(req.user._id);
+    var winback = new Winback(created_winback);
+    
+    saveWinback(winback, function (err) {
+        if(err) {
+            res.send(400, { 'status': 'error',
+                        'message': 'Error saving winback.',
+                        'info': err
+            });
+        }
+        else {
+            res.send(200, { 'status': 'success',
+                        'message': 'Saved winback successfully.',
+                        'info': ''
+            });
+        }
+    })
 }
 
 module.exports.update = function (req, res) {
     var updated_winback = {};
     updated_winback = _.extend(updated_winback, req.body);
 
-    if(updated_winback.offers.length > 0) {
-        saveOffers(updated_winback.offers, function (err, offers) {
-            if(err) {
-                res.send(400, { 
-                    'status': 'error',
-                    'message': 'Unable to update offers in winback.',
-                    'info': err
-                });
-            }
-            else {
-                updated_winback.offers = offers;
-                updateWinback(updated_winback, function (err) {
-                    if(err) {
-                        res.send(400, { 'status': 'error',
-                                    'message': 'Error updating winback.',
-                                    'info': err
-                        });
-                    }
-                    else {
-                        res.send(200, { 'status': 'success',
-                                    'message': 'Updated winback successfully.',
-                                    'info': ''
-                        });
-                    }
-                })
-            }
-        })
-    }
-    else {
-        res.send(400, { 
-            'status': 'error',
-            'message': 'Winback must have atleast one offer.',
-            'info': null
-        });
-    }
+    updateWinback(updated_winback, function (err) {
+        if(err) {
+            res.send(400, { 'status': 'error',
+                        'message': 'Error updating winback.',
+                        'info': err
+            });
+        }
+        else {
+            res.send(200, { 'status': 'success',
+                        'message': 'Updated winback successfully.',
+                        'info': ''
+            });
+        }
+    })
 }
 
 function updateWinback(winback, cb) {
@@ -110,59 +68,6 @@ function saveWinback(winback, cb) {
     })
 }
 
-function saveOffers (offers, cb) {
-    var ids = [];
-    async.each(offers, function (o, callback) {
-        var created_offer = {};
-        created_offer = _.extend(created_offer, o);
-        if(!o._id) {
-            var offer = new Offer(created_offer);
-            saveOffer(offer, function (err, offer) {
-                if(err) {
-                    callback(err, null);
-                }
-                else {
-                    ids.push(offer._id);
-                    callback();
-                }
-            });
-        }
-        else {
-            updateOffer(o, function (err, offer) {
-                if(err) {
-                    callback(err, null);
-                }
-                else {
-                    ids.push(offer._id);
-                    callback();
-                }
-            });
-        }
-    }, function (err) {
-        cb(err, ids);
-    })
-}
-
-function updateOffer(offer, cb) {
-    var id = offer._id;
-    delete offer._id;
-    Offer.findOneAndUpdate({
-        _id: id
-    }, {
-        $set: offer
-    }, {
-        upsert: true
-    }, function (err, offer) {
-        cb(err, offer);
-    })
-}
-
-function saveOffer(offer, cb) {
-    offer.save(function (err, offer) {
-        cb(err, offer);
-    });
-}
-
 module.exports.read = function (req, res) {
     var user_id = req.user._id;
     readWinbacks(user_id, function (err, winbacks) {
@@ -182,13 +87,9 @@ module.exports.read = function (req, res) {
 
     function readWinbacks(user_id, callback) {
         Winback.find({
-            'accounts': user_id,
-            'status': {
-                $ne: 'archived'
-            }
+            'accounts': user_id
         })
         .populate('outlets')
-        .populate('offers')
         .exec(function (err, winbacks) {
             callback(err, winbacks);
         })
@@ -228,7 +129,6 @@ module.exports.readOne = function (req, res) {
             _id:  winback_id
         })
         .populate('outlets')
-        .populate('offers')
         .exec(function (err, winback) {
             callback(err, winback);
         })
