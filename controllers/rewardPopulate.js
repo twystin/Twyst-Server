@@ -86,7 +86,9 @@ function saveReward(program, rewards, cb) {
             if(!reward) {
                 var reward = {
                     program: program_id,
-                    rewards:  rewards
+                    outlets: program.outlets,
+                    status: program.status,
+                    rewards: rewards
                 };
                 var reward = new Reward(reward);
             }
