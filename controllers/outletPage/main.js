@@ -418,7 +418,7 @@ function getScripts() {
 		        ga('send', 'pageview');
 
 		      </script>
-		      <script src="http://pc035860.github.io/angular-easyfb/angular-easyfb.min.js"></script>
+		      <script src="/outlets/assets/js/angular-easyfb.min.js"></script>
 
 
 		    </body>

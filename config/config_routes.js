@@ -418,6 +418,7 @@ module.exports = function (app) {
         var BetaUserCtrl = require('../controllers/beta_users');
         var BetaMerchantCtrl = require('../controllers/beta_merchants');
         app.post('/api/v1/beta/users', BetaUserCtrl.create);
+        app.post('/api/v3/new_year', BetaUserCtrl.addNewYear);
         app.post('/api/v1/beta/merchants', BetaMerchantCtrl.create);
 
     })();
