@@ -7,6 +7,7 @@ var NewYearSchema = new Schema({
     phone: {type: String, trim: true},
     name: {type: String, trim: true},
     dob: {type: Date, trim: true},
+    unknown: {type: String, trim: true},
     outlet: {type: Schema.ObjectId, ref: 'Outlet'},
     created_at : {type: Date, default: Date.now}
 });
