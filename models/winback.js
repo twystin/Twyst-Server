@@ -20,7 +20,6 @@ var WinbackSchema = new Schema ({
         push: {type: String},
         email: {type: String}
     },
-    description: {type: String},
     reward: {
         discount: {
             max: String,
