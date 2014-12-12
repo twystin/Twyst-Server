@@ -14,7 +14,7 @@ var WinbackSchema = new Schema ({
         send_voucher_at: {type: Number}
     },
     min_historical_checkins: {type: Number},
-    weeks_since_last_visit: {type: Number},
+    date_since_last_visit: {type: Date},
     messages: { 
         sms: {type: String},
         push: {type: String},
