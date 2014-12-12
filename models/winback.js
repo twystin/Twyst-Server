@@ -10,7 +10,8 @@ var WinbackSchema = new Schema ({
     validity: {
         earn_start: {type: Date, default: Date.now},
         earn_end: {type: Date, default: Date.now},
-        voucher_valid_days: {type: Number, default: 30} 
+        voucher_valid_days: {type: Number, default: 30},
+        send_voucher_at: {type: Number}
     },
     min_historical_checkins: {type: Number},
     weeks_since_last_visit: {type: Number},
@@ -20,7 +21,36 @@ var WinbackSchema = new Schema ({
         email: {type: String}
     },
     description: {type: String},
-    reward: {type: String},
+    reward: {
+        discount: {
+            max: String,
+            percentage: String
+        },
+        flat: {
+            off: String,
+            spend: String
+        },
+        free: {
+            title: String,
+            _with: String,
+            free_eligibility_type: String,
+            free_eligibility_detail: String
+        },
+        buy_one_get_one: {
+            title: String
+        },
+        reduced: {
+            what: String,
+            worth: String,
+            for_what: String
+        },
+        happyhours: {
+            extension: String
+        },
+        custom: {
+            text: String
+        }
+    },
     terms: {type: String},
     avail_hours: avail_hours.hours,
     last_run_date: {type: Date},

@@ -283,9 +283,6 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			else if(sms.checkin && isNewUser()) {
 				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
 			}
-			if(outlet.basics.slug === 'thecupncakefactory') {
-				message.checkin += ' TCnCF Predict and Win contest closes 10th Dec - hurry! Visit http://twy.st/cnc_predictor to participate.';
-			}
 			if(outlet.basics.slug === 'cocktailsanddreamsspeakeasy') {
 				message.checkin += " Join the WYS contest - name your favourite whatever-you-say at Speaks, and it may make our menu in your name! Post your entries on Speakeasy's Facebook page!";
 			}
