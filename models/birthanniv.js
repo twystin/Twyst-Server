@@ -7,7 +7,10 @@ var avail_hours = require("../common/operatingHours");
 var BirthAnnivSchema = new Schema ({
     name: {type: String, trim: true, required: true},
     slug: {type: String, trim: true, required: true},
-    event_type: [{type: String, enum: ['birth', 'anniv']}],
+    events: {
+        birth: {type: Boolean, default: false},
+        anniv: {type: Boolean, default: true}
+    },
     created_at : {type: Date, default: Date.now},
     modified_at: {type: Date, default: Date.now},
     checkin_tier: [{

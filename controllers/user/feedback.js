@@ -104,31 +104,29 @@ module.exports.save = function(req, res) {
 				getOutletDetails(callback);
 			}
 		}, function(err, results) {
-			//console.log(results);
 			var outlet = results.OUTLET_DETAILS;
 			var user = results.USER_DETAILS;
 			
 			
 			var emailHTML = '';
-			fs.readFile('/home/rishi/Desktop/Twyst/Twyst-Server/templates/feedback-email.handlebars', 'utf8', function (err, templateHB) {
+			fs.readFile('/home/rishi/Desktop/Twyst/Twyst-Server/templates/feedback-email-2.handlebars', 'utf8', function (err, templateHB) {
 			  if (err) {
 			    console.log("err is ",err);
 			  }
 			  
-			console.log("templateHB is ", templateHB);
 			
 			var template = Handlebars.compile(templateHB);
-			
-			console.log("template is ", template);
+			var owner_name = outlet.basics.contact_person_name.split(" ");
 			var data = {
-				"owner_name": outlet.basics.contact_person_name,
+				"owner_name": owner_name[0],
 				"outlet_name": outlet.basics.name,
 				"outlet_location": outlet.contact.location.locality_1[0],
 				"feedback_comment":feedback.comment,
 				"user_email": user.email,
 				"user_phone": user.phone,
 				"outlet_checkins": results.OUTLET_CHECKINS,
-				"across_outlet_checkins": results.ACROSS_OUTLETS_CHECKINS
+				"across_outlet_checkins": results.ACROSS_OUTLETS_CHECKINS,
+				"feedback_type": feedback.type
 			};
 
 			var result = template(data);
@@ -140,8 +138,8 @@ module.exports.save = function(req, res) {
 				//cc:  'Contact Us <contactus@twyst.in>',
 				subject: 'Sample Feedback Email',
 				text: 'Feedback Email',
-				html: result
-				//type: feedback.type
+				html: result,
+				type: feedback.type
 				/*attachments: [{
 					filename: 'Feedback_Photo_1.jpeg',
 					content: 'https://s3-us-west-2.amazonaws.com/twyst-feedbacks/' + feedback.photo
@@ -220,7 +218,7 @@ function getUploadObject(bucketName, ContentType, image_name, image_data) {
 }
 
 function validateFeedback(feedback) {
-	if (!feedback.type && !feedback.outlet && !(feedback.photo || comment)) {
+	if (!feedback.type && !feedback.outlet && !(feedback.photo || feedback.comment)) {
 		return false;
 	}
 	return true;
