@@ -311,6 +311,7 @@ module.exports = function (app) {
     (function voucher_routes() {
         var VoucherCtrl = require('../controllers/voucher');
         var VoucherRedeemCtrl = require('../controllers/voucher_redeem');
+        var RedeemCtrl = require('../controllers/redeem');
         //app.get('/api/v1/vouchers', checkAuthenticated(), VoucherCtrl.query);
         app.get('/api/v1/vouchers/:code/:searchedAt', checkAuthenticated(), checkRole(5), VoucherCtrl.read);
         app.get('/api/v1/vouchers_by_phone/:phone/:outlet', checkAuthenticated(), checkRole(5), VoucherCtrl.readByUserPhone);
@@ -318,7 +319,7 @@ module.exports = function (app) {
         app.get('/api/v1/vouchers/status/change/:code', checkAuthenticated(), checkRole(5), VoucherCtrl.changeStatus);
         app.post('/api/v1/voucher/sms/redeem', VoucherRedeemCtrl.recieveSmsRedeem);
         app.post('/api/v1/voucher/app/redeem', checkAuthenticated(), VoucherRedeemCtrl.redeemVoucherApp);
-        app.post('/api/v1/redeem/vouchers', checkAuthenticated(), checkRole(5), VoucherRedeemCtrl.redeemVoucherPanel);
+        app.post('/api/v1/redeem/vouchers', checkAuthenticated(), checkRole(5), RedeemCtrl.redeemPanel);
         app.put('/api/v1/vouchers/:voucher_id', checkAuthenticated(), VoucherCtrl.update);
         app.delete('/api/v1/vouchers/:voucher_id', checkAuthenticated(), VoucherCtrl.delete);
     })();

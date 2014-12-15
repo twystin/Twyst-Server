@@ -29,6 +29,7 @@ module.exports.read = function(req, res) {
             .populate('issue_details.issued_for')
             .populate('issue_details.issued_to')
             .populate('issue_details.program')
+            .populate('issue_details.winback')
             .exec(function(err,voucher) {
             if (err) {
                 res.send(400, {'status': 'error',
@@ -155,13 +156,14 @@ module.exports.readByUserPhone = function(req, res) {
                         })
             },
             'issue_details.issued_at': outlet
-        }).populate('issue_details.issued_for')
-            .populate('issue_details.issued_to')
-            .populate('issue_details.program')
-            .sort({'basics.modified_at': -1})
-            .exec(function(err,vouchers) {
-
-                sortVouchers(vouchers)
+        })
+        .populate('issue_details.issued_for')
+        .populate('issue_details.winback')
+        .populate('issue_details.issued_to')
+        .populate('issue_details.program')
+        .sort({'basics.modified_at': -1})
+        .exec(function(err,vouchers) {
+            sortVouchers(vouchers)
         }); 
 
         function sortVouchers (vouchers) {
@@ -170,42 +172,10 @@ module.exports.readByUserPhone = function(req, res) {
                 callback(null, vouchers);
             }
             else {
-                var i = 0, meta_data = [];
-                vouchers.forEach(function (voucher) {
-                    var data = {};
-                    if((voucher.basics.status === 'active'
-                        || voucher.basics.status === 'user redeemed')
-                        && (new Date(voucher.issue_details.program.validity.burn_end) > new Date())) {
-                        data.status = 2;
-                        data.pos = i;
-                        meta_data.push(data);
-                    }
-                    else if(voucher.basics.status === 'merchant redeemed') {
-                        data.status = 1;
-                        data.pos = i;
-                        meta_data.push(data);
-                    }
-                    else if(voucher.basics.status !== 'merchant redeemed'
-                        && new Date(voucher.issue_details.program.validity.burn_end) <= new Date()) {
-                        data.status = 0;
-                        data.pos = i;
-                        meta_data.push(data);
-                    }
-                    i++;
-                });
-
-                meta_data = _.sortBy(meta_data, function (data) {
-                    return -data.status;
-                });
-
-                var sorted_vouchers = [];
-                var k = 0;
-                meta_data.forEach(function (data) {
-                    var pos = data.pos;
-                    sorted_vouchers[k++] = vouchers[pos];
-                });
-
-                callback(null, sorted_vouchers);
+                vouchers = _.sortBy(vouchers, function (v) {
+                    return -(new Date(v.basics.created_at));
+                })
+                callback(null, vouchers);
             }
         }
     }
