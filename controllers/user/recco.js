@@ -22,11 +22,14 @@ module.exports.getRecco = function (req, res) {
 				{
 					'contact.location.locality_1': new RegExp(req.query.q, "i")
 				},
-				{
+				{ 
 					'contact.location.locality_2': new RegExp(req.query.q, "i")
 				},
 				{
 					'contact.location.city': new RegExp(req.query.q, "i")
+				},
+				{ 
+					'attributes.tags': new RegExp(req.query.q, "i")
 				}
 			]
 		} : {'outlet_meta.status': 'active'};

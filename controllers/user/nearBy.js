@@ -25,6 +25,9 @@ module.exports.getNearby = function (req, res) {
 				},
 				{
 					'contact.location.city': new RegExp(req.query.q, "i")
+				},
+				{ 
+					'attributes.tags': new RegExp(req.query.q, "i")
 				}
 			]
 		} : {'outlet_meta.status': 'active',};
