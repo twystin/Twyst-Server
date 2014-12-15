@@ -396,7 +396,7 @@ function buildDataObject(outlets, programs) {
 		obj.closed_now = CommonUtils.isOpen(obj.outlet_summary.business_hours);
 		obj.opensAt = null;
 		if(obj.closed_now) {
-			obj.opensAt = CommonUtilities.opensAt(obj.outlet_summary.business_hours);
+			obj.opensAt = CommonUtils.opensAt(obj.outlet_summary.business_hours);
 		}
 		obj.program_summary = getMatchedProgram(programs, o._id);
 		objects.push(obj); 
