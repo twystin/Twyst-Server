@@ -81,15 +81,18 @@ module.exports.opensAt = function (business_hours) {
         for(var i = 0; i < today.timings.length; i++) {
             var open_min = today.timings[i].open.hr * 60 + today.timings[i].open.min;
             if(open_min > minutes) {
-                var hr = today.timings[i].open.hr 
+                var hr = today.timings[i].open.hr;
                 var min = today.timings[i].open.min ? today.timings[i].open.min : '00';
-                opens.time = hr + ':' + min;
+                var am_pm = '';
                 if(hr > 11) {
-                    opens.time += ' PM';
+                    hr -= 12;
+                    hr = hr ? hr : '00';
+                    am_pm += ' PM';
                 }
                 else {
-                    opens.time += ' AM';
+                    am_pm += ' AM';
                 }
+                opens.time = hr + ':' + min + am_pm;
                 return opens;
             }
         }
@@ -111,15 +114,18 @@ module.exports.opensAt = function (business_hours) {
                     var open_min = today.timings[i].open.hr * 60 + today.timings[i].open.min;
                     if(minutes < open_min) {
                         opens.day = day;
-                        var hr = today.timings[i].open.hr 
+                        var hr = today.timings[i].open.hr;
                         var min = today.timings[i].open.min ? today.timings[i].open.min : '00';
-                        opens.time = hr + ':' + min;
+                        var am_pm = '';
                         if(hr > 11) {
-                            opens.time += ' PM';
+                            hr -= 12;
+                            hr = hr ? hr : '00';
+                            am_pm += ' PM';
                         }
                         else {
-                            opens.time += ' AM';
+                            am_pm += ' AM';
                         }
+                        opens.time = hr + ':' + min + am_pm;
                         return opens;
                     }
                 }
