@@ -69,7 +69,9 @@ module.exports = function (app) {
         var SocialCtrl = require('../controllers/user/social');
         var FollowCtrl = require('../controllers/user/follow');
         var FeedbackCtrl = require('../controllers/user/feedback');
+        var CheckinCtrl = require('../controllers/checkins/qr/main')
         app.get(Routes.USER_NEAR_V3, NearByCtrl.getNearby);
+        app.post(Routes.USER_CHECKIN_V3, checkAuthenticated(), CheckinCtrl.checkin);
         app.get(Routes.USER_RECCO_V3, ReccoCtrl.getRecco);
         app.get(Routes.USER_OUTLET_DETAIL_v3, DetailCtrl.getDetails);
         app.get(Routes.USER_REWARDS_V3, checkAuthenticated(), RewardCtrl.getRewards);
