@@ -437,6 +437,7 @@ function getOutlets (q, callback) {
 		'basics.name':1, 
 		'contact.location': 1,
 		'basics.is_a': 1,
+		'basics.icon': 1,
 		'contact.phones': 1,
 		'publicUrl': 1,
 		'business_hours': 1,
