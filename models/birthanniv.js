@@ -11,8 +11,8 @@ var BirthAnnivSchema = new Schema ({
     created_at : {type: Date, default: Date.now},
     modified_at: {type: Date, default: Date.now},
     checkin_tier: [{
-        from: type: Number, default: '';
-        to: type: Number, default: '',
+        from: {type: Number, default: ''},
+        to: {type: Number, default: ''},
         reward: {
             discount: {
                 max: String,
@@ -48,11 +48,11 @@ var BirthAnnivSchema = new Schema ({
     validity: {
         earn_start: {type: Date, default: Date.now},
         earn_end: {type: Date, default: Date.now},
-        voucher_valid_days: {
+        valid_days: {
             before: {type: Number},
             after: {type: Number}
         },
-        send_voucher_at: {
+        send_at: {
             days_before: {type: Number},
             at_hours: {type: Number}
         }
