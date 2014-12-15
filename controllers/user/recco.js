@@ -394,8 +394,12 @@ function buildDataObject(outlets, programs) {
 		var obj = {};
 		obj.outlet_summary = o;
 		obj.closed_now = CommonUtils.isOpen(obj.outlet_summary.business_hours);
+		results.opensAt = null;
+		if(results.closed_now) {
+			results.opensAt = CommonUtilities.opensAt(results.OUTLET.business_hours);
+		}
 		obj.program_summary = getMatchedProgram(programs, o._id);
-		objects.push(obj);
+		objects.push(obj); 
 	});
 	return objects;
 }
