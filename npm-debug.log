@@ -1,0 +1,180 @@
+0 info it worked if it ends with ok
+1 verbose cli [ '/usr/bin/node', '/usr/bin/npm', 'install', 'handlebars', '-g' ]
+2 info using npm@1.4.28
+3 info using node@v0.10.33
+4 verbose node symlink /usr/bin/node
+5 verbose cache add [ 'handlebars', null ]
+6 verbose cache add name=undefined spec="handlebars" args=["handlebars",null]
+7 verbose parsed url { protocol: null,
+7 verbose parsed url   slashes: null,
+7 verbose parsed url   auth: null,
+7 verbose parsed url   host: null,
+7 verbose parsed url   port: null,
+7 verbose parsed url   hostname: null,
+7 verbose parsed url   hash: null,
+7 verbose parsed url   search: null,
+7 verbose parsed url   query: null,
+7 verbose parsed url   pathname: 'handlebars',
+7 verbose parsed url   path: 'handlebars',
+7 verbose parsed url   href: 'handlebars' }
+8 silly lockFile 9566e355-handlebars handlebars
+9 verbose lock handlebars /home/rishi/.npm/9566e355-handlebars.lock
+10 silly lockFile 9566e355-handlebars handlebars
+11 silly lockFile 9566e355-handlebars handlebars
+12 verbose addNamed [ 'handlebars', '' ]
+13 verbose addNamed [ null, '*' ]
+14 silly lockFile 0ab5732f-handlebars handlebars@
+15 verbose lock handlebars@ /home/rishi/.npm/0ab5732f-handlebars.lock
+16 silly addNameRange { name: 'handlebars', range: '*', hasData: false }
+17 verbose request where is /handlebars
+18 verbose request registry http://registry.npmjs.org/
+19 verbose request id c12ee3df4cb6c65d
+20 verbose url raw /handlebars
+21 verbose url resolving [ 'http://registry.npmjs.org/', './handlebars' ]
+22 verbose url resolved http://registry.npmjs.org/handlebars
+23 verbose request where is http://registry.npmjs.org/handlebars
+24 info trying registry request attempt 1 at 11:54:12
+25 verbose etag "852WZIFTIJSU5S2WAA7M9QZXB"
+26 http GET http://registry.npmjs.org/handlebars
+27 http 304 http://registry.npmjs.org/handlebars
+28 silly registry.get cb [ 304,
+28 silly registry.get   { date: 'Fri, 05 Dec 2014 06:24:53 GMT',
+28 silly registry.get     via: '1.1 varnish',
+28 silly registry.get     'last-modified': 'Fri, 05 Dec 2014 05:46:40 GMT',
+28 silly registry.get     'cache-control': 'max-age=60',
+28 silly registry.get     etag: '"852WZIFTIJSU5S2WAA7M9QZXB"',
+28 silly registry.get     age: '8',
+28 silly registry.get     connection: 'keep-alive',
+28 silly registry.get     'x-served-by': 'cache-lax1429-LAX',
+28 silly registry.get     'x-cache': 'HIT',
+28 silly registry.get     'x-cache-hits': '180',
+28 silly registry.get     'x-timer': 'S1417760693.031790,VS0,VE0',
+28 silly registry.get     vary: 'Accept' } ]
+29 verbose etag http://registry.npmjs.org/handlebars from cache
+30 silly addNameRange number 2 { name: 'handlebars', range: '*', hasData: true }
+31 silly addNameRange versions [ 'handlebars',
+31 silly addNameRange   [ '1.0.6',
+31 silly addNameRange     '1.0.6-2',
+31 silly addNameRange     '1.0.7',
+31 silly addNameRange     '1.0.8',
+31 silly addNameRange     '1.0.9',
+31 silly addNameRange     '1.0.10',
+31 silly addNameRange     '1.0.11',
+31 silly addNameRange     '1.0.12',
+31 silly addNameRange     '1.1.0',
+31 silly addNameRange     '1.1.1',
+31 silly addNameRange     '1.1.2',
+31 silly addNameRange     '1.2.0',
+31 silly addNameRange     '1.2.1',
+31 silly addNameRange     '1.3.0',
+31 silly addNameRange     '2.0.0-alpha.1',
+31 silly addNameRange     '2.0.0-alpha.2',
+31 silly addNameRange     '2.0.0-alpha.3',
+31 silly addNameRange     '2.0.0-alpha.4',
+31 silly addNameRange     '2.0.0-beta.1',
+31 silly addNameRange     '2.0.0',
+31 silly addNameRange     '1.0.2-beta',
+31 silly addNameRange     '1.0.4-beta',
+31 silly addNameRange     '1.0.5-beta' ] ]
+32 verbose addNamed [ 'handlebars', '2.0.0' ]
+33 verbose addNamed [ '2.0.0', '2.0.0' ]
+34 silly lockFile a1e153af-handlebars-2-0-0 handlebars@2.0.0
+35 verbose lock handlebars@2.0.0 /home/rishi/.npm/a1e153af-handlebars-2-0-0.lock
+36 silly lockFile a1e153af-handlebars-2-0-0 handlebars@2.0.0
+37 silly lockFile a1e153af-handlebars-2-0-0 handlebars@2.0.0
+38 silly lockFile 0ab5732f-handlebars handlebars@
+39 silly lockFile 0ab5732f-handlebars handlebars@
+40 silly resolved [ { name: 'handlebars',
+40 silly resolved     barename: 'handlebars',
+40 silly resolved     version: '2.0.0',
+40 silly resolved     description: 'Handlebars provides the power necessary to let you build semantic templates effectively with no frustration',
+40 silly resolved     homepage: 'http://www.handlebarsjs.com/',
+40 silly resolved     keywords: [ 'handlebars', 'mustache', 'template', 'html' ],
+40 silly resolved     repository:
+40 silly resolved      { type: 'git',
+40 silly resolved        url: 'https://github.com/wycats/handlebars.js.git' },
+40 silly resolved     author: { name: 'Yehuda Katz' },
+40 silly resolved     license: 'MIT',
+40 silly resolved     engines: { node: '>=0.4.7' },
+40 silly resolved     dependencies: { optimist: '~0.3', 'uglify-js': '~2.3' },
+40 silly resolved     optionalDependencies: { 'uglify-js': '~2.3' },
+40 silly resolved     devDependencies:
+40 silly resolved      { async: '~0.2.9',
+40 silly resolved        'aws-sdk': '~1.5.0',
+40 silly resolved        benchmark: '~1.0',
+40 silly resolved        'dustjs-linkedin': '~2.0.2',
+40 silly resolved        eco: '~1.1.0-rc-3',
+40 silly resolved        'es6-module-packager': '1.x',
+40 silly resolved        grunt: '~0.4.1',
+40 silly resolved        'grunt-cli': '~0.1.10',
+40 silly resolved        'grunt-contrib-clean': '~0.4.1',
+40 silly resolved        'grunt-contrib-concat': '~0.3.0',
+40 silly resolved        'grunt-contrib-connect': '~0.5.0',
+40 silly resolved        'grunt-contrib-copy': '~0.4.1',
+40 silly resolved        'grunt-contrib-jshint': '0.x',
+40 silly resolved        'grunt-contrib-requirejs': '~0.4.1',
+40 silly resolved        'grunt-contrib-uglify': '~0.2.2',
+40 silly resolved        'grunt-contrib-watch': '~0.5.3',
+40 silly resolved        'grunt-saucelabs': '8.x',
+40 silly resolved        istanbul: '^0.3.0',
+40 silly resolved        jison: '~0.3.0',
+40 silly resolved        'keen.io': '0.0.3',
+40 silly resolved        mocha: '~1.20.0',
+40 silly resolved        mustache: '~0.7.2',
+40 silly resolved        semver: '~2.1.0',
+40 silly resolved        underscore: '~1.5.1' },
+40 silly resolved     main: 'lib/index.js',
+40 silly resolved     bin: { handlebars: 'bin/handlebars' },
+40 silly resolved     scripts: { test: 'grunt' },
+40 silly resolved     gitHead: '1eb2b04aa1468059172af16968e28ba3a9c07e6d',
+40 silly resolved     bugs: { url: 'https://github.com/wycats/handlebars.js/issues' },
+40 silly resolved     _id: 'handlebars@2.0.0',
+40 silly resolved     _shasum: '6e9d7f8514a3467fa5e9f82cc158ecfc1d5ac76f',
+40 silly resolved     _from: 'handlebars@',
+40 silly resolved     _npmVersion: '1.4.21',
+40 silly resolved     _npmUser: { name: 'kpdecker', email: 'kpdecker@gmail.com' },
+40 silly resolved     maintainers: [ [Object] ],
+40 silly resolved     dist:
+40 silly resolved      { shasum: '6e9d7f8514a3467fa5e9f82cc158ecfc1d5ac76f',
+40 silly resolved        tarball: 'http://registry.npmjs.org/handlebars/-/handlebars-2.0.0.tgz' },
+40 silly resolved     directories: {},
+40 silly resolved     _resolved: 'http://registry.npmjs.org/handlebars/-/handlebars-2.0.0.tgz',
+40 silly resolved     readme: 'ERROR: No README data found!' } ]
+41 info install handlebars@2.0.0 into /usr/lib
+42 info installOne handlebars@2.0.0
+43 verbose lib/node_modules/handlebars unbuild
+44 verbose tar unpack /home/rishi/.npm/handlebars/2.0.0/package.tgz
+45 silly lockFile 304a68a2--usr-lib-node-modules-handlebars tar:///usr/lib/node_modules/handlebars
+46 verbose lock tar:///usr/lib/node_modules/handlebars /home/rishi/.npm/304a68a2--usr-lib-node-modules-handlebars.lock
+47 silly lockFile 7fd97e2f-npm-handlebars-2-0-0-package-tgz tar:///home/rishi/.npm/handlebars/2.0.0/package.tgz
+48 verbose lock tar:///home/rishi/.npm/handlebars/2.0.0/package.tgz /home/rishi/.npm/7fd97e2f-npm-handlebars-2-0-0-package-tgz.lock
+49 silly gunzTarPerm modes [ '775', '664' ]
+50 error Error: EACCES, mkdir '/usr/lib/node_modules/handlebars'
+50 error  { [Error: EACCES, mkdir '/usr/lib/node_modules/handlebars']
+50 error   errno: 3,
+50 error   code: 'EACCES',
+50 error   path: '/usr/lib/node_modules/handlebars',
+50 error   fstream_type: 'Directory',
+50 error   fstream_path: '/usr/lib/node_modules/handlebars',
+50 error   fstream_class: 'DirWriter',
+50 error   fstream_stack:
+50 error    [ '/usr/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23',
+50 error      '/usr/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53',
+50 error      'Object.oncomplete (fs.js:107:15)' ] }
+51 error Please try running this command again as root/Administrator.
+52 error System Linux 3.2.0-69-generic
+53 error command "/usr/bin/node" "/usr/bin/npm" "install" "handlebars" "-g"
+54 error cwd /home/rishi/Desktop/Twyst/Twyst-Server
+55 error node -v v0.10.33
+56 error npm -v 1.4.28
+57 error path /usr/lib/node_modules/handlebars
+58 error fstream_path /usr/lib/node_modules/handlebars
+59 error fstream_type Directory
+60 error fstream_class DirWriter
+61 error code EACCES
+62 error errno 3
+63 error stack Error: EACCES, mkdir '/usr/lib/node_modules/handlebars'
+64 error fstream_stack /usr/lib/node_modules/npm/node_modules/fstream/lib/dir-writer.js:36:23
+64 error fstream_stack /usr/lib/node_modules/npm/node_modules/mkdirp/index.js:46:53
+64 error fstream_stack Object.oncomplete (fs.js:107:15)
+65 verbose exit [ 3, true ]
