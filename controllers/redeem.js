@@ -141,16 +141,14 @@ function sendRedeemSmsToUser (voucher, user, used_at, used_time) {
         'location': 'DINE_IN',
         'phone': user.phone
     };
-	//AutoCheckin.autoCheckin(auto_checkin_obj);
+	AutoCheckin.autoCheckin(auto_checkin_obj);
     var date = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
-    console.log(used_at)
     Outlet.findOne({
     	_id: used_at
     }, function (err, outlet) {
     	if(outlet) {
     		var message = 'Voucher code '+ voucher.basics.code +' redeemed at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(used_time)) +' at '+ date.getHours() + ':' + date.getMinutes() +'. Keep checking-in at '+ outlet.basics.name +' on Twyst for more rewards! Get Twyst http://twy.st/app';
-    		console.log(message)
-    		//SMS.sendSms(user.phone, message, 'VOUCHER_REDEEM_MESSAGE');
+    		SMS.sendSms(user.phone, message, 'VOUCHER_REDEEM_MESSAGE');
     	}
     });
 }
