@@ -82,17 +82,8 @@ module.exports.opensAt = function (business_hours) {
             var open_min = today.timings[i].open.hr * 60 + today.timings[i].open.min;
             if(open_min > minutes) {
                 var hr = today.timings[i].open.hr;
-                var min = today.timings[i].open.min ? today.timings[i].open.min : '00';
-                var am_pm = '';
-                if(hr > 11) {
-                    hr -= 12;
-                    hr = hr ? hr : '00';
-                    am_pm += ' PM';
-                }
-                else {
-                    am_pm += ' AM';
-                }
-                opens.time = hr + ':' + min + am_pm;
+                var min = today.timings[i].open.min;
+                opens.time = formatTime(hr, min);
                 return opens;
             }
         }
@@ -113,19 +104,10 @@ module.exports.opensAt = function (business_hours) {
                 for(var i = 0; i < today.timings.length; i++) {
                     var open_min = today.timings[i].open.hr * 60 + today.timings[i].open.min;
                     if(minutes < open_min) {
-                        opens.day = day;
+                        opens.day = day.substr(0, 3);
                         var hr = today.timings[i].open.hr;
-                        var min = today.timings[i].open.min ? today.timings[i].open.min : '00';
-                        var am_pm = '';
-                        if(hr > 11) {
-                            hr -= 12;
-                            hr = hr ? hr : '00';
-                            am_pm += ' PM';
-                        }
-                        else {
-                            am_pm += ' AM';
-                        }
-                        opens.time = hr + ':' + min + am_pm;
+                        var min = today.timings[i].open.min;
+                        opens.time = formatTime(hr, min);
                         return opens;
                     }
                 }
@@ -133,6 +115,15 @@ module.exports.opensAt = function (business_hours) {
         }
         return opens;
     }
+}
+
+function formatTime(hours, minutes) {
+    var ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
 }
 
 module.exports.tenDigitPhone = function (phone_number) {
