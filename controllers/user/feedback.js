@@ -126,7 +126,7 @@ module.exports.save = function(req, res) {
 				"outlet_location": outlet.contact.location.locality_1[0],
 				"feedback_comment":feedback.comment,
 				"user_email": user.email,
-				"user_phone": req.body.phone,
+				"user_phone": user.phone,
 				"outlet_checkins": results.OUTLET_CHECKINS,
 				"across_outlet_checkins": results.ACROSS_OUTLETS_CHECKINS
 			};

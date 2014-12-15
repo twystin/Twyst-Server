@@ -60,6 +60,15 @@ module.exports = function (app) {
         app.delete('/api/v3/winback/:winback_id', checkAuthenticated(), WinbackCtrl.delete);
     })();
 
+    (function birthanniv_route () {
+        var BirthAnnivCtrl = require('../controllers/programs/birthanniv');
+        app.post('/api/v3/birthanniv', checkAuthenticated(), BirthAnnivCtrl.create);
+        app.get('/api/v3/birthanniv', checkAuthenticated(), BirthAnnivCtrl.read);
+        app.get('/api/v3/birthanniv/:birthanniv_id', checkAuthenticated(), BirthAnnivCtrl.readOne);
+        app.put('/api/v3/birthanniv', checkAuthenticated(), BirthAnnivCtrl.update);
+        app.delete('/api/v3/birthanniv/:birthanniv_id', checkAuthenticated(), BirthAnnivCtrl.delete);
+    })();
+
     (function v3_user_data_routes () {
         var NearByCtrl = require('../controllers/user/nearBy');
         var ReccoCtrl = require('../controllers/user/recco');
