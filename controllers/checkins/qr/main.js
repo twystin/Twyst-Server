@@ -177,7 +177,7 @@ module.exports.checkin = function(req, res) {
 				var success_obj = {
 					outlet: qr.outlet_id,
 					reward_distance: applicable_reward.count - (count + 1),
-					reward: applicable_reward;
+					reward: applicable_reward
 				}
 				if(success_obj.reward_distance === 0) {
 					saveVoucher(user, success_obj, reward, checkin._id);
