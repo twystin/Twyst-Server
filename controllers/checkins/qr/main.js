@@ -173,6 +173,7 @@ module.exports.checkin = function(req, res) {
 				});
 			}
 			else {
+				updateQrUsed(qr);
 				var success_obj = {
 					reward_distance: applicable_reward.count - (count + 1),
 					reward: null
@@ -188,7 +189,6 @@ module.exports.checkin = function(req, res) {
 						'info': success_obj
 					});
 				}
-				updateQrUsed(qr);
 			}
 		})
 	}
@@ -247,7 +247,9 @@ module.exports.checkin = function(req, res) {
 
 function updateQrUsed(qr) {
 	qr.times_used += 1;
-	qr.save();
+	qr.save(function (err) {
+		console.log(err);
+	});
 }
 
 function getMatchedReward(reward, count) {
