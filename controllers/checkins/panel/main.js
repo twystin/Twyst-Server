@@ -284,7 +284,7 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
 			}
 			if(outlet.basics.slug === 'cocktailsanddreamsspeakeasy') {
-				message.checkin += " Join the WYS contest - name your favourite whatever-you-say at Speaks, and it may make our menu in your name! Post your entries on Speakeasy's Facebook page!";
+				message.checkin += "We are turning 2, celebrations start 19-Dec and continue all week! Special offers for regulars, stay tuned for updates!";
 			}
 			sms.checkin = false;
 			sms.reward = false;
