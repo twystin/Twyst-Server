@@ -215,9 +215,7 @@ module.exports.checkin = function(req, res) {
 		voucher.issue_details.issued_for = success_obj.reward.offer;
 		voucher.checkin_details.checkin_id = checkin_id;
 
-		if(reward.basics && reward.basics.description) {
-			voucher.basics.description = success_obj.reward.rewardified;
-		}
+		voucher.basics.description = success_obj.reward.rewardified;
 		
 		voucher.basics.code = keygen._({
 			forceUppercase: true, 
