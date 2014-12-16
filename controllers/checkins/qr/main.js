@@ -188,6 +188,7 @@ module.exports.checkin = function(req, res) {
 						'info': success_obj
 					});
 				}
+				updateQrUsed(qr);
 			}
 		})
 	}
@@ -244,6 +245,11 @@ module.exports.checkin = function(req, res) {
 	}
 }
 
+function updateQrUsed(qr) {
+	qr.times_used += 1;
+	qr.save();
+}
+
 function getMatchedReward(reward, count) {
 	count = count || 0;
 	for (var i = 0; i < reward.rewards.length; i++) {
@@ -274,8 +280,8 @@ function hasActiveRewards(outlet, cb) {
 }
 
 function isValidCheckin(phone, outlet_id, cb) {
-	var cap_time_six_hours = new Date(Date.now() - 6 * 60 * 60 * 1000),
-		cap_time_five_minutes = new Date(Date.now() - 5 * 60 * 1000);
+	var cap_time_six_hours = new Date(Date.now() -  10 * 1000),
+		cap_time_five_minutes = new Date(Date.now() - 10 * 1000);
 	Checkin.findOne({
 		phone: phone,
 		created_date: {
