@@ -1,6 +1,8 @@
-var mongoose = require("mongoose");
-var Voucher = mongoose.model('Voucher');
-var Checkin = mongoose.model('Checkin');
+var mongoose = require("mongoose"),
+	Outlet = mongoose.model('Outlet'),
+	Program = mongoose.model('Program')
+	Voucher = mongoose.model('Voucher'),
+	Checkin = mongoose.model('Checkin');
 var Utils = require('../../common/utilities');
 var async = require("async");
 var _ = require("underscore");
@@ -9,7 +11,7 @@ module.exports.getTimeline = function (req, res) {
 	var start = req.query.start || 1,
 		end = req.query.end || 20,
 		user = req.user;
-
+ 
 	getInfo(user, function (err, data) {
 		if(err) {
 			res.send(400, {
@@ -59,6 +61,12 @@ function assembleResults(data) {
 		data.checkins.forEach(function (c) {
 			results.push(getCheckinTimeline(c));
 		})
+		data.new_outlets.forEach(function (o) {
+			results.push(getOutletTimeline(o));
+		})
+		data.new_programs.forEach(function (p) {
+			results.push(getProgramTimeline(p));
+		})
 		data.rewards.forEach(function (v) {
 			results.push(getVoucherTimeline(v));
 			if(v.basics.status === 'merchant redeemed') {
@@ -69,13 +77,37 @@ function assembleResults(data) {
 	return results;
 }
 
+function getProgramTimeline(program) {
+	var obj = {};
+	obj.created_date = program.created_at;
+	obj.message_object_type = "NEW_PROGRAM";
+	obj.message = "New and Better Rewards at "+ program.outlets[0].basics.name +".";
+	obj.message_object = {
+		'outlet_id': program.outlets[0]._id
+	};
+
+	return obj;
+}
+
+function getOutletTimeline(outlet) {
+	var obj = {};
+	obj.created_date = outlet.basics.created_at;
+	obj.message_object_type = "NEW_OUTLET";
+	obj.message = "New Outlet added. Now earn rewards at "+ outlet.basics.name +" on Twyst.";
+	obj.message_object = {
+		'outlet_id': outlet._id
+	};
+
+	return obj;
+}
+
 function getCheckinTimeline(checkin) {
 	var obj = {};
 	obj.created_date = checkin.created_date;
 	obj.message_object_type = "CHECKIN";
 	obj.message = "You checked-in at " + checkin.outlet.basics.name + " on " + Utils.formatDate(checkin.created_date) +" .";
 	obj.message_object = {
-		'checkin': checkin
+		'outlet_id': checkin.outlet._id
 	};
 
 	return obj;
@@ -87,7 +119,7 @@ function getVoucherTimeline(voucher) {
 	obj.message_object_type = "VOUCHER_UNLOCKED";
 	obj.message = "You unlocked a voucher at " + voucher.issue_details.issued_at[0].basics.name + " on " + Utils.formatDate(voucher.basics.created_at) +" .";
 	obj.message_object = {
-		'voucher': voucher
+		'voucher_id': voucher._id
 	};
 
 	return obj;
@@ -99,7 +131,7 @@ function getRedeemedTimeline(voucher) {
 	obj.message_object_type = "VOUCHER_USED";
 	obj.message = "You used your voucher at " + voucher.used_details.used_at.basics.name + " on " + Utils.formatDate(voucher.used_details.used_time) +" .";
 	obj.message_object = {
-		'voucher': voucher
+		'outlet_id': voucher.used_details.used_at._id
 	};
 
 	return obj;
@@ -112,10 +144,50 @@ function getInfo(user, cb) {
 	    },
 	    rewards: function(callback) {
 	    	getMyRewards(user, callback);
+	    },
+	    new_outlets: function (callback) {
+	    	getNewOutlets(callback);
+	    },
+	    new_programs: function (callback) {
+	    	getNewPrograms(callback);
 	    }
 	}, function(err, results) {
 	    cb(err, results);
 	});
+}
+
+function getNewOutlets(cb) {
+	Outlet.find({
+		'basics.created_at': {
+			$gt: new Date(Date.now() - 864000000*2)
+		},
+		'outlet_meta.status': 'active'
+	}, function (err, outlets) {
+		if(err) {
+			cb(err, []);
+		}
+		else {
+			cb(null, outlets);
+		}
+	})
+} 
+
+function getNewPrograms(cb) {
+	Program.find({
+		'created_at': {
+			$gt: new Date(Date.now() - 864000000*2)
+		},
+		'status': 'active'
+	})
+	.populate('outlets')
+	.exec(function (err, programs) {
+		if(err) {
+			cb(err, []);
+		}
+		else {
+			cb(null, programs);
+		}
+	})
 }
 
 function getMyCheckins(user, cb) {
