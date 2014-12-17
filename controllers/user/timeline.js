@@ -162,7 +162,9 @@ function getNewOutlets(cb) {
 			$gt: new Date(Date.now() - 864000000*2)
 		},
 		'outlet_meta.status': 'active'
-	}, function (err, outlets) {
+	})
+	.select('basics')
+	.exec(function (err, outlets) {
 		if(err) {
 			cb(err, []);
 		}
@@ -179,6 +181,7 @@ function getNewPrograms(cb) {
 		},
 		'status': 'active'
 	})
+	.select('outlets created_at')
 	.populate('outlets')
 	.exec(function (err, programs) {
 		if(err) {
@@ -194,6 +197,7 @@ function getMyCheckins(user, cb) {
 	Checkin.find({
 		phone: user.phone
 	})
+	.select('created_date outlet')
 	.populate('outlet')
 	.exec(function (err, checkins) {
 		if(err) {
@@ -207,11 +211,9 @@ function getMyCheckins(user, cb) {
 
 function getMyRewards(user, cb) {
 	Voucher.find({
-		'issue_details.issued_to': user._id,
-		'basics.created_at': {
-			$lt: new Date(Date.now() - 10800000)
-		}
+		'issue_details.issued_to': user._id
 	})
+	.select('issue_details.issued_at used_details.used_at basics.created_at')
 	.populate('issue_details.issued_at')
 	.populate('used_details.used_at')
 	.exec(function (err, vouchers) {
