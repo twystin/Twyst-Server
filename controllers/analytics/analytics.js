@@ -1,97 +1,104 @@
-var mongoose = require('mongoose'); 
+var mongoose = require('mongoose'),
+	async = require('async'),
+	_ = require('underscore'); 
 
-module.exports.getVoucherData = function (req, res) {
-	// body...
-	var today=new Date();
-	var today_comp={
-		day:today.getDay(),
-		date:today.getDate(),
-		month:today.getMonth(),
-		year:today.getFullYear()
-	};
-	var voucher_data = {
-        labels : [],
-        datasets : [
-            {
-                data : []
-            }
-        ]
-	};
-	for(var i=0;i<5;i++){
-		var t=(new Date(today_comp.year,today_comp.month,today_comp.date-i)).toString().slice(0,10);
-		voucher_data.labels.push(t);
-	}
-	for(i=0;i<31;i++){
-		voucher_data.datasets[0].data[i]=0;
-	}
-	var diff=function(date1,date2){
-		var days = Math.floor((date2.getTime() - date1.getTime())/(1000*60*60*24));
-		return days;
-	};
-	var vouchers=mongoose.model('Voucher');
-	vouchers.find({'basics.status':'redeemed'},function(err,result){
-		if(err){
-			//console.log("devender, take care of error");
+var Outlet = mongoose.model('Outlet'),
+	Checkin = mongoose.model('Checkin'),
+	Voucher = mongoose.model('Voucher');
+
+module.exports.getDashBoard = function (req, res) {
+	Outlet.find({
+		'outlet_meta.accounts': req.user._id
+	})
+	.select('basics.name')
+	.exec(function (err, outlets) {
+		if(err || outlets.length < 1) {
+			res.send(400,{
+				'status': 'error',
+				'message': 'Unable to get dashboard analytics',
+				'info': err
+			});
 		}
-		console.log(result);
-		for(var j=0;j<result.length;j++){
-			var x=result[j]["used_details"]["used_date"];
-			x=diff(x,today);
-			voucher_data.datasets[0].data[x]++;
+		else {
+			runInParallel(outlets);
 		}
-		//console.log('voucher_data ');
-		//console.log(voucher_data.datasets[0].data);
-		res.send({	'status': 'success',
-				'message': 'Got voucher data',
-				'info': voucher_data
-		});
 	});
-	
+
+	function runInParallel(outlets) {
+		async.parallel({
+		    checkins: function(callback) {
+		    	getCheckins(outlets, callback);
+		    },
+		    redeem_count: function(callback) {
+		    	getRedeemCount(outlets, callback);
+		    }
+		}, function(err, results) {
+		    if(err) {
+		    	res.send(200, {
+			    	'status' : 'error',
+	                'message' : 'Error getting dashboard data',
+	                'info': err
+	            });
+		    }
+		    else {
+		    	var data = {
+		    		checkin_count: results.checkins.checkin_count,
+		    		redeem_count: results.redeem_count,
+		    		user_count: results.checkins.user_count
+		    	}
+		    	res.send(200, {
+			    	'status' : 'success',
+	                'message' : 'Got dashboard data',
+	                'info': data
+	            });
+		    }
+		});
+	}
 }
 
-module.exports.getCheckinData = function (req, res) {
-	// body...
-	var today=new Date();
-	var today_comp={
-		day:today.getDay(),
-		date:today.getDate(),
-		month:today.getMonth(),
-		year:today.getFullYear()
-	};
-	var claim_data = {
-        labels : [],
-        datasets : [
-            {
-                data : []
-            }
-        ]
-	};
-	for(var i=0;i<5;i++){
-		var t=(new Date(today_comp.year,today_comp.month,today_comp.date-i)).toString().slice(0,10);
-		claim_data.labels.push(t);
-	}
-	for(i=0;i<31;i++){
-		claim_data.datasets[0].data[i]=0;
-	}
-	var diff=function(date1,date2){
-		var days = Math.floor((date2.getTime() - date1.getTime())/(1000*60*60*24));
-		return days;
-	};
-	var checkins=mongoose.model('Checkin');
-	checkins.find({},function(err,result){
-		if(err){
-			//console.log("devender, take care of error");
+function getCheckins(outlets, callback) {
+	Checkin.find({
+		checkin_date: {
+			$gt: new Date(Date.now() - 60 * 86400000)
+		},
+		outlet: {
+			$in: outlets.map(function (o) {
+				return o._id;
+			})
 		}
-		for(var j=0;j<result.length;j++){
-			var x=result[j]["checkin_date"];
-			x=diff(x,today);
-			claim_data.datasets[0].data[x]++;	
+	})
+	.select('phone')
+	.exec(function (err, checkins) {
+		if(err) {
+			callback(err, checkins);
 		}
-		//console.log("checkin data ");
-		//console.log(claim_data.datasets[0].data);
-		res.send({	'status': 'success',
-				'message': 'Got checkin data',
-				'info': claim_data
-		});
-	});	
+		else {
+			var count = {
+				checkin_count: checkins.length,
+				user_count: 0
+			};
+			var unique = _.uniq(checkins, function (c) {
+				return c.phone;
+			})
+			count.user_count = unique.length;
+			callback(null, count);
+		}
+	})
+}
+
+function getRedeemCount(outlets, callback) {
+	Voucher.count({
+		'basics.status': 'merchant redeemed',
+		'basics.created_at': {
+			$gt: new Date(Date.now() - 60 * 86400000)
+		},
+		'used_details.used_at': {
+			$in: outlets.map(function (o) {
+				return o._id;
+			})
+		}
+	})
+	.exec(function (err, count) {
+		callback(err, count);
+	})
 }
