@@ -33,32 +33,37 @@ module.exports.get = function(req, res) {
 	function getVouchers(outlets) {
 		Voucher.count({
 			'basics.status': 'merchant redeemed',
+			'used_details.used_time': {
+				$gt: new Date(Date.now() - 60 * 86400000)
+			},
 			'used_details.used_at': {
 				$in: outlets.map(function(o) {
 					return o._id;
 				})
 			}
-		}, function(err, VoucherCount) {
+		}, function(err, voucher_count) {
 			if (err) {
 				res.send(400, {
 					'status': 'error',
 					'message': 'Error getting Voucher Count',
 					'info': err
 				});
-			} else if (VoucherCount === 0) {
-				res.send(200, {
-					'status': 'success',
-					'message': 'No voucher redemeption in last three months',
-					'info': ''
-				})
 			} else {
-				calculateFigure(outlets, VoucherCount);
+				if (!voucher_count) {
+					res.send(200, {
+						'status': 'success',
+						'message': 'No voucher redemeption in last three months',
+						'info': 0
+					})
+				} else {
+					calculateFigure(outlets, voucher_count);
+				}
 			}
 		})
 	}
 
 	function calculateFigure(outlets, VoucherCount) {
-		var roi = ((costs[outlets[0].attributes.cost_for_two.min] + costs[outlets[0].attributes.cost_for_two.max]) / 4) * VoucherCount
+		var roi = ((costs[outlets[0].attributes.cost_for_two.min - 1] + costs[outlets[0].attributes.cost_for_two.max - 1]) / 2) * VoucherCount
 		res.send(200, {
 			'status': 'success',
 			'message': 'Successfully calculated ROI',

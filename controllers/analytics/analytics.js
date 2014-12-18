@@ -89,7 +89,7 @@ function getCheckins(outlets, callback) {
 function getRedeemCount(outlets, callback) {
 	Voucher.count({
 		'basics.status': 'merchant redeemed',
-		'basics.created_at': {
+		'used_details.used_time': {
 			$gt: new Date(Date.now() - 60 * 86400000)
 		},
 		'used_details.used_at': {

@@ -38,9 +38,7 @@ module.exports.getCounts = function (req, res) {
 			var q_redeem = {
 				'used_details.used_at' : req.params.outlet_id,
 				'issue_details.program' : req.params.program_id,
-				'basics.status': {
-					$ne: 'active'
-				}
+				'basics.status': 'merchant redeemed'
 			}
 		}
 		else {
@@ -55,9 +53,7 @@ module.exports.getCounts = function (req, res) {
 			}
 			var q_redeem = {
 				'used_details.used_at' : req.params.outlet_id,
-				'basics.status': {
-					$ne: 'active'
-				}
+				'basics.status': 'merchant redeemed'
 			}
 		}
 		getCheckinCount();
