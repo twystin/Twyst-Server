@@ -283,9 +283,6 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			else if(sms.checkin && isNewUser()) {
 				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
 			}
-			if(outlet.basics.slug === 'cocktailsanddreamsspeakeasy') {
-				message.checkin += " We are turning 2, celebrations start 19-Dec and continue all week! Special offers for regulars, stay tuned for updates!";
-			}
 			if(outlet.basics.slug === 'fruitpress') {
 				message.checkin += " Enjoy all new winter specials at Fruit Press – hot chai, coffee, soups and more!";
 			}
