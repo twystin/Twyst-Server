@@ -67,40 +67,30 @@ module.exports.getOTP = function (req, res) {
 		else if(send_new) {
 				otp_data.otp = keygen.number({length: 4});
 		}
-		saveOtp(otp_data, send_new);
+		otp_data.created_at = Date.now();
+		saveOtp(otp_data);
 	}
 
-	function saveOtp(otp_data, send_new) {
+	function saveOtp(otp_data) {
 		var otp_message = 'Your Twyst verification code is ';
-		if(!send_new) {
-			otp_message += otp_data.otp;
-			SMS.sendSms(phone, otp_message);
-			res.send(200, {
-				'status': 'success',
-				'message': 'The verification code has been sent to you',
-				'info': 'The verification code has been sent to you'
-			});
-		}
-		else {
-			otp_data.save(function (err) {
-				if(err) {
-					res.send(400, {
-						'status': 'error',
-						'message': 'Error processing verification code',
-						'info': err
-					})
-				}
-				else {
-					otp_message += otp_data.otp;
-					SMS.sendSms(phone, otp_message);
-					res.send(200, {
-						'status': 'success',
-						'message': 'The verification code has been sent to you',
-						'info': 'The verification code has been sent to you'
-					});
-				}
-			})
-		}
+		otp_data.save(function (err) {
+			if(err) {
+				res.send(400, {
+					'status': 'error',
+					'message': 'Error processing verification code',
+					'info': err
+				})
+			}
+			else {
+				otp_message += otp_data.otp;
+				SMS.sendSms(phone, otp_message, 'OTP_MESSAGE');
+				res.send(200, {
+					'status': 'success',
+					'message': 'The verification code has been sent to you',
+					'info': 'The verification code has been sent to you'
+				});
+			}
+		})
 	}
 
 	function getTimeDiff(otp) {
