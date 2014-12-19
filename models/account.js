@@ -18,6 +18,7 @@ var Account = new Schema({
     parent: String, //The logged in user which creates the restricted users
     reset_password_token: String,
     remember: String,
+    birthday: {type : Date},
     validated: {
         role_validated: Boolean,
         email_validated: {
