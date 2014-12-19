@@ -126,8 +126,11 @@ function formatTime(hours, minutes) {
     return strTime;
 }
 
-module.exports.tenDigitPhone = function (phone_number) {
-    return phone_number.substring(phone_number.length-10, phone_number.length);
+module.exports.tenDigitPhone = function (phone) {
+    if(!phone) {
+        return '';
+    }
+    return phone.substring(phone.length-10);
 };
 
 module.exports.formatDate = function(date) {

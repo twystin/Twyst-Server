@@ -6,19 +6,6 @@ var mongoose = require('mongoose'),
 	Account = mongoose.model('Account'),
 	OTP = mongoose.model('TempOTP');
 
-var util = require('util'),
-    crypto = require('crypto'),
-    LocalStrategy = require('passport-local').Strategy,
-    BadRequestError = require('passport-local').BadRequestError;
-
-var options = {};
-options.saltlen = options.saltlen || 32;
-options.iterations = options.iterations || 25000;
-options.keylen = options.keylen || 512;
-    
-options.hashField = options.hashField || 'hash';
-options.saltField = options.saltField || 'salt';
-
 module.exports.getOTP = function (req, res) {
 
 	var phone = req.params.phone;
@@ -121,189 +108,105 @@ module.exports.getOTP = function (req, res) {
 	}
 }
 
-module.exports.updateDeviceId = function (req, res) { 
+module.exports.validateOtp = function (req, res) { 
 
-	var otp = req.body.otp;
-	var phone = req.body.phone;
-	phone = CommonUtilities.tenDigitPhone(phone);
-	var device_id = req.body.device_id;
+	var otp = req.body.otp,
+		phone = CommonUtilities.tenDigitPhone(req.body.phone);
 
-	if(otp && phone && device_id) {
-		findOTP(phone);
+	if(otp && phone) {
+		validateOtp();
 	}
 	else {
 		res.send(400, {
 			'status': 'error',
 			'message': 'Request has missing values.',
-			'info': ''
+			'info': 'Request requires phone and OTP code'
 		});
 	};
 
-	function findOTP (phone) {
-
-		TempOTP.findOne({phone: phone}, function (err, existing_otp) {
+	function validateOtp() {
+		OTP.findOne({
+			phone: phone,
+			otp: otp
+		})
+		.exec(function (err, otp) {
 			if(err) {
 				res.send(400, {
 					'status': 'error',
 					'message': 'Error getting OTP.',
-					'info': JSON.stringify(err)
+					'info': err
+				});
+			}
+			else if(!otp) {
+				res.send(400, {
+					'status': 'error',
+					'message': 'Incorrect OTP',
+					'info': 'Incorrect OTP'
 				});
 			}
 			else {
-				if(existing_otp === null) {
-					res.send(200, {
-						'status': 'error',
-						'message': 'Error getting OTP.',
-						'info': JSON.stringify(err)
-					});
-				}
-				else {
-					matchPhoneAndOTP(existing_otp);
-				}
+				processUser();
 			}
-		});
+		})
 	}
 
-	function matchPhoneAndOTP(existing_otp) {
-
-		if((existing_otp.phone === phone) && (existing_otp.otp === otp)) {
-			checkIfExistingUser(phone);
-		}
-		else {
-			res.send(400, {
-				'status': 'error',
-				'message': 'The OTP you entered is incorrect.',
-				'info': ''
-			});
-		}
-	};
-
-	function checkIfExistingUser (phone) {
-		Account.findOne({phone: phone, role: {$gt: 5}}, function (err, user) {
+	function processUser() {
+		Account.findOne({
+			phone: phone, 
+			role: {
+				$gt: 5
+			}
+		})
+		.exec(function (err, user) {
 			if(err) {
 				res.send(400, {
 					'status': 'error',
-					'message': 'Error serving your request currently.',
-					'info': JSON.stringify(err)
+					'message': 'Error getting user',
+					'info': err
 				});
 			}
-			else {
-				if(user === null) {
-					registerNewUser();
-				}
-				else {
-					if(user.role === 6) {
-						migrateUser(user);
+			else if(!user) {
+				registerUser(function (err, user) {
+					if(err) {
+						res.send(400, {
+							'status': 'error',
+							'message': 'Error registering user',
+							'info': err
+						});
 					}
 					else {
-						updateUser();
-					}
-				}
-			}
-		});
-	};
-
-	function registerNewUser() {
-		
-		var account = {};
-		account.username = phone;
-		account.phone = phone;
-		account.device_id = device_id;
-		account.role = 7;
-		account.otp_validated = true;
-
-		Account.register(new Account(account), phone, function(err, user) {
-	        if (err) {
-	            res.send(400, {
-	            	'status' : 'error',
-	                'message' : 'Error registering user.',
-	                'info':  JSON.stringify(err) 
-	            });
-	        } else {
-	            returnResponse(user.username);
-	        }
-	    });
-	}
-
-	function updateUser() {
-		Account.findOneAndUpdate({phone: phone, role: 7}, 
-			{$set: {device_id: device_id, otp_validated: true} },
-			{upsert:true},
-			function(err,user) {
-				if (err) {
-					res.send(400, {	
-						'status' : 'error',
-						'message': 'Error updating device id.',
-						'info': JSON.stringify(err)
-					});
-				} else {
-					returnResponse(user.username);
-				}
-		});
-	}
-
-	function migrateUser(user) {
-		
-		user.username = phone;
-		user.phone = phone;
-		user.device_id = device_id;
-		user.role = 7;
-		user.otp_validated = true;
-
-		updatePassword(phone);
-
-		function updatePassword (password) {
-
-			crypto.randomBytes(options.saltlen, function(err, buf) {
-	            if (err) {
-	                res.send(400, {	
-						'status' : 'error',
-						'message': 'Error migrating user.',
-						'info': JSON.stringify(err)
-					});
-	            }
-
-	            var salt = buf.toString('hex');
-	            crypto.pbkdf2(password, salt, options.iterations, options.keylen, function(err, hashRaw) {
-	                if (err) {
-	                    res.send(400, {	
-							'status' : 'error',
-							'message': 'Error generating password.',
-							'info': JSON.stringify(err)
+						res.send(200, {
+							'status': 'success',
+							'message': 'User registered successfull',
+							'info': 'OTP verification successfull'
 						});
-	                }
-	                else {
-	                	user.hash = new Buffer(hashRaw, 'binary').toString('hex');
-	                	user.salt = salt;
-	                	
-	                	saveUser();
-	                }
-	            });
-	        });
-		}
-		
-		function saveUser() {
-			user.save(function (err) {
-				if(err) {
-					res.send(400, {	
-						'status' : 'error',
-						'message': 'Error updating device id.',
-						'info': JSON.stringify(err)
-					});
-				}
-				else {
-					returnResponse(user.username);
-				}
-			});
-		};
+					}
+				})
+			}
+			else {
+				res.send(200, {
+					'status': 'success',
+					'message': 'OTP verification successfull',
+					'info': 'OTP verification successfull'
+				});
+			}
+		})
 	}
 
-	function returnResponse (username) {
+	function registerUser(cb) {
 		
-		res.send(200, {
-			'status': "success",
-			'message': "Successfully verified User",
-			'info': JSON.stringify(username)
-		})
+		var account = {
+			username: phone,
+			phone: phone,
+			role: 7,
+			otp_validated: true
+		};
+
+		Account.register(
+			new Account(account), 
+			phone, 
+			function(err) {
+	        	cb(err);
+	    });
 	}
 }
