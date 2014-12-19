@@ -131,7 +131,7 @@ module.exports = function (app) {
 
     (function user_otp_route() {
         var OtpCtrl = require('../controllers/otpCtrl.js');
-        app.get('/api/v2/otp/:mobile', OtpCtrl.getOTP);
+        app.get('/api/v2/otp/:phone', OtpCtrl.getOTP);
         app.post('/api/v2/otp', OtpCtrl.updateDeviceId);
     })();
 

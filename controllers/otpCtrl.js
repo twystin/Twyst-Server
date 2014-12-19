@@ -1,17 +1,10 @@
-var mongoose = require('mongoose');
-var TempOTP = mongoose.model('TempOTP');
-var SmsSentLog = mongoose.model('SmsSentLog');
-var keygen = require("keygenerator");
-var Account = mongoose.model('Account');
-var CommonUtilities = require('../common/utilities');
-var SMS = require('../common/smsSender');
-
-var _ = require('underscore');
-
-var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";
-
-var http = require('http');
-http.post = require('http-post');
+var mongoose = require('mongoose'),
+	_ = require('underscore'),
+	keygen = require("keygenerator"),
+	SMS = require('../common/smsSender'),
+	CommonUtilities = require('../common/utilities');
+	Account = mongoose.model('Account'),
+	OTP = mongoose.model('TempOTP');
 
 var util = require('util'),
     crypto = require('crypto'),
@@ -28,67 +21,104 @@ options.saltField = options.saltField || 'salt';
 
 module.exports.getOTP = function (req, res) {
 
-	if(req.params && req.params.mobile) {
-		searchOTP(req.params.mobile);
-	}
-	else {
+	var phone = req.params.phone;
+	if(!phone) {
 		res.send(400, {
 			'status': 'error',
-			'message': 'Request is empty',
-			'info': ''
-		});
+			'message': 'Request incomplete',
+			'info': 'Phone number required for OTP'
+		})
+	}
+	else {
+		initOtp();
 	}
 
-	function searchOTP(phone) {
-		phone = CommonUtilities.tenDigitPhone(phone);
-		var otp_code = keygen.number({length: 6});
-		var temp = {};
-		temp.otp = otp_code;
-		temp.phone = phone;
-
-		var temp_otp = new TempOTP(temp);
-
-		TempOTP.findOne({phone: phone}, function (err, existing_otp) {
+	function initOtp() {
+		OTP.findOne({
+			phone: phone
+		})
+		.exec(function (err, otp) {
 			if(err) {
 				res.send(400, {
 					'status': 'error',
-					'message': 'Error generating OTP',
-					'info': JSON.stringify(err)
-				});
+					'message': 'Error processing OTP',
+					'info': err
+				})
 			}
 			else {
-				if(existing_otp !== null) {
-					existing_otp.otp = otp_code;
-					saveOTP(existing_otp);
+				if(otp) {
+					var time_diff_last_otp = getTimeDiff(otp);
+					if(time_diff_last_otp > 86400000) {
+						genOtp(otp, true);
+					}
+					else if(time_diff_last_otp < 300000) {
+						res.send(400, {
+							'status': 'error',
+							'message': 'The OTP code has already been sent',
+							'info': 'The OTP code has already been sent'
+						})
+					}
+					else {
+						genOtp(otp, false);
+					}
 				}
 				else {
-					saveOTP(temp_otp);
+					genOtp(null, true);
 				}
 			}
-		});
+		})
+	}
 
-		function saveOTP (new_otp) {
+	function genOtp(otp_data, send_new) {
+		if(!otp_data) {
+			otp_data = {
+				'phone': phone,
+				'otp': keygen.number({length: 4})
+			}
+			otp_data = new OTP(otp_data);
+		}
+		else if(send_new) {
+				otp_data.otp = keygen.number({length: 4});
+		}
+		saveOtp(otp_data, send_new);
+	}
 
-			new_otp.save(function (err, new_otp) {
+	function saveOtp(otp_data, send_new) {
+		var otp_message = 'The Twyst OTP code is ';
+		if(!send_new) {
+			otp_message += otp_data.otp;
+			SMS.sendSms(phone, otp_message);
+			res.send(200, {
+				'status': 'success',
+				'message': 'The OTP code has been sent to you',
+				'info': 'The OTP code has been sent to you'
+			});
+		}
+		else {
+			otp_data.save(function (err) {
 				if(err) {
 					res.send(400, {
 						'status': 'error',
-						'message': 'Error saving OTP',
-						'info': JSON.stringify(err)
-					});
-				}
-				else {
-					var push_message = "The TWYST OTP code is " + otp_code;
-					SMS.sendSms(phone, push_message, 'OTP_MESSAGE');
-					res.send(200, {
-						'status': "success",
-						'message': "Successfully generated OTP",
-						'info': ""
+						'message': 'Error processing OTP',
+						'info': err
 					})
 				}
-			});
-		};
-	};
+				else {
+					otp_message += otp_data.otp;
+					SMS.sendSms(phone, otp_message);
+					res.send(200, {
+						'status': 'success',
+						'message': 'The OTP code has been sent to you',
+						'info': 'The OTP code has been sent to you'
+					});
+				}
+			})
+		}
+	}
+
+	function getTimeDiff(otp) {
+		return otp.created_at ? (Date.now() - new Date(otp.created_at)) : 0;
+	}
 }
 
 module.exports.updateDeviceId = function (req, res) { 
@@ -234,8 +264,6 @@ module.exports.updateDeviceId = function (req, res) {
 	            }
 
 	            var salt = buf.toString('hex');
-	            console.log(buf);
-	            console.log(salt);
 	            crypto.pbkdf2(password, salt, options.iterations, options.keylen, function(err, hashRaw) {
 	                if (err) {
 	                    res.send(400, {	
@@ -278,32 +306,4 @@ module.exports.updateDeviceId = function (req, res) {
 			'info': JSON.stringify(username)
 		})
 	}
-}
-
-function responder(phone, push_message) {
-
-	saveSentSms(phone, push_message);
-
-	var message = push_message.replace('&','n');
-	console.log(message);
-	var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
-	
-	http.post(send_sms_url, function(res){
-		console.log(res);
-	});
-}
-
-function saveSentSms (phone, message) {
-
-	var sms_log = {};
-	sms_log.phone = phone;
-	sms_log.message = message;
-
-	var sms_log = new SmsSentLog(sms_log);
-
-	sms_log.save(function (err) {
-		if(err) {
-			console.log(err);
-		}
-	});
 }
