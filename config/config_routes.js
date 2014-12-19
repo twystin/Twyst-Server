@@ -146,6 +146,7 @@ module.exports = function (app) {
         app.put('/api/v1/pass/forgot/:username', MailerCtrl.forgot);
         app.put('/api/v1/resend/validation/', MailerCtrl.validationEmail);
         app.post('/api/v1/sendfeedback', checkAuthenticated(), MailerCtrl.feedbackEmail);
+        app.post('/api/v3/sendfeedback', checkAuthenticated(), MailerCtrl.feedbackEmail);
     })();
 
     //Change password and reset passwords

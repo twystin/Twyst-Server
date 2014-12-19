@@ -173,7 +173,7 @@ module.exports.feedbackEmail = function(req,res){
 	var message = {
         text:     JSON.stringify(feedback),
         from:    "Admin <jayram@twyst.in>",
-        to:      'Hey'+' '+'<'+	'ar@twyst.in' +'>',
+        to:      '<ar@twyst.in>,<jayram@twyst.in>',
         subject: "Feedback from Twyst User"
 	};
 	server.send(message, function(err, message) {
