@@ -13,7 +13,7 @@ module.exports.getOTP = function (req, res) {
 		res.send(400, {
 			'status': 'error',
 			'message': 'Request incomplete',
-			'info': 'Phone number required for OTP'
+			'info': 'Phone number required for verification code'
 		})
 	}
 	else {
@@ -28,7 +28,7 @@ module.exports.getOTP = function (req, res) {
 			if(err) {
 				res.send(400, {
 					'status': 'error',
-					'message': 'Error processing OTP',
+					'message': 'Error processing verification',
 					'info': err
 				})
 			}
@@ -41,8 +41,8 @@ module.exports.getOTP = function (req, res) {
 					else if(time_diff_last_otp < 300000) {
 						res.send(400, {
 							'status': 'error',
-							'message': 'The OTP code has already been sent',
-							'info': 'The OTP code has already been sent'
+							'message': 'The verification code has already been sent',
+							'info': 'The verification code has already been sent'
 						})
 					}
 					else {
@@ -71,14 +71,14 @@ module.exports.getOTP = function (req, res) {
 	}
 
 	function saveOtp(otp_data, send_new) {
-		var otp_message = 'The Twyst OTP code is ';
+		var otp_message = 'Your Twyst verification code is ';
 		if(!send_new) {
 			otp_message += otp_data.otp;
 			SMS.sendSms(phone, otp_message);
 			res.send(200, {
 				'status': 'success',
-				'message': 'The OTP code has been sent to you',
-				'info': 'The OTP code has been sent to you'
+				'message': 'The verification code has been sent to you',
+				'info': 'The verification code has been sent to you'
 			});
 		}
 		else {
@@ -86,7 +86,7 @@ module.exports.getOTP = function (req, res) {
 				if(err) {
 					res.send(400, {
 						'status': 'error',
-						'message': 'Error processing OTP',
+						'message': 'Error processing verification code',
 						'info': err
 					})
 				}
@@ -95,8 +95,8 @@ module.exports.getOTP = function (req, res) {
 					SMS.sendSms(phone, otp_message);
 					res.send(200, {
 						'status': 'success',
-						'message': 'The OTP code has been sent to you',
-						'info': 'The OTP code has been sent to you'
+						'message': 'The verification code has been sent to you',
+						'info': 'The verification code has been sent to you'
 					});
 				}
 			})
@@ -120,7 +120,7 @@ module.exports.validateOtp = function (req, res) {
 		res.send(400, {
 			'status': 'error',
 			'message': 'Request has missing values.',
-			'info': 'Request requires phone and OTP code'
+			'info': 'Request requires phone and verification code'
 		});
 	};
 
@@ -133,15 +133,15 @@ module.exports.validateOtp = function (req, res) {
 			if(err) {
 				res.send(400, {
 					'status': 'error',
-					'message': 'Error getting OTP.',
+					'message': 'Error getting verification code',
 					'info': err
 				});
 			}
 			else if(!otp) {
 				res.send(400, {
 					'status': 'error',
-					'message': 'Incorrect OTP',
-					'info': 'Incorrect OTP'
+					'message': 'Incorrect verification code',
+					'info': 'Incorrect verification code'
 				});
 			}
 			else {
@@ -178,7 +178,7 @@ module.exports.validateOtp = function (req, res) {
 						res.send(200, {
 							'status': 'success',
 							'message': 'User registered successfull',
-							'info': 'OTP verification successfull'
+							'info': 'verification successfull'
 						});
 					}
 				})
@@ -186,8 +186,8 @@ module.exports.validateOtp = function (req, res) {
 			else {
 				res.send(200, {
 					'status': 'success',
-					'message': 'OTP verification successfull',
-					'info': 'OTP verification successfull'
+					'message': 'verification successfull',
+					'info': 'verification successfull'
 				});
 			}
 		})
