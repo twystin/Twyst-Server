@@ -216,7 +216,7 @@ module.exports.redeemApp = function (req, res) {
 					if(Utils.isClosed(outlet.business_hours)) {
 						res.send(400, { 
 							'status': 'error',
-				            'message': 'Outlet closed currently',
+				            'message': 'Voucher not available right now',
 				            'info': 'Invalid timing for redeem'
 				        });
 					}
