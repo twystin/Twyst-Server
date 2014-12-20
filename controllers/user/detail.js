@@ -237,7 +237,10 @@ function getInfo(outlet_id, cb) {
 
 function getTotalCheckinCount(outlet_id, cb) {
 	Checkin.count({
-		outlet: outlet_id
+		outlet: outlet_id,
+		checkin_type: {
+			$ne: 'BATCH'
+		}
 	}, function (err, count) {
 		cb(err, count);
 	})
