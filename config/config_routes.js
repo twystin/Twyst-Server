@@ -78,7 +78,8 @@ module.exports = function (app) {
         var SocialCtrl = require('../controllers/user/social');
         var FollowCtrl = require('../controllers/user/follow');
         var FeedbackCtrl = require('../controllers/user/feedback');
-        var CheckinCtrl = require('../controllers/checkins/qr/main')
+        var CheckinCtrl = require('../controllers/checkins/qr/main');
+        var RedeemCtrl = require('../controllers/redeem');
         app.get(Routes.USER_NEAR_V3, NearByCtrl.getNearby);
         app.post(Routes.USER_CHECKIN_V3, checkAuthenticated(), CheckinCtrl.checkin);
         app.get(Routes.USER_RECCO_V3, ReccoCtrl.getRecco);
@@ -89,6 +90,7 @@ module.exports = function (app) {
         app.post(Routes.USER_FOLLOW_V3, checkAuthenticated(), FollowCtrl.follow);
         app.post(Routes.USER_UNFOLLOW_V3, checkAuthenticated(), FollowCtrl.unfollow);
         app.post(Routes.USER_FEEDBACK_V3, checkAuthenticated(), FeedbackCtrl.save);
+        app.post(Routes.USER_VOUCHER_REDEEM_v3, checkAuthenticated(), RedeemCtrl.redeemApp);
     })();
 
     (function panel_route() {

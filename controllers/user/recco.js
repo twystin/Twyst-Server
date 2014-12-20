@@ -396,7 +396,7 @@ function buildDataObject(outlets, programs) {
 	outlets.forEach(function (o) {
 		var obj = {};
 		obj.outlet_summary = o;
-		obj.closed_now = CommonUtils.isOpen(obj.outlet_summary.business_hours);
+		obj.closed_now = CommonUtils.isClosed(obj.outlet_summary.business_hours);
 		obj.opensAt = null;
 		if(obj.closed_now) {
 			obj.opensAt = CommonUtils.opensAt(obj.outlet_summary.business_hours);

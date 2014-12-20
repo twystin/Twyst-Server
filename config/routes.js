@@ -14,7 +14,8 @@ var routes = {
 	USER_SOCIAL_v3: '/api/v3/social',
 	USER_FOLLOW_V3: '/api/v3/follow',
 	USER_UNFOLLOW_V3: '/api/v3/unfollow',
-	USER_FEEDBACK_V3: '/api/v3/feedback'
+	USER_FEEDBACK_V3: '/api/v3/feedback',
+	USER_VOUCHER_REDEEM_v3: '/api/v3/redeem/app'
 };
 
 module.exports = routes;

@@ -76,7 +76,7 @@ module.exports.save = function(req, res) {
 					'info': err
 				})
 			} else {
-				initEmail(req.user, feedback_obj);
+				//initEmail(req.user, feedback_obj);
 				res.send(200, {
 					'status': 'success',
 					'message': 'Saved the feedback',

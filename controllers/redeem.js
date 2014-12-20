@@ -1,6 +1,6 @@
 var mongoose = require('mongoose'),
 	_ = require('underscore'),
-	CommonUtilities = require('../common/utilities'),
+	Utils = require('../common/utilities'),
 	Reward = require('../models/reward_applicability'),
 	AutoCheckin = require('./checkins/auto_checkin'),
 	SMS = require('../common/smsSender');
@@ -55,10 +55,10 @@ module.exports.redeemPanel = function (req, res) {
 
 	function processRedeem(voucher) {
 		if (voucher.basics.type === 'WINBACK') {
-			redeemWinback(voucher);
+			redeemWinbackVoucher(voucher);
 		}
 		else if (!voucher.basics.type || voucher.basics.type === 'CHECKIN') {
-			redeemCheckin(voucher);
+			redeemCheckinVoucher(voucher);
 		}
 		else {
 			res.send(400, { 
@@ -69,7 +69,7 @@ module.exports.redeemPanel = function (req, res) {
 		}
 	}
 
-	function redeemWinback(voucher) {
+	function redeemWinbackVoucher(voucher) {
 		if(isExpired(voucher.validity.start_date, voucher.validity.end_date)) {
 			res.send(400, { 
 				'status': 'error',
@@ -101,7 +101,7 @@ module.exports.redeemPanel = function (req, res) {
 		}
 	}
 
-	function redeemCheckin(voucher) {
+	function redeemCheckinVoucher(voucher) {
 		var program = voucher.issue_details.program;
 		if(isExpired(program.validity.burn_start, program.validity.burn_end)) {
 			res.send(400, { 
@@ -147,7 +147,7 @@ function sendRedeemSmsToUser (voucher, user, used_at, used_time) {
     	_id: used_at
     }, function (err, outlet) {
     	if(outlet) {
-    		var message = 'Voucher code '+ voucher.basics.code +' redeemed at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(used_time)) +' at '+ date.getHours() + ':' + date.getMinutes() +'. Keep checking-in at '+ outlet.basics.name +' on Twyst for more rewards! Get Twyst http://twy.st/app';
+    		var message = 'Voucher code '+ voucher.basics.code +' redeemed at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(used_time)) +' at '+ date.getHours() + ':' + date.getMinutes() +'. Keep checking-in at '+ outlet.basics.name +' on Twyst for more rewards! Get Twyst http://twy.st/app';
     		SMS.sendSms(user.phone, message, 'VOUCHER_REDEEM_MESSAGE');
     	}
     });
@@ -158,7 +158,7 @@ function redeemVoucher(voucher, used_at, used_time, cb) {
 	voucher.basics.type = voucher.basics.type || 'CHECKIN';
 	voucher.used_details.used_at = used_at;
 	voucher.used_details.used_by = voucher.issue_details.issued_to;
-	voucher.used_details.used_time = CommonUtilities.setCurrentTime(used_time);
+	voucher.used_details.used_time = Utils.setCurrentTime(used_time);
 	voucher.used_details.used_date = Date.now();
 	voucher.save(function (err) {
 		cb(err);
@@ -180,4 +180,161 @@ function getVoucher(q, cb) {
     .exec(function(err,voucher) {
     	cb(err, voucher);
     });
+}
+
+function getOutlet(q, cb) {
+	Outlet.findOne(q, function (err, outlet) {
+		cb(err, outlet);
+	})
+}
+
+module.exports.redeemApp = function (req, res) {
+	var code = req.body.code,
+		used_at = req.body.used_at,
+		used_time = new Date();
+
+	if(code && used_at) {
+		getOutlet({
+			_id: used_at
+		}, function (err, outlet) {
+			if(err) {
+				res.send(400, { 
+					'status': 'error',
+		            'message': 'Error getting outlet',
+		            'info': err
+		        });
+			}
+			else {
+				if(!outlet) {
+					res.send(400, { 
+						'status': 'error',
+			            'message': 'Error getting outlet',
+			            'info': 'Invalid outlet'
+			        });
+				}
+				else {
+					if(Utils.isClosed(outlet.business_hours)) {
+						res.send(400, { 
+							'status': 'error',
+				            'message': 'Outlet closed currently',
+				            'info': 'Invalid timing for redeem'
+				        });
+					}
+					else {
+						initRedeem();
+					}
+				}
+			}
+		})
+	}
+	else {
+		res.send(400, { 
+			'status': 'error',
+            'message': 'Request has missing values',
+            'info': 'Request has missing values'
+        });
+	}
+
+	function initRedeem() {
+		var q = {
+			'basics.code': code,
+			'issue_details.issued_at': used_at,
+			'issue_details.issued_to': req.user._id
+		};
+
+		getVoucher(q, function (err, voucher) {
+			if(err) {
+				res.send(400, { 
+					'status': 'error',
+		            'message': 'Error getting voucher',
+		            'info': err
+		        });
+			}
+			else {
+				if(!voucher) {
+					res.send(400, { 
+						'status': 'error',
+			            'message': 'Invalid voucher code',
+			            'info': 'Invalid voucher code'
+			        });
+				}
+				else {
+					processRedeem(voucher);
+				}
+			}
+		});
+	}
+
+	function processRedeem(voucher) {
+		if (voucher.basics.type === 'WINBACK') {
+			redeemWinbackVoucher(voucher);
+		}
+		else if (!voucher.basics.type || voucher.basics.type === 'CHECKIN') {
+			redeemCheckinVoucher(voucher);
+		}
+		else {
+			res.send(400, { 
+				'status': 'error',
+	            'message': 'Invalid voucher code',
+	            'info': 'Invalid voucher code'
+	        });
+		}
+	}
+
+	function redeemWinbackVoucher(voucher) {
+		if(isExpired(voucher.validity.start_date, voucher.validity.end_date)) {
+			res.send(400, { 
+				'status': 'error',
+	            'message': 'Expired voucher code',
+	            'info': 'Expired voucher code'
+	        });
+		}
+		else {
+			redeemVoucher(voucher, used_at, used_time, function (err) {
+				if(err) {
+					res.send(400, { 
+						'status': 'error',
+			            'message': 'Error redeeming voucher',
+			            'info': err
+			        });
+				}
+				else {
+	                res.send(200, { 
+						'status': 'success',
+			            'message': 'Successfully redeemed voucher',
+			            'info': 'Successfully redeemed voucher'
+			        });
+				}
+			})
+		}
+	}
+
+	function redeemCheckinVoucher(voucher) {
+		var program = voucher.issue_details.program;
+		if(isExpired(program.validity.burn_start, program.validity.burn_end)) {
+			res.send(400, { 
+				'status': 'error',
+	            'message': 'Expired voucher code',
+	            'info': 'Expired voucher code'
+	        });
+		}
+		else {
+			redeemVoucher(voucher, used_at, used_time, function (err) {
+				if(err) {
+					res.send(400, { 
+						'status': 'error',
+			            'message': 'Error redeeming voucher',
+			            'info': err
+			        });
+				}
+				else {
+	                res.send(200, { 
+						'status': 'success',
+			            'message': 'Successfully redeemed voucher',
+			            'info': 'Successfully redeemed voucher'
+			        });
+				}
+			})
+		}
+	}
 }

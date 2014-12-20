@@ -310,7 +310,7 @@ module.exports.publicview = function(req,res) {
 		    	getRewards(outlet_id, callback);
 		    }
 		}, function(err, results) {
-			results.closed_now = CommonUtilities.isOpen(results.OUTLET.business_hours);
+			results.closed_now = CommonUtilities.isClosed(results.OUTLET.business_hours);
 			results.opensAt = null;
 			if(results.closed_now) {
 				results.opensAt = CommonUtilities.opensAt(results.OUTLET.business_hours);

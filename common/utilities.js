@@ -22,7 +22,7 @@ module.exports.shuffleArray = function(array) {
     return array;
 }
 
-module.exports.isOpen = function (business_hours) {
+module.exports.isClosed = function (business_hours) {
     var days = [ 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     if(!business_hours) {
         return false;
