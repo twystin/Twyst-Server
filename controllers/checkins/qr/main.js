@@ -313,7 +313,7 @@ function isValidCheckin(phone, outlet_id, cb) {
 }
 
 function isOutletClosed(outlet) {
-	return Utils.isOpen(outlet.business_hours);
+	return Utils.isClosed(outlet.business_hours);
 }
 
 function isUsedTooMany(qr) {

@@ -62,7 +62,7 @@ function getInfo(active_vouchers, lat, lon) {
 		temp_obj.off_now = false;
 		temp_obj.avail_in = null
 		if(active_vouchers[i].issue_details.issued_for) {
-			temp_obj.off_now = CommonUtils.isOpen(active_vouchers[i].issue_details.issued_for.avail_hours);
+			temp_obj.off_now = CommonUtils.isClosed(active_vouchers[i].issue_details.issued_for.avail_hours);
 			if(temp_obj.off_now) {
 				temp_obj.avail_in = CommonUtils.opensAt(active_vouchers[i].issue_details.issued_for.avail_hours);
 			}

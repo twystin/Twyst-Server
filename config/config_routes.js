@@ -60,6 +60,15 @@ module.exports = function (app) {
         app.delete('/api/v3/winback/:winback_id', checkAuthenticated(), WinbackCtrl.delete);
     })();
 
+    (function birthanniv_route () {
+        var BirthAnnivCtrl = require('../controllers/programs/birthanniv');
+        app.post('/api/v3/birthanniv', checkAuthenticated(), BirthAnnivCtrl.create);
+        app.get('/api/v3/birthanniv', checkAuthenticated(), BirthAnnivCtrl.read);
+        app.get('/api/v3/birthanniv/:birthanniv_id', checkAuthenticated(), BirthAnnivCtrl.readOne);
+        app.put('/api/v3/birthanniv', checkAuthenticated(), BirthAnnivCtrl.update);
+        app.delete('/api/v3/birthanniv/:birthanniv_id', checkAuthenticated(), BirthAnnivCtrl.delete);
+    })();
+
     (function v3_user_data_routes () {
         var NearByCtrl = require('../controllers/user/nearBy');
         var ReccoCtrl = require('../controllers/user/recco');
@@ -69,7 +78,8 @@ module.exports = function (app) {
         var SocialCtrl = require('../controllers/user/social');
         var FollowCtrl = require('../controllers/user/follow');
         var FeedbackCtrl = require('../controllers/user/feedback');
-        var CheckinCtrl = require('../controllers/checkins/qr/main')
+        var CheckinCtrl = require('../controllers/checkins/qr/main');
+        var RedeemCtrl = require('../controllers/redeem');
         app.get(Routes.USER_NEAR_V3, NearByCtrl.getNearby);
         app.post(Routes.USER_CHECKIN_V3, checkAuthenticated(), CheckinCtrl.checkin);
         app.get(Routes.USER_RECCO_V3, ReccoCtrl.getRecco);
@@ -80,6 +90,7 @@ module.exports = function (app) {
         app.post(Routes.USER_FOLLOW_V3, checkAuthenticated(), FollowCtrl.follow);
         app.post(Routes.USER_UNFOLLOW_V3, checkAuthenticated(), FollowCtrl.unfollow);
         app.post(Routes.USER_FEEDBACK_V3, checkAuthenticated(), FeedbackCtrl.save);
+        app.post(Routes.USER_VOUCHER_REDEEM_v3, checkAuthenticated(), RedeemCtrl.redeemApp);
     })();
 
     (function panel_route() {
