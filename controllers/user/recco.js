@@ -1,13 +1,14 @@
-var mongoose = require("mongoose");
-var Outlet = mongoose.model('Outlet');
-var Program = mongoose.model('Program');
-var Checkin = mongoose.model('Checkin');
-var Voucher = mongoose.model('Voucher');
-var Follow = mongoose.model('Favourite');
-var Reward = mongoose.model('Reward');
-var async = require('async');
-var _ = require("underscore");
-var CommonUtils = require('../../common/utilities');
+var mongoose = require("mongoose"),
+	async = require('async'),
+	_ = require("underscore"),
+	CommonUtils = require('../../common/utilities');
+var Outlet = mongoose.model('Outlet')
+	Program = mongoose.model('Program'),
+	Checkin = mongoose.model('Checkin'),
+	Voucher = mongoose.model('Voucher'),
+	Follow = mongoose.model('Favourite'),
+	Reward = mongoose.model('Reward');
+
 
 module.exports.getRecco = function (req, res) {
 	var lat = req.query.lat || 28.47178,
@@ -252,8 +253,14 @@ function getMyFollows(user, callback) {
 
 function getMyRewards(user, callback) {
 	var q = {
+		'basics.status': 'active',
 		'issue_details.issued_to': user._id,
-		'basics.status': 'active'
+		'validity.start_date': {
+			$lt: new Date()
+		},
+		'validity.end_date': {
+			$gt: new Date()
+		}
 	};
 	Voucher.find(q, function (err, results) {
 		callback(null, results || []);
