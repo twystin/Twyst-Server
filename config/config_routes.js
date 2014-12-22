@@ -47,7 +47,7 @@ module.exports = function (app) {
     })();
 
     (function reward_route () {
-        var RewardCtrl = require('../controllers/rewardPopulate');
+        var RewardCtrl = require('../controllers/reward_populate');
         app.get('/api/v3/reward_details/:program_id', RewardCtrl.readOne);
     })();
 
@@ -383,11 +383,11 @@ module.exports = function (app) {
         var TierCtrl = require('../controllers/tier');
         var OfferCtrl = require('../controllers/offer');
         app.post('/api/v1/add/tiers/:program_id', checkAuthenticated(), checkRole(4), TierCtrl.addTier);
-        app.post('/api/v1/add/offers/:tier_id', checkAuthenticated(), checkRole(4), OfferCtrl.addOffer);
+        app.post('/api/v1/offers', checkAuthenticated(), checkRole(4), OfferCtrl.addOffer);
         app.put('/api/v1/tiers/:tier_id', checkAuthenticated(), checkRole(4), TierCtrl.update);
-        app.put('/api/v1/offers/:offer_id', checkAuthenticated(), checkRole(4), OfferCtrl.update);
+        app.put('/api/v1/offers', checkAuthenticated(), checkRole(4), OfferCtrl.update);
         app.delete('/api/v1/delete/tier/:tier_id', checkAuthenticated(), checkRole(4), TierCtrl.deleteTier);
-        app.delete('/api/v1/delete/offer/:offer_id', checkAuthenticated(), checkRole(4), OfferCtrl.deleteOffer);
+        app.delete('/api/v1/offer/:offer_id', checkAuthenticated(), checkRole(4), OfferCtrl.delete);
     })();
 
     (function offer_routes() {

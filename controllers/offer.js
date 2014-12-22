@@ -21,9 +21,9 @@ module.exports.read = function(req,res) {
 };
 
 module.exports.addOffer = function(req,res) {
-	var tier_id = req.params.tier_id;
+	var tier_id = req.body.tier_id;
 	var created_offer = {};
-	created_offer = _.extend(created_offer, req.body);
+	created_offer = _.extend(created_offer, req.body.offer);
 	var offer = new Offer(created_offer);
 
 	offer.save(function(err, offer) {
@@ -82,29 +82,31 @@ module.exports.query = function(req,res) {
 
 module.exports.update = function(req,res) {
 	var updated_offer = {};
-	updated_offer = _.extend(updated_offer, req.body);
+	updated_offer = _.extend(updated_offer, req.body.offer);
 	delete updated_offer._id;
 	Offer.findOneAndUpdate(
-							{_id:req.params.offer_id}, 
-							{$set: updated_offer },
-							{upsert:true},
-							function(err,offer) {
-								if (err) {
-									res.send(400,{'status': 'error',
-												'message': 'Error updating offer ' + req.params.offer_id,
-												'info': JSON.stringify(err)
-									});
-								} else {
-									res.send(200, { 'status': 'success',
-												'message': 'Successfully updated offer',
-												'info': JSON.stringify(offer)
-									});
-								}
-							});
+		{_id:req.body.offer_id}, 
+		{$set: updated_offer },
+		{upsert:true},
+		function(err,offer) {
+		if (err) {
+			res.send(400,{'status': 'error',
+						'message': 'Error updating offer ' + req.body.offer_id,
+						'info': JSON.stringify(err)
+			});
+		} else {
+			res.send(200, { 'status': 'success',
+						'message': 'Successfully updated offer',
+						'info': JSON.stringify(offer)
+			});
+		}
+	});
 };
 
-module.exports.deleteOffer = function(req,res) {
-    Offer.findOneAndRemove({_id: req.params.offer_id}, function(err){
+module.exports.delete = function(req,res) {
+    Offer.findOneAndRemove({
+    	_id: req.params.offer_id
+    }, function(err){
 		if (err) {
 			res.send(400, {'status': 'error',
 						'message': 'Error deleting offer',

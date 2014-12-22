@@ -1,9 +1,10 @@
-var mongoose = require('mongoose');
-var Outlet = mongoose.model('Outlet');
-var Program = mongoose.model('Program');
-var async = require('async');
-
-var CacheCtrl = require('../cacheCtrl.js');
+var mongoose = require('mongoose'),
+	async = require('async'),
+	CacheCtrl = require('../cacheCtrl'),
+	RewardCtrl = require('../reward_populate');
+var Outlet = mongoose.model('Outlet'),
+	Reward = mongoose.model('Reward'),
+	Program = mongoose.model('Program');
 
 module.exports.changeOutletStatus = function (req, res) {
 	if(!req.body.outlet) {
@@ -60,7 +61,7 @@ module.exports.changeOutletStatus = function (req, res) {
 }
 
 module.exports.changeProgramStatus = function (req, res) {
-	if(!req.body.program) {
+	if(!req.body.program_id || !req.body.status) {
 		res.send(400, {
 	    	'status' : 'error',
             'message' : 'Request incomplete.',
@@ -72,7 +73,9 @@ module.exports.changeProgramStatus = function (req, res) {
 	}
 
 	function changeStatus() {
-		Program.findOne({_id: req.body.program._id}, function (err, program) {
+		Program.findOne({
+			_id: req.body.program_id
+		}, function (err, program) {
 			if(err) {
 				res.send(400, {
 			    	'status' : 'error',
@@ -89,22 +92,33 @@ module.exports.changeProgramStatus = function (req, res) {
 		            });
 				}
 				else {
-					program.status = req.body.program.status;
+					program.status = req.body.status;
 					program.save(function (err) {
 						if(err) {
 							res.send(400, {
 						    	'status' : 'error',
-				                'message' : 'Error getting program.',
+				                'message' : 'Error updating status',
 				                'info': err
 				            });
 						}
 						else {
 							CacheCtrl.clear();
-							res.send(200, {
-						    	'status' : 'success',
-				                'message' : 'successfully updated status.',
-				                'info': ''
-				            });
+							RewardCtrl.createRewardTable(program._id, function (err, data) {
+								if(err) {
+									res.send(200, {
+								    	'status' : 'error',
+						                'message' : 'Updated status, Reward table error',
+						                'info': err
+						            });
+								}
+								else {
+									res.send(200, {
+								    	'status' : 'success',
+						                'message' : 'successfully updated status, populated reward',
+						                'info': ''
+						            });
+								}
+							})
 						}
 					});
 				}
