@@ -1,11 +1,12 @@
-var mongoose = require('mongoose');
-var Program = mongoose.model('Program');
-var Offer = mongoose.model('Offer');
-var Tier = mongoose.model('Tier');
-var Tag = mongoose.model('Tag');
-var _ = require('underscore');
-var async = require('async');
-var TagCtrl = require('../controllers/tag');
+var mongoose = require('mongoose'),
+	_ = require('underscore'),
+	async = require('async'),
+	TagCtrl = require('./tag'),
+	VoucherCtrl = require('./voucher');
+var Program = mongoose.model('Program'),
+	Offer = mongoose.model('Offer'),
+	Tier = mongoose.model('Tier'),
+	Tag = mongoose.model('Tag');
 
 var program = {};
 var errs = [];
@@ -308,8 +309,8 @@ module.exports.update = function(req,res) {
 						'message': 'Error saving program',
 						'info': JSON.stringify(err)
 			});
-		} else {
-			if(program !== null) {
+		} else { 
+			if(program) {
 				program.name = updated_program.name;
 				program.outlets = updated_program.outlets;
 				program.status = updated_program.status;
@@ -324,13 +325,29 @@ module.exports.update = function(req,res) {
 									'message': 'Error saving program',
 									'info': JSON.stringify(err)
 						});
-						console.log(err);
 					}
 					else {
-						res.send(200, {	'status': 'success',
-									'message': 'Saved program',
-									'info': ''
-						});
+						var validity = {
+							start_date: program.validity.burn_start,
+							end_date: program.validity.burn_end
+						}
+						VoucherCtrl.updateValidity(program._id, validity, function (err, num ) {
+							if(err) {
+								res.send(200, {	
+									'status': 'success',
+									'message': 'Saved program, voucher update error',
+									'info': err
+								});
+							}
+							else {
+								res.send(200, {	
+									'status': 'success',
+									'message': 'Saved program, updated validity for vouchers',
+									'info': num
+								});
+							}
+						})
+						
 					};
 				});
 			}

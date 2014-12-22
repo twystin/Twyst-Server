@@ -1,14 +1,25 @@
-var mongoose = require('mongoose');
-var Voucher = mongoose.model('Voucher');
-var Account = mongoose.model('Account');
-var Program = mongoose.model('Program');
-var Outlet = mongoose.model('Outlet');
-var Checkin = mongoose.model('Checkin');
-var AutoCheckin = require('./checkins/auto_checkin');
+var mongoose = require('mongoose'),
+    async = require('async'),
+    _ = require('underscore'),
+    AutoCheckin = require('./checkins/auto_checkin');
+var Voucher = mongoose.model('Voucher'),
+    Account = mongoose.model('Account'),
+    Program = mongoose.model('Program'),
+    Outlet = mongoose.model('Outlet'),
+    Checkin = mongoose.model('Checkin');
 
-var async = require('async');
-
-var _ = require('underscore');
+module.exports.updateValidity = function (program_id, validity, cb) {
+    Voucher.update({
+        'issue_details.program': program_id,
+        'basics.status': 'active'
+    }, {
+        validity: validity
+    }, {
+        multi: true
+    }).exec(function (err, num) {
+        cb(err, num)
+    })
+}
 
 module.exports.read = function(req, res) {
     var code = req.params.code;
