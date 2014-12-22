@@ -317,6 +317,7 @@ function computeReccoWeight(object_set, checkin_data, lat, lon) {
 			o.outlet_summary) * 100 / checkin_data.total_checkins;
 		o.distance = calculateDistance(o.outlet_summary, lat, lon)
 		o.total = o.popularity + (100 - o.distance);
+		o.total *= -1;
 	});
 	return object_set;
 }
