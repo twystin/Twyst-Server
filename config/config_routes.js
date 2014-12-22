@@ -96,12 +96,13 @@ module.exports = function (app) {
     (function panel_route() {
         
         var PanelCtrl = require('../controllers/checkins/panel/main');
+        var BatchCtrl = require('../controllers/checkins/panel/batch');
         var PosCtrl = require('../controllers/checkins/panel/pos');
         var AllCheckinCtrl = require('../controllers/analytics/checkins');
         var AllVoucherCtrl = require('../controllers/analytics/vouchers');
         app.post('/api/v2/pos_checkins', PosCtrl.poscheckin);
         app.post('/api/v2/checkins', checkAuthenticated(), PanelCtrl.checkin);
-        app.post('/api/v2/batch_checkins', PanelCtrl.checkin);
+        app.post('/api/v3/batch_checkins', BatchCtrl.checkin);
         app.get('/api/v2/allcheckins/:outlet/:program', checkAuthenticated(),  AllCheckinCtrl.getCheckins);
         app.get('/api/v2/allvouchers/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getVouchers);
         app.get('/api/v2/allredeems/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getRedeems);

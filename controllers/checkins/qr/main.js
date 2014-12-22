@@ -252,6 +252,7 @@ function updateQrUsed(qr) {
 
 function getMatchedReward(reward, count) {
 	count = count || 0;
+	count += 1;
 	for (var i = 0; i < reward.rewards.length; i++) {
         if(reward.rewards[i].count > count) {
 	        return reward.rewards[i];
