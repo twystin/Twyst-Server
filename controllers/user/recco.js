@@ -255,12 +255,18 @@ function getMyRewards(user, callback) {
 	var q = {
 		'basics.status': 'active',
 		'issue_details.issued_to': user._id,
-		'validity.start_date': {
-			$lt: new Date()
-		},
-		'validity.end_date': {
-			$gt: new Date()
-		}
+		$and: [
+			{
+				'validity.start_date': {
+					$lt: new Date()
+				},
+			},
+			{
+				'validity.end_date': {
+					$gt: new Date()
+				}
+			}		
+		]
 	};
 	Voucher.find(q, function (err, results) {
 		callback(null, results || []);

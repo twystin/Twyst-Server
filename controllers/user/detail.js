@@ -103,7 +103,7 @@ function getActiveReward(reward, count) {
 function getOtherInfo(user, result, cb) {
 	async.parallel({
 	    active_rewards: function(callback) {
-	    	getActiveRewards(user, function (has_active) {
+	    	getActiveRewards(user, result, function (has_active) {
 	    		callback(null, has_active);
 	    	});
 	    },
@@ -152,20 +152,27 @@ function getCheckinCount(user, result, cb) {
 	}
 }
 
-function getActiveRewards(user, cb) {
-	if(!user) {
+function getActiveRewards(user, result, cb) {
+	if(!user || !result.outlet_details) {
 		cb([]);
 	}
 	else {
 		Voucher.find({
 			'basics.status': 'active',
 			'issue_details.issued_to': user._id,
-			'validity.start_date': {
-				$lt: new Date()
-			},
-			'validity.end_date': {
-				$gt: new Date()
-			}
+			'issue_details.issued_at': result.outlet_details._id,
+			$and: [
+				{
+					'validity.start_date': {
+						$lt: new Date()
+					},
+				},
+				{
+					'validity.end_date': {
+						$gt: new Date()
+					}
+				}		
+			]
 		}, function (err, vouchers) {
 			cb(vouchers || []);
 		})
