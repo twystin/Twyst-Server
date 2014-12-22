@@ -10,9 +10,10 @@ var Checkin = mongoose.model('Checkin'),
 
 module.exports.checkin = function(req, res) {
 	var phone = req.body.phone,
-		outlet_id = req.body.outlet_id,
+		outlet_id = req.body.outlet,
 		user = null,
-		message = req.body.message; 
+		message = req.body.message,
+		location = req.body.location; 
 	if(!phone || !outlet_id || !message) {
 		res.send(400, {	
 			'status': 'error',
@@ -110,7 +111,7 @@ module.exports.checkin = function(req, res) {
 			checkin_program: reward.program._id,
 			checkin_tier: applicable_reward.tier,
 			checkin_for: applicable_reward.offer,
-			location: 'DINE_IN',
+			location: location,
 			checkin_type: 'BATCH',
 			checkin_code: 'BATCH'
 		};
