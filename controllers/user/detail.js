@@ -103,7 +103,7 @@ function getActiveReward(reward, count) {
 function getOtherInfo(user, result, cb) {
 	async.parallel({
 	    active_rewards: function(callback) {
-	    	getActiveRewards(user, result, function (has_active) {
+	    	getActiveRewards(user, function (has_active) {
 	    		callback(null, has_active);
 	    	});
 	    },
@@ -152,8 +152,8 @@ function getCheckinCount(user, result, cb) {
 	}
 }
 
-function getActiveRewards(user, result, cb) {
-	if(!user || !result.programs_details) {
+function getActiveRewards(user, cb) {
+	if(!user) {
 		cb([]);
 	}
 	else {
@@ -273,32 +273,6 @@ function getProgram(outlet_id, cb) {
 		outlets: outlet_id,
 		status: 'active'
 	}, function (err, program) {
-		if(err || !program) {
-			cb(err, program);
-		}
-		else {
-			populateTiers(program, function (err, populated_program) {
-				cb(err, populated_program);
-			})
-		}
-	})
-}
-
-function populateTiers(program, cb) {
-	Tier.find({
-		_id: {
-			$in: program.tiers
-		}
-	})
-	.populate('offers')
-	.exec(function (err, tiers) {
-		if(err) {
-			cb(err, program);
-		}
-		else {
-			program = program.toObject();
-			program.tiers = tiers;
-			cb(null, program);
-		}
+		cb(err, program);
 	})
 }
