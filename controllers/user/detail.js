@@ -158,8 +158,14 @@ function getActiveRewards(user, result, cb) {
 	}
 	else {
 		Voucher.find({
-			'issue_details.program': result.programs_details._id,
-			'issue_details.issued_to': user._id
+			'basics.status': 'active',
+			'issue_details.issued_to': user._id,
+			'validity.start_date': {
+				$lt: new Date()
+			},
+			'validity.end_date': {
+				$gt: new Date()
+			}
 		}, function (err, vouchers) {
 			cb(vouchers || []);
 		})
