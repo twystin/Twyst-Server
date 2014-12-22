@@ -280,8 +280,8 @@ function hasActiveRewards(outlet, cb) {
 }
 
 function isValidCheckin(phone, outlet_id, cb) {
-	var cap_time_six_hours = new Date(Date.now() -  10 * 1000),
-		cap_time_five_minutes = new Date(Date.now() - 10 * 1000);
+	var cap_time_six_hours = new Date(Date.now() -  21600000),
+		cap_time_five_minutes = new Date(Date.now() - 300000);
 	Checkin.findOne({
 		phone: phone,
 		created_date: {
@@ -323,7 +323,7 @@ function isUsedTooMany(qr) {
 	return true;
 }
 
-function isExpired(qr) {
+function isExpired(qr) { 
 	if(new Date(qr.validity.start) < new Date() 
 		&& new Date(qr.validity.end) > new Date()) {
 		return false;
