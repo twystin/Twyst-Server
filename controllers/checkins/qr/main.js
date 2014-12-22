@@ -176,7 +176,7 @@ module.exports.checkin = function(req, res) {
 				updateQrUsed(qr);
 				var success_obj = {
 					outlet: qr.outlet_id,
-					reward_distance: applicable_reward.count - (count + 1),
+					reward_distance: (applicable_reward.count - 1) - (count + 1),
 					reward: applicable_reward
 				}
 				if(success_obj.reward_distance === 0) {
