@@ -286,6 +286,10 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			if(outlet.basics.slug === 'fruitpress') {
 				message.checkin += " Enjoy all new winter specials at Fruit Press – hot chai, coffee, soups and more!";
 			}
+			if(outlet.basics.slug === 'strikerpubbrewery'
+				|| outlet.basics.slug === 'strikerpubkitchen') {
+				message.checkin += " Adda by Striker at Sec-29 now open! Call 9811118182 for details.";
+			}
 			sms.checkin = false;
 			sms.reward = false;
 
