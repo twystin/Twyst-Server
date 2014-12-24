@@ -1,7 +1,9 @@
 'use strict';
-var mongoose = require('mongoose');
+var fs = require('fs'),
+	_ = require('underscore'),
+	mongoose = require('mongoose'),
+	Handlebars = require('handlebars');
 var Account = mongoose.model('Account');
-var _ = require('underscore');
 
 module.exports.login = function (req, res) {
     res.send(200, {
@@ -201,6 +203,63 @@ module.exports.findUserByPhone = function (req, res) {
 						'info': JSON.stringify(user)
 					});
 				}
+			}
+		});
+	}
+}
+
+module.exports.verifyEmail = function (req, res) {
+	var token = req.params.token,
+		message = null;
+	if(!token) {
+		message = 'Sorry, The link is invalid.'
+		sendTemplate(message);
+	}
+	else {
+		Account.findOne({
+			'validated.email_validated.token': token
+		}).exec(function (err, user) {
+			if(err) {
+				message = 'Sorry, Error verifying email.'
+				sendTemplate(message);
+			}
+			else {
+				if(user) {
+					user.validated.email_validated.status = true;
+					user.save(function (err) {
+						if(err) {
+							message = 'Sorry, Error verifying email.'
+							sendTemplate(message);
+						}
+						else {
+							message = 'Thanks, Your email address has been verified.';
+							sendTemplate(message);
+						}
+					})
+				}
+				else {
+					message = 'Sorry, The link is invalid.';
+					sendTemplate(message);
+				}
+			}
+		});
+	}
+
+	function sendTemplate(message) {
+		fs.readFile("./templates/email_verify.handlebars", 
+		'utf8', 
+		function (err, data) {
+			var template_data = {
+				message: null
+			}
+			if(err) {
+				template_data.message = 'Sorry, Error verifying email.'
+			}
+			else {
+				template_data.message = message;
+				var template = Handlebars.compile(data);
+				template = template(template_data);
+				res.send(template)
 			}
 		});
 	}

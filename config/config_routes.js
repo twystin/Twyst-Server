@@ -180,6 +180,7 @@ module.exports = function (app) {
         var AccountCtrl = require('../controllers/account'),
             MailerCtrl = require('../controllers/mailer'),
             CommonUtilities = require('../common/utilities');
+        app.get('/verify_email/:token', AccountCtrl.verifyEmail);
         app.post('/api/v1/auth/login', function (req, res, next) {
             var onlyNumbers = /^[0-9+]*$/;
             if(onlyNumbers.test(req.body.username) && onlyNumbers.test(req.body.password)) {
