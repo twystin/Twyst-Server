@@ -216,7 +216,7 @@
                             <td valign="middle" width="270" style="padding: 10px 0 10px 20px;" class="logo">
                               <div class="imgpop">
                                 <a href="#">
-                                  <img src="http://twyst.in/home/assets/img/twyst_logo_2.png" width="100" border="0" style="display:block; border:none; outline:none; text-decoration:none;" st-image="edit" class="logo" id="zno0rrmvzuuwhfr">
+                                  <img src="http://twyst.in/home/assets/img/twyst_logo_2.png" width="100" alt="logo" border="0" style="display:block; border:none; outline:none; text-decoration:none;" st-image="edit" class="logo" id="zno0rrmvzuuwhfr">
                                 </a>
                               </div>
                             </td>
@@ -279,7 +279,7 @@
                           <tr>
                             <td style="font-family: Helvetica, arial, sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 20px;" st-title="rightimage-title">
                               <p>
-                                Hi {{owner_name}},
+                                Hi {{#if user_email}}{{merchant_name}}{{else}} User{{/if}},
                               </p>
                             </td>
                           </tr>
@@ -305,22 +305,20 @@
                                   .
                                 </span>
                               </p>
-                              <br/>
                               <p>
                                 <span style="text-decoration: underline;">
                                   <strong>
                                     <span style="color: rgb(96, 96, 96); font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 15px; line-height: 22.5px; text-decoration: underline;">
-                                      User Comment: {{feedback_type}}
+                                      User Comment
                                     </span>
                                   </strong>
                                 </span>
                               </p>
                               <p>
                                 <span style="color: rgb(96, 96, 96); font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 15px; line-height: 22.5px;">
-                                  {{feedback_comment}}
+                                  {{comment}}
                                 </span>
                               </p>
-                              <br/>
                               <p>
                                 <span style="text-decoration: underline;">
                                   <strong>
@@ -331,10 +329,12 @@
                                 </span>
                               </p>
                               <p>
+                                {{#if user_email}}
                                 <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
                                   Email id: {{user_email}}
                                 </span>
                                 <br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
+                                {{/if}}
                                 <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
                                   Phone Number: {{user_phone}}
                                 </span>
@@ -344,11 +344,11 @@
                                 </span>
                                 <br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
                                 <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;margin-left: 15px;">
-                                  This outlet: {{outlet_checkins}}
+                                  At this outlet: {{checkins.here}}
                                 </span>
                                 <br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
                                 <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;margin-left: 15px;">
-                                  All your outlets: {{across_outlet_checkins}}
+                                  At all your outlets: {{checkins.all}}
                                 </span>
                               </p>
                               <br/>
@@ -371,6 +371,7 @@
                             </td>
                           </tr>
                           <!-- button -->
+                          {{#if user_email}}
                           <tr>
                             <td>
                               <table height="30" align="left" valign="middle" border="0" cellpadding="0" cellspacing="0" class="tablet-button" st-button="edit" style="border-radius: 4px; font-size: 13px; font-family: Helvetica, arial, sans-serif; text-align: center; color: rgb(255, 255, 255); font-weight: 300; padding-left: 18px; padding-right: 18px; background-color: rgb(246, 145, 30); background-clip: padding-box;" bgcolor="#f6911e">
@@ -379,8 +380,8 @@
                                     <td style="padding-left:18px; padding-right:18px;font-family:Helvetica, arial, sans-serif; text-align:center;  color:#ffffff; font-weight: 300;" width="auto" align="center" valign="middle" height="30">
                                       <span style="color: #ffffff; font-weight: 300;">
                                         
-                                        <a style="color: #ffffff; text-align:center;text-decoration: none;" href="mailto:{{user_email}}?subject=Reply for Twyst feedback&cc=contactus@twyst.in" st-content="read-more-button" tabindex="-1">
-                                          Click here to respond to Customer
+                                        <a style="color: #ffffff; text-align:center;text-decoration: none;" href="mailto:{{user_email}}?cc=contactus@twyst.in" st-content="read-more-button" tabindex="-1">
+                                          Reply to the customer
                                         </a>
                                       </span>
                                     </td>
@@ -389,6 +390,7 @@
                               </table>
                             </td>
                           </tr>
+                          {{/if}}
                           <!-- /button -->
                           <!-- Spacing -->
                           <tr>
