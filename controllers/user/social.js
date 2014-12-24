@@ -44,7 +44,7 @@ module.exports.update = function (req, res) {
 					if(key === 'email' 
 						&& user.social_graph
 						&& user.social_graph.email
-						&& user.social_graph[email].email) {
+						&& user.social_graph[key].email) {
 						secret_code = keygen.session_id();
 						user.validated = user.validated || {};
 						user.validated.email_validated = user.validated.email_validated || {};
