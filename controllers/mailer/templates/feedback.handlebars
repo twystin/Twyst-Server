@@ -1,413 +1,212 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
-<html>
-  <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-      Twyst Merchant Email
-    </title>
-    <style type="text/css">
-      /* Client-specific Styles */
-      #outlook a {
-        padding:0;
-      } /* Force Outlook to provide a "view in browser" menu link. */
-      body{
-        width:100% !important;
-        -webkit-text-size-adjust:100%;
-        -ms-text-size-adjust:100%;
-        margin:0;
-        padding:0;
-      }
-      /* Prevent Webkit and Windows Mobile platforms from changing default font sizes, while not breaking desktop design. */
-      .ExternalClass {
-        width:100%;
-      } /* Force Hotmail to display emails at full width */
-      .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {
-        line-height: 100%;
-      } /* Force Hotmail to display normal line spacing.  More on that: http://www.emailonacid.com/forum/viewthread/43/ */
-      #backgroundTable {
-        margin:0;
-        padding:0;
-        width:100% !important;
-        line-height: 100% !important;
-      }
-      img {
-        outline:none;
-        text-decoration:none;
-        border:none;
-        -ms-interpolation-mode: bicubic;
-      }
-      a img {
-        border:none;
-      }
-      .image_fix {
-        display:block;
-      }
-      p {
-        margin: 0px 0px !important;
-      }
-      
-      table td {
-        border-collapse: collapse;
-      }
-      table {
-        border-collapse:collapse;
-        mso-table-lspace:0pt;
-        mso-table-rspace:0pt;
-      }
-      /*a {
-      color: #e95353;
-      text-decoration: none;
-      text-decoration:none!important;
-    }*/
-      /*STYLES*/
-      table[class=full] {
-        width: 100%;
-        clear: both;
-      }
-      
-      /*################################################*/
-      /*IPAD STYLES*/
-      /*################################################*/
-      @media only screen and (max-width: 640px) {
-        a[href^="tel"], a[href^="sms"] {
-          text-decoration: none;
-          color: #ffffff;
-          /* or whatever your want */
-          pointer-events: none;
-          cursor: default;
-        }
-        .mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
-          text-decoration: default;
-          color: #ffffff !important;
-          pointer-events: auto;
-          cursor: default;
-        }
-        table[class=devicewidth] {
-          width: 440px!important;
-          text-align:center!important;
-        }
-        table[class=devicewidthinner] {
-          width: 420px!important;
-          text-align:center!important;
-        }
-        table[class="sthide"]{
-          display: none!important;
-        }
-        img[class="bigimage"]{
-          width: 420px!important;
-          height:219px!important;
-        }
-        img[class="col2img"]{
-          width: 420px!important;
-          height:258px!important;
-        }
-        img[class="image-banner"]{
-          width: 440px!important;
-          height:106px!important;
-        }
-        td[class="menu"]{
-          text-align:center !important;
-          padding: 0 0 10px 0 !important;
-        }
-        td[class="logo"]{
-          padding:10px 0 5px 0!important;
-          margin: 0 auto !important;
-        }
-        img[class="logo"]{
-          padding:0!important;
-          margin: 0 auto !important;
-        }
+
+
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<title>Twyst feedback Email</title>
+                                                                                                                                                                                                                                                                                                                                                                                                        
+<style type="text/css">
+    .ReadMsgBody {width: 100%; background-color: #ffffff;}
+    .ExternalClass {width: 100%; background-color: #ffffff;}
+    body     {width: 100%; background-color: #ffffff; margin:0; padding:0; -webkit-font-smoothing: antialiased;font-family: helvetica, sans-serif}
+    table {border-collapse: collapse;}
+    
+    @media only screen and (max-width: 640px)  {
+                    body[yahoo] .deviceWidth {width:440px!important; padding:0;}    
+                    body[yahoo] .center {text-align: center!important;}  
+            }
+            
+    @media only screen and (max-width: 479px) {
+                    body[yahoo] .deviceWidth {width:280px!important; padding:0;}    
+                    body[yahoo] .center {text-align: center!important;}  
+            }
+
+</style>
+</head>
+
+<body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0" yahoo="fix" style="font-family: Georgia, Times, serif">
+
+<!-- Wrapper -->
+<table width="100%" border="0" cellpadding="0" cellspacing="0" align="center">
+    <tr>
+        <td width="100%" valign="top" bgcolor="#eeeeed" style="padding-top:20px">
         
-      }
-      /*##############################################*/
-      /*IPHONE STYLES*/
-      /*##############################################*/
-      @media only screen and (max-width: 480px) {
-        a[href^="tel"], a[href^="sms"] {
-          text-decoration: none;
-          color: #ffffff;
-          /* or whatever your want */
-          pointer-events: none;
-          cursor: default;
-        }
-        .mobile_link a[href^="tel"], .mobile_link a[href^="sms"] {
-          text-decoration: default;
-          color: #ffffff !important;
-          
-          pointer-events: auto;
-          cursor: default;
-        }
-        table[class=devicewidth] {
-          width: 280px!important;
-          text-align:center!important;
-        }
-        table[class=devicewidthinner] {
-          width: 260px!important;
-          text-align:center!important;
-        }
-        table[class="sthide"]{
-          display: none!important;
-        }
-        img[class="bigimage"]{
-          width: 260px!important;
-          height:136px!important;
-        }
-        img[class="col2img"]{
-          width: 260px!important;
-          height:160px!important;
-        }
-        img[class="image-banner"]{
-          width: 280px!important;
-          height:68px!important;
-        }
-        
-      }
-    </style>
-  </head>
-  <body>
-    <div class="block">
-      <!-- Start of preheader -->
-      
-      <!-- End of preheader -->
-      
-      <table bgcolor="#f6f4f5" width="100%" cellpadding="0" cellspacing="0" border="0" st-sortable="preheader">
-        <tbody>
-          <tr>
-            <td width="100%">
-              <table width="580" cellpadding="0" cellspacing="0" border="0" align="center" class="devicewidth" hasbackground="true">
-                <tbody>
-                  <!-- Spacing -->
-                  <tr>
-                    <td width="100%" height="5">
+            <!-- Main Body -->
+            <table width="580"  class="deviceWidth" border="0" cellpadding="0" cellspacing="0" align="center" bgcolor="#ffffff">
+                
+                <!-- Header Image -->          
+                <tr>
+                    <td valign="top" style="padding:0" bgcolor="#eeeeed">
+                        <a href="#"><img  class="deviceWidth" src="https://s3-us-west-2.amazonaws.com/twystimages/eb_feedback.png" alt="USER FEEDBACK" border="0" style="display: block;" /></a>                       
                     </td>
-                  </tr>
-                  <!-- Spacing -->
-                  <tr>
-                    <td width="100%" height="5">
+                </tr>
+                <!-- END Header Image -->
+
+                <!-- Intro Para -->
+                <tr>
+                    <td style="font-size: 14px; color: #858585; font-weight: normal; text-align: left; font-family: helvetica, sans-serif; line-height: 24px; vertical-align: top; padding:10px 20px 10px 20px" bgcolor="#ffffff">
+                        <table>
+                            <tr>
+                                <td valign="middle" style="padding:10px 10px 10px 0"><a href="#" style="text-decoration: none; color: #5b5b5b; font-size: 18px; font-weight: bold; font-family:helvetica, sans-serif">Hi {{merchant_name}},</a>
+                                </td>
+                            </tr>
+                        </table>
+                        You've received new feedback for your outlet <b style="color: #5b5b5b;">{{outlet_name}}, {{outlet_location}}</b></br><br>
                     </td>
-                  </tr>
-                  <!-- Spacing -->
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="block" style="display: block;">
-      <!-- start of header -->
-      
-      <!-- end of header -->
-      
-      <table width="100%" bgcolor="#f6f4f5" cellpadding="0" cellspacing="0" border="0" st-sortable="header">
-        <tbody>
-          <tr>
-            <td>
-              <table width="580" bgcolor="#000000" cellpadding="0" cellspacing="0" border="0" align="center" class="devicewidth" hasbackground="true">
-                <tbody>
-                  <tr>
-                    <td>
-                      <!-- logo -->
-                      
-                      <table width="280" cellpadding="0" cellspacing="0" border="0" align="left" class="devicewidth" bgcolor="#000000">
-                        <tbody>
-                          <tr>
-                            <td valign="middle" width="270" style="padding: 10px 0 10px 20px;" class="logo">
-                              <div class="imgpop">
-                                <a href="#">
-                                  <img src="http://twyst.in/home/assets/img/twyst_logo_2.png" width="100" alt="logo" border="0" style="display:block; border:none; outline:none; text-decoration:none;" st-image="edit" class="logo" id="zno0rrmvzuuwhfr">
-                                </a>
-                              </div>
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                      <!-- End of logo -->
-                      <!-- menu -->
-                      <!-- <table width="280" cellpadding="0" cellspacing="0" border="0" align="right" class="devicewidth" bgcolor="#000000">
-                        <tbody>
-                          <tr>
-                            <td width="270" valign="middle" style="font-family: Helvetica, Arial, sans-serif;font-size: 14px; color: #ffffff;line-height: 24px; padding: 10px 0;" align="right" class="menu" st-content="menu">
-                              <p>
-                                <a style="text-decoration: none; color: #ffffff;" href="http://twyst.in">
-                                  HOME
-                                </a>
-                                | 
-                                <a style="text-decoration: none; color: #ffffff;" href="http://twyst.in/discover">
-                                  DISCOVER
-                                </a>
-                                | 
-                                <a style="text-decoration: none; color: #ffffff;" href="http://twyst.in/merchants">
-                                  MERCHANTS
-                                </a>
-                              </p>
-                            </td>
-                            <td width="20">
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table> -->
-                      <!-- End of Menu -->
+                </tr>
+                <tr>
+                    <td style="font-size: 14px; color: #858585; font-weight: normal; text-align: left; font-family: helvetica, sans-serif; line-height: 24px; vertical-align: top; padding:10px 20px 10px 20px" bgcolor="#ffffff">
+                        <table>
+                            <tr>
+                                <td valign="middle" style="padding:0px 10px 10px 0"><a href="#" style="text-decoration: none; color: #5b5b5b; font-size: 16px; font-weight: bold; font-family:helvetica, sans-serif">Customer Comment</a>
+                                </td>
+                            </tr>
+                        </table>
+                        <table bordercolor="#858585" border="1px">
+                            <tr>
+                                <td style="padding: 10px 20px 10px 20px;">
+                                    {{comment}}
+                                    </br>
+                                </td>
+                            </tr>
+                        </table>
+                        <br>
                     </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="block">
-      <!-- Full + text -->
-      
-      <table width="100%" bgcolor="#f6f4f5" cellpadding="0" cellspacing="0" border="0" st-sortable="title+text">
-        <tbody>
-          <tr>
-            <td>
-              <table bgcolor="#ffffff" width="580" align="center" cellspacing="0" cellpadding="0" border="0" class="devicewidth" hasbackground="true">
-                <tbody>
-                  <tr>
-                    <td width="100%" height="20">
+                </tr>
+                <tr>
+                    <td style="font-size: 14px; color: #858585; font-weight: normal; text-align: left; font-family: helvetica, sans-serif; line-height: 24px; vertical-align: top; padding:10px 20px 10px 20px" bgcolor="#ffffff">
+                        <table>
+                            <tr>
+                                <td valign="middle" style="padding:0px 10px 0px 0"><a href="#" style="text-decoration: none; color: #5b5b5b; font-size: 16px; font-weight: bold; font-family:helvetica, sans-serif">Customer Details</a>
+                                </td>
+                            </tr>
+                        </table>
+                        </br>
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    Email Id
+                                </td>
+                                <td width="10px">:</td>
+                                <td>
+                                    <b style="color: #5b5b5b;">{{user_email}}</b>
+                                </td>                                
+                            </tr>
+                            <tr>
+                                <td>
+                                    Mobile Number
+                                </td>
+                                <td width="10px">:</td>
+                                <td>
+                                    <b style="color: #5b5b5b;">{{user_phone}}</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Check-ins Here
+                                </td>
+                                <td width="10px">:</td>
+                                <td>
+                                    <b style="color: #5b5b5b;">{{checkins.here}}</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Check-ins at all your Outlets
+                                </td>
+                                <td width="10px">:</td>
+                                <td>
+                                    <b style="color: #5b5b5b;">{{checkins.all}}</b>
+                                </td>
+                            </tr>
+                        </table>
+
+                        </br>
                     </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <table width="540" align="center" cellspacing="0" cellpadding="0" border="0" class="devicewidthinner">
-                        <tbody>
-                          <!-- title -->
-                          <tr>
-                            <td style="font-family: Helvetica, arial, sans-serif; font-size: 18px; color: #333333; text-align:left;line-height: 20px;" st-title="rightimage-title">
-                              <p>
-                                Hi {{#if user_email}}{{merchant_name}}{{else}} User{{/if}},
-                              </p>
-                            </td>
-                          </tr>
-                          <!-- end of title -->
-                          <!-- Spacing -->
-                          <tr>
-                            <td width="100%" height="10">
-                            </td>
-                          </tr>
-                          <!-- Spacing -->
-                          <!-- content -->
-                          <tr>
-                            <td style="font-family: Helvetica, arial, sans-serif; font-size: 13px; color: #666666; text-align:left;line-height: 24px;" st-content="rightimage-paragraph">
-                              <p>
-                                <span style="color: rgb(96, 96, 96); font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 15px; line-height: 22.5px;">
-                                  You have new feedback for your outlet:
-                                </span>
-                                
-                                <strong style="color: rgb(96, 96, 96); font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 15px; line-height: 22.5px;">
-                                  {{outlet_name}}, {{outlet_location}}
-                                </strong>
-                                <span style="color: rgb(96, 96, 96); font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 15px; line-height: 22.5px;">
-                                  .
-                                </span>
-                              </p>
-                              <p>
-                                <span style="text-decoration: underline;">
-                                  <strong>
-                                    <span style="color: rgb(96, 96, 96); font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 15px; line-height: 22.5px; text-decoration: underline;">
-                                      User Comment
-                                    </span>
-                                  </strong>
-                                </span>
-                              </p>
-                              <p>
-                                <span style="color: rgb(96, 96, 96); font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 15px; line-height: 22.5px;">
-                                  {{comment}}
-                                </span>
-                              </p>
-                              <p>
-                                <span style="text-decoration: underline;">
-                                  <strong>
-                                    <span style="color: rgb(96, 96, 96); font-family: Tahoma, Verdana, Segoe, sans-serif; font-size: 15px; line-height: 22.5px; text-decoration: underline;">
-                                      User Details
-                                    </span>
-                                  </strong>
-                                </span>
-                              </p>
-                              <p>
-                                {{#if user_email}}
-                                <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                  Email id: {{user_email}}
-                                </span>
-                                <br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                {{/if}}
-                                <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                  Phone Number: {{user_phone}}
-                                </span>
-                                <br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                  Check-ins:
-                                </span>
-                                <br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;margin-left: 15px;">
-                                  At this outlet: {{checkins.here}}
-                                </span>
-                                <br style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;margin-left: 15px;">
-                                  At all your outlets: {{checkins.all}}
-                                </span>
-                              </p>
-                              <br/>
-                              <p>
-                                <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                  Thanks,
-                                </span>
-                              </p>
-                              <p>
-                                <span style="color: rgb(96, 96, 96); font-family: Helvetica; font-size: 15px; line-height: 22.5px;">
-                                  Team Twyst
-                                </span>
-                              </p>
-                            </td>
-                          </tr>
-                          <!-- end of content -->
-                          <!-- Spacing -->
-                          <tr>
-                            <td width="100%" height="10">
-                            </td>
-                          </tr>
-                          <!-- button -->
-                          {{#if user_email}}
-                          <tr>
-                            <td>
-                              <table height="30" align="left" valign="middle" border="0" cellpadding="0" cellspacing="0" class="tablet-button" st-button="edit" style="border-radius: 4px; font-size: 13px; font-family: Helvetica, arial, sans-serif; text-align: center; color: rgb(255, 255, 255); font-weight: 300; padding-left: 18px; padding-right: 18px; background-color: rgb(246, 145, 30); background-clip: padding-box;" bgcolor="#f6911e">
-                                <tbody>
-                                  <tr>
-                                    <td style="padding-left:18px; padding-right:18px;font-family:Helvetica, arial, sans-serif; text-align:center;  color:#ffffff; font-weight: 300;" width="auto" align="center" valign="middle" height="30">
-                                      <span style="color: #ffffff; font-weight: 300;">
-                                        
-                                        <a style="color: #ffffff; text-align:center;text-decoration: none;" href="mailto:{{user_email}}?cc=contactus@twyst.in" st-content="read-more-button" tabindex="-1">
-                                          Reply to the customer
-                                        </a>
-                                      </span>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                            </td>
-                          </tr>
-                          {{/if}}
-                          <!-- /button -->
-                          <!-- Spacing -->
-                          <tr>
-                            <td width="100%" height="20">
-                            </td>
-                          </tr>
-                          <!-- Spacing -->
-                        </tbody>
-                      </table>
+                </tr>
+                <!-- END Intro Para -->
+
+                <tr>
+                    <td style="padding:10px 20px 10px 20px; align:center">
+                        <div>
+                            <!--[if mso]>
+                                <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://www.EXAMPLE.com/" style="height:40px;v-text-anchor:middle;width:220px;" arcsize="10%" stroke="f" fillcolor="#f79635">
+                                <w:anchorlock/>
+                                <center style="color:#ffffff;font-family:sans-serif;font-size:16px;font-weight:bold;">
+                                    Reply to Customer
+                                </center>
+                                </v:roundrect>
+                            <![endif]-->
+
+                            <![if !mso]>
+                                <table cellspacing="0" cellpadding="0"> 
+                                    <tr> 
+                                        <td align="center" width="220px" height="40" bgcolor="#f79635" style="-webkit-border-radius: 4px; -moz-border-radius: 4px; border-radius: 4px; color: #ffffff; display: block; padding: 5px 10px 5px 10px">
+                                            <a href="mailto:{{user_email}}?cc=contactus@twyst.in" style="font-size:16px; font-weight: bold; font-family: helvetica, sans-serif; text-decoration: none; line-height:40px; width:100%; display:inline-block;">
+                                                <span style="color: #ffffff;">
+                                                    Reply to Customer
+                                                </span>
+                                            </a>
+                                        </td> 
+                                    </tr> 
+                                </table> 
+                            <![endif]>
+                        </div>
+                        </br>
+                        <p style="font-size: 14px; color: #858585; font-weight: normal; text-align: left; font-family: helvetica, sans-serif; line-height: 24px; vertical-align: top; padding:0px 0px 10px 0px">
+                            Thanks!</br>
+                            <b style="color: #5b5b5b;">Team Twyst</b>
+                        </p>                        
                     </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </body>
+                </tr>
+
+                <!-- END Header Text -->
+            </table>
+            <!-- END Section 1 -->
+
+            <!-- Footer -->
+            <table width="580px" border="0" cellpadding="0" cellspacing="0" align="center" class="deviceWidth">
+                <tr>
+                    <td bgcolor="#363636" style="padding:15px 0px 0px 0px">
+                        <table width="100%" border="0" cellpadding="0" cellspacing="0" align="center" class="deviceWidth">
+                            <tr>
+                                <td>                    
+                                    <table width="45%" cellpadding="0" cellspacing="0"  border="0" align="left" class="deviceWidth">
+                                        <tr>
+                                            <td valign="top" style="font-size: 11px; color: #f1f1f1; color:#999; font-family: helvetica, sans-serif; padding: 0px 20px 20px 20px" class="center">
+
+                                                You are receiving this email because you registered with twyst.in. You may safely unsubscribe here.
+
+                                            </td>
+                                        </tr>
+                                    </table>
+                        
+                                    <table width="50%" cellpadding="0" cellspacing="0"  border="0" align="right" class="deviceWidth">
+                                        <tr>
+                                            <td valign="top" style="font-size: 11px; color: #f1f1f1; font-weight: normal; font-family: helvetica, sans-serif; line-height: 26px; vertical-align: top; text-align:right; padding: 0px 20px 0px 20px;" class="center">
+
+                                                <a href="http://www.facebook.com/twystin"><img src="https://s3-us-west-2.amazonaws.com/twystimages/48xfacebook.png" width="42" height="42" alt="Facebook" title="Facebook" border="0" /></a>
+
+                                                <a href="http://www.twitter.com/twystin"><img src="https://s3-us-west-2.amazonaws.com/twystimages/48xtwitter.png" width="42" height="42" alt="Twitter" title="Twitter" border="0" /></a>
+
+                                                <a href="http://www.instagram.com/twyst.in"><img src="https://s3-us-west-2.amazonaws.com/twystimages/48xinstagram.png" width="42" height="42" alt="Instagram" title="Instagram" border="0" /></a>
+                                                <br />
+                                            </td>
+                                        </tr>
+                                    </table>   
+                                </td>
+                            </tr>
+                        </table>                                                                    
+                    </td>
+                </tr>
+            </table>
+            <!-- END Footer -->
+        </td>
+    </tr>
+</table> <!-- End Wrapper -->
+
+</body>
 </html>
