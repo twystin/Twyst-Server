@@ -110,19 +110,19 @@ function validateFeedback(feedback) {
 
 function initEmail(user, feedback_obj) {
 	var obj = {
-		to: 'jayram.chandan@gmail.com',
+		to: null,
 		data: {
 			merchant_name: 'Jayram',
 			merchant_id: null,
-			outlet_name: 'Randon Outlet',
-			outlet_location: 'Gurgaon',
+			outlet_name: null,
+			outlet_location: null,
 			user_email: getUserEmail(user),
 			user_phone: user.phone,
 			checkins: {
 				here: 0,
 				all: 0
 			},
-			comment: "It's so delightful to have some nearly great food...I love this joint as it's not so pricey and the food too is great. They don't take a lot of time to deliver and the quantity of food too is great for two. It is an awesome food joint.. Definitely a high!!"
+			comment: feedback_obj.feedback.comment
 		},
 		type: 'FEEDBACK',
 		photo_url: null,		
