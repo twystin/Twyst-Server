@@ -5,8 +5,8 @@ var Mailer = require('../mailer/mailer'),
 
 module.exports.update = function (req, res) {
 	var user = req.user,
-		key = req.body.key || 'email',
-		data = req.body.data || {email: 'jayram.chandan@gmail.com'};
+		key = req.body.key,
+		data = req.body.data;
 	if(user && key && data) {
 		updateUser();
 	}
@@ -41,8 +41,7 @@ module.exports.update = function (req, res) {
 					user.social_graph = user.social_graph || {};
 					user.social_graph[key] = data;
 					var secret_code = null;
-					console.log(user.social_graph[key])
-					if(user.social_graph[key].email) {
+					if(key === 'email' && user.social_graph[email].email) {
 						secret_code = keygen.session_id();
 						user.validated = user.validated || {};
 						user.validated.email_validated = user.validated.email_validated || {};
@@ -57,7 +56,9 @@ module.exports.update = function (req, res) {
 							});
 						}
 						else {
-							initEmail(req.user, user.social_graph[key].email, secret_code);
+							if(key === 'email') {
+								initEmail(req.user, user.social_graph[key].email, secret_code);
+							}
 							res.send(200, {
 								'status': 'success',
 								'message': 'Successfully updated user.',
