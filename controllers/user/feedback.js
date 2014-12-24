@@ -297,11 +297,14 @@ function getMerchant(accounts, cb) {
 
 function getUserEmail(user) {
 	if(user.social_graph
-		&& (user.social_graph.email &&
-		user.social_graph.email.email) || 
-		user.social_graph.facebook &&
-		user.social_graph.facebook.email) {
-		return user.social_graph.email.email || user.social_graph.facebook.email;
+		&& user.social_graph.email 
+		&& user.social_graph.email.email) {
+		return user.social_graph.email.email;
+	}
+	if(user.social_graph
+		&& user.social_graph.facebook 
+		&& user.social_graph.facebook.email) {
+		return user.social_graph.facebook.email;
 	}
 	return null;
 }
