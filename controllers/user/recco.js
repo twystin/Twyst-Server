@@ -92,14 +92,16 @@ function getMatchedRewards(cut_reccos, cb) {
 	if(!cut_reccos || !cut_reccos.length) {
 		cb(null, cut_reccos);
 	}
-	getRewards(cut_reccos, function (err, rewards) {
-		if(err) {
-			cb(err, cut_reccos);
-		}
-		else {
-			cb(null, getReccosWithMatchedRewars(cut_reccos, rewards));
-		}
-	})
+	else {
+		getRewards(cut_reccos, function (err, rewards) {
+			if(err) {
+				cb(err, cut_reccos);
+			}
+			else {
+				cb(null, getReccosWithMatchedRewars(cut_reccos, rewards));
+			}
+		})
+	}
 }
 
 function getReccosWithMatchedRewars(cut_reccos, rewards) {
