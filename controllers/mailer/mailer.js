@@ -4,23 +4,23 @@ var fs = require('fs'),
 var creds = {
 	'FEEDBACK': {
 		service: 'Gmail',
-		username: 'jayram@twyst.in',
-		pass: 'Singh@005',
+		username: 'contactus@twyst.in',
+		pass: 'Majoni12',
 		template: './controllers/mailer/templates/feedback.handlebars',
 		subject: 'Feedback from Twyst User',
 		cc: 'contactus@twyst.in'
 	},
 	'WELCOME_APP': {
 		service: 'Gmail',
-		username: 'jayram@twyst.in',
-		pass: 'Singh@005',
+		username: 'contactus@twyst.in',
+		pass: 'Majoni12',
 		template: './controllers/mailer/templates/welcome-app.handlebars',
 		subject: 'Welcome to Twyst'
 	},
 	'WELCOME_EXISTING': {
 		service: 'Gmail',
-		username: 'jayram@twyst.in',
-		pass: 'Singh@005',
+		username: 'contactus@twyst.in',
+		pass: 'Majoni12',
 		template: './controllers/mailer/templates/welcome-pre.handlebars',
 		subject: 'Welcome to Twyst'
 	}	
