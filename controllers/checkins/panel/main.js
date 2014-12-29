@@ -290,6 +290,7 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				|| outlet.basics.slug === 'strikerpubkitchen') {
 				message.checkin += " Adda by Striker at Sec-29 now open! Call 9811118182 for details.";
 			}
+			message.checkin += ' Exclusive party/delivery offers for 31 Dec - http://twyst.in/ny2015';
 			sms.checkin = false;
 			sms.reward = false;
 
