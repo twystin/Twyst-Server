@@ -5,7 +5,10 @@ var settings = require('../../config/settings');
 var constants = {};
 constants.USER = {};
 constants.SMS_PROVIDER  = {};
-constants.VERSION = {};
+constants.VERSION = {
+	client: 3,
+	api: 3
+};
 
 constants.SMS_PROVIDER.number = '+919266801954';
 constants.SMS_PROVIDER.prefix = 'CHK';
