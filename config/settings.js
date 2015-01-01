@@ -59,8 +59,8 @@ module.exports.values = {
         }
     },
     'version': {
-        "client": "2",
-        "api": "1",
+        "client": "3",
+        "api": "3",
         "status": "stable",
         "info": {
             "description": "some description",
