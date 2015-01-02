@@ -11,8 +11,8 @@ module.exports.poscheckin = function(req, res){
 		})
 	}
 	else {
-		if(validateMobile(phone)) {
-			async.each(rows, function (phone, callback) {
+		async.each(rows, function (phone, callback) {
+			if(validateMobile(phone)) {
 				var auto_checkin_obj = {
 		            'phone': phone,
 		            'outlet': req.body.outlet,
@@ -24,21 +24,17 @@ module.exports.poscheckin = function(req, res){
 			    AutoCheckinCtrl.autoCheckin(auto_checkin_obj, function (result) {
 			    	callback();
 			    });
-			}, function (err) {
-				res.send(200, {
-					'status': 'success',
-					'message': 'Checked in successfully',
-					'info': null
-				})
-			})
-		}
-		else {
-			res.send(400, {
-				'status': 'error',
-				'message': 'Mobile number not valid',
+			}
+			else {
+				callback();
+			}
+		}, function (err) {
+			res.send(200, {
+				'status': 'success',
+				'message': 'Checked in successfully',
 				'info': null
 			})
-		}
+		})
 	}
 
 	function validateMobile(phone) {
