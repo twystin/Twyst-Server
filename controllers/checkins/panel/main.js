@@ -271,11 +271,11 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			}
 			else if(sms.checkin && sms.reward && isNewUser()) {
 				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app.';
+				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
 			}
 			else if(sms.checkin && sms.reward && !isNewUser()) {
 				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app.';
+				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
 			}
 			else if(sms.checkin && !isNewUser()) {
 				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
@@ -290,7 +290,6 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				|| outlet.basics.slug === 'strikerpubkitchen') {
 				message.checkin += " Adda by Striker at Sec-29 now open! Call 9811118182 for details.";
 			}
-			message.checkin += ' Exclusive party/delivery offers for 31 Dec - http://twyst.in/ny2015';
 			sms.checkin = false;
 			sms.reward = false;
 
