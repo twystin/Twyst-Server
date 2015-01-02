@@ -104,7 +104,8 @@ module.exports.validateOtp = function (req, res) {
 		phone = CommonUtilities.tenDigitPhone(req.body.phone);
 
 	if(otp && phone) {
-		otp *= 1;
+		otp += '';
+		phone += '';
 		validateOtp();
 	}
 	else {
