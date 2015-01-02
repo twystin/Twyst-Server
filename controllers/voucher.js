@@ -251,7 +251,9 @@ module.exports.changeStatus  = function (req, res){
 
         function triggerAutoCheckin(auto_checkin_obj, voucher) {
             if(voucher.basics.status === 'active') {
-                AutoCheckin.autoCheckin(auto_checkin_obj);    
+                AutoCheckin.autoCheckin(auto_checkin_obj, function (result) {
+
+                });    
             }
             else if(voucher.basics.status === 'user redeemed'){
                 Checkin.findOne({
@@ -263,7 +265,9 @@ module.exports.changeStatus  = function (req, res){
                     }
                 }, function (err, checkin) {
                     if(!checkin) {
-                        AutoCheckin.autoCheckin(auto_checkin_obj); 
+                        AutoCheckin.autoCheckin(auto_checkin_obj, function (result) {
+                            
+                        }); 
                     }
                 })
             }

@@ -143,7 +143,9 @@ function sendRedeemSmsToUser (voucher, user, used_at, used_time) {
         'location': 'DINE_IN',
         'phone': user.phone
     };
-	AutoCheckin.autoCheckin(auto_checkin_obj);
+	AutoCheckin.autoCheckin(auto_checkin_obj, function (result) {
+		
+	});
     var date = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
     Outlet.findOne({
     	_id: used_at
