@@ -78,7 +78,8 @@ module.exports.redeemPanel = function (req, res) {
 	        });
 		}
 		else {
-			redeemVoucher(voucher, used_at, used_time, function (err) {
+			var status = "merchant redeemed";
+			redeemVoucher(voucher, used_at, used_time, status, function (err) {
 				if(err) {
 					res.send(400, { 
 						'status': 'error',
@@ -111,7 +112,8 @@ module.exports.redeemPanel = function (req, res) {
 	        });
 		}
 		else {
-			redeemVoucher(voucher, used_at, used_time, function (err) {
+			var status = 'merchant redeemed';
+			redeemVoucher(voucher, used_at, used_time, status, function (err) {
 				if(err) {
 					res.send(400, { 
 						'status': 'error',
@@ -153,8 +155,8 @@ function sendRedeemSmsToUser (voucher, user, used_at, used_time) {
     });
 }
 
-function redeemVoucher(voucher, used_at, used_time, cb) {
-	voucher.basics.status = 'merchant redeemed';
+function redeemVoucher(voucher, used_at, used_time, status, cb) {
+	voucher.basics.status = status;
 	voucher.basics.type = voucher.basics.type || 'CHECKIN';
 	voucher.used_details.used_at = used_at;
 	voucher.used_details.used_by = voucher.issue_details.issued_to;
@@ -290,7 +292,8 @@ module.exports.redeemApp = function (req, res) {
 	        });
 		}
 		else {
-			redeemVoucher(voucher, used_at, used_time, function (err) {
+			var status = 'user redeemed';
+			redeemVoucher(voucher, used_at, used_time, status, function (err) {
 				if(err) {
 					res.send(400, { 
 						'status': 'error',
@@ -319,7 +322,8 @@ module.exports.redeemApp = function (req, res) {
 	        });
 		}
 		else {
-			redeemVoucher(voucher, used_at, used_time, function (err) {
+			var status = 'user redeemed';
+			redeemVoucher(voucher, used_at, used_time, status, function (err) {
 				if(err) {
 					res.send(400, { 
 						'status': 'error',
