@@ -161,6 +161,9 @@ function getActiveRewards(user, result, cb) {
 			'basics.status': 'active',
 			'issue_details.issued_to': user._id,
 			'issue_details.issued_at': result.outlet_details._id,
+			'basics.created_at': {
+				$lt: new Date(Date.now() - 10800000)
+			},
 			$and: [
 				{
 					'validity.start_date': {

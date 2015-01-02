@@ -257,6 +257,9 @@ function getMyRewards(user, callback) {
 	var q = {
 		'basics.status': 'active',
 		'issue_details.issued_to': user._id,
+		'basics.created_at': {
+			$lt: new Date(Date.now() - 10800000)
+		},
 		$and: [
 			{
 				'validity.start_date': {
