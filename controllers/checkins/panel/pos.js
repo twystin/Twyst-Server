@@ -1,5 +1,6 @@
 var AutoCheckinCtrl = require('../../checkins/auto_checkin'),
-	async = require('async');
+	async = require('async'),
+	_ = require('underscore');
 
 module.exports.poscheckin = function(req, res){
 	var rows = req.body.rows;
@@ -11,6 +12,7 @@ module.exports.poscheckin = function(req, res){
 		})
 	}
 	else {
+		rows = _.uniq(rows);
 		async.each(rows, function (phone, callback) {
 			if(validateMobile(phone)) {
 				var auto_checkin_obj = {
@@ -38,13 +40,27 @@ module.exports.poscheckin = function(req, res){
 	}
 
 	function validateMobile(phone) {
-	    if (phone.length < 10 || phone.length > 12) {
-	        return false;
-	    }
-	    var lastTenChar = phone.charAt(phone.length - 10);
-	    if (lastTenChar == "7" || lastTenChar == "8" || lastTenChar == "9") {
-	        return true;
-	    }
-	    return false;
+		if(phone) {
+			var last_ten_char = phone.substr(phone.length - 10);
+			if(isNumber(last_ten_char)
+				&& isValidFirstDigit(last_ten_char)) {
+				return true;
+			}
+		}
+		return false;
 	}
+
+	function isValidFirstDigit(str) {
+		if(str[0] == '7' 
+			|| str[0] == '8'
+			|| str[0] == '9') {
+			return true;
+		}
+		return false;
+	}
+
+	function isNumber(str) {
+        var numeric = /^-?[0-9]+$/;
+        return numeric.test(str);
+    }
 };
