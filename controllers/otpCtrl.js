@@ -106,6 +106,8 @@ module.exports.validateOtp = function (req, res) {
 	if(otp && phone) {
 		otp += '';
 		phone += '';
+		console.log(otp);
+		console.log(phone);
 		validateOtp();
 	}
 	else {
