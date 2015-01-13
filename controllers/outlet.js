@@ -93,16 +93,21 @@ module.exports.getCount = function (req, res) {
 }
 
 module.exports.query = function(req,res) {
-	Outlet.find({'outlet_meta.accounts': req.params.user_id}, function(err,outlets) {
+	Outlet.find({
+		'outlet_meta.accounts': req.user._id
+	})
+	.exec(function(err, outlets) {
 		if (err) {
-			res.send(400, {	'status': 'error',
-						'message': 'Error getting list of outlets',
-						'info': JSON.stringify(err)
+			res.send(400, {	
+				'status': 'error',
+				'message': 'Error getting list of outlets',
+				'info': err
 			});
 		} else {
-			res.send(200, {	'status': 'success',
-						'message': 'Got all outlets',
-						'info': JSON.stringify(outlets)
+			res.send(200, {	
+				'status': 'success',
+				'message': 'Got all outlets',
+				'info': outlets
 			});
 		}
 	}) 

@@ -278,7 +278,7 @@ module.exports = function (app) {
         app.get('/api/v2/outlets/slugs', OutletCtrl.getSlugs);
         app.get('/api/v1/outlets/count/:user_id', checkAuthenticated(), checkRole(5), OutletCtrl.getCount);
         app.get('/api/v1/outlets/programs/:outlet_id', OutletCtrl.getOffersForOutlet);
-        app.get('/api/v1/outlets/:user_id', checkAuthenticated(), checkRole(5), OutletCtrl.query);
+        app.get('/api/v1/outlets', checkAuthenticated(), checkRole(5), OutletCtrl.query);
         app.get('/api/v1/near/:latitude/:longitude', OutletCtrl.nearbyOutlets);
         app.get('/api/v1/outlet/console', checkRole(1), OutletCtrl.consoleQuery);
         app.get('/api/v1/outlets/view/:outlet_id', checkAuthenticated(), checkRole(4), OutletCtrl.read);
