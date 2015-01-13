@@ -162,7 +162,7 @@ module.exports = function (app) {
     })();
 
     //Change password and reset passwords
-    (function password_reset_routes() {
+    (function password_reset_routes() { 
         var ResetCtrl = require('../controllers/reset_password');
         app.put('/api/v1/pass/reset/:token', ResetCtrl.resetPassword);
         app.put('/api/v1/pass/change/:user_id', checkAuthenticated(), ResetCtrl.changePassword);

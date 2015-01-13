@@ -154,7 +154,7 @@ function getActiveVoucher(user, cb) {
 	Voucher.find({
 		'issue_details.issued_to': user._id,
 		'basics.created_at': {
-			$lt: new Date(Date.now() - 10800000)
+			$lt: new Date()
 		},
 		'basics.status': 'active'
 	})

@@ -1,15 +1,14 @@
 'use strict';
-var _ = require('underscore');
-var mongoose = require('mongoose');
-var async = require('async');
-var Checkin = mongoose.model('Checkin');
-var Qr = mongoose.model('Qr');
-var Program = mongoose.model('Program');
-var Outlet = mongoose.model('Outlet');
-
-var Tier = mongoose.model('Tier');
-var Account = mongoose.model('Account');
-var SmsSentLog = mongoose.model('SmsSentLog');
+var _ = require('underscore'),
+    mongoose = require('mongoose'),
+    async = require('async');
+var Checkin = mongoose.model('Checkin'),
+    SmsSentLog = mongoose.model('SmsSentLog'),
+    Qr = mongoose.model('Qr'),
+    Program = mongoose.model('Program'),
+    Outlet = mongoose.model('Outlet'),
+    Tier = mongoose.model('Tier'),
+    Account = mongoose.model('Account');
 
 module.exports.getCheckinHistory = function(query, cb) {
     async.parallel({
@@ -31,10 +30,16 @@ module.exports.getCheckinHistory = function(query, cb) {
 
     function getCheckin(query, callback) {
         Checkin.findOne({
-                phone: query.phone
-            }, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
-
-                callback(null, checkin);
+            phone: query.phone,
+            checkin_type: {
+                $ne: 'BATCH'
+            }
+        })
+        .sort({
+            'created_date': -1 
+        })
+        .exec(function(err, checkin) {
+            callback(null, checkin);
         });
     }
 
@@ -52,10 +57,16 @@ module.exports.getCheckinHistory = function(query, cb) {
 
     function getLastCheckin(query, callback) {
         Checkin.findOne({
-                phone: query.phone
-            }, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
-
-                callback(null, checkin);
+            phone: query.phone,
+            checkin_type: {
+                $ne: 'BATCH'
+            }
+        })
+        .sort({ 
+            'created_date': -1 
+        })
+        .exec(function(err, checkin) {
+            callback(null, checkin);
         });
     }
 
@@ -67,14 +78,20 @@ module.exports.getCheckinHistory = function(query, cb) {
         upper = upper || new Date();
         lower = lower || new Date(new Date().getTime() - (6 * 60 * 60 * 1000));
         Checkin.findOne({
-                phone: query.phone,
-                created_date: {
-                    $gt: lower,
-                    $lt: upper
-                }
-            }, {}, { sort: { 'created_date' : -1 } }, function(err, checkin) {
-
-                callback(null, checkin);
+            phone: query.phone,
+            created_date: {
+                $gt: lower,
+                $lt: upper
+            },
+            checkin_type: {
+                $ne: 'BATCH'
+            }
+        })
+        .sort({
+            'created_date' : -1 
+        })
+        .exec(function(err, checkin) {
+            callback(null, checkin);
         });
     }
 }

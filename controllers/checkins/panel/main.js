@@ -1,15 +1,14 @@
-var async = require('async');
-var _ = require('underscore');
-var mongoose = require('mongoose');
-var Helper = require('./helper');
-var response = require('./response');
-var SMS = require('../../../common/smsSender');
-var CommonUtilities = require('../../../common/utilities');
-var Checkin = mongoose.model('Checkin');
-var Voucher = mongoose.model('Voucher');
-var keygen = require("keygenerator");
-var UserDataCtrl = require('../../user/userDataCtrl');
-var util = require('util');
+var async = require('async'),
+	_ = require('underscore'),
+	mongoose = require('mongoose'),
+	keygen = require("keygenerator");
+var Helper = require('./helper'),
+	response = require('./response'),
+	SMS = require('../../../common/smsSender'),
+	Utils = require('../../../common/utilities');
+
+var Checkin = mongoose.model('Checkin'),
+	Voucher = mongoose.model('Voucher');
 
 function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
 
@@ -70,7 +69,7 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 	checkin = _.extend(checkin, obj);
 	var current_time = Date.now();
 
-	checkin.created_date = CommonUtilities.setCurrentTime(checkin.created_date);
+	checkin.created_date = Utils.setCurrentTime(checkin.created_date);
 
 	q.checkin_time = checkin.created_date;
 	checkin.checkin_type = checkin.checkin_type || "PANEL";
@@ -270,18 +269,18 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				message.checkin = message.checkin.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
 			}
 			else if(sms.checkin && sms.reward && isNewUser()) {
-				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
+				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ Utils.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ Utils.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
 			}
 			else if(sms.checkin && sms.reward && !isNewUser()) {
-				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ CommonUtilities.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ CommonUtilities.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
+				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ Utils.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ Utils.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
 			}
 			else if(sms.checkin && !isNewUser()) {
-				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
 			}
 			else if(sms.checkin && isNewUser()) {
-				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ CommonUtilities.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
 			}
 			if(outlet.basics.slug === 'fruitpress') {
 				message.checkin += " Enjoy all new winter specials at Fruit Press – hot chai, coffee, soups and more!";
@@ -327,9 +326,10 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 		if(reward.basics && reward.basics.description) {
 			voucher.basics.description = reward.basics.description;
 		}
+		var voucher_valid_from = new Date(checkin.created_date).getTime() + 10800000;
+		voucher_valid_from = new Date(voucher_valid_from);
 
-		voucher.basics.created_at = CommonUtilities.setCurrentTime(
-											checkin.created_date);
+		voucher.basics.created_at = Utils.setCurrentTime(voucher_valid_from);
 		
 		voucher.basics.code = keygen._(
 			{forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});

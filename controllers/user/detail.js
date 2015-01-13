@@ -1,12 +1,13 @@
-var mongoose = require("mongoose");
+var mongoose = require("mongoose"),
+	async = require('async');
 var Outlet = mongoose.model('Outlet');
-var Program = mongoose.model('Program');
-var Tier = mongoose.model('Tier');
-var Checkin = mongoose.model('Checkin');
-var Voucher = mongoose.model('Voucher');
-var Reward = mongoose.model('Reward'),
+	Program = mongoose.model('Program'),
+	Tier = mongoose.model('Tier'),
+	Checkin = mongoose.model('Checkin'),
+	Voucher = mongoose.model('Voucher'),
+	Reward = mongoose.model('Reward'),
 	Follow = mongoose.model('Favourite');
-var async = require('async');
+
 var CommonUtils = require('../../common/utilities');
 
 module.exports.getDetails = function (req, res) {
@@ -162,7 +163,7 @@ function getActiveRewards(user, result, cb) {
 			'issue_details.issued_to': user._id,
 			'issue_details.issued_at': result.outlet_details._id,
 			'basics.created_at': {
-				$lt: new Date(Date.now() - 10800000)
+				$lt: new Date(Date.now())
 			},
 			$and: [
 				{

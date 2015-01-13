@@ -221,16 +221,13 @@ module.exports.rewardify = function (input) {
 }
 
 module.exports.setCurrentTime = function (oldDate) {
-    if(!oldDate) {
-        return new Date();
-    }
-    // Check if 6 hours difference
-    if(new Date() - new Date(oldDate) > 6 * 60 * 60 * 1000) {        
+    if(new Date() - new Date(oldDate) > 3600000) {        
         return new Date(oldDate);
     }
-    else {
-        return new Date();
+    if(new Date() < new Date(oldDate)) {
+        return new Date(oldDate);
     }
+    return new Date();
 }
 
 module.exports.getOutletAttributes = function (outlet) {

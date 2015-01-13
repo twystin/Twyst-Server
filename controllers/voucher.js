@@ -83,112 +83,116 @@ module.exports.read = function(req, res) {
 };
 
 module.exports.readByUserPhone = function(req, res) {
-    var phone = req.params.phone;
-    var outlet = req.params.outlet;
-
-    if(phone) {
-        getUserId();
+    var phone = req.params.phone,
+        outlet = req.params.outlet;
+        
+    if(phone && outlet) {
+        getDetails();
     }
     else {
-        res.send(400, {'status': 'error',
-                       'message': 'Error phone number',
-                       'info': JSON.stringify(err)
+        res.send(400, {
+            'status': 'error',
+            'message': 'Invalid request parameters',
+            'info': 'Invalid request parameters'
         });
     }
 
-    function getUserId() {
-
-        Account.find({phone: phone}, function (err, users) {
-
+    function getDetails() {
+        getUsers(function (err, users) {
             if(err) {
-                res.send(400, {'status': 'error',
-                               'message': 'User not found',
-                               'info': JSON.stringify(err)
+                res.send(400, {
+                    'status': 'error',
+                    'message': 'Error getting user',
+                    'info': err
                 });
             }
             else {
-                if(users.length === 0) {
-                    res.send(200, {'status': 'error',
-                                   'message': 'User has no vouchers.',
-                                   'info': ''
+                if(users && users.length) {
+                    parallelExecutor(users, function (err, data) {
+                        if(err) {
+                            res.send(400, {
+                                'status': 'error',
+                                'message': 'Error getting details',
+                                'info': err
+                            });
+                        }
+                        else {
+                            res.send(200, {
+                                'status': 'success',
+                                'message': 'Successfully got details',
+                                'info': data
+                            });
+                        }
                     });
                 }
                 else {
-                    async.parallel({
-                        CHECKIN_COUNT: function(callback) {
-                            getCheckinCount(callback);
-                        },
-                        VOUCHERS: function(callback) {
-                            getVoucherDetails(users, callback);
-                        }
-                    }, function(err, results) {
-                        res.send(200, { 
-                            'status': 'success',
-                            'message': 'Got details for the user.',
-                            'info': results
-                        });
+                    res.send(400, {
+                        'status': 'error',
+                        'message': 'No users found with the phone number',
+                        'info': err
                     });
                 }
             }
+        })
+    }
+
+    function parallelExecutor(users, cb) {
+        async.parallel({
+            CHECKIN_COUNT: function(callback) {
+                getCheckinCount(function (err, count) {
+                    callback(err, count);
+                });
+            },
+            VOUCHERS: function(callback) {
+                getVouchers(users, function (err, vouchers) {
+                    callback(err, vouchers);
+                });
+            }
+        }, function(err, results) {
+            cb(err, results);
         });
     }
 
-    function getCheckinCount(callback) {
-        getActiveProgram();
-        function getActiveProgram () {
-            Program.findOne({
-                    'status': 'active',
-                    'outlets': outlet
-                }, function (err, program) {
-                    if(!program) {
-                        callback(null, 0);
-                    }
-                    getCount(program);
-            });
-        }
-        
-        function getCount (program) {
-            Checkin.count({
-                'phone': phone,
-                'checkin_program': program._id
-            }, function (err, count) {
-
-                    callback(null, count || 0);
-            });
-        } 
+    function getUsers(callback) {
+        Account.find({
+            phone: phone
+        })
+        .select('phone')
+        .exec(function (err, users) {
+            callback(err, users)
+        })
     }
 
-    function getVoucherDetails (users, callback) {
+    function getCheckinCount (callback) {
+        Checkin.count({
+            'phone': phone,
+            'outlet': outlet
+        }, function (err, count) {
+            callback(err, count);
+        });
+    }
+
+    function getVouchers (users, callback) {
         Voucher.find({
             'issue_details.issued_to': {
                 $in: users.map(
-                            function(item){
-                                return mongoose.Types.ObjectId(String(item._id)); 
-                        })
+                    function(item){
+                        return mongoose.Types.ObjectId(String(item._id)); 
+                })
             },
-            'issue_details.issued_at': outlet
+            'issue_details.issued_at': outlet,
+            'basics.created_at': {
+                $lt: new Date()
+            }
         })
         .populate('issue_details.issued_for')
         .populate('issue_details.winback')
         .populate('issue_details.issued_to')
         .populate('issue_details.program')
         .sort({'basics.modified_at': -1})
-        .exec(function(err,vouchers) {
-            sortVouchers(vouchers)
-        }); 
-
-        function sortVouchers (vouchers) {
-
-            if(vouchers.length <= 1) {
-                callback(null, vouchers);
-            }
-            else {
-                vouchers = _.sortBy(vouchers, function (v) {
-                    return -(new Date(v.basics.created_at));
-                })
-                callback(null, vouchers);
-            }
-        }
+        .exec(function(err, vouchers) {
+            callback(err, vouchers);
+        });
     }
 };
 

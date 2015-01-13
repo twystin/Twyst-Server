@@ -211,7 +211,10 @@ function getMyCheckins(user, cb) {
 
 function getMyRewards(user, cb) {
 	Voucher.find({
-		'issue_details.issued_to': user._id
+		'issue_details.issued_to': user._id,
+		'basics.created_at': {
+			$lt: new Date()
+		}
 	})
 	.select('issue_details.issued_at used_details.used_at basics.created_at')
 	.populate('issue_details.issued_at')

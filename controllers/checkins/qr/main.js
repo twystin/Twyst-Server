@@ -216,6 +216,7 @@ module.exports.checkin = function(req, res) {
 		voucher.checkin_details.checkin_id = checkin_id;
 
 		voucher.basics.description = success_obj.reward.rewardified;
+		voucher.basics.created_at = new Date(Date.now() + 10800000);
 		
 		voucher.basics.code = keygen._({
 			forceUppercase: true, 
