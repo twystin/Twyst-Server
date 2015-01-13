@@ -1,108 +1,123 @@
-var mongoose = require('mongoose');
-var Program = mongoose.model('Program');
-var Offer = mongoose.model('Offer');
-var Tier = mongoose.model('Tier');
-var _ = require('underscore');
-var Checkin = mongoose.model('Checkin');
-var Voucher = mongoose.model('Voucher');
+var mongoose = require('mongoose'),
+	_ = require('underscore'),
+	async = require('async');
+var Program = mongoose.model('Program'),
+	Offer = mongoose.model('Offer'),
+	Tier = mongoose.model('Tier'),
+	Checkin = mongoose.model('Checkin'),
+	Voucher = mongoose.model('Voucher');
 
 module.exports.getCounts = function (req, res) {
 
-	var counts = {
-		'checkin_count': null,
-		'voucher_count': null,
-		'redeem_count': null
-	};
-	var outlet_id, program_id;
+	var outlet_id = req.params.outlet_id,
+		program_id = req.params.program_id;
 
-	if(!req.params.outlet_id) {
+	if(!outlet_id) {
 		res.send(400, {
 			'status': 'error',
 			'message': 'Outlet missing in request',
-			'info': JSON.stringify(err)
+			'info': err
 		});
 	}
 	else {
-		if(req.params.program_id !== 'ALL') {
-			var q_checkins = {
-				'outlet' : req.params.outlet_id,
-				'checkin_program' : req.params.program_id,
+		var q = getQuery(outlet_id, program_id);
+		paralletCounter(q, function (err, counts) {
+			if(err) {
+				res.send(400, {
+					'status': 'error',
+					'message': 'Error getting counts',
+					'info': err
+				});
+			}
+			else {
+				res.send(200, {
+					'status': 'success',
+					'message': 'Got count successfully',
+					'info': counts
+				});
+			}
+		});
+	}
+
+	function paralletCounter(q, cb) {
+		async.parallel({
+            checkin_count: function(callback) {
+                getCheckinsCount(q, function (err, count) {
+                    callback(err, count);
+                });
+            },
+            voucher_count: function(callback) {
+                getVouchersCount(q, function (err, count) {
+                    callback(err, count);
+                });
+            },
+            redeem_count: function (callback) {
+            	getRedeemsCount(q, function (err, count) {
+                    callback(err, count);
+                });
+            }
+        }, function(err, results) {
+            cb(err, results);
+        });
+	}
+
+	function getCheckinsCount(q, callback) {
+		Checkin.count(q.checkins)
+		.exec(function (err, count) {
+			callback(err, count);
+		})
+	}
+
+	function getVouchersCount(q, callback) {
+		Voucher.count(q.vouchers)
+		.exec(function (err, count) {
+			callback(err, count);
+		})
+	}
+
+	function getRedeemsCount(q, callback) {
+		Voucher.count(q.redeems)
+		.exec(function (err, count) {
+			callback(err, count);
+		})
+	}
+
+	function getQuery (outlet_id, program_id) {
+		var q = {};
+		if(program_id !== 'ALL') {
+			q.checkins = {
+				'outlet' : outlet_id,
+				'checkin_program' : program_id,
 				'checkin_type' : {
 					$ne: 'BATCH'
 				}
 			};
-			var q_voucher = {
-				'issue_details.issued_at' : req.params.outlet_id,
-				'issue_details.program' : req.params.program_id
+			q.vouchers = {
+				'issue_details.issued_at' : outlet_id,
+				'issue_details.program' : program_id
 			};
-			var q_redeem = {
-				'used_details.used_at' : req.params.outlet_id,
-				'issue_details.program' : req.params.program_id,
+			q.redeems = {
+				'used_details.used_at' : outlet_id,
+				'issue_details.program' : program_id,
 				'basics.status': 'merchant redeemed'
 			}
 		}
 		else {
-			var q_checkins = {
-				'outlet' : req.params.outlet_id,
+			q.checkins = {
+				'outlet' : outlet_id,
 				'checkin_type' : {
 					$ne: 'BATCH'
 				}
 			};
-			var q_voucher = {
-				'issue_details.issued_at' : req.params.outlet_id
+			q.vouchers = {
+				'issue_details.issued_at' : outlet_id
 			}
-			var q_redeem = {
-				'used_details.used_at' : req.params.outlet_id,
+			q.redeems = {
+				'used_details.used_at' : outlet_id,
 				'basics.status': 'merchant redeemed'
 			}
 		}
-		getCheckinCount();
-	}
-
-	function getCheckinCount () {
-
-		Checkin.count(q_checkins, function (err, count) {
-
-			if(err) {
-				counts.checkin_count = null;
-			}
-			else {
-				counts.checkin_count = count;
-			}
-			getVoucherCount();
-		});
-	}
-
-	function getVoucherCount () {
-
-		Voucher.count(q_voucher, function (err, count) {
-
-			if(err) {
-				counts.voucher_count = null;
-			}
-			else {
-				counts.voucher_count = count;
-			}
-			getRedeemCount();
-		});
-	}
-
-	function getRedeemCount () {
-
-		Voucher.count(q_redeem, function (err, count) {
-
-			if(err) {
-				counts.redeem_count = null;
-			}
-			else {
-				counts.redeem_count = count;
-			}
-			res.send(200, {
-				'status': 'success',
-				'message': 'Got count successfully',
-				'info': counts
-			})
-		});
+		return q;
 	}
 }
 
