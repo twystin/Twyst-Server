@@ -305,7 +305,7 @@ module.exports = function (app) {
         app.get('/api/v2/programs', checkAuthenticated(), checkRole(5), ProgramCtrl.get);
         app.get('/api/v1/programs/count/:user_id', checkAuthenticated(), checkRole(5), ProgramCtrl.getCount);
         app.get('/api/v1/programs/offer/:offer_id', checkAuthenticated(), checkRole(4), ProgramCtrl.getProgramByOffer);
-        app.get('/api/v1/programs/:user_id', checkAuthenticated(), checkRole(5), ProgramCtrl.query);
+        app.get('/api/v1/programs', checkAuthenticated(), checkRole(5), ProgramCtrl.query);
         app.get('/api/v1/programs/only/:user_id', checkAuthenticated(), checkRole(4), ProgramCtrl.onlyPrograms);
         app.get('/api/v1/public/programs/', ProgramCtrl.publicQuery);
         app.get('/api/v1/programs/view/:program_id', ProgramCtrl.readOne);

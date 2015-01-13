@@ -86,19 +86,23 @@ module.exports.onlyPrograms = function (req, res) {
 };
 
 module.exports.query = function (req, res) { 
-	Program.find({accounts: getAccountIdForProgram()}).populate('outlets').exec(function (err, programs) {
+	Program.find({
+		accounts: getAccountIdForProgram()
+	})
+	.populate('outlets')
+	.exec(function (err, programs) {
 		if(err) {
 			res.send(400, {
 				'status': 'error',
 				'message': 'Error getting programs',
-				'info': JSON.stringify(err)
+				'info': err
 			});
 		}
 		else {
 			res.send(200, {
 				'status': 'error',
-				'message': 'Got programs successfully.',
-				'info': JSON.stringify(programs)
+				'message': 'Got programs successfully',
+				'info': programs
 			});
 		}
 	});
