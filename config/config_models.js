@@ -9,7 +9,7 @@ module.exports = function () {
         'checkin', 'favourite', 'qr_code', 'tag', 'beta_users', 'log', 'smslog',
         'smsMessageSentLogs', 'redirect', 'temp_otp', 'notif', 'social', 'rating',
         'recco_config', 'userLoc', 'rewards', 'winback', 'beta_merchants', 'group_program', 
-        'feedback', 'unsbs', 'new_year', 'voucher_reminder', 'birthanniv'
+        'feedback', 'unsbs', 'new_year', 'voucher_reminder', 'specialProgram'
     ];
 
     models.forEach(function (m) {

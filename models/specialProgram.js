@@ -4,18 +4,19 @@ var Schema = mongoose.Schema;
 var Outlet = mongoose.model('Outlet');
 var avail_hours = require("../common/operatingHours");
 
-var BirthAnnivSchema = new Schema ({
+var SpecialProgramSchema = new Schema ({
     name: {type: String, trim: true, required: true},
     slug: {type: String, trim: true, required: true},
-    events: {
+    desc: {type: String},
+    types: {
         birth: {type: Boolean, default: false},
-        anniv: {type: Boolean, default: true}
+        anniv: {type: Boolean, default: false}
     },
     created_at : {type: Date, default: Date.now},
     modified_at: {type: Date, default: Date.now},
-    checkin_tier: [{
-        from: {type: Number, default: ''},
-        to: {type: Number, default: ''},
+    ranges: [{
+        count_from: {type: Number, default: ''},
+        count_till: {type: Number, default: ''},
         reward: {
             discount: {
                 max: String,
@@ -51,10 +52,6 @@ var BirthAnnivSchema = new Schema ({
     validity: {
         earn_start: {type: Date, default: Date.now},
         earn_end: {type: Date, default: Date.now},
-        valid_days: {
-            before: {type: Number},
-            after: {type: Number}
-        },
         send_at: {
             days_before: {type: Number},
             at_hours: {type: Number}
@@ -78,10 +75,10 @@ function slugify(name) {
     return name.toLowerCase().replace(/\s+/g, '').replace(/\W/g, '');
 }
 
-BirthAnnivSchema.pre('validate', function (next) {
+SpecialProgramSchema.pre('validate', function (next) {
     if(!this.name) next();
     this.slug = slugify(this.name);
     next();
 });
 
-module.exports = mongoose.model('BirthAnniv', BirthAnnivSchema);
+module.exports = mongoose.model('SpecialProgram', SpecialProgramSchema);
