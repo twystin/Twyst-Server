@@ -102,7 +102,7 @@ function getVoucherTimeline(voucher) {
 	var obj = {};
 	obj.created_date = voucher.basics.created_at;
 	obj.message_object_type = "VOUCHER_UNLOCKED";
-	obj.message = "Voucher received form " + voucher.issue_details.issued_at[0].basics.name + ", "+ voucher.issue_details.issued_at[0].contact.location.locality_1[0] +".";
+	obj.message = "Voucher received from " + voucher.issue_details.issued_at[0].basics.name + ", "+ voucher.issue_details.issued_at[0].contact.location.locality_1[0] +".";
 	obj.message_object = {
 		'voucher_id': voucher._id
 	};
