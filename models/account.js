@@ -39,6 +39,22 @@ var Account = new Schema({
         google: {},
         email: {}
     },
+    profile: {
+        first_name: {type: String, default: ""},
+        middle_name: {type: String, default: ""},
+        last_name: {type: String, default: ""},
+        email: {type: String},
+        bday: {
+            d: {type: Number},
+            m: {type: Number},
+            y: {type: Number}
+        },
+        anniv: {
+            d: {type: Number},
+            m: {type: Number},
+            y: {type: Number}
+        }
+    },
     device_id: {type: String, default: ''},
     otp_validated: Boolean,
     batch_user: {type: Boolean, default: false},
