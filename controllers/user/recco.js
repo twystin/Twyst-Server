@@ -81,7 +81,6 @@ function getQuery(query) {
 	for(var i = 0; i < query.length; i++) {
 		query[i] = new RegExp(query[i], "i");
 	}
-	console.log(query);
 	var q = {
 		'outlet_meta.status': 'active',
 		$or:[{
@@ -111,7 +110,6 @@ function getQuery(query) {
 			}
 		]
 	};
-	console.log(q);
 	return q;
 }
 
