@@ -41,6 +41,11 @@ module.exports = function (app) {
         return false;
     };
 
+    (function job_status_route () {
+        var SMSJob = require('../controllers/job_status/sms_sender');
+        app.get('/api/v3/job_status/sms', SMSJob.status);
+    })();
+
     (function seo_route () {
         var SitemapCtrl = require('../controllers/sitemapGen');
         app.get('/api/v3/sitemap', SitemapCtrl.initSitemap);
