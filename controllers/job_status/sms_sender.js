@@ -34,7 +34,7 @@ module.exports.status = function (req, res) {
 				res.send(200, {
 					'status': 'success',
 					'message': 'Got status successfully',
-					'data': status
+					'info': status
 				})
 			}
 		}
