@@ -1,6 +1,4 @@
 var mongoose = require('mongoose');
-mongoose.connect('localhost/twyst')
-require('../config/config_models')();
 
 var Account = mongoose.model('Account');
 var Unsbs = mongoose.model('Unsbs');

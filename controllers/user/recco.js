@@ -15,25 +15,11 @@ module.exports.getRecco = function (req, res) {
 		lon = req.query.lon ||  77.1016,
 		start = req.query.start || 1,
 		end = req.query.end || 20,
-		q = req.query.q ? {
-			'outlet_meta.status': 'active',
-			$or:[{
-					'basics.name': new RegExp(req.query.q, "i")
-				}, 
-				{
-					'contact.location.locality_1': new RegExp(req.query.q, "i")
-				},
-				{ 
-					'contact.location.locality_2': new RegExp(req.query.q, "i")
-				},
-				{
-					'contact.location.city': new RegExp(req.query.q, "i")
-				},
-				{ 
-					'attributes.tags': new RegExp(req.query.q, "i")
-				}
-			]
-		} : {'outlet_meta.status': 'active'};
+		q = {'outlet_meta.status': 'active'};
+
+	if(req.query.q) {
+		q = getQuery(req.query.q);
+	}
 
 	getOutlets(q, function (outlets) {
 		if(!outlets || !outlets.length) {
@@ -43,12 +29,31 @@ module.exports.getRecco = function (req, res) {
 				'info': []
 			});
 		}
-		getProgramsForOutlets(outlets, function (objects) {
-			getIndependentUserData(function (results) {
-				var unordered_set = computeReccoWeight(objects, results, lat, lon);
-				if(req.user) {
-					getUserHistory(req.user, function (err, history) {
-						var relevant_set = addUserRelevance(unordered_set, history);
+		else {
+			getProgramsForOutlets(outlets, function (objects) {
+				getIndependentUserData(function (results) {
+					var unordered_set = computeReccoWeight(objects, results, lat, lon);
+					if(req.user) {
+						getUserHistory(req.user, function (err, history) {
+							var relevant_set = addUserRelevance(unordered_set, history);
+							var sorted_set = sortRecco(unordered_set);
+							var result = {
+								total: sorted_set.length,
+								reccos: getNumberOfRecco(sorted_set, start, end)
+							}
+							getMatchedRewards(result.reccos, function (err, reccos) {
+								if(!err) {
+									result.reccos = reccos;
+								}
+								res.send(200, {
+									'status': 'success',
+									'message': 'Got recco data successfully',
+									'info': result
+								});
+							})
+						})
+					}
+					else {
 						var sorted_set = sortRecco(unordered_set);
 						var result = {
 							total: sorted_set.length,
@@ -64,28 +69,50 @@ module.exports.getRecco = function (req, res) {
 								'info': result
 							});
 						})
-					})
-				}
-				else {
-					var sorted_set = sortRecco(unordered_set);
-					var result = {
-						total: sorted_set.length,
-						reccos: getNumberOfRecco(sorted_set, start, end)
 					}
-					getMatchedRewards(result.reccos, function (err, reccos) {
-						if(!err) {
-							result.reccos = reccos;
-						}
-						res.send(200, {
-							'status': 'success',
-							'message': 'Got recco data successfully',
-							'info': result
-						});
-					})
-				}
-			})
-		});
+				})
+			});
+		}
 	})
+}
+
+function getQuery(query) {
+	var query = query.split(/[ ,]+/);
+	for(var i = 0; i < query.length; i++) {
+		query[i] = new RegExp(query[i], "i");
+	}
+	console.log(query);
+	var q = {
+		'outlet_meta.status': 'active',
+		$or:[{
+				'basics.name': {
+					$in: query
+				}
+			}, 
+			{
+				'contact.location.locality_1': {
+					$in: query
+				}
+			},
+			{ 
+				'contact.location.locality_2': {
+					$in: query
+				}
+			},
+			{
+				'contact.location.city': {
+					$in: query
+				}
+			},
+			{ 
+				'attributes.tags': {
+					$in: query
+				}
+			}
+		]
+	};
+	console.log(q);
+	return q;
 }
 
 function getMatchedRewards(cut_reccos, cb) {
