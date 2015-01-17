@@ -99,7 +99,7 @@ function filterExpired(vouchers) {
 		else {
 			// Other programs
 		}
-		if(isExpired(program_validity)) {
+		if(isExpired(program_validity, program_type)) {
 			v.EXPIRED.push(vouchers[i]);
 		}
 		else {
