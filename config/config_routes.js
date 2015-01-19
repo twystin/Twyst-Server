@@ -160,8 +160,6 @@ module.exports = function (app) {
     // Route to send mails
     (function mailer_routes() {
         var MailerCtrl = require('../controllers/mailer');
-        app.put('/api/v1/pass/forgot/:username', MailerCtrl.forgot);
-        app.put('/api/v1/resend/validation/', MailerCtrl.validationEmail);
         app.post('/api/v1/sendfeedback', checkAuthenticated(), MailerCtrl.feedbackEmail);
         app.post('/api/v3/sendfeedback', checkAuthenticated(), MailerCtrl.feedbackEmail);
     })();
@@ -183,7 +181,6 @@ module.exports = function (app) {
     //Register user and login as well as other auth routes
     (function authentication_routes() {
         var AccountCtrl = require('../controllers/account'),
-            MailerCtrl = require('../controllers/mailer'),
             CommonUtilities = require('../common/utilities');
         app.get('/verify_email/:token', AccountCtrl.verifyEmail);
         app.post('/api/v1/auth/login', function (req, res, next) {
@@ -195,7 +192,7 @@ module.exports = function (app) {
             next();
         }, passport.authenticate('local'), AccountCtrl.login);
 
-        app.post('/api/v1/auth/register', AccountCtrl.register, MailerCtrl.validationEmail);
+        app.post('/api/v1/auth/register', AccountCtrl.register);
         app.get('/api/v1/auth/logout', AccountCtrl.logout);
         app.get('/api/v1/auth/users', checkAuthenticated(), checkRole(3), AccountCtrl.query);
         app.get('/api/v1/auth/users/:user_id', checkAuthenticated(), checkRole(4), AccountCtrl.read);

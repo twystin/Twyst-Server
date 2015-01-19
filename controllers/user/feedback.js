@@ -112,7 +112,7 @@ function initEmail(user, feedback_obj) {
 	var obj = {
 		to: null,
 		data: {
-			merchant_name: 'Jayram',
+			merchant_name: null,
 			merchant_id: null,
 			outlet_name: null,
 			outlet_location: null,
