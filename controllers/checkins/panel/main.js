@@ -24,6 +24,9 @@ module.exports.checkin = checkin = function(req, res) {
 			if(success_object.sms && success_object.sms.reward) {
 				SMS.sendSms(req.body.phone, success_object.sms.reward, 'VOUCHER_MESSAGE');
 			}
+			if(success_object.sms && success_object.sms.voucher_only_app) {
+				SMS.sendSms(req.body.phone, success_object.sms.voucher_only_app, 'VOUCHER_MESSAGE');
+			}
 			responder(success_object.res.statusCode, success_object.res.message);
 		});
 	}
@@ -288,6 +291,16 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 			if(outlet.basics.slug === 'strikerpubbrewery'
 				|| outlet.basics.slug === 'strikerpubkitchen') {
 				message.checkin += " Adda by Striker at Sec-29 now open! Call 9811118182 for details.";
+			}
+			if(outlet._id === '534b82cb0a9281e4520001bf'
+				|| outlet._id === '540f29192f61834b5170ec5e'
+				|| outlet._id === '5491a7abd031388c54653b35'
+				|| outlet._id === '54a0fba94a9f96a41bbe4bb2'
+				|| outlet._id === '5464888737cb6ce2369d054a'
+				|| outlet._id === '543cbb84c4c303bc6d6d37c0'
+				|| outlet._id === '5445f7c247f75ed312fc91e3'
+				|| outlet._id === '5469efed7063c62266666503') {
+				message.voucher_only_app = 'In a few days, vouchers will be available only on the Twyst app for Android and iPhone. Upgrade to the app (http://twyst.in/app) to continue to view, track and redeem your rewards. Please write to support@twyst.in for help!';
 			}
 			sms.checkin = false;
 			sms.reward = false;
