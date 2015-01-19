@@ -18,6 +18,7 @@ module.exports.checkin = checkin = function(req, res) {
 		&& isNumber(req.body.phone)){
 		
 		initCheckin(req.body, function (success_object) {
+			console.log(success_object.sms)
 			if(success_object.sms && success_object.sms.checkin) {
 				SMS.sendSms(req.body.phone, success_object.sms.checkin, 'CHECKIN_MESSAGE');
 			}
@@ -292,14 +293,14 @@ module.exports.initCheckin = initCheckin =  function(obj, callback) {
 				|| outlet.basics.slug === 'strikerpubkitchen') {
 				message.checkin += " Adda by Striker at Sec-29 now open! Call 9811118182 for details.";
 			}
-			if(outlet._id === '534b82cb0a9281e4520001bf'
-				|| outlet._id === '540f29192f61834b5170ec5e'
-				|| outlet._id === '5491a7abd031388c54653b35'
-				|| outlet._id === '54a0fba94a9f96a41bbe4bb2'
-				|| outlet._id === '5464888737cb6ce2369d054a'
-				|| outlet._id === '543cbb84c4c303bc6d6d37c0'
-				|| outlet._id === '5445f7c247f75ed312fc91e3'
-				|| outlet._id === '5469efed7063c62266666503') {
+			if(outlet._id.equals('534b82cb0a9281e4520001bf')
+				|| outlet._id.equals('540f29192f61834b5170ec5e')
+				|| outlet._id.equals('5491a7abd031388c54653b35')
+				|| outlet._id.equals('54a0fba94a9f96a41bbe4bb2')
+				|| outlet._id.equals('5464888737cb6ce2369d054a')
+				|| outlet._id.equals('543cbb84c4c303bc6d6d37c0')
+				|| outlet._id.equals('5445f7c247f75ed312fc91e3')
+				|| outlet._id.equals('5469efed7063c62266666503')) {
 				message.voucher_only_app = 'In a few days, vouchers will be available only on the Twyst app for Android and iPhone. Upgrade to the app (http://twyst.in/app) to continue to view, track and redeem your rewards. Please write to support@twyst.in for help!';
 			}
 			sms.checkin = false;
