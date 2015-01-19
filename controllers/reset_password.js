@@ -18,97 +18,127 @@ options.missingPasswordError = options.missingPasswordError || 'Password argumen
     
 
 module.exports.resetPassword = function (req, res) {
-	var password = req.body.password;
-	var token = req.params.token;
+	var password = req.body.password,
+        token = req.params.token;
 
-        if (!password) {
-            res.send(options.missingPasswordError);
-        }
-        
-        var updated_user = {};
-        updated_user.hash = '';
-        updated_user.salt = '';
-
-        crypto.randomBytes(options.saltlen, function(err, buf) {
-            if (err) {
-                res.send(err);
-            }
-
-            var salt = buf.toString('hex');
-
-            crypto.pbkdf2(password, salt, options.iterations, options.keylen, function(err, hashRaw) {
-                if (err) {
-                    res.send(err);
-                }
-                else {
-                	updated_user.hash = new Buffer(hashRaw, 'binary').toString('hex');
-                	updated_user.salt = salt;
-                	Account.findOneAndUpdate(
-							{reset_password_token: token}, 
-							{$set: updated_user}, 
-							{upsert:true},
-							function(err,user) {
-								if (err) {
-									res.send(400, {	'status': 'error',
-												'message': 'Error updating password ' + req.params.user_id,
-												'info': JSON.stringify(err)
-									});
-								} else {
-									res.send(200, {	'status': 'success',
-												'message': 'Successfully updated password',
-												'info': JSON.stringify(user)
-									});
-								}
-					});
-                }
-            });
+    if(!password || !token) {
+        res.send(400, { 
+            'status': 'error',
+            'message': 'Sorry password missing in request',
+            'info': err
         });
+    }
+    else {
+        getHashSalt(password, function (err, data) {
+            if(err) {
+                res.send(400, { 
+                    'status': 'error',
+                    'message': 'Sorry password could not be changed',
+                    'info': err
+                });
+            }
+            else {
+                var q = {
+                    reset_password_token: token
+                };
+                updateHashSalt(q, data, function (err) {
+                    if(err) {
+                        res.send(400, { 
+                            'status': 'error',
+                            'message': 'Sorry password could not be changed',
+                            'info': err
+                        });
+                    }
+                    else {
+                        res.send(200, { 
+                            'status': 'success',
+                            'message': 'Password changed successfully',
+                            'info': null
+                        });
+                    }
+                });
+            }
+        });
+    }
 };
 
 module.exports.changePassword = function (req, res) {
     var password = req.body.password;
-    var user_id = req.params.user_id;
-
-        if (!password) {
-            res.send(options.missingPasswordError);
-        }
-        
-        var updated_user = {};
-        updated_user.hash = '';
-        updated_user.salt = '';
-
-        crypto.randomBytes(options.saltlen, function(err, buf) {
-            if (err) {
-                res.send(err);
+    if(!password) {
+        res.send(400, { 
+            'status': 'error',
+            'message': 'Sorry password missing in request',
+            'info': err
+        });
+    }
+    else {
+        getHashSalt(password, function (err, data) {
+            if(err) {
+                res.send(400, { 
+                    'status': 'error',
+                    'message': 'Sorry password could not be changed',
+                    'info': err
+                });
             }
+            else {
+                var q = {
+                    _id: req.user._id
+                };
+                updateHashSalt(q, data, function (err) {
+                    if(err) {
+                        res.send(400, { 
+                            'status': 'error',
+                            'message': 'Sorry password could not be changed',
+                            'info': err
+                        });
+                    }
+                    else {
+                        res.send(200, { 
+                            'status': 'success',
+                            'message': 'Password changed successfully',
+                            'info': null
+                        });
+                    }
+                });
+            }
+        });
+    }
+};
 
+function updateHashSalt(q, data, cb) {
+    Account.findOneAndUpdate(q, {
+        $set: data
+    }, {
+        upsert:true
+    })
+    .exec(function (err, user) {
+        cb(err, user);
+    })
+}
+
+function getHashSalt(password, cb) {
+    crypto.randomBytes(options.saltlen, function(err, buf) {
+        if(err) {
+            cb(err);
+        }
+        else {
             var salt = buf.toString('hex');
-
-            crypto.pbkdf2(password, salt, options.iterations, options.keylen, function(err, hashRaw) {
-                if (err) {
-                    res.send(err);
+            crypto.pbkdf2(password, 
+                salt, 
+                options.iterations, 
+                options.keylen, 
+            function(err, hashRaw) { 
+                if(err) {
+                    cb(err);
                 }
                 else {
-                    updated_user.hash = new Buffer(hashRaw, 'binary').toString('hex');
-                    updated_user.salt = salt;
-                    Account.findOneAndUpdate(
-                            {_id: user_id}, 
-                            {$set: updated_user}, 
-                            {upsert:true},
-                            function(err,user) {
-                                if (err) {
-                                    res.send(400, { 'status': 'error',
-                                                'message': 'Error updating password ' + req.params.user_id,
-                                                'info': JSON.stringify(err)
-                                    });
-                                } else {
-                                    res.send(200, { 'status': 'success',
-                                                'message': 'Successfully updated password',
-                                                'info': JSON.stringify(user)
-                                    });
-                                }
-                    });
+                    var data = {
+                        hash: new Buffer(hashRaw, 'binary').toString('hex'),
+                        salt: salt
+                    }
+                    cb(null, data);
                 }
             });
-        });
-};
+        }
+    });
+}

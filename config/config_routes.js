@@ -168,7 +168,7 @@ module.exports = function (app) {
     (function password_reset_routes() { 
         var ResetCtrl = require('../controllers/reset_password');
         app.put('/api/v1/pass/reset/:token', ResetCtrl.resetPassword);
-        app.put('/api/v1/pass/change/:user_id', checkAuthenticated(), ResetCtrl.changePassword);
+        app.put('/api/v1/pass/change', checkAuthenticated(), ResetCtrl.changePassword);
     })();
     //Image uploader to upload images to S3
     (function image_routes() {
