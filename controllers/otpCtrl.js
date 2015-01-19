@@ -60,7 +60,7 @@ module.exports.getOTP = function (req, res) {
 		if(!otp_data) {
 			otp_data = {
 				'phone': phone,
-				'otp': keygen.number({length: 4})
+				'otp': getOTPCode(1000, 9999)
 			}
 			otp_data = new OTP(otp_data);
 		}
@@ -95,6 +95,10 @@ module.exports.getOTP = function (req, res) {
 
 	function getTimeDiff(otp) {
 		return otp.created_at ? (Date.now() - new Date(otp.created_at)) : 0;
+	}
+
+	function getOTPCode(min, max) {
+    	return Math.floor(Math.random()*(max-min+1)+min);
 	}
 }
 
