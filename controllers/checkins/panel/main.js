@@ -18,7 +18,6 @@ module.exports.checkin = checkin = function(req, res) {
 		&& isNumber(req.body.phone)){
 		
 		initCheckin(req.body, function (success_object) {
-			console.log(success_object.sms)
 			if(success_object.sms && success_object.sms.checkin) {
 				SMS.sendSms(req.body.phone, success_object.sms.checkin, 'CHECKIN_MESSAGE');
 			}
