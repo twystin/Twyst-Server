@@ -213,7 +213,12 @@ module.exports.checkin = function(req, res) {
 				console.log(err);
 			}
 			else {
-				console.log('Voucher generated - code: ' + voucher.basics.code);
+				if(!voucher) {
+					// Do nothing
+				}
+				else {
+					console.log('Voucher generated - code: ' + voucher.basics.code);
+				}
 			}
 		});
 	}
