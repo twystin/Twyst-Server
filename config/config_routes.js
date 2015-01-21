@@ -399,19 +399,6 @@ module.exports = function (app) {
         app.get('/api/v1/offers/:offer_id', OfferCtrl.read);
     })();
 
-
-    //Checkin CRUD routes
-    (function checkin_routes() {
-        var CheckinCtrl = require('../controllers/checkin');
-        app.get('/api/v1/checkins',checkAuthenticated(), checkRole(5), CheckinCtrl.query);
-        app.post('/api/v1/qr/checkins', checkAuthenticated(), checkRole(7), CheckinCtrl.qrCheckin);
-        app.get('/api/v1/checkins/:checkin_id',checkAuthenticated(),checkRole(5), CheckinCtrl.read);
-        app.post('/api/v1/checkins',checkAuthenticated(), checkRole(5), CheckinCtrl.panelCheckin);
-        app.put('/api/v1/checkins/:checkin_id',checkAuthenticated(), checkRole(5), CheckinCtrl.update);
-        app.delete('/api/v1/checkins/:checkin_id',checkAuthenticated(), checkRole(5), CheckinCtrl.delete);
-    })();
-
-
     //Favourites management routes
     (function favourite_routes() {
         var FavouriteCtrl = require('../controllers/favourites');
