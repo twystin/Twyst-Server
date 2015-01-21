@@ -36,7 +36,7 @@ function initEmail(user) {
 			user_phone: user.phone,
 			message: user.message
 		},
-		type: 'CONTACTUS_MERCHANT'
+		type: 'CONTACTUS'
 	};
 	Mailer.sendEmail(obj);
 }
