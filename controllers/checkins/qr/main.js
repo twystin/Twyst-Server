@@ -1,7 +1,8 @@
 var mongoose = require('mongoose'),
 	_ = require('underscore'),
 	keygen = require("keygenerator"),
-	Utils = require('../../../common/utilities');
+	Utils = require('../../../common/utilities'),
+	VoucherGen = require('../../voucher-gen');
 var Checkin = mongoose.model('Checkin'),
 	Qr = mongoose.model('Qr'),
 	Program = mongoose.model('Program'),
@@ -181,6 +182,11 @@ module.exports.checkin = function(req, res) {
 				}
 				if(success_obj.reward_distance === 0) {
 					saveVoucher(user, success_obj, reward, checkin._id);
+					res.send(200, {	
+						'status': 'success',
+						'message': 'Successfully checked-in, Voucher generated',
+						'info': success_obj
+					});
 				}
 				else {
 					res.send(200, {	
@@ -194,60 +200,29 @@ module.exports.checkin = function(req, res) {
 	}
 
 	function saveVoucher(user, success_obj, reward, checkin_id) {
-		var voucher = {};
-		voucher.issue_details = {};
-		voucher.basics = {};
-		voucher.validity = {};
-		voucher.checkin_details = {};
-		
-		//Validity for voucher
-		voucher.validity.start_date = reward.program.validity.burn_start;
-		voucher.validity.end_date = reward.program.validity.burn_end;
-		
-		// Issue details
-		voucher.issue_details.issued_at = [];
-		if(reward.program.outlets.length > 0) {
-			voucher.issue_details.issued_at = reward.program.outlets.slice();
-		}
-		voucher.issue_details.issued_to = user._id;
-		voucher.issue_details.program = reward.program._id;
-		voucher.issue_details.tier = success_obj.reward.tier;
-		voucher.issue_details.issued_for = success_obj.reward.offer;
-		voucher.checkin_details.checkin_id = checkin_id;
-
-		voucher.basics.description = success_obj.reward.rewardified;
-		voucher.basics.created_at = new Date(Date.now() + 10800000);
-		
-		voucher.basics.code = keygen._({
-			forceUppercase: true, 
-			length: 6, 
-			exclude:['O', '0', 'L', '1']
-		});
-		voucher = new Voucher(voucher);
-
-		voucher.save(function (err) {
+		var obj = {
+			user: user,
+			reward_table: reward,
+			current_reward: success_obj.reward,
+			checkin_id: checkin_id,
+			creation_time: Date.now(),
+			is_batch: false
+		};
+		VoucherGen.generate(obj, function (err, voucher) {
 			if(err) {
-				res.send(200, {	
-					'status': 'success',
-					'message': 'Successfully checked-in, voucher gen error',
-					'info': success_obj
-				});
+				console.log(err);
 			}
 			else {
-				res.send(200, {	
-					'status': 'success',
-					'message': 'Successfully checked-in, Unlocked a voucher',
-					'info': success_obj
-				});
+				console.log('Voucher generated - code: ' + voucher.basics.code);
 			}
-		})
+		});
 	}
 }
 
 function updateQrUsed(qr) {
 	qr.times_used += 1;
 	qr.save(function (err) {
-		console.log(err);
+		console.log(err || '');
 	});
 }
 

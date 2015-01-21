@@ -1,13 +1,13 @@
 'use strict'; 
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
+var valid_hours = require("../common/operatingHours");
 
 var VoucherSchema = new Schema({
     basics: {
         code: {type: String, trim: true, required: true, unqiue: true, index: true},
         description: {type: String, default: '', trim: true},
-        type: {type: String, enum: ['WINBACK', 'CHECKIN'], default: 'CHECKIN'},
-        applicability: {type: String, default: '', trim: true},
+        type: {type: String, enum: ['WINBACK', 'CHECKIN', 'BIRTHDAY'], default: 'CHECKIN'},
         status : {type: String, enum: ['active', 'user redeemed', 'merchant redeemed'], default: 'active'},
         created_at : {type: Date, default: Date.now},
         modified_at: {type: Date, default: Date.now}
@@ -15,7 +15,7 @@ var VoucherSchema = new Schema({
     validity:{
         start_date: {type: Date, default: Date.now},
         end_date: {type: Date, default: Date.now},
-        number_of_days: {type: String, default: ''}
+        number_of_days: {type: String}
     },
     issue_details:{
         issue_date : {type: Date, default: Date.now},
@@ -37,9 +37,9 @@ var VoucherSchema = new Schema({
         checkin_id: {type: Schema.ObjectId, ref: 'Checkin'},
         batch: {type: Boolean, default: false}
     },
-    redemption_phone_number: {type: String, default: ''},
-    free_text: String
+    applicable_hours:valid_hours.voucher_hours,
+    reward: {},
+    terms: {type: String}
 });
-
 
 module.exports = mongoose.model('Voucher', VoucherSchema);

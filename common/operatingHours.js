@@ -91,3 +91,34 @@ module.exports.hours = {
         }]
     }
 }
+
+module.exports.voucher_hours = {
+    sunday: {
+        closed: {type: Boolean, default: false},
+        timings: []
+    },
+    monday: {
+        closed: {type: Boolean, default: false},
+        timings: []
+    },
+    tuesday: {
+        closed: {type: Boolean, default: false},
+        timings: []
+    },
+    wednesday: {
+        closed: {type: Boolean, default: false},
+        timings: []
+    },
+    thursday: {
+        closed: {type: Boolean, default: false},
+        timings: []
+    },
+    friday: {
+        closed: {type: Boolean, default: false},
+        timings: []
+    },
+    saturday: {
+        closed: {type: Boolean, default: false},
+        timings: []
+    }
+}
