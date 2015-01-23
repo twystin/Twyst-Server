@@ -1,7 +1,7 @@
 var mongoose = require('mongoose'),
     async = require('async'),
     _ = require('underscore'),
-    AutoCheckin = require('./checkins/auto_checkin');
+    AutoCheckin = require('./checkins/panel/request');
 var Voucher = mongoose.model('Voucher'),
     Account = mongoose.model('Account'),
     Program = mongoose.model('Program'),

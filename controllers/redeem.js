@@ -2,7 +2,7 @@ var mongoose = require('mongoose'),
 	_ = require('underscore'),
 	Utils = require('../common/utilities'),
 	Reward = require('../models/reward_applicability'),
-	AutoCheckin = require('./checkins/auto_checkin'),
+	AutoCheckin = require('./checkins/panel/request'),
 	SMS = require('../common/smsSender');
 
 var Voucher = mongoose.model('Voucher'),

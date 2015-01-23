@@ -4,7 +4,7 @@ var Outlet = mongoose.model('Outlet');
 var _ = require('underscore');
 var CommonUtilities = require('../common/utilities');
 var Reward = require('../models/reward_applicability');
-var AutoCheckin = require('./checkins/auto_checkin');
+var AutoCheckin = require('./checkins/panel/request');
 var SMS = require('../common/smsSender');
 
 var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";

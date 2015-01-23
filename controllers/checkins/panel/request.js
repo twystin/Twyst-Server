@@ -71,6 +71,17 @@ module.exports.poscheckin = function(req, res){
 	}
 };
 
+module.exports.autoCheckin = function (_obj, cb) {
+	Checkin_Main.checkin(_obj, function (err, data) {
+		if(err) {
+			
+		}
+		else {
+			smsHandler(data.info);
+		}
+	});
+}
+
 function smsHandler(_obj) {
 	Helper.getOutlet(_obj.outlet, function (err, outlet) {
 		if(err) {
