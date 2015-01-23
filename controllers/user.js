@@ -11,34 +11,41 @@ var _ = require('underscore');
 var https = require('https');
 
 module.exports.setGCM = function (req, res) {
-    var user = req.user;
-    var gcm = req.body;
-    Account.findOne({_id: user._id}, function (err, account) {
-        if (err) {
-            res.send(400, {
-                'status': 'error',
-                'message': 'Error finding user',
-                'info': JSON.stringify(err)
-            });
-        } else {
-            if (account !== null) {
-                account.gcm = gcm.id;
-                account.save();
-                res.send(200, {
-                    'status': 'success',
-                    'message': 'Account updated with GCM',
-                    'info': JSON.stringify(account)
+    var gcm = req.body.gcm;
+    if(!gcm) {
+        res.send(400, {
+            'status': 'error',
+            'message': 'Request requires GCM in body',
+            'info': null
+        });
+    }
+    else {
+        Account.findOneAndUpdate({
+            _id: req.user._id
+        }, {
+            $set: {
+                gcm: gcm.id
+            }
+        }, {
+            upsert:true
+        })
+        .exec(function (err) {
+            if(err) {
+                res.send(400, {
+                    'status': 'error',
+                    'message': 'Error updating gcm',
+                    'info': err
                 });
             }
             else {
-                res.send(400, {
-                    'status': 'error',
-                    'message': 'Account not found',
-                    'info': ''
+                res.send(200, {
+                    'status': 'success',
+                    'message': 'Account updated with gcm',
+                    'info': null
                 });
             }
-        }
-    });
+        })
+    }
 };
 
 

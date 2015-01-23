@@ -449,6 +449,7 @@ module.exports = function (app) {
         app.get('/api/v2/friends',checkAuthenticated(), checkRole(7), UserCtrl.friendsOnTwyst);
         app.post('/api/v1/user/home', UserCtrl.setHome) ;//User authentication to be added here
         app.post('/api/v1/user/gcm', UserCtrl.setGCM) ;//User authentication to be added here
+        app.post('/api/v3/user/gcm', UserCtrl.setGCM);
     })();
 
     (function notify_routes() {
