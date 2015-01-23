@@ -30,8 +30,8 @@ module.exports.registerUser = function (phone, cb) {
 }
 
 module.exports.otherCheckinToday = function (phone, created_date, cb) {
-    var lower_range = new Date(new Date(created_date).getTime() - 10800000),
-        upper_range = new Date(new Date(created_date).getTime() + 10800000);
+    var lower_range = new Date(new Date(created_date).getTime() - 10),
+        upper_range = new Date(new Date(created_date).getTime() + 10);
     Checkin.findOne({
         phone: phone,
         created_date: {
@@ -51,7 +51,7 @@ module.exports.getCheckinInfo = function (checkin, outlet_id) {
     }
     else {
         var time = new Date() - new Date(checkin.created_date);
-        if(time > 300000) {
+        if(time > 30) {
             return 'ALLOW';
         }
         else {
