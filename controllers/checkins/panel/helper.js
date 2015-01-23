@@ -1,363 +1,115 @@
-'use strict';
-var _ = require('underscore'),
-    mongoose = require('mongoose'),
-    async = require('async');
-var Checkin = mongoose.model('Checkin'),
-    SmsSentLog = mongoose.model('SmsSentLog'),
-    Qr = mongoose.model('Qr'),
-    Program = mongoose.model('Program'),
-    Outlet = mongoose.model('Outlet'),
-    Tier = mongoose.model('Tier'),
-    Account = mongoose.model('Account');
+var mongoose = require('mongoose');
+var Account = mongoose.model('Account'),
+    Checkin = mongoose.model('Checkin'),
+    Reward = mongoose.model('Reward'),
+    Outlet = mongoose.model('Outlet');
 
-module.exports.getCheckinHistory = function(query, cb) {
-    async.parallel({
-        last: function(callback) {
-            getCheckin(query, callback);
-        },
-        count: function(callback) {
-            getCheckinCount(query, callback);
-        },
-        last_checkin: function(callback) {
-            getLastCheckin(query, callback);
-        },
-        last_checkin_today: function(callback) {
-            getLastCheckinToday(query, callback);
-        }
-    }, function(err, results) {
-        cb(results);
-    });
-
-    function getCheckin(query, callback) {
-        Checkin.findOne({
-            phone: query.phone,
-            checkin_type: {
-                $ne: 'BATCH'
-            }
-        })
-        .sort({
-            'created_date': -1 
-        })
-        .exec(function(err, checkin) {
-            callback(null, checkin);
-        });
-    }
-
-    function getCheckinCount(query, callback) {
-        Checkin.count({
-                phone: query.phone, 
-                checkin_program: query.program._id
-            }, function(err, count) {
-                if(err) {
-                    count = 0;
-                }
-                callback(null, count);
-        });
-    }
-
-    function getLastCheckin(query, callback) {
-        Checkin.findOne({
-            phone: query.phone,
-            checkin_type: {
-                $ne: 'BATCH'
-            }
-        })
-        .sort({ 
-            'created_date': -1 
-        })
-        .exec(function(err, checkin) {
-            callback(null, checkin);
-        });
-    }
-
-    function getLastCheckinToday(query, callback) {
-        if(query.checkin_time) {
-            var upper = new Date(query.checkin_time.getTime() + (30 * 60 * 1000));
-            var lower = new Date(query.checkin_time.getTime() - (6 * 60 * 60 * 1000));
-        };
-        upper = upper || new Date();
-        lower = lower || new Date(new Date().getTime() - (6 * 60 * 60 * 1000));
-        Checkin.findOne({
-            phone: query.phone,
-            created_date: {
-                $gt: lower,
-                $lt: upper
-            },
-            checkin_type: {
-                $ne: 'BATCH'
-            }
-        })
-        .sort({
-            'created_date' : -1 
-        })
-        .exec(function(err, checkin) {
-            callback(null, checkin);
-        });
-    }
+module.exports.isUserRegistered = function(phone, cb) {
+    Account.findOne({
+        phone: phone
+    })
+    .exec(function (err, user) {
+        cb(err, user);
+    })
 }
 
-module.exports.getActiveProgram = function(query, cb) { 
-    Program.findOne({
-            outlets: query.outlet,
-            'status': 'active'
-        }, function(err, program) {
-            if (program){
-                populateProgram(program, cb);
-            }
-            else{
-                cb(program);
-            }
-    });
-
-    function populateProgram (program, cb) {
-        var tiers = [];
-        var count = program.tiers.length;
-
-        program.tiers.forEach(function (id) {
-            Tier.findOne({_id: id}).populate('offers').exec(function (err, tier) {
-                var t = {};
-                t = tier;
-                count--;
-                tiers.push(t);
-                if(count === 0) {
-                    program = program.toObject();
-                    program.tiers = tiers;
-                    cb(program);
-                }
-            })
-        });
-    }
-}
-
-module.exports.getApplicableOffer = function (p, c) {
-    
-    var count = Number(c);
-    var rewards = [];
-    var val = -1;
-
-    var program = p;
-    var obj = {};
-    
-    for(var i = 0; i < program.tiers.length; i++) {
-        if(program.tiers[i]) {
-            for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
-                for(var j = 0; j < program.tiers[i].offers.length; j++) {
-                    obj = {};
-                    if(program.tiers[i].offers[j]) {
-                        if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
-                            if((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
-                                obj.lim = lim;
-                                obj.tier = program.tiers[i];
-                                obj.offer = program.tiers[i].offers[j];
-                                rewards.push(obj);
-                            }
-                        }
-                        if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
-                            
-                            if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                                obj.lim = lim;
-                                obj.tier = program.tiers[i];
-                                obj.offer = program.tiers[i].offers[j];
-                                rewards.push(obj);
-                            }
-                        }
-                        if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
-                            if(lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                                obj.lim = lim;
-                                obj.tier = program.tiers[i];
-                                obj.offer = program.tiers[i].offers[j];
-                                rewards.push(obj);
-                            }
-                        }
-                    }
-                }
-            }   
-        }
-        
-    }
-    
-    rewards = _.uniq(rewards, function (obj) {
-        return obj.lim;
-    });
-
-    rewards = _.sortBy(rewards, function (obj) {
-        return obj.lim;
-    });
-
-    if(rewards[0].lim > count) {
-        obj = rewards[0];
-    }
-    
-    for (var i = 1; i < rewards.length; i++) {
-        if(rewards[i].lim === count) {
-            obj = rewards[i+1];
-        }
-        else if(rewards[i-1].lim <= count && rewards[i].lim > count) {
-            obj = rewards[i];
-        }
+module.exports.registerUser = function (phone, cb) {
+    var account = {
+        username: phone,
+        phone: phone,
+        role: 6,
+        otp_validated: true
     };
 
-    return obj;
+    Account.register(
+        new Account(account), 
+        phone,
+        function(err, user) {
+            cb(err, user);
+    });
 }
 
-module.exports.isRewardTime = function (tier, count) {
-    var total_checkin_count = count + 1;
-    var in_tier_checkin_count = count - tier.basics.start_value + 1;
-    var reward = null;
-
-    if(!tier || tier.offers.length === 0) {
-        return null;
-    }
-
-    for(var i = 0; i < tier.offers.length; i++) {
-        if(tier.offers[i]) {
-            if(tier.offers[i].user_eligibility) {
-                if(tier.offers[i].user_eligibility.criteria) {
-                    if(tier.offers[i].user_eligibility.criteria.condition === 'on only') {
-                        if(Number(tier.offers[i].user_eligibility.criteria.value) === total_checkin_count) {
-                            reward = tier.offers[i];
-                            break;
-                        }
-                    }
-                    if(tier.offers[i].user_eligibility.criteria.condition === 'after') {
-                        if(Number(tier.offers[i].user_eligibility.criteria.value) <= total_checkin_count) {
-                            reward = tier.offers[i];
-                            break;
-                        }
-                    }
-                    if(tier.offers[i].user_eligibility.criteria.condition === 'on every') {
-                        if(((in_tier_checkin_count + 1) > 0) && ((in_tier_checkin_count + 1) % Number(tier.offers[i].user_eligibility.criteria.value) === 0)) {
-                            reward = tier.offers[i];
-                            break;
-                        }
-                    }
-                }
-            }
+module.exports.otherCheckinToday = function (phone, created_date, cb) {
+    var lower_range = new Date(new Date(created_date).getTime() - 10800000),
+        upper_range = new Date(new Date(created_date).getTime() + 10800000);
+    Checkin.findOne({
+        phone: phone,
+        created_date: {
+            $gt: lower_range,
+            $lt: upper_range
         }
-    }
-    return reward;
+    })
+    .sort({'created_date': -1})
+    .exec(function (err, checkin) {
+        cb(err, checkin);
+    })
 }
 
-module.exports.isUserRegistered = function (query, cb) {
-
-    Account.findOne({phone: query.phone}, function (err, user) {
-        if(err) {
-            cb(null);
+module.exports.getCheckinInfo = function (checkin, outlet_id) {
+    if(checkin.outlet.equals(outlet_id)) {
+        return 'HERE';
+    }
+    else {
+        var time = new Date() - new Date(checkin.created_date);
+        if(time > 300000) {
+            return 'ALLOW';
         }
         else {
-            if(user) {
-                cb(user);
-            }
-            else {
-                registerUser();
-            }
+            return 'SOMEWHERE_ELSE';
         }
-    });
-
-    function registerUser() {
-        Account.register(
-            new Account({ 
-                username : query.phone, 
-                phone: query.phone, 
-                role: 6,
-                batch_user: query.batch_user
-            }), query.phone, function(err, account) {
-
-            if (err) {
-                console.log(err);
-                cb(account);
-            } else {
-                cb(account);
-            }
-        });
     }
 }
 
-module.exports.getDOW = function(array) {
-    if(array.length === 0) {
-        return '';
-    }
-    for(var i = 0; i < array.length; i++ ) {
-        if(array[i] !== 'all days') {
-            return 'on '+array.join(',');
-        }
-        if(array[i] === 'all days') {
-            return 'on all days of the week';
+module.exports.hasActiveRewards = function (outlet_id, cb) {
+    Reward.findOne({
+        outlets: outlet_id,
+        status: 'active'
+    })
+    .populate('program').exec(function (err, reward) {
+        cb(err, reward);
+    })
+}
+
+module.exports.countCheckinHere = function (phone, program, cb) {
+    Checkin.count({
+        phone: phone,
+        checkin_program: program
+    }, function (err, count) {
+        cb(err, count);
+    })
+}
+
+module.exports.getMatchedReward = function (reward, count) {
+    count = count || 0;
+    count += 1;
+    for (var i = 0; i < reward.rewards.length; i++) {
+        if(reward.rewards[i].count > count) {
+            return reward.rewards[i];
         }
     };
+    return null;
 }
 
-module.exports.getTOD = function(array) {
-    if(array.length === 0) {
-        return '';
-    }
-    for(var i = 0; i < array.length; i++ ) {
-
-        if(array[i] !== 'all day') {
-            return 'at '+array.join(',');
-        }
-        if(array[i] === 'all day') {
-            return 'all day long';
-        }
+module.exports.getCheckinObject = function (_obj) {
+    var checkin = {
+        phone: _obj.phone,
+        outlet: _obj.outlet,
+        checkin_program: _obj.reward.program._id,
+        checkin_tier: _obj.current_reward.tier,
+        checkin_for: _obj.current_reward.offer,
+        location: _obj.location,
+        checkin_type: _obj.checkin_type,
+        checkin_code: _obj.checkin_code,
+        created_date: _obj.created_date
     };
+    return checkin;
 }
 
-module.exports.getOutlet = function(id, cb) {
-    Outlet.findOne({_id: id}, function(err, outlet) {
-        cb(outlet);
-    });
-}
-
-module.exports.getNext = function(c, p) {
-        
-    var count = Number(c) + 1;
-    var rewards = [];
-    var val = -1;
-
-    var program = p;
-    
-    for(var i = 0; i < program.tiers.length; i++) {
-        if(program.tiers[i]) {
-            for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
-                for(var j = 0; j < program.tiers[i].offers.length; j++) {
-                    if(program.tiers[i].offers[j]) {
-                        if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
-                            if((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
-                                rewards.push(lim);
-                            }
-                        }
-                        if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
-                            
-                            if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                                rewards.push(lim);
-                            }
-                        }
-                        if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
-                            if(lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                                rewards.push(lim);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    rewards = _.uniq(rewards);
-    rewards = _.sortBy(rewards, function (num) {
-        return num;
-    });
-    
-    for (var i = 0; i < rewards.length; i++) {
-        if(rewards[0] > count) {
-            val = rewards[0] - count;
-        }
-        else if(rewards[i] === count) {
-            val = rewards[i+1] - rewards[i];
-        }
-        else if(rewards[i-1] < count && rewards[i] > count) {
-            val = rewards[i] - count;
-        }
-    };
-    return val;
+module.exports.getOutlet = function (outlet_id, cb) {
+    Outlet.findOne({
+        _id: outlet_id
+    })
+    .exec(function (err, outlet) {
+        cb(err, outlet);
+    })
 }

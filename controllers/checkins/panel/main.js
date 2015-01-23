@@ -1,353 +1,262 @@
-var async = require('async'),
-	_ = require('underscore'),
-	mongoose = require('mongoose'),
-	keygen = require("keygenerator");
+var _ = require('underscore'),
+	mongoose = require('mongoose');
 var Helper = require('./helper'),
-	response = require('./response'),
-	SMS = require('../../../common/smsSender'),
+	VoucherGen = require('../../voucher-gen'),
 	Utils = require('../../../common/utilities');
 
 var Checkin = mongoose.model('Checkin'),
 	Voucher = mongoose.model('Voucher');
 
-function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); } 
+// Checkin Module
+// Parameter as checkin object and callback
+// object properties
+// phone, outlet, location, created_date, checkin_type, checkin_code
 
-module.exports.checkin = checkin = function(req, res) {
-	if ( req.body.phone 
-		&& req.body.phone.length === 10 
-		&& isNumber(req.body.phone)){
-		
-		initCheckin(req.body, function (success_object) {
-			if(success_object.sms && success_object.sms.checkin) {
-				SMS.sendSms(req.body.phone, success_object.sms.checkin, 'CHECKIN_MESSAGE');
-			}
-			if(success_object.sms && success_object.sms.reward) {
-				SMS.sendSms(req.body.phone, success_object.sms.reward, 'VOUCHER_MESSAGE');
-			}
-			if(success_object.sms && success_object.sms.voucher_only_app) {
-				SMS.sendSms(req.body.phone, success_object.sms.voucher_only_app, 'VOUCHER_MESSAGE');
-			}
-			responder(success_object.res.statusCode, success_object.res.message);
-		});
+module.exports.checkin = function (_obj, cb) {
+	var error = null,
+		success = null;
+	if(!_obj.phone || !_obj.outlet) {
+		error = {
+			'message': 'Missing Phone Number or Outlet ID',
+			'info': null
+		}
+		cb(error);
 	}
 	else {
-		responder(response.message.invalid_mobile_number.statusCode, response.message.invalid_mobile_number);
-	}
-	
-	function responder(statusCode, message) {
-		res.send(statusCode, message);
-	}
-	
-};
-
-module.exports.initCheckin = initCheckin =  function(obj, callback) {
-	var checkin = {}, 
-		q = {},
-		history = {},
-		applicable = {},
-		reward = null,
-		user = null,
-		sms = {},
-		voucher = null;	
-
-	var success = {
-		'checkin': false,
-		'voucher': null,
-		'sms': null,
-		'res': {
-			'statusCode': null,
-			'message': null
+		if(isValidPhone(_obj.phone)) {
+			_obj.location = _obj.location || 'HOME_DELIVERY';
+			_obj.created_date = Utils.setCurrentTime(_obj.created_date);
+			_obj.checkin_type = _obj.checkin_type || 'PANEL';
+			_obj.checkin_code = _obj.checkin_code || 'PANEL';
+			preprocessUser();
+		}
+		else {
+			error = {
+				'message': 'Invalid mobile number. Please check the number you have entered.',
+				'info': null
+			}
+			cb(error);
 		}
 	};
 
-	sms.checkin = false;
-	sms.reward = false;
-	history.last = null;
-
-	q.phone  = obj.phone;
-	q.outlet = obj.outlet;
-	q.batch_user = obj.batch_user || false;
-	q.message = obj.message;
-	// Get request body and save in Checkin object.
-	checkin = _.extend(checkin, obj);
-	var current_time = Date.now();
-
-	checkin.created_date = Utils.setCurrentTime(checkin.created_date);
-
-	q.checkin_time = checkin.created_date;
-	checkin.checkin_type = checkin.checkin_type || "PANEL";
-	checkin.checkin_code = checkin.checkin_code || "PANEL";
-
-	Helper.getActiveProgram(q, function(data) {
-		if(data) {
-			q.program = data; 
-			getCheckinHistory(q);
-		}
-		else {
-			success.res.statusCode = response.message.program_error.statusCode;
-			success.res.message = response.message.program_error;
-			callback(success);
-		}
-	});
-
-	function getCheckinHistory(query) {
-		Helper.getCheckinHistory(query, function(data) {
-			history = data;
-			if(history.last) {
-				isValidCheckin(history.last_checkin, history.last_checkin_today);
-			}
-			else {
-				createCheckin(checkin);
-			}
-		});
-	};
-
-	function isValidCheckin(last_checkin, last_checkin_today) {
-		var diff = Date.now() - last_checkin.created_date;
-		var diff2 = checkin.created_date - current_time;
-		if(diff2 < 0) {
-			if(last_checkin_today) {
-				if(last_checkin_today.outlet.equals(q.outlet)) {
-					success.res.statusCode = response.message.six_hours_error.statusCode;
-					success.res.message = response.message.six_hours_error;
-					callback(success);
-				}
-				else {
-					createCheckin(checkin);
-				}
-			}
-			else {
-				createCheckin(checkin);
-			}
-		}
-		else if(diff > 6 * 30 * 60 * 1000) {
-			createCheckin(checkin);
-		}
-		else {
-			if(last_checkin.outlet.equals(q.outlet)) {
-				success.res.statusCode = response.message.six_hours_error.statusCode;
-				success.res.message = response.message.six_hours_error;
-				callback(success);
-			}
-			else {
-				if(diff > 5 * 60 * 1000) {
-					createCheckin(checkin);
-				}
-				else {
-					success.res.statusCode = response.message.thirty_minutes_error.statusCode;
-					success.res.message = response.message.thirty_minutes_error;
-					callback(success);
-				}
-			}
-		}
-	}
-
-	function isUserRegistered (cb) {
-
-		Helper.isUserRegistered(q, function (data) {
-			if(data) {
-				user = data;
-				cb(true);
-			}
-			else {
-				cb(false);
-			}
-		});
-	}
-
-	function createCheckin(checkin) {
-		isUserRegistered(function (data) {
-			if(data) {
-				saveCheckin(checkin);
-			}
-			else {
-				// Error in User registeration ()
-				success.res.statusCode = response.message.error.statusCode;
-				success.res.message = response.message.error;
-				callback(success);
-			}
-		});
-	}
-
-	function getCheckinObject() {
-		
-		checkin.checkin_program = q.program;
-		checkin.checkin_tier = applicable.tier;
-		checkin.checkin_for = applicable.offer;
-		checkin.checkin_date = Date.now();
-		if(q.batch_user) {
-			checkin.checkin_code = 'BATCH';
-			checkin.checkin_type = "BATCH";
-		}
-		return new Checkin(checkin);
-	}
-
-	function saveCheckin(checkin) {
-		applicable = Helper.getApplicableOffer(q.program, history.count);
-		checkin = getCheckinObject();
-
-		checkin.save(function (err, checkin) {
+	function preprocessUser() {
+		Helper.isUserRegistered(_obj.phone, function (err, status) {
 			if(err) {
-				success.res.statusCode = response.message.error.statusCode;
-				success.res.message = response.message.error;
-				callback(success);
+				error = {
+					'message': 'Error getting registered User',
+					'info': err
+				}
+				cb(error);
 			}
 			else {
-				sms.checkin = true;
-				reward = Helper.isRewardTime(applicable.tier, history.count);
-				if(reward) {
-					saveVoucher(reward);
+				if(status) {
+					_obj.user = status;
+					validateCheckin();
 				}
 				else {
-					smsController(function (sms_msg) {
-						response.message.success.message = "User " + q.phone + ' has been checked-in successfully.';
-						success.res.statusCode = response.message.success.statusCode;
-						success.res.message = response.message.success;
-						success.sms = sms_msg;
-						success.checkin = true;
-						callback(success);
-					});
+					Helper.registerUser(_obj.phone, function (err, user) {
+						if(err) {
+							error = {
+								'message': 'Error registering User',
+								'info': err
+							}
+							cb(error);
+						}
+						else {
+							if(user) {
+								_obj.user = user;
+								validateCheckin();
+							}
+							else {
+								error = {
+									'message': 'Error getting registered User',
+									'info': null
+								}
+								cb(error);
+							}
+						}
+					})
 				}
 			}
-		});
+		})
 	}
 
-	function saveVoucher(reward) {
-		voucher = getVoucherDetails(reward);
-		voucher = new Voucher(voucher);
-
-		voucher.save(function(err, voucher) {
+	function validateCheckin() {
+		Helper.otherCheckinToday(_obj.phone, _obj.created_date, function (err, checkin) {
 			if(err) {
-				sms.checkin = true;
-				smsController(function (sms_msg) {
-					response.message.success.message = "User " + q.phone + ' has been checked-in successfully.';
-					success.res.statusCode = response.message.success.statusCode;
-					success.res.message = response.message.success;
-					success.sms = sms_msg;
-					success.checkin = true;
-					callback(success);
-				});
-			}
-			else {
-				sms.reward = true;
-				smsController(function (sms_msg) {
-					response.message.success.message = "User "+ q.phone + " has been checked-in successfully. The user has also unlocked a reward.";
-					success.res.statusCode = response.message.success.statusCode;
-					success.res.message = response.message.success;
-					success.sms = sms_msg;
-					success.checkin = true;
-					success.voucher = voucher;
-					callback(success);
-				});
-				
-			}
-		});
-
-	}
-
-	function smsController(cb) {
-		var outlet = null;
-		Helper.getOutlet(q.outlet, function (o) {
-			if(o) {
-				outlet = o;
-				cb(getMessages());
-			}
-			else {
-				cb(null);
-			}
-		});
-
-		var checkins_to_next_reward = Helper.getNext(history.count, q.program);
-
-		function getMessages() {
-			var message = {
-				'checkin': null,
-				'reward': null
-			};
-			if(q.batch_user) {
-				message.checkin = q.message;
-				if(voucher) {
-					message.checkin = message.checkin.replace(/xxxxxx/g, voucher.basics.code);
+				error = {
+					'message': 'Error getting last checkin',
+					'info': err
 				}
-				message.checkin = message.checkin.replace(/URL/g, 'http://twyst.in/download/%23/'+ q.phone);
+				cb(error);
+			} 
+			else {
+				if(!checkin) {
+					initCheckin();
+				}
+				else {
+					var checkin_place = Helper.getCheckinInfo(checkin, _obj.outlet);
+					if(checkin_place === 'HERE') {
+						error = {
+							'message': 'Check-in error. User has been checked-in already. Please check-in again on his next visit / order.',
+							'info': null
+						}
+						cb(error);
+					}
+					else if (checkin_place === 'SOMEWHERE_ELSE'){
+						error = {
+							'message': 'Check-in error. User checked-in recently somewhere else. Please try checking-in here after some time.',
+							'info': null
+						}
+					}
+					else {
+						initCheckin();
+					}
+				}
 			}
-			else if(sms.checkin && sms.reward && isNewUser()) {
-				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ Utils.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ Utils.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
-			}
-			else if(sms.checkin && sms.reward && !isNewUser()) {
-				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(checkin.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-				message.reward = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ voucher.basics.code +'. '+ Utils.rewardify(reward) +'. Terms- '+ reward.terms +'. VALID UNTIL '+ Utils.formatDate(new Date(voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
-			}
-			else if(sms.checkin && !isNewUser()) {
-				message.checkin = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-			}
-			else if(sms.checkin && isNewUser()) {
-				message.checkin = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(checkin.created_date)) +'. You are '+ checkins_to_next_reward +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-			}
-			if(outlet.basics.slug === 'fruitpress') {
-				message.checkin += " Enjoy all new winter specials at Fruit Press – hot chai, coffee, soups and more!";
-			}
-			if(outlet.basics.slug === 'strikerpubbrewery'
-				|| outlet.basics.slug === 'strikerpubkitchen') {
-				message.checkin += " Adda by Striker at Sec-29 now open! Call 9811118182 for details.";
-			}
-			if(outlet._id.equals('534b82cb0a9281e4520001bf')
-				|| outlet._id.equals('540f29192f61834b5170ec5e')
-				|| outlet._id.equals('5491a7abd031388c54653b35')
-				|| outlet._id.equals('54a0fba94a9f96a41bbe4bb2')
-				|| outlet._id.equals('5464888737cb6ce2369d054a')
-				|| outlet._id.equals('543cbb84c4c303bc6d6d37c0')
-				|| outlet._id.equals('5445f7c247f75ed312fc91e3')
-				|| outlet._id.equals('5469efed7063c62266666503')) {
-				message.voucher_only_app = 'In a few days, vouchers will be available only on the Twyst app for Android and iPhone. Upgrade to the app (http://twyst.in/app) to continue to view, track and redeem your rewards. Please write to support@twyst.in for help!';
-			}
-			sms.checkin = false;
-			sms.reward = false;
-
-			return message;
-		}
+		});
 	}
 
-	function isNewUser() {
-		if(history.count > 0) {
-			return false;
+	function initCheckin() {
+		Helper.hasActiveRewards(_obj.outlet, function (err, reward) {
+			if(err) {
+				error = {
+					'message': 'Check-in error. No active rewards here',
+					'info': err
+				}
+				cb(error);
+			}
+			else {
+				if(!reward) {
+					error = {
+						'message': 'Check-in error. No active rewards here',
+						'info': null
+					}
+					cb(error);
+				}
+				else {
+					_obj.reward = reward;
+					processCheckin();
+				}
+			}
+		});
+	}
+
+	function processCheckin() {
+		Helper.countCheckinHere(_obj.phone, _obj.reward.program, function (err, count) {
+			if(err) {
+				error = {
+					'message': 'Check-in error. Error getting checkin count',
+					'info': err
+				}
+				cb(error);
+			}
+			else {
+				_obj.count = count;
+				var applicable_reward = Helper.getMatchedReward(_obj.reward, _obj.count);
+				if(!applicable_reward) {
+					error = {
+						'message': 'Check-in error. No active rerards for this user',
+						'info': null
+					}
+					cb(error);
+				}
+				else {
+					_obj.current_reward = applicable_reward;
+					saveCheckin();
+				}
+			}
+		});
+	}
+
+	function saveCheckin() {
+		var checkin = Helper.getCheckinObject(_obj);
+		checkin = new Checkin(checkin);
+		checkin.save(function (err) {
+			if(err) {
+				error = {
+					'message': 'Check-in error. Error saving checkin',
+					'info': err
+				}
+				cb(error);
+			}
+			else {
+				_obj.reward_distance = (_obj.current_reward.count - 1) - (_obj.count + 1);
+				if(_obj.reward_distance === 0) {
+					saveVoucher(checkin);
+				}
+				else {
+					success = {
+						'message': _obj.phone + ' has been checked-in successfully',
+						'info': _obj
+					}
+					cb(null, success);
+				}
+			}
+		});
+	}
+
+	function saveVoucher(checkin) {
+		var obj = {
+			user: _obj.user,
+			reward_table: _obj.reward,
+			current_reward: _obj.current_reward,
+			checkin_id: checkin._id,
+			creation_time: new Date(checkin.created_date).getTime(),
+			is_batch: (_obj.checkin_type === 'BATCH') ? true : false
+		};
+		VoucherGen.generate(obj, function (err, voucher) {
+			if(err) {
+				console.log(err);
+				success = {
+					'message': _obj.phone + ' has been checked-in successfully',
+					'info': _obj
+				}
+				cb(null, success);
+			}
+			else {
+				if(!voucher) {
+					success = {
+						'message': _obj.phone + ' has been checked-in successfully',
+						'info': _obj
+					}
+					cb(null, success);
+				}
+				else {
+					_obj.voucher = voucher;
+					success = {
+						'message': _obj.phone + ' has been checked-in successfully, User also unlocked a voucher',
+						'info': _obj
+					}
+					cb(null, success);
+					console.log('Voucher generated - code: ' + voucher.basics.code);
+				}
+			}
+		});
+	}
+}
+
+function isValidPhone(phone) {
+	if(phone) {
+		var last_ten_char = phone.substr(phone.length - 10);
+		if(isNumber(last_ten_char)
+			&& isValidFirstDigit(last_ten_char)) {
+			return true;
 		}
+	}
+	return false;
+}
+
+function isValidFirstDigit(str) {
+	if(str[0] == '7' 
+		|| str[0] == '8'
+		|| str[0] == '9') {
 		return true;
 	}
+	return false;
+}
 
-	function getVoucherDetails (reward) {
-		var voucher = {};
-		voucher.issue_details = {};
-		voucher.basics = {};
-		voucher.validity = {};
-		
-		//Validity for voucher
-		voucher.validity.start_date = q.program.validity.burn_start;
-		voucher.validity.end_date = q.program.validity.burn_end;
-		
-		// Issue details
-		voucher.issue_details.issued_at = [];
-		if(q.program.outlets.length > 0) {
-			voucher.issue_details.issued_at = q.program.outlets.slice();
-		}
-		voucher.issue_details.issued_to = user._id;
-		voucher.issue_details.program = q.program._id;
-		voucher.issue_details.tier = applicable.tier._id;
-		voucher.issue_details.issued_for = reward._id;
-
-		if(reward.basics && reward.basics.description) {
-			voucher.basics.description = reward.basics.description;
-		}
-		var voucher_valid_from = new Date(checkin.created_date).getTime() + 10800000;
-		voucher_valid_from = new Date(voucher_valid_from);
-
-		voucher.basics.created_at = Utils.setCurrentTime(voucher_valid_from);
-		
-		voucher.basics.code = keygen._(
-			{forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});
-
-		return voucher;
-	}
-
-} 
+function isNumber(str) {
+    var numeric = /^-?[0-9]+$/;
+    return numeric.test(str);
+}

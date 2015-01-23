@@ -221,13 +221,19 @@ module.exports.rewardify = function (input) {
 }
 
 module.exports.setCurrentTime = function (oldDate) {
-    if(new Date() - new Date(oldDate) > 3600000) {        
-        return new Date(oldDate);
+    if(!oldDate) {
+        return (new Date());
     }
-    if(new Date() < new Date(oldDate)) {
-        return new Date(oldDate);
+    else {
+        var date = new Date(oldDate),
+            h = new Date().getHours(),
+            m = new Date().getMinutes(),
+            s = new Date().getSeconds();
+        date.setHours(h);
+        date.setMinutes(m);
+        date.setSeconds(s);
+        return date;
     }
-    return new Date();
 }
 
 module.exports.getOutletAttributes = function (outlet) {
