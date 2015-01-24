@@ -7,7 +7,7 @@ var SmsSentLog = mongoose.model('SmsSentLog');
 var Notif = mongoose.model('Notif');
 var Account = mongoose.model('Account');
 
-module.exports.sendSms = function (phone, push_message, type) {
+module.exports.sendSms = function (phone, push_message, type, from) {
 	push_message = push_message.replace(/(\n)+/g, '');	
 	var message = push_message.replace(/&/g,'%26');
 	message = message.replace(/% /g,'%25 ');
@@ -105,7 +105,8 @@ module.exports.sendSms = function (phone, push_message, type) {
 	}
 
 	function send() {
-		var send_sms_url = sms_push_url + phone + "&from=TWYSTR&udh=0&text=" + message;
+		from = from || 'TWYSTR';
+		var send_sms_url = sms_push_url + phone + "&from="+ from +"&udh=0&text=" + message;
 		http.get(send_sms_url, function(res){
 			console.log(res.statusCode);
 			var body = '';

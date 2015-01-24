@@ -13,7 +13,8 @@ module.exports.checkin = function(req, res) {
 		outlet_id = req.body.outlet,
 		user = null,
 		message = req.body.message,
-		location = req.body.location; 
+		location = req.body.location,
+		sms_sender_id = req.body.sms_sender_id; 
 	if(!phone || !outlet_id || !message) {
 		res.send(400, {	
 			'status': 'error',
@@ -186,7 +187,7 @@ module.exports.checkin = function(req, res) {
 			}
 			else {
 				var push_message = message.replace(/xxxxxx/g, voucher.basics.code);
-				SMS.sendSms(phone, push_message, 'BATCH_CHECKIN');
+				SMS.sendSms(phone, push_message, 'BATCH_CHECKIN', sms_sender_id);
 				res.send(200, {	
 					'status': 'success',
 					'message': 'Successfully checked-in, Unlocked a voucher',
