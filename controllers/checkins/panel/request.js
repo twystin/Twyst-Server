@@ -88,6 +88,11 @@ module.exports.batchCheckin = function (req, res) {
 		}
 		else {
 			batchSmsHandler(data.info, message, sms_sender_id);
+			res.send(200, {
+				'status': 'success',
+				'message': _obj.phone + ' Checked in successfully',
+				'info': null
+			})
 		}
 	});
 }
