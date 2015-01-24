@@ -105,7 +105,7 @@ module.exports = function (app) {
         var AllVoucherCtrl = require('../controllers/analytics/vouchers');
         app.post('/api/v2/pos_checkins', CheckinCtrl.poscheckin);
         app.post('/api/v2/checkins', checkAuthenticated(), CheckinCtrl.panelCheckin);
-        app.post('/api/v3/batch_checkins', BatchCtrl.checkin);
+        app.post('/api/v3/batch_checkins', CheckinCtrl.batchCheckin);
         app.get('/api/v2/allcheckins/:outlet/:program', checkAuthenticated(),  AllCheckinCtrl.getCheckins);
         app.get('/api/v2/allvouchers/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getVouchers);
         app.get('/api/v2/allredeems/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getRedeems);

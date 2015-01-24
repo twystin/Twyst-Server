@@ -71,6 +71,27 @@ module.exports.poscheckin = function(req, res){
 	}
 };
 
+module.exports.batchCheckin = function (req, res) {
+	var message = req.body.message,
+		sms_sender_id = req.body.sms_sender_id;
+	var _obj = {
+        'phone': req.body.phone,
+        'outlet': req.body.outlet,
+        'location': req.body.location,
+        'created_date': new Date(),
+        'checkin_type' : 'BATCH',
+        'checkin_code' : 'BATCH'
+    };
+    Checkin_Main.checkin(_obj, function (err, data) {
+		if(err) {
+			
+		}
+		else {
+			batchSmsHandler(data.info, message, sms_sender_id);
+		}
+	});
+}
+
 module.exports.autoCheckin = function (_obj, cb) {
 	Checkin_Main.checkin(_obj, function (err, data) {
 		if(err) {
@@ -80,6 +101,13 @@ module.exports.autoCheckin = function (_obj, cb) {
 			smsHandler(data.info);
 		}
 	});
+}
+
+function batchSmsHandler(_obj, _message, sms_sender_id) {
+	if(_obj.voucher) {
+		_message = _message.replace(/xxxxxx/g, _obj.voucher.basics.code);
+		SMS.sendSms(_obj.phone, _message, 'BATCH_CHECKIN_MESSAGE', sms_sender_id);
+	}
 }
 
 function smsHandler(_obj) {
