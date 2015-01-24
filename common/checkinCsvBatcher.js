@@ -8,16 +8,14 @@ function readCsv(data_index) {
 	csv()
 	.from.stream(fs.createReadStream(__dirname + '/flip.csv', { encoding: 'utf8' }))
 	.on('record', function (row, index) {	
-		if(index === 0) {
-			phones.push(row[0]);
-		}
+		phones.push(row[0]);
 	})
 	.on('end', function (count) {
 		console.log(count)
 		phones.forEach(function (phone) {
 			httpCheckin(phone, function (err) {
 				
-			})
+			});
 		});
 	})
 }

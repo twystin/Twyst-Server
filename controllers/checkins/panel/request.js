@@ -84,7 +84,11 @@ module.exports.batchCheckin = function (req, res) {
     };
     Checkin_Main.checkin(_obj, function (err, data) {
 		if(err) {
-			
+			res.send(400,  {
+				'status': 'error',
+				'message': err.message,
+				'info': err.ifo
+			});
 		}
 		else {
 			batchSmsHandler(data.info, message, sms_sender_id);
