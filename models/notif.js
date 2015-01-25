@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var NotifSchema = new Schema({
+    from: {type: String},
     phones: [String],
     message_type: String,
     head: String,

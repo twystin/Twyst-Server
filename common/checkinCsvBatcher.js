@@ -2,20 +2,24 @@ var rest = require('restler');
 var csv = require('csv');
 var fs = require("fs");
 var async = require('async');
-readCsv(0)
+readCsv(1000)
 var phones = [];
 function readCsv(data_index) {
 	csv()
 	.from.stream(fs.createReadStream(__dirname + '/flip.csv', { encoding: 'utf8' }))
 	.on('record', function (row, index) {	
-		phones.push(row[0]);
+		if(index > data_index) {
+			phones.push(row[0]);
+		}
 	})
 	.on('end', function (count) {
 		console.log(count)
-		phones.forEach(function (phone) {
+		async.eachSeries(phones, function (phone, callback) {
 			httpCheckin(phone, function (err) {
-				
+				callback();
 			});
+		}, function (err) {
+			console.log(err);
 		});
 	})
 }
