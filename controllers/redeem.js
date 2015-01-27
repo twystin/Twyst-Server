@@ -195,7 +195,8 @@ function getOutlet(q, cb) {
 module.exports.redeemApp = function (req, res) {
 	var code = req.body.code,
 		used_at = req.body.used_at,
-		used_time = new Date();
+		used_time = new Date(),
+		user = req.user;
 
 	if(code && used_at) {
 		getOutlet({
@@ -225,7 +226,7 @@ module.exports.redeemApp = function (req, res) {
 				        });
 					}
 					else {
-						initRedeem();
+						initRedeem(outlet);
 					}
 				}
 			}
@@ -239,9 +240,10 @@ module.exports.redeemApp = function (req, res) {
         });
 	}
 
-	function initRedeem() {
+	function initRedeem(outlet) {
 		var q = {
 			'basics.code': code,
+			'basics.status': 'active',
 			'issue_details.issued_at': used_at,
 			'issue_details.issued_to': req.user._id
 		};
@@ -263,29 +265,13 @@ module.exports.redeemApp = function (req, res) {
 			        });
 				}
 				else {
-					processRedeem(voucher);
+					processRedeem(voucher, outlet);
 				}
 			}
 		});
 	}
 
-	function processRedeem(voucher) {
-		if (voucher.basics.type === 'WINBACK') {
-			redeemWinbackVoucher(voucher);
-		}
-		else if (!voucher.basics.type || voucher.basics.type === 'CHECKIN') {
-			redeemCheckinVoucher(voucher);
-		}
-		else {
-			res.send(400, { 
-				'status': 'error',
-	            'message': 'Invalid voucher code',
-	            'info': 'Invalid voucher code'
-	        });
-		}
-	}
-
-	function redeemWinbackVoucher(voucher) {
+	function processRedeem(voucher, outlet) {
 		if(isExpired(voucher.validity.start_date, voucher.validity.end_date)) {
 			res.send(400, { 
 				'status': 'error',
@@ -304,43 +290,22 @@ module.exports.redeemApp = function (req, res) {
 			        });
 				}
 				else {
-	                res.send(200, { 
+	                res.send(200, {
 						'status': 'success',
 			            'message': 'Successfully redeemed voucher',
 			            'info': 'Successfully redeemed voucher'
 			        });
+			        sendMessageToMerchant(voucher, outlet, user.phone);
 				}
 			})
 		}
 	}
 
-	function redeemCheckinVoucher(voucher) {
-		var program = voucher.issue_details.program;
-		if(isExpired(program.validity.burn_start, program.validity.burn_end)) {
-			res.send(400, { 
-				'status': 'error',
-	            'message': 'Expired voucher code',
-	            'info': 'Expired voucher code'
-	        });
-		}
-		else {
-			var status = 'user redeemed';
-			redeemVoucher(voucher, used_at, used_time, status, function (err) {
-				if(err) {
-					res.send(400, { 
-						'status': 'error',
-			            'message': 'Error redeeming voucher',
-			            'info': err
-			        });
-				}
-				else {
-	                res.send(200, { 
-						'status': 'success',
-			            'message': 'Successfully redeemed voucher',
-			            'info': 'Successfully redeemed voucher'
-			        });
-				}
-			})
-		}
+	function sendMessageToMerchant(voucher, outlet, user_phone) {
+		var current_time = new Date();
+        outlet.contact.phones.reg_mobile.forEach (function (phone) {
+            var push_message = 'User '+user_phone+' has redeemed voucher '+voucher.basics.code+' on '+Utils.formatDate(current_time)+', at '+outlet.basics.name+', '+outlet.contact.location.locality_1.toString()+'. Voucher is VALID. Reward details- '+voucher.basics.description+'.';
+            SMS.sendSms(phone, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE');
+        });
 	}
 }
