@@ -303,9 +303,11 @@ module.exports.redeemApp = function (req, res) {
 
 	function sendMessageToMerchant(voucher, outlet, user_phone) {
 		var current_time = new Date();
+		var push_message = 'User '+user_phone+' has redeemed voucher '+voucher.basics.code+' on '+Utils.formatDate(current_time)+', at '+outlet.basics.name+', '+outlet.contact.location.locality_1.toString()+'. Voucher is VALID. Reward details- '+voucher.basics.description+'.';
         outlet.contact.phones.reg_mobile.forEach (function (phone) {
-            var push_message = 'User '+user_phone+' has redeemed voucher '+voucher.basics.code+' on '+Utils.formatDate(current_time)+', at '+outlet.basics.name+', '+outlet.contact.location.locality_1.toString()+'. Voucher is VALID. Reward details- '+voucher.basics.description+'.';
-            SMS.sendSms(phone, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE');
+            if(phone.num) {
+            	SMS.sendSms(phone, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE');
+            }
         });
 	}
 }
