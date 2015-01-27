@@ -305,8 +305,8 @@ module.exports.redeemApp = function (req, res) {
 		var current_time = new Date();
 		var push_message = 'User '+user_phone+' has redeemed voucher '+voucher.basics.code+' on '+Utils.formatDate(current_time)+', at '+outlet.basics.name+', '+outlet.contact.location.locality_1.toString()+'. Voucher is VALID. Reward details- '+voucher.basics.description+'.';
         outlet.contact.phones.reg_mobile.forEach (function (phone) {
-            if(phone.num) {
-            	SMS.sendSms(phone, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE');
+            if(phone && phone.num) {
+            	SMS.sendSms(phone.num, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE');
             }
         });
 	}
