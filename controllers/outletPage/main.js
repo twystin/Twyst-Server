@@ -217,6 +217,12 @@ function getCss() {
 	              </li>
 
 	              <li>
+	                <a href="/vouchers">
+	                  View Vouchers
+	                </a>
+	              </li>
+
+	              <li>
 	                <a href="http://twyst.in/merchant/">
 	                  For merchants
 	                </a>
