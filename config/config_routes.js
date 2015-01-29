@@ -54,6 +54,7 @@ module.exports = function (app) {
     (function reward_route () {
         var RewardCtrl = require('../controllers/reward_populate');
         app.get('/api/v3/reward_details/:program_id', RewardCtrl.readOne);
+        app.post('/api/v3/rewards', RewardCtrl.createTable)
     })();
 
     (function winback_route () {

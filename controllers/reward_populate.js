@@ -36,7 +36,27 @@ module.exports.readOne = function (req, res) {
     })
 }
 
-module.exports.createRewardTable =  function(program_id, cb) {
+module.exports.createTable = function (req, res) {
+    var program_id = req.body.program_id;
+    createRewardTable(program_id, function (err, done) {
+        if(err) {
+            res.send(400, {
+                'status': 'error',
+                'message': err,
+                'info': err
+            });
+        }
+        else {
+            res.send(200, {
+                'status': 'success',
+                'message': 'Reward table populated',
+                'info': null
+            })
+        }
+    });
+}
+
+module.exports.createRewardTable = createRewardTable = function(program_id, cb) {
 
     if(!program_id) {
         cb('Error processing: No program ID', null);
