@@ -142,20 +142,40 @@ function smsHandler(_obj) {
 
 function checkinMessageSender(_obj, outlet) {
 	var _message = null;
-	if(_obj.count === 0) {
-		if(_obj.voucher) {
-			_message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +". Reward unlocked! Your voucher will be available on your Twyst app soon. Don't have the app? Get it now at http://twy.st/app";
-		}
-		else {
-			_message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
-		}
+	if(isVoucherInApp(outlet)) {
+		if(_obj.count === 0) {
+	        if(_obj.voucher) {
+	            _message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +". Reward unlocked! Your voucher will be available on your Twyst app soon. Don't have the app? Get it now at http://twy.st/app";
+	        }
+	        else {
+	            _message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+	        }
+	    }
+	    else {
+	        if(_obj.voucher) {
+	            _message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +". Reward unlocked! Your voucher will be available on your Twyst app soon. Don't have the app? Get it now at http://twy.st/app";
+	        }
+	        else {
+	            _message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];   
+	        }
+	    }
 	}
 	else {
-		if(_obj.voucher) {
-			_message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +". Reward unlocked! Your voucher will be available on your Twyst app soon. Don't have the app? Get it now at http://twy.st/app";
+    	if(_obj.count === 0) {
+			if(_obj.voucher) {
+				_message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+			}
+			else {
+				_message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst!. Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+			}
 		}
 		else {
-			_message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];	
+			if(_obj.voucher) {
+				_message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +'. Reward unlocked - yay! You will soon receive your voucher code via SMS. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+			}
+			else {
+				_message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];	
+			}
 		}
 	}
 	SMS.sendSms(_obj.phone, _message, 'CHECKIN_MESSAGE');
