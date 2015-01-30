@@ -94,7 +94,10 @@ module.exports.getCount = function (req, res) {
 
 module.exports.query = function(req,res) {
 	Outlet.find({
-		'outlet_meta.accounts': req.user._id
+		'outlet_meta.accounts': req.user._id,
+		'outlet_meta.status': {
+			$ne: 'archived'
+		}
 	})
 	.exec(function(err, outlets) {
 		if (err) {
@@ -538,29 +541,29 @@ module.exports.delete = function(req,res) {
 	});
 };
 
-module.exports.archived = function(req,res) {
-	var updated_outlet = {};
-	updated_outlet.outlet_meta = {};
-	updated_outlet = _.extend(updated_outlet, req.body);
-	delete updated_outlet._id;
-	updated_outlet.outlet_meta.status = 'archived';
-	Outlet.findOneAndUpdate(
-							{'basics.name': req.params.outlet_id}, 
-							{$set: updated_outlet }, 
-							{upsert:true},
-							function(err,outlet) {
-								if (err) {
-									res.send(400, {	'status': 'error',
-												'message': 'Error updating outlet ' + req.params.outlet_id,
-												'info': JSON.stringify(err)
-									});
-								} else {
-									res.send(200, {	'status': 'success',
-												'message': 'Successfully updated outlet',
-												'info': JSON.stringify(outlet)
-									});
-								}
-							});
+module.exports.archived = function(req, res) {
+	Outlet.findOneAndUpdate({
+		_id: req.params.outlet_id,
+		'outlet_meta.accounts': req.user._id
+	}, {
+		$set: {
+			'outlet_meta.status': 'archived'
+		} 
+	}, {
+		upsert:true
+	}, function(err, outlet) {
+		if (err) {
+			res.send(400, {	'status': 'error',
+						'message': 'Error archiving outlet',
+						'info': err
+			});
+		} else {
+			res.send(200, {	'status': 'success',
+						'message': 'Successfully archived outlet',
+						'info': null
+			});
+		}
+	});
 };
 
 module.exports.getOffersForOutlet = function (req, res) {
