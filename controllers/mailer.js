@@ -7,7 +7,8 @@ module.exports.feedbackEmail = function(req, res){
 			to: 'contactus@twyst.in',
 			data: {
 				message: req.body.feedbackMessage,
-				user_phone: req.user.phone
+				user_phone: req.user.phone,
+				user_email: getEmail(req.user)
 			},
 			type: 'APP_FEEDBACK'
 		};
@@ -26,3 +27,15 @@ module.exports.feedbackEmail = function(req, res){
 		})
 	}
 };
+
+function getEmail(user) {
+	if(user.social_graph) {
+		if(user.social_graph.facebook && user.social_graph.facebook.email) {
+			return user.social_graph.facebook.email;
+		}
+		else if (user.social_graph.email && user.social_graph.email.email) {
+			return user.social_graph.email.email;
+		}
+	}
+	return null;
+}

@@ -7,12 +7,46 @@ var Checkin = mongoose.model('Checkin');
 var BetaUsers = mongoose.model('BetaUsers');
 var Outlet = mongoose.model('Outlet');
 var voucher_gen = require('./voucherGenMistake')
-mongoose.connect('mongodb://localhost/twyst');
+mongoose.connect('mongodb://50.112.253.131/twyst');
 
 var Voucher = mongoose.model('Voucher');
 
 var Account = mongoose.model('Account');
 var Favourite = mongoose.model('Favourite');
+
+Account.find({
+	role: 7,
+	social_graph: {
+		$exists: 1
+	}
+})
+.exec(function (err, users) {
+	if(err) {
+		console.log(err);
+	}
+	else {
+		countDetails(users);
+	}
+});
+var facebook = 0,
+	email = 0,
+	email_v = 0;
+function countDetails(users) {
+	users.forEach(function (u) {
+		if(u.social_graph.facebook) {
+			++facebook;
+		}
+		else if(u.social_graph.email) {
+			++email;
+			if(u.validated && u.validated.email_validated && u.validated.email_validated.status) {
+				++email_v;
+			}
+		}
+	});
+	console.log("Facebook: " + facebook);
+	console.log("Email: " + email);
+	console.log("Validated: " + email_v);
+}
 
 // Account.find({role: 7}).select({phone:1}).exec(function (err, users) {
 // 	users.forEach(function (u) {
@@ -232,34 +266,34 @@ var Favourite = mongoose.model('Favourite');
 // 	})
 // })
 
-Checkin.find({'outlet': '540ea0a72f61834b5170eb06',
-				'created_date': {
-						$gte: new Date(2014, 8, 10),
-						$lte: new Date(2014, 8, 30)
-				},
-				'checkin_type': 'QR'
-	}, function (err, checkins) {
-		checkins = _.uniq(checkins, function (ch) {
-			return ch.phone;
-		});
-		var distinct_checkins = checkins.length;
-		hasPrevCheckins();
-		function hasPrevCheckins () {
-			checkins.forEach(function (ch) {
-				Checkin.findOne({
-					phone: ch.phone,
-					created_date: {
-						$lt: new Date(ch.created_date)
-					}
-				}, function (err, checkin) {
-					if(checkin) {
-						--distinct_checkins;
-					}
-					console.log(distinct_checkins)
-				})
-			})
-		}
-})
+// Checkin.find({'outlet': '540ea0a72f61834b5170eb06',
+// 				'created_date': {
+// 						$gte: new Date(2014, 8, 10),
+// 						$lte: new Date(2014, 8, 30)
+// 				},
+// 				'checkin_type': 'QR'
+// 	}, function (err, checkins) {
+// 		checkins = _.uniq(checkins, function (ch) {
+// 			return ch.phone;
+// 		});
+// 		var distinct_checkins = checkins.length;
+// 		hasPrevCheckins();
+// 		function hasPrevCheckins () {
+// 			checkins.forEach(function (ch) {
+// 				Checkin.findOne({
+// 					phone: ch.phone,
+// 					created_date: {
+// 						$lt: new Date(ch.created_date)
+// 					}
+// 				}, function (err, checkin) {
+// 					if(checkin) {
+// 						--distinct_checkins;
+// 					}
+// 					console.log(distinct_checkins)
+// 				})
+// 			})
+// 		}
+// })
 
 // Voucher.find({}).select('gen_type').exec(function (err, vouchers) {
 // 	console.log(vouchers.length)
