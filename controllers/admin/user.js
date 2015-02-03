@@ -7,7 +7,13 @@ module.exports.getAllUsers = function (req, res) {
 	var skip = 0, limit = 0, q;
 	if(req.query.q) {
 		q = {
-			'username': new RegExp(req.query.q, "i")
+			$or:[{
+					'username': new RegExp(req.query.q, "i")
+				}, 
+				{
+					'social_graph.email.email': new RegExp(req.query.q, "i")
+				}
+			]
 		}
 	}
 	else {
