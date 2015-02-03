@@ -17,6 +17,11 @@ module.exports.getAllUsers = function (req, res) {
 	if(req.query.role && req.query.role !== 'All') {
 		q.role = req.query.role;
 	}
+	else {
+		q.role = {
+			$ne: 6
+		}
+	}
 
 	initQuery();
 
@@ -43,68 +48,103 @@ module.exports.getAllUsers = function (req, res) {
 	    	getCount(q, callback);
 	    }
 	}, function(err, results) {
-	    res.send(200, {
-	    	'status' : 'success',
-            'message' : 'Got users.',
-            'info': results
-        });
+	    if(err) {
+	    	res.send(400, {
+		    	'status' : 'error',
+	            'message' : 'Error Getting users.',
+	            'info': err
+	        });
+	    }
+	    else {
+	    	res.send(200, {
+		    	'status' : 'success',
+	            'message' : 'Got users.',
+	            'info': results
+	        });
+	    }
 	});
 
 	function getUsers (q, callback) {
 		var sortQuery={};
 		sortQuery[req.query.sortBy] = req.query.sortOrder;
 		Account.find(q)
-				.sort(sortQuery)
-				.skip(skip)
-				.limit(limit)
-				.lean()
-				.exec(function (err, users) {
-				getUsersLastSeen(users, callback);
+			.select('-hash -salt')
+			.sort(sortQuery)
+			.skip(skip)
+			.limit(limit)
+			.lean()
+			.exec(function (err, users) {
+			callback(err, users);
 		})
 	}
 
 	function getCount (q, callback) {
 		Account.count(q, function (err, count) {
-			callback(null, count || 0);
+			callback(err, count || 0);
 		})
 	}
+}
 
-	function getUsersLastSeen(users, callback) {
-		var length = users.length;
-		if(!length) {
-			callback(null, users || []);
-		}
-		users.forEach(function (user) {
-			getLastSeenLocation(user, function (time) {
-				length--;
-				user.last_seen = time;
-				if(!length) {
-					callback(null, users || []);
-				}
+module.exports.getUser = function (req, res) {
+	if(!req.params.username) {
+		res.send(400, {
+	    	'status' : 'error',
+            'message' : 'Error Getting user',
+            'info': err
+        });
+	}
+	else {
+		getUser(req.params.username, function (err, user) {
+			if(err) {
+				res.send(400, {
+			    	'status' : 'error',
+		            'message' : 'Error Getting user',
+		            'info': err
+		        });
+			}
+			else {
+				res.send(200, {
+			    	'status' : 'success',
+		            'message' : 'Got user.',
+		            'info': user
+		        });
+			}
+		});
+	}
+
+	function getUser(username, cb) {
+		Account.findOne({
+			username: username
+		})
+		.select('-hash -salt')
+		.exec(function (err, user) {
+			cb(err, user);
+		})
+	}
+}
+
+module.exports.updateUser = function(req, res) {
+	var update_user = {};
+	update_user = _.extend(update_user, req.body);
+	delete update_user._id; 
+	delete update_user.username;
+	Account.findOneAndUpdate(
+	{username:req.params.username}, 
+	{$set: update_user}, 
+	{upsert:true},
+	function(err) {
+		if (err) {
+			res.send(400, {	
+				'status': 'error',
+				'message': 'Error updating user ',
+				'info': err
 			});
-		})
-	}
-
-	function getLastSeenLocation(user, cb) {
-		if(!isAppUser(user)) {
-			cb(null);
+		} else {
+			res.send(200, {	
+				'status': 'success',
+				'message': 'Successfully updated user',
+				'info': null
+			});
 		}
-		else {
-			UserLoc.findOne({account: user._id}, function (err, loc) {
-				if(err || !loc) {
-					cb(null);
-				}
-				else {
-					cb(loc.locations[loc.locations.length - 1].logged_time);
-				}
-			})
-		}
-	}
-
-	function isAppUser(user) {
-		if(user.role === 7) {
-			return true;
-		}
-		return false;
-	}
+	});	
 }
