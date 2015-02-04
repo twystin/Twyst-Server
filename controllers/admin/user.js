@@ -9,7 +9,7 @@ module.exports.getAllUsers = function (req, res) {
 	var skip = 0, limit = 0, q;
 	if(req.query.q) {
 		q = {
-			$or:[{
+			$or:[{ 
 					'username': new RegExp(req.query.q, "i")
 				}, 
 				{
@@ -275,7 +275,6 @@ module.exports.getTimeline = function (req, res) {
 			phone: phone
 		})
 		.populate('outlet')
-		.limit(50)
 		.exec(function (err, checkins) {
 			cb(err, checkins);
 		})
@@ -288,7 +287,6 @@ module.exports.getTimeline = function (req, res) {
 		.populate('issue_details.issued_at')
 		.populate('used_details.used_at')
 		.select('basics issue_details.issued_at used_details terms')
-		.limit(50)
 		.exec(function (err, vouchers) {
 			cb(err, vouchers);
 		})
