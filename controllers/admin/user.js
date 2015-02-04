@@ -233,7 +233,7 @@ module.exports.getTimeline = function (req, res) {
 			data.CHECKINS.forEach(function (c) {
 				var obj = {
 					'type': 'CHECKIN',
-					'time': c.checkin_date,
+					'time': c.created_date,
 					'details': c
 				};
 				result.data.push(obj);
