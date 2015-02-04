@@ -129,6 +129,7 @@ module.exports = function (app) {
         app.get('/api/v2/allprograms', StatusCtrl.getAllPrograms);
         app.get('/api/v2/allusers', UserCtrl.getAllUsers);
         app.get('/api/v2/alluser/:username', UserCtrl.getUser);
+        app.post('/api/v2/alluser', UserCtrl.getTimeline);
         app.put('/api/v2/alluser/:username', UserCtrl.updateUser);
         app.get('/api/v2/allqrs', QrCtrl.getAllQrs);
         app.post('/api/v2/changestatus/outlet', StatusCtrl.changeOutletStatus);
