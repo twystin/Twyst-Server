@@ -251,10 +251,7 @@ module.exports = function (app) {
     //Create log for users
     (function user_log_routes() {
         var LogCtrl = require('../controllers/log');
-        var SmsLogCtrl = require('../controllers/smslog');
         app.post('/api/v1/log', LogCtrl.createLog);
-        app.post('/api/v1/smslog', SmsLogCtrl.createLog);
-        app.get('/api/v2/sms/status', SmsLogCtrl.deliveryReport)
     })();
 
     //SMS route
