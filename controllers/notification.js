@@ -2,6 +2,30 @@
 var mongoose = require('mongoose');
 var Notif = mongoose.model('Notif');
 
+module.exports.get = function (req, res) {
+	Notif.find({
+		'status': 'DRAFT'
+	})
+	.sort({'logged_at': -1})
+	.limit(100)
+	.exec(function (err, notifs) {
+		if(err) {
+			res.send(400, {
+				'status' : 'error',
+	            'message' : 'Error getting notifs',
+	            'info':  err
+	        });
+		}
+		else {
+			res.send(200, {
+				'status' : 'success',
+	            'message' : 'successfully got notifs',
+	            'info':  notifs
+	        });
+		}
+	})
+}
+
 module.exports.save = function (req, res) {
 
 	var obj = req.body.obj;

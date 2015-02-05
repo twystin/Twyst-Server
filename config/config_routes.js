@@ -436,8 +436,9 @@ module.exports = function (app) {
     })();
 
     (function notification_routes() {
-        var NotifCtrl = require('../controllers/push_notification');
-        app.post('/api/v2/notifs',NotifCtrl.save);
+        var NotifCtrl = require('../controllers/notification');
+        app.post('/api/v2/notifs', NotifCtrl.save);
+        app.get('/api/v2/notifs', NotifCtrl.get);
     })();
 
     (function typeahead_routes() {
