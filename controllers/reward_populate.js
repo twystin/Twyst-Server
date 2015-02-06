@@ -102,21 +102,12 @@ function saveReward(program, rewards, cb) {
             cb(err, reward);
         }
         else {
-            if(!reward) {
-                var reward = {
-                    program: program_id,
-                    outlets: program.outlets,
-                    status: program.status,
-                    rewards: rewards
-                };
-                var reward = new Reward(reward);
-            }
-            else {
-                reward.rewards = rewards;
-                reward.outlets = program.outlets;
-                reward.status = program.status;
-                reward.modified_date = Date.now();
-            }
+            reward = reward || new Reward(reward);
+            reward.program = program_id;
+            reward.rewards = rewards;
+            reward.outlets = program.outlets;
+            reward.status = program.status;
+            reward.modified_date = Date.now();
             reward.save(function (err, reward) {
                 cb(err, reward);
             })
