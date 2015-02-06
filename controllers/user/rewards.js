@@ -6,6 +6,7 @@ var CommonUtils = require('../../common/utilities');
 module.exports.getRewards = function (req, res) {
 	var start = req.query.start || 1,
 		end = req.query.end || 20,
+		sort_by = req.query.sort_by || 'validity.end',
 		user = req.user,
 		lat = req.query.lat,
 		lon = req.query.lon;
@@ -25,9 +26,7 @@ module.exports.getRewards = function (req, res) {
 			};
 			result.total += (vouchers.ACTIVE.length + vouchers.MERCHANT_REDEEMED.length + vouchers.USER_REDEEMED.length);
 			result.vouchers = vouchers;
-			var filtered_vouchers = filterExpired(vouchers.ACTIVE);
-			result.vouchers.ACTIVE = getInfo(filtered_vouchers.ACTIVE, lat, lon);
-			result.vouchers.EXPIRED = filtered_vouchers.EXPIRED;
+			result.vouchers.ACTIVE = getInfo(vouchers.ACTIVE, lat, lon);
 			res.send(200, {
 				'status': 'success',
 				'message': 'Got vouchers successfully.',
@@ -78,52 +77,13 @@ function calculateDistance(outlet, lat, lon) {
 	return CommonUtils.calculateDistance(outlet_loc, current_loc);
 }
 
-function filterExpired(vouchers) {
-	var v = {
-		ACTIVE: [],
-		EXPIRED: []
-	}
-	if(!vouchers || !vouchers.length) {
-		return v;
-	}
-	for(var i = 0; i < vouchers.length; i++) {
-		var program_validity, program_type;
-		if(vouchers[i].issue_details.program) {
-			program_validity = vouchers[i].issue_details.program.validity;
-			program_type = 'CHECKIN';
-		}
-		else if(vouchers[i].issue_details.winback) {
-			program_validity = vouchers[i].validity;
-			program_type = 'WINBACK';
-		}
-		else {
-			// Other programs
-		}
-		if(isExpired(program_validity, program_type)) {
-			v.EXPIRED.push(vouchers[i]);
-		}
-		else {
-			v.ACTIVE.push(vouchers[i]);
-		}
-	}
-	return v;
-}
-
-function isExpired(program_validity, program_type) {
-	var time_now = new Date();
-	if(!program_type || program_type === 'CHECKIN') {
-		return new Date(program_validity.burn_end) < time_now;
-	}
-	else if(program_type === 'WINBACK') {
-		return new Date(program_validity.end_date) < time_now;
-	}
-	return false;
-}
-
 function getVoucher (user, cb) {
 	async.parallel({
 	    ACTIVE: function(callback) {
 	    	getActiveVoucher(user, callback);
+	    },
+	    EXPIRED: function(callback) {
+	    	getExpiredVoucher(user, callback);
 	    },
 	    USER_REDEEMED: function(callback) {
 	    	getUserRedeemed(user, callback);
@@ -133,6 +93,23 @@ function getVoucher (user, cb) {
 	    }
 	}, function(err, results) {
 	    cb(err, results);
+	});
+}
+
+function getExpiredVoucher(user, cb) {
+	Voucher.find({
+		'issue_details.issued_to': user._id,
+		'validity.end_date': {
+			$lt: new Date()
+		},
+		'basics.status': 'active'
+	})
+	.populate('issue_details.issued_at')
+	.populate('issue_details.issued_for')
+	.populate('issue_details.program')
+	.populate('issue_details.winback')
+	.exec(function (err, vouchers) {
+		cb(null, vouchers || []);
 	});
 }
 
@@ -155,6 +132,9 @@ function getActiveVoucher(user, cb) {
 		'issue_details.issued_to': user._id,
 		'basics.created_at': {
 			$lt: new Date()
+		},
+		'validity.end_date': {
+			$gt: new Date()
 		},
 		'basics.status': 'active'
 	})
