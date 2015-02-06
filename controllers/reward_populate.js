@@ -134,43 +134,19 @@ function getRewards(program) {
             for (var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
                 for (var j = 0; j < program.tiers[i].offers.length; j++) {
                     if (program.tiers[i].offers[j]) {
-                        var reward = {
-                            tier: null,
-                            offer: null,
-                            count: null,
-                            reward: null,
-                            rewardified: null
-                        };
-
                         if (program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on every') {
                             if ((lim - program.tiers[i].basics.start_value + 1) % program.tiers[i].offers[j].user_eligibility.criteria.value === 0) {
-                                reward.count = lim + 1;
-                                reward.tier = program.tiers[i]._id;
-                                reward.offer = program.tiers[i].offers[j]._id;
-                                reward.reward = program.tiers[i].offers[j].basics.title;
-                                reward.rewardified = Utils.rewardify(program.tiers[i].offers[j]);
-                                rewards.push(reward);
+                                rewards.push(getRewardObject(lim, program.tiers[i], program.tiers[i].offers[j]));
                             }
                         }
                         if (program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
-
                             if (lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                                reward.count = lim + 1;
-                                reward.tier = program.tiers[i]._id;
-                                reward.offer = program.tiers[i].offers[j]._id;
-                                reward.reward = program.tiers[i].offers[j].basics.title;
-                                reward.rewardified = Utils.rewardify(program.tiers[i].offers[j]);
-                                rewards.push(reward);
+                                rewards.push(getRewardObject(lim, program.tiers[i], program.tiers[i].offers[j]));
                             }
                         }
                         if (program.tiers[i].offers[j].user_eligibility.criteria.condition === 'after') {
                             if (lim >= Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
-                                reward.count = lim + 1;
-                                reward.tier = program.tiers[i]._id;
-                                reward.offer = program.tiers[i].offers[j]._id;
-                                reward.reward = program.tiers[i].offers[j].basics.title;
-                                reward.rewardified = Utils.rewardify(program.tiers[i].offers[j]);
-                                rewards.push(reward);
+                                rewards.push(getRewardObject(lim, program.tiers[i], program.tiers[i].offers[j]));
                             }
                         }
                     }
@@ -179,6 +155,17 @@ function getRewards(program) {
         }
     }
     return getSortedUniqueRewards(rewards);
+}
+
+function getRewardObject(on_count, tier, offer) {
+    return {
+        count: on_count + 1,
+        tier: tier._id,
+        offer: offer._id,
+        qr_only: offer.qr_only || false,
+        reward: offer.basics.title,
+        rewardified: Utils.rewardify(offer)
+    };
 }
 
 function getSortedUniqueRewards(rewards){

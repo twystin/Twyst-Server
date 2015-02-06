@@ -77,13 +77,13 @@ module.exports.countCheckinHere = function (phone, program, cb) {
     }, function (err, count) {
         cb(err, count);
     })
-}
+} 
 
 module.exports.getMatchedReward = function (reward, count) {
     count = count || 0;
     count += 1;
     for (var i = 0; i < reward.rewards.length; i++) {
-        if(reward.rewards[i].count > count) {
+        if(!reward.rewards[i].qr_only && (reward.rewards[i].count > count)) {
             return reward.rewards[i];
         }
     };

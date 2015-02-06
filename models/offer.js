@@ -14,6 +14,7 @@ var OfferSchema = new Schema({
         created_at : {type: Date, default: Date.now},
         modified_at: {type: Date, default: Date.now}
     },
+    qr_only: {type: Boolean, default: false},
     terms: {type: String},
     avail_hours: avail_hours.hours,
     reward: {

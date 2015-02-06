@@ -19,6 +19,7 @@ var RewardSchema = new Schema({
     	offer: {type: Schema.ObjectId, ref: 'Offer'},
     	count : {type: Number},
     	reward: {type: String},
+        qr_only: {type: Boolean},
     	rewardified: {type: String}
     }]
 });

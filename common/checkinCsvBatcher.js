@@ -2,11 +2,11 @@ var rest = require('restler');
 var csv = require('csv');
 var fs = require("fs");
 var async = require('async');
-readCsv(1000)
+readCsv(0)
 var phones = [];
 function readCsv(data_index) {
 	csv()
-	.from.stream(fs.createReadStream(__dirname + '/flip.csv', { encoding: 'utf8' }))
+	.from.stream(fs.createReadStream(__dirname + '/ccc.csv', { encoding: 'utf8' }))
 	.on('record', function (row, index) {	
 		if(index > data_index) {
 			phones.push(row[0]);
@@ -27,11 +27,11 @@ function readCsv(data_index) {
 function httpCheckin (phone, cb) {
 	rest.post('http://twyst.in/api/v3/batch_checkins', {
 		data: {
-			sms_sender_id: 'FLIPER',
+			sms_sender_id: 'COFCHA',
 			phone: phone,
-	        outlet: "54c3379be39f3eba4dc9c690",
+	        outlet: "5332a73e4871e79576000c3a",
 	        location: 'DINE_IN',
-	        message: "We love serving you at Flip Bistro and Pizzeria! As a way of saying thanks, we've enrolled you into our new rewards program powered by Twyst. Get Twyst for your phone (http://twy.st/app) to view & redeem your rewards! Republic Day Weekend (24-26 Jan) special, Buy 1 pizza and get 50% off on the 2nd. Call 9810054440 (Galleria), 0124 4200303 (Golf Course Road)"
+	        message: "Greetings from Coffee & Chai Co! We've enrolled you into our new rewards program on Twyst. Get a cup of Tea/Coffee free when you visit us next (Voucher Code xxxxxx, T&C: Min spend Rs 200). Get the Twyst app (http://twy.st/app) to check-in, unlock and Redeem your Rewards!"
 		}
 	}).on('complete', function(data, response) {
 	  	console.log(data)
