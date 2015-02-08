@@ -178,6 +178,9 @@ function checkinMessageSender(_obj, outlet) {
 			}
 		}
 	}
+	if(outlet.checkin_message_append) {
+		_message += ' ' + outlet.checkin_message_append;
+	}
 	SMS.sendSms(_obj.phone, _message, 'CHECKIN_MESSAGE');
 }
 

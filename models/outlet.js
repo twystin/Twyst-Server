@@ -6,6 +6,7 @@ var mongoose = require('mongoose'),
 
 var OutletSchema = new Schema({
     username: {type: String},
+    checkin_message_append: {type: String},
     publicUrl: [{type: String}],
     shortUrl: [{type: String}],
     ny_2015: {
