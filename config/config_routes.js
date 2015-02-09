@@ -131,7 +131,7 @@ module.exports = function (app) {
         app.get('/api/v2/alluser/:username', UserCtrl.getUser);
         app.post('/api/v2/alluser', UserCtrl.getTimeline);
         app.put('/api/v2/alluser/:username', UserCtrl.updateUser);
-        app.get('/api/v2/allqrs', QrCtrl.getAllQrs);
+        app.get('/api/v2/allqrs/:outlet_id', QrCtrl.getAllQrs);
         app.post('/api/v2/changestatus/outlet', StatusCtrl.changeOutletStatus);
         app.post('/api/v2/changefeatured/outlet', FeatureCtrl.changeOutletFeatured);
         app.post('/api/v2/changestatus/program', StatusCtrl.changeProgramStatus);
