@@ -4,7 +4,7 @@ var fs = require("fs");
 var async = require('async');
 
 var config = {
-	'csv_file_name': '/ccc.csv', // File path with phone numbers
+	'csv_file_name': __dirname + '/ccc.csv', // File path with phone numbers
 	'checkin_url': 'http://twyst.in/api/v3/batch_checkins', // Checkin API
 	'sms_sender_id': 'COFCHA', // SMS Sender ID (Leave blank if from TWYSTR)
 	'outlet_id': '5332a73e4871e79576000c3a', // Outlet ID
@@ -46,7 +46,7 @@ function getPhoneNumbersFromFile(file_name, cb) {
 	var phone_numbers = [];
 	csv()
 	.from
-	.stream(fs.createReadStream(__dirname + file_name, { encoding: 'utf8' }))
+	.stream(fs.createReadStream(file_name, { encoding: 'utf8' }))
 	.on('record', function (row, index) {	
 		phone_numbers.push(row[0]);
 	})
