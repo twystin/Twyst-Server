@@ -5,12 +5,12 @@ var async = require('async');
 
 var config = {
 	'csv_file_name': '/ccc.csv', // File path with phone numbers
-	'checkin_url': 'http://twyst.in/api/v3/batch_checkins',
-	'sms_sender_id': 'COFCHA',
-	'outlet_id': '5332a73e4871e79576000c3a',
-	'checkin_location': 'DINE_IN',
+	'checkin_url': 'http://twyst.in/api/v3/batch_checkins', // Checkin API
+	'sms_sender_id': 'COFCHA', // SMS Sender ID (Leave blank if from TWYSTR)
+	'outlet_id': '5332a73e4871e79576000c3a', // Outlet ID
+	'checkin_location': 'DINE_IN', // Checkin location DINE_IN / HOME_DELIVERY
 	'message': "Greetings from Coffee & Chai Co! We've enrolled you into our new rewards program on Twyst. Get a cup of Tea/Coffee free when you visit us next (Voucher Code xxxxxx, T&C: Min spend Rs 200). Get the Twyst app (http://twy.st/app) to check-in, unlock and Redeem your Rewards!"
-};
+}; // Message must have xxxxxx (To replace with voucher code) 
 
 initCheckin();
 function initCheckin() {
