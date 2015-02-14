@@ -14,7 +14,9 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 
 	console.log(message);
 	console.log("------------------------");
-	if(type === 'OTP_MESSAGE' || type === 'UNSBS_MESSAGE') {
+	if(type === 'OTP_MESSAGE' 
+		|| type === 'UNSBS_MESSAGE' 
+		|| type === 'PROMO_MESSAGE') {
 		send();
 	}
 	else {

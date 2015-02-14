@@ -260,6 +260,7 @@ module.exports = function (app) {
         var GetAppCtrl = require('../controllers/getapp');
 
         app.get("/api/v1/sms", SMSRCtrl.reciever);
+        app.post("/api/v1/sms", SMSRCtrl.sender);
         app.get("/api/v1/download/app", GetAppCtrl.getApp);
         app.get('/api/v3/app_downloads', GetAppCtrl.getDownloads);
         app.get('/api/v1/sms/provider', function (req,res) {

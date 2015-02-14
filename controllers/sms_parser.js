@@ -5,10 +5,25 @@ var SmsCheckinCodeModule = require('./getSMSCheckinCode');
 var VoucherRedeemModule = require('./voucher_redeem');
 var SmsSentLog = mongoose.model('SmsSentLog');
 var BlackLister = require('./blacklister');
+var SMS = require('../common/smsSender');
 var sms_push_url = "http://myvaluefirst.com/smpp/sendsms?username=twysthttp&password=twystht6&to=";
 
 var http = require('http');
 http.post = require('http-post');
+
+module.exports.sender = function (req, res) {
+	var body = req.body;
+	if(body.message 
+		&& body.phone
+		&& body.type
+		&& body.from) {
+		SMS.sendSms(body.phone, body.message, body.type, body.from);
+		res.send("Sent to " + body.phone);
+	}
+	else {
+		res.send("Error sending sms");
+	}
+}
 
 module.exports.reciever = function(req, res) {
 	
