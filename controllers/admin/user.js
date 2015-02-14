@@ -25,11 +25,6 @@ module.exports.getAllUsers = function (req, res) {
 	if(req.query.role && req.query.role !== 'All') {
 		q.role = req.query.role;
 	}
-	else {
-		q.role = {
-			$ne: 6
-		}
-	}
 
 	initQuery();
 

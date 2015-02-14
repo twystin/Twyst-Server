@@ -182,13 +182,31 @@ module.exports.validateOtp = function (req, res) {
 				})
 			}
 			else {
-				res.send(200, {
-					'status': 'success',
-					'message': 'verification successfull',
-					'info': 'verification successfull'
+				updateUser(user, function (err) {
+					if(err) {
+						res.send(400, {
+							'status': 'error',
+							'message': 'Error updating role',
+							'info': err
+						});
+					}
+					else {
+						res.send(200, {
+							'status': 'success',
+							'message': 'verification successfull',
+							'info': 'verification successfull'
+						});
+					}
 				});
 			}
-		})
+		});
+	}
+
+	function updateUser(user) {
+		user.role = 7;
+		user.save(function (err) {
+			cb(err);
+		});
 	}
 
 	function registerUser(cb) {
