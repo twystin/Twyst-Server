@@ -9,6 +9,7 @@ var OutletSchema = new Schema({
     checkin_message_append: {type: String},
     publicUrl: [{type: String}],
     shortUrl: [{type: String}],
+    voucher_in_app: {type: Boolean, default: false},
     ny_2015: {
         featured: {type: Boolean, default: false},
         on_twyst: {type: String, trim: true},

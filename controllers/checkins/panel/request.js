@@ -196,15 +196,5 @@ function voucherMessageSender(_obj, outlet) {
 }
 
 function isVoucherInApp(outlet) {
-	if(outlet._id.equals('534b82cb0a9281e4520001bf')
-		|| outlet._id.equals('540f29192f61834b5170ec5e')
-		|| outlet._id.equals('5491a7abd031388c54653b35')
-		|| outlet._id.equals('54a0fba94a9f96a41bbe4bb2')
-		|| outlet._id.equals('5464888737cb6ce2369d054a')
-		|| outlet._id.equals('543cbb84c4c303bc6d6d37c0')
-		|| outlet._id.equals('5445f7c247f75ed312fc91e3')
-		|| outlet._id.equals('5469efed7063c62266666503')) {
-		return true;
-	}
-	return false;
+	return outlet.voucher_in_app;
 }
