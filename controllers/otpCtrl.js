@@ -202,7 +202,7 @@ module.exports.validateOtp = function (req, res) {
 		});
 	}
 
-	function updateUser(user) {
+	function updateUser(user, cb) {
 		user.role = 7;
 		user.save(function (err) {
 			cb(err);
