@@ -48,7 +48,7 @@ function getPhoneNumbersFromFile(file_name, cb) {
 	.from
 	.stream(fs.createReadStream(file_name, { encoding: 'utf8' }))
 	.on('record', function (row, index) {	
-		if(index < 1) {
+		if(index < 5) {
 			phone_numbers.push(row[0]);
 		}
 	})

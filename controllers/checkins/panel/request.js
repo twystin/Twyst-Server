@@ -11,7 +11,7 @@ module.exports.panelCheckin = function (req, res) {
 		'outlet': req.body.outlet,
 		'location': req.body.location,
 		'created_date': req.body.created_date,
-		'is_batch': true
+		'is_batch': false
 	};
 
 	Checkin_Main.checkin(_obj, function (err, data) {
