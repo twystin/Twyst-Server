@@ -203,7 +203,7 @@ module.exports.checkin = function (_obj, cb) {
 			current_reward: _obj.current_reward,
 			checkin_id: checkin._id,
 			creation_time: new Date(checkin.created_date).getTime(),
-			is_batch: (_obj.checkin_type === 'BATCH') ? true : false
+			is_batch: checkin.is_batch
 		};
 		VoucherGen.generate(obj, function (err, voucher) {
 			if(err) {

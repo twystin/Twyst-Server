@@ -7,10 +7,11 @@ var _ = require('underscore'),
 
 module.exports.panelCheckin = function (req, res) {
 	var _obj = {
-		phone: req.body.phone,
-		outlet: req.body.outlet,
-		location: req.body.location,
-		created_date: req.body.created_date
+		'phone': req.body.phone,
+		'outlet': req.body.outlet,
+		'location': req.body.location,
+		'created_date': req.body.created_date,
+		'is_batch': true
 	};
 
 	Checkin_Main.checkin(_obj, function (err, data) {
@@ -50,7 +51,8 @@ module.exports.poscheckin = function(req, res){
 	            'location': 'HOME_DELIVERY',
 	            'created_date': new Date(),
 	            'checkin_type' : 'POS',
-	            'checkin_code' : 'POS'
+	            'checkin_code' : 'POS',
+	            'is_batch': false
 	        };
 		    Checkin_Main.checkin(_obj, function (err, data) {
 				if(err) {
@@ -80,7 +82,8 @@ module.exports.batchCheckin = function (req, res) {
         'location': req.body.location,
         'created_date': new Date(),
         'checkin_type' : 'BATCH',
-        'checkin_code' : 'BATCH'
+        'checkin_code' : 'BATCH',
+        'is_batch': true
     };
     Checkin_Main.checkin(_obj, function (err, data) {
 		if(err) {
