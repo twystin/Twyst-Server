@@ -46,7 +46,7 @@ function getVoucherObject(object_param) {
 			description: object_param.current_reward.rewardified,
 			type: 'CHECKIN',
 			status: 'active',
-			created_at: new Date(object_param.creation_time).getTime() + 10800000
+			created_at: object_param.is_batch ? (new Date(object_param.creation_time)) : (new Date(object_param.creation_time).getTime() + 10800000)
 		},
 		reward: object_param.offer.reward,
 		applicable_hours: getTimings(object_param.offer),

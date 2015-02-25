@@ -6,10 +6,10 @@ var async = require('async');
 var config = {
 	'csv_file_name': __dirname + '/ccc.csv', // File path which has phone numbers
 	'checkin_url': 'http://twyst.in/api/v3/batch_checkins', // Checkin API
-	'sms_sender_id': 'COFCHA', // SMS Sender ID (Leave blank if from TWYSTR)
-	'outlet_id': '5332a73e4871e79576000c3a', // Outlet ID
-	'checkin_location': 'DINE_IN', // Checkin location DINE_IN / HOME_DELIVERY
-	'message': "Greetings from Coffee & Chai Co! We've enrolled you into our new rewards program on Twyst. Get a cup of Tea/Coffee free when you visit us next (Voucher Code xxxxxx, T&C: Min spend Rs 200). Get the Twyst app (http://twy.st/app) to check-in, unlock and Redeem your Rewards!"
+	'sms_sender_id': 'BEYBRD', // SMS Sender ID (Leave blank if from TWYSTR)
+	'outlet_id': '540ea3d32f61834b5170eb10', // Outlet ID
+	'checkin_location': 'HOME_DELIVERY', // Checkin location DINE_IN / HOME_DELIVERY
+	'message': "We love serving you at Beyond Breads! As a way of saying thanks, we have given you a free check-in into our new rewards program on Twyst! Now get 12% off on your next order, your voucher code is xxxxxx. Find all rewards at Beyond Breads at http://twyst.in/bbr"
 }; // Message must have xxxxxx (To replace with voucher code) 
 
 initCheckin();
@@ -48,7 +48,9 @@ function getPhoneNumbersFromFile(file_name, cb) {
 	.from
 	.stream(fs.createReadStream(file_name, { encoding: 'utf8' }))
 	.on('record', function (row, index) {	
-		phone_numbers.push(row[0]);
+		if(index < 1) {
+			phone_numbers.push(row[0]);
+		}
 	})
 	.on('end', function (count) {
 		cb(phone_numbers);
