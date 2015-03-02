@@ -155,6 +155,7 @@ function getRewardObject(on_count, tier, offer) {
         offer: offer._id,
         qr_only: offer.qr_only || false,
         reward: offer.basics.title,
+        description: offer.basics.description,
         rewardified: Utils.rewardify(offer)
     };
 }
