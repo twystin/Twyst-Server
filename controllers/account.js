@@ -4,6 +4,7 @@ var fs = require('fs'),
 	mongoose = require('mongoose'),
 	Handlebars = require('handlebars');
 var Account = mongoose.model('Account');
+var WelcomeEmail = require('./welcome_email_sms');
 
 module.exports.login = function (req, res) {
     res.send(200, {
@@ -233,6 +234,11 @@ module.exports.verifyEmail = function (req, res) {
 							sendTemplate(message);
 						}
 						else {
+							var email = getEmail(req.user);
+							if(email !== null) {
+								WelcomeEmail.sendWelcomeMail(email);
+							}
+							
 							message = 'Thanks, Your email address has been verified.';
 							sendTemplate(message);
 						}
@@ -263,5 +269,17 @@ module.exports.verifyEmail = function (req, res) {
 				res.send(template)
 			}
 		});
+	}
+
+	function getEmail(user) {
+		if(user.social_graph) {
+			if(user.social_graph.facebook && user.social_graph.facebook.email) {
+				return user.social_graph.facebook.email;
+			}
+			else if (user.social_graph.email && user.social_graph.email.email) {
+				return user.social_graph.email.email;
+			}
+		}
+	return null;
 	}
 }
