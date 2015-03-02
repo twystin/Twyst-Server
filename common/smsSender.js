@@ -12,7 +12,7 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 	var message = push_message.replace(/&/g,'%26');
 	message = message.replace(/% /g,'%25 ');
 
-	console.log(message + "dks   " + push_message);
+	console.log(message);
 	console.log("------------------------");
 	if(type === 'OTP_MESSAGE' 
 		|| type === 'UNSBS_MESSAGE' 
