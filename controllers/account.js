@@ -234,7 +234,7 @@ module.exports.verifyEmail = function (req, res) {
 							sendTemplate(message);
 						}
 						else {
-							var email = getEmail(req.user);
+							var email = getEmail(user);
 							if(email !== null) {
 								WelcomeEmail.sendWelcomeMail(email);
 							}
