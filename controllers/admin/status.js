@@ -4,7 +4,8 @@ var mongoose = require('mongoose'),
 	RewardCtrl = require('../reward_populate');
 var Outlet = mongoose.model('Outlet'),
 	Reward = mongoose.model('Reward'),
-	Program = mongoose.model('Program');
+	Program = mongoose.model('Program'),
+	SpecialProgram = mongoose.model('SpecialProgram');
 
 module.exports.changeOutletStatus = function (req, res) {
 	if(!req.body.outlet) {
@@ -189,6 +190,12 @@ module.exports.getAllOutlets = function (req, res) {
 			callback(null, count || 0);
 		})
 	}
+}
+
+module.exports.getSpecialPrograms = function(req,res) {
+	SpecialProgram.find(function(e,p) {
+		res.send(200,p);
+	})
 }
 
 module.exports.getAllPrograms = function (req, res) {

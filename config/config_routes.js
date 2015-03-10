@@ -127,6 +127,7 @@ module.exports = function (app) {
         app.get('/api/v2/total_checkins', AnonDataCtrl.totalCheckins);
         app.get('/api/v2/alloutlets', StatusCtrl.getAllOutlets);
         app.get('/api/v2/allprograms', StatusCtrl.getAllPrograms);
+        app.get('/api/v2/specialprograms', StatusCtrl.getSpecialPrograms);
         app.get('/api/v2/allusers', UserCtrl.getAllUsers);
         app.get('/api/v2/alluser/:username', UserCtrl.getUser);
         app.post('/api/v2/alluser', UserCtrl.getTimeline);
