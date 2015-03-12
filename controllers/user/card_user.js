@@ -26,68 +26,79 @@ module.exports.populateCardUser = function (req, res) {
 
 var updateUser = function(user, callback){
 	if(user.mobile !== undefined) {
-		findUser(user.mobile, function(userFound){
-			if(userFound !== null && userFound[0] !== undefined) {
-				if((userFound[0].email == undefined || userFound[0].email == null) && 
-					(userFound[0].name == undefined || userFound[0].name == null) ) {
-					console.log('both should be update');
-					Account.findOneAndUpdate({ phone: user.mobile},  
-						{$set: {"name": user.name, "email": user.email} }, 
-						
-						function(err, updatedUser) {
-							if (err) {
-								console.log(err);
-								callback(false);
-								
-							} else if(updatedUser) {
-								sendEmailAndSms(user);		
-								callback(true);																								
-							}	
-						}
-					);		
-
-				}
-				else if(userFound[0].email == undefined || userFound[0].email == null) {
-					console.log('only email should be update');
-					Account.findOneAndUpdate({ phone: user.mobile},  
-						{$set: {"email": user.email} }, 
-						
-						function(err, updatedUser) {
-							if (err) {
-								console.log(err);
-								callback(false);
-								
-							} else {
-								if(updatedUser) {
-									sendEmailAndSms(user);		
-								}
-								
-								callback(true);
-							}	
-						}
-					);				
-				}
-				else if(userFound[0].name == undefined || userFound[0].name == null) {
-					console.log('only name should be update');
-					Account.findOneAndUpdate({ phone: user.mobile},  
-						{$set: {"name": user.name} }, 
-						
-						function(err, updatedUser) {
-							if (err) {
-								console.log(err);
-								callback(false);
-								
-							} else {				
-								callback(true);
-							}	
-						}
-					);				
+		findUser(user.mobile, function(userFound){	
+					
+			Account.findById(userFound[0]._id, function (err, account) {
+				if(err) console.log(err)
+					console.log(account)
+				if(account.profile === undefined)	{
+					account.profile.first_name = user.firstName;
+					account.profile.middle_name = user.middleName;
+					account.profile.last_name = user.lastName;
+					account.profile.email = user.email;
+					account.profile.bday.d = user.date;
+					account.profile.bday.m = user.month;
+					account,profile.bday.y = user.year;
+					console.log('All Updated');
+					sendEmailAndSms(user);
 				}
 				else {
-					console.log('nothing to update ');
-					callback(true);
-				}	
-			}		
+					if(account.profile !== undefined &&
+					(account.profile.first_name === undefined || account.profile.first_name === '')){
+					account.profile.first_name = user.firstName;
+					console.log('firstName Updated');
+					}
+
+					if(account.profile !== undefined &&
+						(account.profile.middle_name === undefined || account.profile.middle_name === '')){
+						account.profile.middle_name = user.middleName;
+						console.log('middleName Updated');
+					}
+					if(account.profile !== undefined &&
+						(account.profile.last_name=== undefined || account.profile.last_name === '')){
+						account.profile.last_name = user.lastName;
+						console.log('lastName Updated');
+					}
+
+					if(account.profile !== undefined &&
+						(account.profile.email === undefined || account.profile.email === '')){
+						account.profile.email = user.email;
+						console.log('email Updated');
+						sendEmailAndSms(user);
+
+					}
+					if(account.profile !== undefined && 
+						(account.profile.bday === undefined || account.profile.bday === '')){
+						account.profile.bday.d = user.date;
+						account.profile.bday.m = user.month;
+						account.profile.bday.y = user.year;
+						console.log('bday Updated');
+					}
+					else {
+						if(account.profile !== undefined && account.profile.bday !== undefined && 
+						(account.profile.bday.d === undefined || account.profile.bday.d === '')){
+						account.profile.bday.d = user.date;
+						console.log('date Updated');
+						}
+						if(account.profile !== undefined && account.profile.bday !== undefined && 
+							(account.profile.bday.m === undefined || account.profile.bday.m === '')){
+							account.profile.bday.m = user.month;
+							console.log('month Updated');
+						}
+						if(account.profile !== undefined && account.profile.bday !== undefined && 
+							(account.profile.bday.y === undefined || account.profile.bday.y === '')){
+							account.profile.bday.y = user.year;
+							console.log('year Updated');
+						}
+					} 	
+				}
+				
+					
+				account.save(function(err) {
+			        if (err) return next(err);
+			        callback('Updated');
+			    });
+			});		
 		})	
 	}
 }
@@ -110,7 +121,10 @@ var  findUser = function(phone, callback) {
 
 var sendEmailAndSms = function(user) {
 	//console.log(user);
-	EmailAndSmsSender.sendWelcomeMail(user.email);
-	SMS.sendSms(user.mobile, twyst_welcome_message, 'WELCOME_MESSAGE');
+	if(user.email !== undefined && user.email !== '' && user.email !== null) {
+		EmailAndSmsSender.sendWelcomeMail(user.email);
+		SMS.sendSms(user.mobile, twyst_welcome_message, 'WELCOME_MESSAGE');	
+	}
+	
 
 }
