@@ -138,11 +138,11 @@ function saveVoucher(user, special, cb) {
   var voucher = getVoucherObject(special, user);
   voucher = new Voucher(voucher);
   voucher.save(function(err) {
-    cb(err, voucher);
+    cb(err, user, special, voucher);
   })
 }
 
-function sendMessage(err,v) {
+function sendMessage(err, u, w, v) {
     if (err) {
       console.log(err);
     } else {

@@ -30,7 +30,9 @@ function processSms(user, winback, voucher) {
 		winback.outlets[0].contact.phones.mobile[0].num :
 		winback.outlets[0].contact.phones.landline);
 	var push_message = "We haven't seen you at "+ winback.outlets[0].basics.name +" in a while! We have something extra for you – "+ rewardify(winback) +" when you visit next. Voucher code "+ voucher.basics.code +" (valid till "+ Utils.formatDate(voucher.validity.end_date) +"). To claim, just show this to your server. See you soon! Call "+ outlet_phone +" to reserve/order.";
-	saveReminder(user.phone, push_message, winback.validity.send_voucher_at);
+	if (!user.blacklisted) {
+		saveReminder(user.phone, push_message, winback.validity.send_voucher_at);
+	}
 }
 
 function processConsole() {

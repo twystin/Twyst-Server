@@ -35,7 +35,12 @@ function processSms(user, special, voucher) {
 	console.log("WINBACK " + JSON.stringify(special));
 
 	var push_message = "Birthday wishes from " + special.outlets[0].basics.name + "! We have a little something for you – " + rewardify(special) + " - when you visit next. Voucher code "+ voucher.basics.code +" (valid till "+ Utils.formatDate(voucher.validity.end_date) +"). To claim, just show this to your server. See you soon! Call "+ outlet_phone +" to reserve/order.";
-	saveReminder(user.phone, push_message, special.validity.send_at.at_hours);
+	console.log(user);
+	if (!user.blacklisted) {
+		saveReminder(user.phone, push_message, special.validity.send_at.at_hours);
+	} else {
+		console.log("Blacklisted user");
+	}
 }
 
 function processConsole() {

@@ -11,7 +11,7 @@ Dead code:
   ☐ controllers/sms.js - dead code
 Features:
   ☐ SMS sending - consolidate & respect blacklist / unsubscribe list
-    ☐ SMS sending
+    ✔ SMS sending @done(2015-03-15 21:24) @project(Features)
         - common/smsSender.js: done
         - Check all places where sendSms is called: done
         - getApp.js - done
@@ -19,16 +19,15 @@ Features:
         - controllers/redeem.js - done
         - controllers/sms.js - done
         - controllers/voucherRedeem.js - done
-        
-        - jobs/notifications/*
-        - jobs/voucherReminder/*
-        - jobs/winback
-        - scripts/batch/checkinCsv
-
+        - jobs/voucherReminder/: done
+        - jobs/winback: done
+        - scripts/batch/checkinCsv - done
+        - jobs/notifications/smsSender - dont need now?
 
     ☐ Unsubscribe
         - blacklister.js
         - jobs/voucherReminder/transport.js
+        - handle users in unsubscribed list
     ☐ Sending STOP message in all
     ☐ Merchant handle SMSs
     ☐ STOP BB1 / handle

@@ -15,7 +15,9 @@ module.exports.handleReminder = function (voucher) {
 					console.log("Unsbs user");
 				}
 				else {
-					processSms(user.phone, voucher, outlets[0]);
+					if (!user.blacklisted) {
+						processSms(user.phone, voucher, outlets[0]);
+					}
 				}
 			}
 		});
