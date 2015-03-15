@@ -1,3 +1,7 @@
+// ARUNR: Seems like an unused file
+// Moving from root to refactoring
+
+
 var gcm = require('node-gcm');
 var csv = require('csv');
 var fs = require('fs');

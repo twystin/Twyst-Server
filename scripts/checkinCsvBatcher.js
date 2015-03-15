@@ -10,7 +10,7 @@ var config = {
 	'outlet_id': '540ea3d32f61834b5170eb10', // Outlet ID
 	'checkin_location': 'HOME_DELIVERY', // Checkin location DINE_IN / HOME_DELIVERY
 	'message': "We love serving you at Beyond Breads! As a way of saying thanks, we have given you a free check-in into our new rewards program on Twyst! Now get 12% off on your next order, your voucher code is xxxxxx. Find all rewards at Beyond Breads at http://twyst.in/bbr"
-}; // Message must have xxxxxx (To replace with voucher code) 
+}; // Message must have xxxxxx (To replace with voucher code)
 
 initCheckin();
 function initCheckin() {
@@ -38,7 +38,7 @@ function httpCheckin (phone, cb) {
 	        message: config.message
 		}
 	}).on('complete', function(data, response) {
-		cb(data, response);	
+		cb(data, response);
 	});
 };
 
@@ -47,7 +47,7 @@ function getPhoneNumbersFromFile(file_name, cb) {
 	csv()
 	.from
 	.stream(fs.createReadStream(file_name, { encoding: 'utf8' }))
-	.on('record', function (row, index) {	
+	.on('record', function (row, index) {
 		if(index < 5) {
 			phone_numbers.push(row[0]);
 		}

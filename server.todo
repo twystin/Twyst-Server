@@ -1,4 +1,12 @@
-REFACTORING:
-  ✔ Bring in twyst-data also into the same tree @done(2015-03-15 17:05) @project(REFACTORING)
+Refactoring:
   ☐ Separate scripts directory out
   ☐ Separate out code by feature (instead of MVC)
+
+Features:
+  ☐ SMS sending - consolidate & respect blacklist / unsubscribe list
+  ☐ Wishlist program
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+
+  ✔ Bring in twyst-data also into the same tree @done(2015-03-15 17:05) @project(Refactoring)

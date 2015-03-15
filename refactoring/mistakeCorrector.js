@@ -1,3 +1,6 @@
+// ARUNR: Seems like an unused file
+// Moving from root to refactoring
+
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var _ = require('underscore');
@@ -71,9 +74,9 @@ function countDetails(users) {
 // CROSS VISITING M/R
 // var o = {};
 // o.query = {checkin_program: "537b648fc1844b7c5400000f"};
-// o.map = function () { 
-// 	emit(this.phone, this.outlet) 
-// }	
+// o.map = function () {
+// 	emit(this.phone, this.outlet)
+// }
 // o.reduce = function (k, values) {
 // 	var unique = [];
 // 	values.forEach (function (v) {
@@ -116,12 +119,12 @@ function countDetails(users) {
 //CROSS VISITING USERS Aggregate
 // var d1 = Date.now();
 // Checkin.aggregate({$match: {checkin_program: mongoose.Types.ObjectId("537b648fc1844b7c5400000f")}},
-// 			{ $group: { 
+// 			{ $group: {
 // 					_id: {
 // 						phone:'$phone'
-// 					}, 
-// 					unique_outlets: { 
-// 						$addToSet: '$outlet' 
+// 					},
+// 					unique_outlets: {
+// 						$addToSet: '$outlet'
 // 					},
 // 					outlets: {
 // 						$push: '$outlet'
@@ -132,7 +135,7 @@ function countDetails(users) {
 // });
 // var d1 = Date.now();
 // Checkin.aggregate({$match: {checkin_program: mongoose.Types.ObjectId("537b648fc1844b7c5400000f")}},
-// 			{ $group: 
+// 			{ $group:
 // 				{ _id: '$phone', count: { $sum: 1 }}
 // 			}, {
 // 				$group: {
@@ -146,7 +149,7 @@ function countDetails(users) {
 // PERCENTAGE OF USERS WITH GREATER THAN 1 CHECKINS Aggregate
 // vaw(r d1 = Date.no);
 // Checkin.aggregate({$match: {}},
-// 			{ $group: 
+// 			{ $group:
 // 				{ _id: '$phone', count: { $sum: 1 }}
 // 			}, {
 // 				$match: {
@@ -162,10 +165,10 @@ function countDetails(users) {
 
 // PERCENTAGE OF USERS WITH GREATER THAN 1 CHECKINS M/R
 // var o = {};
-// o.map = function () { 
-// 	emit(this.phone, 1) 
+// o.map = function () {
+// 	emit(this.phone, 1)
 // }
-// o.reduce = function (k, values) { 
+// o.reduce = function (k, values) {
 // 	return values.length;
 // }
 // //o.query = {outlet: "530ef84902bc583c21000004"};
@@ -188,13 +191,13 @@ function countDetails(users) {
 
 // MAP REDUCE FOR THE DAY-WISE CHECKINS
 // var o = {};
-// o.map = function () { 
+// o.map = function () {
 // 	var days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 // 	var day;
 // 	day = new Date(this.checkin_date).getDay();
-// 	emit(day, 1) 
+// 	emit(day, 1)
 // }
-// o.reduce = function (k, values) { 
+// o.reduce = function (k, values) {
 // 	var count = 0;
 // 	values.forEach(function (v) {
 // 		count += v;
@@ -222,9 +225,9 @@ function countDetails(users) {
 // Outlet.find({}, function (err, outlets) {
 // 	outlets.forEach(function (o) {
 // 		var city = o.contact.location.city.toLowerCase();
-// 		// if(city === 'delhi' 
-// 		// 	|| city === 'gurgaon' 
-// 		// 	|| city === 'noida' 
+// 		// if(city === 'delhi'
+// 		// 	|| city === 'gurgaon'
+// 		// 	|| city === 'noida'
 // 		// 	|| city === 'new delhi') {
 // 		// 	var url = '/' + 'ncr' + '/' +
 // 		// 		o.contact.location.locality_2[0] + '/' +
@@ -232,7 +235,7 @@ function countDetails(users) {
 // 		// 		o.contact.location.city;
 // 		// }
 // 		// else {
-// 		// 	var url = '/' + o.contact.location.city + '/' + 
+// 		// 	var url = '/' + o.contact.location.city + '/' +
 // 		// 		o.contact.location.locality_2[0] + '/'
 // 		// 		o.basics.name + ' ' + o.contact.location.locality_1[0];
 // 		// }
@@ -311,7 +314,7 @@ function countDetails(users) {
 // Voucher.find({
 // 	'issue_details.issued_at': "5332a2924871e79576000c27",
 // 	'issue_details.issue_time': {$lt: new Date(2014, 5, 14)},
-// 	'issue_details.issue_date': {$gt: new Date(2014, 5, 13)} 
+// 	'issue_details.issue_date': {$gt: new Date(2014, 5, 13)}
 // }, function (err, vouchers) {
 // 	console.log(vouchers.length)
 // 	vouchers.forEach(function (vh) {
@@ -325,7 +328,7 @@ function countDetails(users) {
 // Checkin.find({
 // 	'outlet': "5316d59326b019ee59000026",
 // 	'modified_date': {$lt: new Date(2014, 6, 11)},
-// 	'created_date': {$gt: new Date(2014, 6, 10)} 
+// 	'created_date': {$gt: new Date(2014, 6, 10)}
 // }, function (err, checkins) {
 // 	console.log(checkins.length)
 // 	checkins.forEach(function (ch) {
@@ -422,30 +425,30 @@ function countDetails(users) {
 //             $lt: new Date("2014-06-16T00:00:58.669Z")
 //         }
 //     }},
-//   	{ 
+//   	{
 //   		$group: {
-//     		_id: { 
-//     			phone: "$phone" 
+//     		_id: {
+//     			phone: "$phone"
 //     		},
-//     	count: { 
-//     		$sum: 1 
-//     	} 
-//   	}}, 
-//   	{ 
-//   		$match: { 
-//     		count: { 
+//     	count: {
+//     		$sum: 1
+//     	}
+//   	}},
+//   	{
+//   		$match: {
+//     		count: {
 //     			$gte: 1
-//     		} 
+//     		}
 //   	} },
-//   	{ 
-//   		$sort : { 
+//   	{
+//   		$sort : {
 //   			count : -1
-//   		} 
+//   		}
 //   	},
-//   	{ 
-//   		$limit : 2000 
+//   	{
+//   		$limit : 2000
 //   	}, function (err, checkins) {
-//         breakUsers(checkins);  		
+//         breakUsers(checkins);
 // });
 
 // function breakUsers(checkins) {

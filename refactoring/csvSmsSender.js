@@ -1,3 +1,6 @@
+// ARUNR: Seems like an unused file
+// Moving from common to refactoring
+
 var rest = require('restler');
 var csv = require('csv');
 var fs = require("fs");
@@ -9,7 +12,7 @@ var config = {
 	'sms_api': 'http://localhost:3000/api/v1/sms',
 	'message': 'Testing',
 	'csv_file_name': __dirname + '/ccc.csv',
-}; 
+};
 
 initSms();
 function initSms() {
@@ -36,7 +39,7 @@ function httpCheckin (phone, cb) {
 	        message: config.message
 		}
 	}).on('complete', function(data, response) {
-		cb(data, response);	
+		cb(data, response);
 	});
 };
 
@@ -45,7 +48,7 @@ function getPhoneNumbersFromFile(file_name, cb) {
 	csv()
 	.from
 	.stream(fs.createReadStream(file_name, { encoding: 'utf8' }))
-	.on('record', function (row, index) {	
+	.on('record', function (row, index) {
 		phone_numbers.push(row[0]);
 	})
 	.on('end', function (count) {
