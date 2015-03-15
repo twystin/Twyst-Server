@@ -1,6 +1,9 @@
 Refactoring:
-  ☐ Separate scripts directory out
   ☐ Separate out code by feature (instead of MVC)
+  ☐ Clean up the Twyst-Analytics structure directory
+
+Testing:
+  ☐ Write tests for server code
 
 Features:
   ☐ SMS sending - consolidate & respect blacklist / unsubscribe list
@@ -9,4 +12,5 @@ Features:
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
 
+  ✔ Separate scripts directory out @done(2015-03-15 17:51) @project(Refactoring)
   ✔ Bring in twyst-data also into the same tree @done(2015-03-15 17:05) @project(Refactoring)
