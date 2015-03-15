@@ -1,7 +1,7 @@
 var schedule = require('node-schedule');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-var voucher = require('../models/voucher');
+var voucher = require('../../models/voucher');
 var Voucher = mongoose.model('Voucher');
 mongoose.connect('mongodb://50.112.253.131/twyst');
 
