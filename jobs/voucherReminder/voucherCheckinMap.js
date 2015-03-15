@@ -1,4 +1,4 @@
-require('../config/config_models')();
+require('../../config/config_models')();
 var mongoose = require('mongoose');
 var Voucher = mongoose.model('Voucher');
 var Checkin = mongoose.model('Checkin');

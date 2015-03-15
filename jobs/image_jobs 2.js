@@ -4,12 +4,12 @@ var recursive = require('recursive-readdir'),
 	im = require('imagemagick'),
 	async = require('async'),
 	mongoose = require('mongoose'),
-	Settings = require('./config/settings');
+	Settings = require('../config/settings');
 
 AWS.config.update(Settings.values.aws_config);
-require('./config/config_models')();
+require('../config/config_models')();
 mongoose.connect('mongodb://50.112.253.131/twyst');
-var Outlet = mongoose.model('Outlet');	
+var Outlet = mongoose.model('Outlet');
 
 var dimensions = [
 	{

@@ -1,7 +1,7 @@
 var schedule = require('node-schedule'),
 	keygen = require("keygenerator"),
 	async = require('async');
-require('../config/config_models')();
+require('../../config/config_models')();
 var mongoose = require('mongoose');
 var Voucher = mongoose.model('Voucher'),
 	Winback = mongoose.model('Winback'),
@@ -9,7 +9,7 @@ var Voucher = mongoose.model('Voucher'),
 	Checkin = mongoose.model('Checkin'),
 	Account = mongoose.model('Account');
 
-var Filter = require('./filter'); 
+var Filter = require('./filter');
 
 mongoose.connect('mongodb://50.112.253.131/twyst');
 

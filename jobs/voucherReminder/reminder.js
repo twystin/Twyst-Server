@@ -1,7 +1,7 @@
 var schedule = require('node-schedule');
 var async = require('async');
 var _ = require('underscore');
-require('../config/config_models')();
+require('../../config/config_models')();
 var mongoose = require('mongoose');
 var Voucher = mongoose.model('Voucher');
 var Transport = require('./transport');
@@ -27,8 +27,8 @@ function main() {
 
 function processVouchers(vouchers) {
 	for(var i = 0; i < vouchers.length; i++) {
-		if(!vouchers[i].issue_details 
-			|| !vouchers[i].issue_details.issued_to 
+		if(!vouchers[i].issue_details
+			|| !vouchers[i].issue_details.issued_to
 			|| !vouchers[i].issue_details.issued_to.phone) {
 			vouchers.splice(i, 1);
 		}
