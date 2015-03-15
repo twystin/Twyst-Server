@@ -1,4 +1,4 @@
 REFACTORING:
-  ☐ Bring in twyst-data also into the same tree
+  ✔ Bring in twyst-data also into the same tree @done(2015-03-15 17:05) @project(REFACTORING)
   ☐ Separate scripts directory out
   ☐ Separate out code by feature (instead of MVC)

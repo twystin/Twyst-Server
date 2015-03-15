@@ -6,22 +6,22 @@ var async = require("async");
 mongoose.connect('mongodb://50.112.253.131/twyst');
 
 var Schema = mongoose.Schema;
-var account = require('./models/account'),
-    offer = require('./models/offer'),
-    outlet = require('./models/outlet'),
-    program = require('./models/program'),
-    voucher = require('./models/voucher'),
-    tier = require('./models/tier'),
-    recommendation = require('./models/recommendation'),
-    checkin = require('./models/checkin'),
-    favourite = require('./models/favourite'),
-    qr = require('./models/qr_code'),
-    tag = require('./models/tag'),
-    beta_users = require('./models/beta_users'),
-    logs = require('./models/log'),
-    logs = require('./models/smslog'),
-    redirect = require('./models/redirect'),
-    beta_merchants = require('./models/beta_merchants');
+var account = require('../../models/account'),
+    offer = require('../../models/offer'),
+    outlet = require('../../models/outlet'),
+    program = require('../../models/program'),
+    voucher = require('../../models/voucher'),
+    tier = require('../../models/tier'),
+    recommendation = require('../../models/recommendation'),
+    checkin = require('../../models/checkin'),
+    favourite = require('../../models/favourite'),
+    qr = require('../../models/qr_code'),
+    tag = require('../../models/tag'),
+    beta_users = require('../../models/beta_users'),
+    logs = require('../../models/log'),
+    logs = require('../../models/smslog'),
+    redirect = require('../../models/redirect'),
+    beta_merchants = require('../../models/beta_merchants');
 
 var Account = mongoose.model('Account');
 var Checkin = mongoose.model('Checkin');
@@ -64,7 +64,7 @@ module.exports.getCount = function(callback) {
 
 function initVars() {
     data = {};
-    data.totalcheckin = {}; 
+    data.totalcheckin = {};
     data.smscheckin = {};
     data.panelcheckin = {};
     data.qrcheckin = {};
@@ -159,7 +159,7 @@ function redemptions (cb) {
             });
         });
     });
-} 
+}
 
 function favs (cb) {
     Favourites.count({'created_date':{$gt:new Date(Date.now() - 24*60*60*1000)}}, function(e,s) {
