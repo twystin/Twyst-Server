@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var async = require('async');
-require('../config/config_models')();
+require('../../config/config_models')();
 var Special = mongoose.model('SpecialProgram'),
   Outlet = mongoose.model('Outlet'),
   Checkin = mongoose.model('Checkin'),

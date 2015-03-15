@@ -1,6 +1,6 @@
 var schedule = require('node-schedule');
 var async = require('async');
-require('../config/config_models')();
+require('../../config/config_models')();
 var mongoose = require('mongoose');
 var Program = mongoose.model('Program');
 

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 var Notif = mongoose.model('Notif');
-var Utils = require('../common/utilities');
+var Utils = require('../../common/utilities');
 var transports = {
 	'CONSOLE': processConsole,
 	'EMAIL': processEmail,
@@ -27,15 +27,15 @@ module.exports.handleMessage = function (user, special, voucher) {
 function processSms(user, special, voucher) {
 
 	var outlet_phone = (
-		special.outlets[0].contact.phones.mobile ? 
-		special.outlets[0].contact.phones.mobile[0].num : 
+		special.outlets[0].contact.phones.mobile ?
+		special.outlets[0].contact.phones.mobile[0].num :
 		special.outlets[0].contact.phones.landline);
-	
+
 	console.log("VOUCHER " + JSON.stringify(voucher));
 	console.log("WINBACK " + JSON.stringify(special));
 
 	var push_message = "Birthday wishes from " + special.outlets[0].basics.name + "! We have a little something for you – " + rewardify(special) + " - when you visit next. Voucher code "+ voucher.basics.code +" (valid till "+ Utils.formatDate(voucher.validity.end_date) +"). To claim, just show this to your server. See you soon! Call "+ outlet_phone +" to reserve/order.";
-	saveReminder(user.phone, push_message, special.validity.send_at.at_hours); 
+	saveReminder(user.phone, push_message, special.validity.send_at.at_hours);
 }
 
 function processConsole() {

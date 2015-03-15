@@ -1,4 +1,4 @@
-require('../config/config_models')();
+require('../../config/config_models')();
 var mongoose = require('mongoose');
 var _ = require("underscore");
 var Loc = mongoose.model('UserLoc');

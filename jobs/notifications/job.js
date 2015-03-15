@@ -3,7 +3,7 @@ var schedule = require('node-schedule');
 var async = require('async');
 var SmsSender = require('./smsSender');
 var GcmBatcher = require('./gcmBatcher');
-var notif = require('../models/notif');
+var notif = require('../../models/notif');
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 var Notif = mongoose.model('Notif');
@@ -28,17 +28,17 @@ function jobRunner() {
 
 function smsNotifications (callback) {
     getNotifications(
-	'SMS', 
-	new Date(Date.now() - 30 * 60 * 1000), 
-	new Date(Date.now() + 30 * 60 * 1000), 
-	'DRAFT', 
+	'SMS',
+	new Date(Date.now() - 30 * 60 * 1000),
+	new Date(Date.now() + 30 * 60 * 1000),
+	'DRAFT',
 	processSMSNotifications
     );
 
     function processSMSNotifications (notifs) {
 	processNotifications(
-	    notifs, 
-	    callback, 
+	    notifs,
+	    callback,
 	    SmsSender.sendBulkSMS
 	);
     }
@@ -56,7 +56,7 @@ function gcmNotifications (callback) {
     function processGCMNotifications (notifs) {
 	processNotifications(
 	    notifs,
-	    callback, 
+	    callback,
 	    GcmBatcher.sendPush
 	);
     }
@@ -90,8 +90,8 @@ function getNotifications(type, begin, end, status, callback) {
 	},
 	status: status
     }, function(err, notifs) {
-	if (err) { 
-	    console.log(err); 
+	if (err) {
+	    console.log(err);
 	} else {
 	    callback(notifs);
 	}

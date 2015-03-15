@@ -1,4 +1,4 @@
-var email   = require("../node_modules/emailjs/email");
+var email   = require("../../node_modules/emailjs/email");
 var nodemailer = require('nodemailer');
 
 var transporter = nodemailer.createTransport({
