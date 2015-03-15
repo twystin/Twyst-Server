@@ -5,8 +5,33 @@ Refactoring:
 Testing:
   ☐ Write tests for server code
 
+Dead code:
+  ☐ getSMSCheckinCode.js & sms_parser.js - dead code
+  ☐ csvSMSSender.js - dead code
+  ☐ controllers/sms.js - dead code
 Features:
   ☐ SMS sending - consolidate & respect blacklist / unsubscribe list
+    ☐ SMS sending
+        - common/smsSender.js: done
+        - Check all places where sendSms is called: done
+        - getApp.js - done
+        - csvSMSSender.js - done
+        - controllers/redeem.js - done
+        - controllers/sms.js - done
+        - controllers/voucherRedeem.js - done
+        
+        - jobs/notifications/*
+        - jobs/voucherReminder/*
+        - jobs/winback
+        - scripts/batch/checkinCsv
+
+
+    ☐ Unsubscribe
+        - blacklister.js
+        - jobs/voucherReminder/transport.js
+    ☐ Sending STOP message in all
+    ☐ Merchant handle SMSs
+    ☐ STOP BB1 / handle
   ☐ Wishlist program
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿

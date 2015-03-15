@@ -8,21 +8,20 @@ var Notif = mongoose.model('Notif');
 var Account = mongoose.model('Account');
 
 module.exports.sendSms = function (phone, push_message, type, from) {
-	push_message = push_message.replace(/(\n)+/g, '');	
+	push_message = push_message.replace(/(\n)+/g, '');
 	var message = push_message.replace(/&/g,'%26');
 	message = message.replace(/% /g,'%25 ');
 
 	console.log(message);
 	console.log("------------------------");
-	if(type === 'OTP_MESSAGE' 
-		|| type === 'UNSBS_MESSAGE' 
-		|| type === 'PROMO_MESSAGE') {
+	if(type === 'OTP_MESSAGE'
+		|| type === 'UNSBS_MESSAGE') {
 		send();
 	}
 	else {
 		isBlackListedUser(phone, function (err, isBlackListed) {
 			if(err || isBlackListed) {
-				console.log("Blacklisted user here...issse na hoga...Twyst tere liye nahi hai babua...");
+				console.log("Blacklisted user.");
 			}
 			else {
 				checkType();
@@ -136,7 +135,7 @@ function saveSentSms (phone, message, status) {
 	sms_log.phone = phone;
 	sms_log.message = message;
 	sms_log.status = status;
-	
+
 	var sms_log = new SmsSentLog(sms_log);
 
 	sms_log.save(function (err) {
