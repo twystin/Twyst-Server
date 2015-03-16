@@ -72,7 +72,7 @@ module.exports.getOTP = function (req, res) {
 	}
 
 	function saveOtp(otp_data) {
-		var otp_message = 'Your Twyst verification code is ';
+		var otp_message = 'Your Twyst verification code is ';		
 		otp_data.save(function (err) {
 			if(err) {
 				res.send(400, {
@@ -103,7 +103,7 @@ module.exports.getOTP = function (req, res) {
 }
 
 module.exports.validateOtp = function (req, res) { 
-
+	var twyst_welcome_message = 'Welcome To Twyst Rewards Program';
 	var otp = req.body.otp,
 		phone = CommonUtilities.tenDigitPhone(req.body.phone);
 
@@ -172,7 +172,8 @@ module.exports.validateOtp = function (req, res) {
 							'info': err
 						});
 					}
-					else {
+					else {						
+						SMS.sendSms(phone, twyst_welcome_message, 'WELCOME_MESSAGE');
 						res.send(200, {
 							'status': 'success',
 							'message': 'User registered successfull',
@@ -190,7 +191,8 @@ module.exports.validateOtp = function (req, res) {
 							'info': err
 						});
 					}
-					else {
+					else {						
+						SMS.sendSms(phone, twyst_welcome_message, 'WELCOME_MESSAGE');
 						res.send(200, {
 							'status': 'success',
 							'message': 'verification successfull',
