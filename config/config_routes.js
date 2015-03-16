@@ -478,7 +478,7 @@ module.exports = function (app) {
 
     (function user_reg_completion_routs() {
         var PopulateUserCtrl = require('../controllers/user/card_user');
-        app.post('/api/v1/populate/card_user', PopulateUserCtrl.populateCardUser)
+        app.post('/api/v1/populate/card_user', checkAuthenticated(), PopulateUserCtrl.populateCardUser)
     })();
 
     (function handle_defaults() {

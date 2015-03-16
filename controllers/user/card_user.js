@@ -6,16 +6,14 @@ var Account = mongoose.model('Account');
 var EmailAndSmsSender = require('../welcome_email_sms');
 var SMS = require('../../common/smsSender');
 var twyst_welcome_message = 'Welcome To Twyst Rewards Program';
+var async = require('async');
 
 module.exports.populateCardUser = function (req, res) {
 	var allUsers = req.body.userData;
 	var result = true;
-	for  (var i = 0; i < allUsers.length; i ++) {
-		updateUser(allUsers[i], function(data){	
-			console.log(data);
-		})		
-	}
-	
+	async.each(allUsers, updateUser, function(err){
+    	console.log(err);
+	});	
 	res.send(200, {
 		'status': 'success',
 		'message': 'Updated Succcessfully',
@@ -38,7 +36,7 @@ var updateUser = function(user, callback){
 					account.profile.email = user.email;
 					account.profile.bday.d = user.date;
 					account.profile.bday.m = user.month;
-					account,profile.bday.y = user.year;
+					account.profile.bday.y = user.year;
 					console.log('All Updated');
 					sendEmailAndSms(user);
 				}
