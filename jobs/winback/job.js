@@ -11,7 +11,7 @@ var Voucher = mongoose.model('Voucher'),
 
 var Filter = require('./filter');
 
-mongoose.connect('mongodb://50.112.253.131/twyst');
+mongoose.connect('mongodb://localhost/twyst');
 
 var job = schedule.scheduleJob({minute: 38, dayOfWeek: [new schedule.Range(0,6)]}, main);
 main();

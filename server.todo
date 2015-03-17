@@ -1,6 +1,11 @@
 Refactoring:
   ☐ Separate out code by feature (instead of MVC)
   ☐ Clean up the Twyst-Analytics structure directory
+  ☐ Add contests to the beta_users model
+
+DevOps:
+  ☐ Switch to PM2 from AWS
+  ☐ Block our prod db
 
 Testing:
   ☐ Write tests for server code
@@ -9,6 +14,7 @@ Dead code:
   ☐ getSMSCheckinCode.js & sms_parser.js - dead code
   ☐ csvSMSSender.js - dead code
   ☐ controllers/sms.js - dead code
+
 Features:
   ☐ SMS sending - consolidate & respect blacklist / unsubscribe list
     ✔ SMS sending @done(2015-03-15 21:24) @project(Features)
@@ -28,6 +34,7 @@ Features:
         - blacklister.js
         - jobs/voucherReminder/transport.js
         - handle users in unsubscribed list
+
     ☐ Sending STOP message in all
     ☐ Merchant handle SMSs
     ☐ STOP BB1 / handle

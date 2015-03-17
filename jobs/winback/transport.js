@@ -49,7 +49,7 @@ function processEmail() {
 
 function saveReminder(phone, message, send_voucher_at) {
 	var notif = getNotifObject(phone, message, send_voucher_at);
-
+	console.log(notif);
 	notif.save(function (err) {
 		if(err) {
 			console.log(err);
