@@ -3,6 +3,7 @@ var Account = mongoose.model('Account');
 var Mailer = require('../mailer/mailer'),
 	keygen = require("keygenerator");
 
+var WelcomeEmail = require('../../controllers/welcome_email_sms');
 module.exports.update = function (req, res) {
 	var user = req.user,
 		key = req.body.key,
@@ -41,7 +42,7 @@ module.exports.update = function (req, res) {
 					user.social_graph = user.social_graph || {};
 					user.social_graph[key] = data;
 					var secret_code = null;
-					if(key === 'email' 
+					if(key === 'email'
 						&& user.social_graph
 						&& user.social_graph.email
 						&& user.social_graph['email'].email) {
@@ -49,6 +50,9 @@ module.exports.update = function (req, res) {
 						user.validated = user.validated || {};
 						user.validated.email_validated = user.validated.email_validated || {};
 						user.validated.email_validated.token = secret_code;
+					}
+					else if(user.social_graph.facebook && user.social_graph.facebook.email) {
+						//WelcomeEmail.sendWelcomeMail(user.social_graph.facebook.email);
 					}
 					user.save(function (err) {
 						if(err) {

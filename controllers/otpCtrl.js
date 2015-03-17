@@ -102,8 +102,8 @@ module.exports.getOTP = function (req, res) {
 	}
 }
 
-module.exports.validateOtp = function (req, res) { 
-
+module.exports.validateOtp = function (req, res) {
+	var twyst_welcome_message = 'Welcome To Twyst Rewards Program';
 	var otp = req.body.otp,
 		phone = CommonUtilities.tenDigitPhone(req.body.phone);
 
@@ -150,7 +150,7 @@ module.exports.validateOtp = function (req, res) {
 
 	function processUser() {
 		Account.findOne({
-			phone: phone, 
+			phone: phone,
 			role: {
 				$gt: 5
 			}
@@ -173,6 +173,7 @@ module.exports.validateOtp = function (req, res) {
 						});
 					}
 					else {
+						//SMS.sendSms(phone, twyst_welcome_message, 'WELCOME_MESSAGE');
 						res.send(200, {
 							'status': 'success',
 							'message': 'User registered successfull',
@@ -191,6 +192,7 @@ module.exports.validateOtp = function (req, res) {
 						});
 					}
 					else {
+						//SMS.sendSms(phone, twyst_welcome_message, 'WELCOME_MESSAGE');
 						res.send(200, {
 							'status': 'success',
 							'message': 'verification successfull',
@@ -210,7 +212,7 @@ module.exports.validateOtp = function (req, res) {
 	}
 
 	function registerUser(cb) {
-		
+
 		var account = {
 			username: phone,
 			phone: phone,
@@ -219,8 +221,8 @@ module.exports.validateOtp = function (req, res) {
 		};
 
 		Account.register(
-			new Account(account), 
-			phone, 
+			new Account(account),
+			phone,
 			function(err) {
 	        	cb(err);
 	    });

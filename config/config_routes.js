@@ -3,7 +3,7 @@
 var mongoose = require('mongoose');
 var passport = require('passport');
 var Routes = require('./routes');
- 
+
 module.exports = function (app) {
     //Check if a User is authenticated
     function checkAuthenticated() {
@@ -127,7 +127,6 @@ module.exports = function (app) {
         app.get('/api/v2/total_checkins', AnonDataCtrl.totalCheckins);
         app.get('/api/v2/alloutlets', StatusCtrl.getAllOutlets);
         app.get('/api/v2/allprograms', StatusCtrl.getAllPrograms);
-        app.get('/api/v2/specialprograms', StatusCtrl.getSpecialPrograms);
         app.get('/api/v2/allusers', UserCtrl.getAllUsers);
         app.get('/api/v2/alluser/:username', UserCtrl.getUser);
         app.post('/api/v2/alluser', UserCtrl.getTimeline);
@@ -168,7 +167,7 @@ module.exports = function (app) {
     })();
 
     //Change password and reset passwords
-    (function password_reset_routes() { 
+    (function password_reset_routes() {
         var ResetCtrl = require('../controllers/reset_password');
         app.put('/api/v1/pass/reset/:token', ResetCtrl.resetPassword);
         app.put('/api/v1/pass/change', checkAuthenticated(), ResetCtrl.changePassword);
@@ -218,7 +217,7 @@ module.exports = function (app) {
 
         app.get('/api/v1/auth/get_logged_in_user', function (req,res) {
             if(req.user) {
-               res.send(200, {status: 'success', user: req.user}); 
+               res.send(200, {status: 'success', user: req.user});
             }
             else {
                 res.send(401, {status: 'error'});
@@ -299,7 +298,7 @@ module.exports = function (app) {
     (function qr_routes() {
         var QrCtrl = require('../controllers/qr');
         app.post('/api/v1/qr/outlets', checkAuthenticated(), checkRole(1), QrCtrl.qrCreate);
-    })(); 
+    })();
 
 
     //Program CRUD routes
@@ -317,7 +316,7 @@ module.exports = function (app) {
         app.delete('/api/v1/programs/:program_id', checkAuthenticated(), checkRole(4), ProgramCtrl.delete);
     })();
 
-    (function group_program_routes() {        
+    (function group_program_routes() {
         var GroupProgramCtrl = require('../controllers/group_program');
         app.get('/api/v1/group_program/:group_program_id',checkAuthenticated(), GroupProgramCtrl.getGroupProgram);
         app.post('/api/v1/group_program/', checkAuthenticated(), GroupProgramCtrl.create);
@@ -475,6 +474,11 @@ module.exports = function (app) {
         });
         app.get('/r/:key', RedirectCtrl.getRedirected);
         app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet);
+    })();
+
+    (function user_reg_completion_routes() {
+        var PopulateUserCtrl = require('../controllers/user/card_user');
+        app.post('/api/v1/populate/card_user', checkAuthenticated(), PopulateUserCtrl.populateCardUser)
     })();
 
     (function handle_defaults() {

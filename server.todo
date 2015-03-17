@@ -28,7 +28,7 @@ Features:
         - jobs/voucherReminder/: done
         - jobs/winback: done
         - scripts/batch/checkinCsv - done
-        - jobs/notifications/smsSender - dont need now?
+        - jobs/notifications/smsSender - done
 
     ☐ Unsubscribe
         - blacklister.js
