@@ -3,6 +3,8 @@ var mongoose = require('mongoose'),
 var BetaUser = mongoose.model('BetaUsers'),
 	NewYear = mongoose.model('NewYear');
 var Mailer = require('./mailer/mailer');
+var SMS = require('../common/smsSender');
+var twyst_rewards_message;
 
 module.exports.create = function(req, res) {
 
@@ -22,6 +24,11 @@ module.exports.create = function(req, res) {
 				'message': 'Saved user',
 				'info': ''
 			});
+			twyst_rewards_message = "Hi " + created_user.name.split('(')[0]+ ",thank you for participating in the Twyst Rewards Week! Please download the Twyst app (http://twyst.in/app) to complete the sign-up process and receive your vouchers. Questions? Write to contactus@twyst.in or call 9810374518. Happy Twysting!"
+
+			if(created_user.contest === 'twyst_rewards_week') {
+				SMS.sendSms(created_user.phone, twyst_rewards_message, 'PROMO_MESSAGE');	
+			}
 			initEmail(betaUser);
 		}		
 	});
@@ -29,7 +36,7 @@ module.exports.create = function(req, res) {
 
 function initEmail(user) {
 	var obj = {
-		to: 'jayram@twyst.in, ar@twyst.in, rc@twyst.in, mayankyadav@twyst.in, al@twyst.in',
+		to: 'kuldeep@twyst.in, ar@twyst.in, rc@twyst.in, mayankyadav@twyst.in, al@twyst.in',
 		data: {
 			user_name: user.name,
 			user_email: user.email,
