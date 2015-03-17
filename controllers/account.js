@@ -232,7 +232,7 @@ module.exports.verifyEmail = function (req, res) {
 							message = 'Sorry, Error verifying email.'
 							sendTemplate(message);
 						}
-						else {
+						else {							
 							message = 'Thanks, Your email address has been verified.';
 							sendTemplate(message);
 						}

@@ -2,6 +2,7 @@ var mongoose = require("mongoose");
 var Account = mongoose.model('Account');
 var Mailer = require('../mailer/mailer'),
 	keygen = require("keygenerator");
+var WelcomeEmail = require('../../controllers/welcome_email_sms');
 
 module.exports.update = function (req, res) {
 	var user = req.user,
@@ -49,6 +50,9 @@ module.exports.update = function (req, res) {
 						user.validated = user.validated || {};
 						user.validated.email_validated = user.validated.email_validated || {};
 						user.validated.email_validated.token = secret_code;
+					}
+					else if(user.social_graph.facebook && user.social_graph.facebook.email) {
+						WelcomeEmail.sendWelcomeMail(user.social_graph.facebook.email);						
 					}
 					user.save(function (err) {
 						if(err) {

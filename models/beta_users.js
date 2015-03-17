@@ -8,7 +8,8 @@ var BetaUsersSchema = new Schema({
     name: {type: String, trim: true},
     phone: {type: String, trim: true},
     message: {type: String, trim: true},
-    created_at : {type: Date, default: Date.now}
+    created_at : {type: Date, default: Date.now},
+    contest: {type: String, trim: true}
 });
 
 module.exports = mongoose.model('BetaUsers', BetaUsersSchema);

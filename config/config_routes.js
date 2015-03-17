@@ -477,9 +477,16 @@ module.exports = function (app) {
         app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet);
     })();
 
+    (function user_reg_completion_routs() {
+        var PopulateUserCtrl = require('../controllers/user/card_user');
+        app.post('/api/v1/populate/card_user', checkAuthenticated(), PopulateUserCtrl.populateCardUser)
+    })();
+
     (function handle_defaults() {
         app.use(function (req, res){
             res.send(404, {'info': '...Page not found'});
         });
     })();
+
+    
 };
