@@ -2,6 +2,7 @@ Refactoring:
   ☐ Separate out code by feature (instead of MVC)
   ☐ Clean up the Twyst-Analytics structure directory
   ☐ Add contests to the beta_users model
+  ☐ csvSmsSender - look at the code and fix.
 
 DevOps:
   ☐ Switch to PM2 from AWS

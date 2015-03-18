@@ -1,6 +1,3 @@
-// ARUNR: Seems like an unused file
-// Moving from common to refactoring
-
 var rest = require('restler');
 var csv = require('csv');
 var fs = require("fs");
