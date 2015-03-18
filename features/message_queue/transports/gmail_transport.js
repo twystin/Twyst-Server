@@ -7,7 +7,8 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-// var payload = {
+// PAYLOAD FORMAT
+// {
 //     from: 'Arun Rajappa ✔ ar@twyst.in', // sender address
 //     to: 'ar@twyst.in, al@twyst.in, rc@twyst.in', // list of receivers
 //     subject: 'Daily analytics report for: ' + day + '/' + month + '/' + year +'✔', // Subject line
@@ -17,7 +18,7 @@ var transporter = nodemailer.createTransport({
 //         // filename and content type is derived from path
 //             path: './data/report.zip'
 //     }]
-// };
+// }
 
 module.exports.send = function(to, payload, success, error) {
     transporter.sendMail(payload, function(err, info){
