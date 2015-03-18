@@ -6,7 +6,7 @@
 
 // load aws sdk
 var aws = require('aws-sdk');
-aws.config.loadFromPath('./email_config.json');
+aws.config.loadFromPath('./ses_config.json');
 var ses = new aws.SES({
   apiVersion: '2010-12-01'
 });
@@ -22,6 +22,7 @@ ses.listIdentities(params, function(err, data) {
   if (err) console.log(err, err.stack); // an error occurred
   else     console.log(data);           // successful response
 });
+
 // ses.sendEmail({
 //   Source: from,
 //   Destination: {

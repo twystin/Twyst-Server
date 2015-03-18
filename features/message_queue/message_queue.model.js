@@ -9,7 +9,7 @@ var Account = mongoose.model('Account');
 
 var MessageQueueSchema = new Schema({
   to: {type: Schema.ObjectId, ref: 'Account'},
-  transport: {type: String, enum: ['sms_transport', 'email_transport', 'push_transport', 'debug_transport']},
+  transport: {type: String, enum: ['vf_sms_transport', 'gmail_transport', 'ses_transport', 'push_transport', 'debug_transport']},
   status:  {
     state: {type: String, enum: ['QUEUED', 'SENT', 'FAIL', 'RETRY', 'ERROR', 'ARCHIVED']},
     logged: {type: Date}
