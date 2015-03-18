@@ -101,19 +101,19 @@ module.exports.query = function(req,res) {
 	})
 	.exec(function(err, outlets) {
 		if (err) {
-			res.send(400, {	
+			res.send(400, {
 				'status': 'error',
 				'message': 'Error getting list of outlets',
 				'info': err
 			});
 		} else {
-			res.send(200, {	
+			res.send(200, {
 				'status': 'success',
 				'message': 'Got all outlets',
 				'info': outlets
 			});
 		}
-	}) 
+	})
 };
 
 module.exports.nearbyOutlets = function(req,res) {
@@ -141,7 +141,7 @@ module.exports.nearbyOutlets = function(req,res) {
 				  'info': JSON.stringify(err)
 				});
 			} else {
-				getProgramForOutlets(outlets, res);   
+				getProgramForOutlets(outlets, res);
 			}
 		});
 	}
@@ -161,7 +161,7 @@ function getProgramForOutlets(outlets, res) {
 	}
 	else {
 		outlets.forEach(function (item) {
-			
+
 			findProgram(item);
 		});
 	};
@@ -265,7 +265,7 @@ module.exports.consoleQuery = function(req,res) {
 						'info': JSON.stringify(outlets)
 			});
 		}
-	}) 
+	})
 };
 
 module.exports.read = function(req,res) {
@@ -281,7 +281,7 @@ module.exports.read = function(req,res) {
 						'info': JSON.stringify(outlet)
 			});
 		}
-	}) 
+	})
 };
 
 module.exports.publicview = function(req,res) {
@@ -308,7 +308,7 @@ module.exports.publicview = function(req,res) {
 			}
 		}
 	});
-	
+
 	function getData (outlet_id) {
 		async.parallel({
 		    OUTLET: function(callback) {
@@ -334,7 +334,7 @@ module.exports.publicview = function(req,res) {
 	function getOutlet (outlet_id, callback) {
 		Outlet.findOne({_id: outlet_id}, function(err, outlet) {
 			callback (null, outlet || {});
-		}); 
+		});
 	}
 
 	function getRewards (outlet_id, callback) {
@@ -377,11 +377,11 @@ module.exports.publicview = function(req,res) {
 
 	    var program = p;
 	    var obj = {};
-	    
+
 	    for(var i = 0; i < program.tiers.length; i++) {
 	    	if(program.tiers[i]) {
 	    		for(var lim = program.tiers[i].basics.start_value; lim <= program.tiers[i].basics.end_value; lim++) {
-		            
+
 		            for(var j = 0; j < program.tiers[i].offers.length; j++) {
 		                obj = {};
 		                if(program.tiers[i].offers[j]) {
@@ -395,7 +395,7 @@ module.exports.publicview = function(req,res) {
 			                    }
 			                }
 			                if(program.tiers[i].offers[j].user_eligibility.criteria.condition === 'on only') {
-			                    
+
 			                    if(lim === Number(program.tiers[i].offers[j].user_eligibility.criteria.value)) {
 			                        obj.count = lim + 1;
 			                        obj.desc = CommonUtilities.rewardify(program.tiers[i].offers[j]);
@@ -415,11 +415,11 @@ module.exports.publicview = function(req,res) {
 			                }
 		                }
 		            }
-		        }	
+		        }
 	    	}
-	        
+
 	    }
-	    
+
 	    rewards = _.uniq(rewards, function (obj) {
 	    	return obj.count;
 	    });
@@ -445,7 +445,7 @@ module.exports.all = function(req,res) {
 						'info': JSON.stringify(outlets)
 			});
 		}
-	}) 
+	})
 };
 
 module.exports.create = function(req,res) {
@@ -467,7 +467,7 @@ module.exports.create = function(req,res) {
 						'message': 'Saved outlet',
 						'info': ''
 			});
-		}				
+		}
 	});
 
 	function getPublicUrl(o) {
@@ -475,16 +475,16 @@ module.exports.create = function(req,res) {
 		if(!o.contact
 			|| !o.contact.location
 			|| !o.contact.location.city
-			|| !(o.contact.location.locality_1 
+			|| !(o.contact.location.locality_1
 					&& o.contact.location.locality_1.length)
-			|| !(o.contact.location.locality_1 
+			|| !(o.contact.location.locality_1
 					&& o.contact.location.locality_1.length)) {
 			return publicUrl;
 		}
-		var url = o.basics.name 
-			+ ' ' 
+		var url = o.basics.name
+			+ ' '
 			+ o.contact.location.locality_1
-			+ ' ' 
+			+ ' '
 			+ o.contact.location.city;
 
 		url = url.replace(/[^a-zA-Z0-9 ]/g, "");
@@ -500,10 +500,11 @@ module.exports.update = function(req,res) {
 	updated_outlet = _.extend(updated_outlet, req.body);
 	to_be_updated = updated_outlet._id;
 	delete updated_outlet._id;
+	delete updated_outlet.__v;
 	updated_outlet.basics.modified_at = Date.now();
 	Outlet.findOneAndUpdate(
-							{_id: to_be_updated}, 
-							{$set: updated_outlet }, 
+							{_id: to_be_updated},
+							{$set: updated_outlet },
 							{upsert:true},
 							function(err,outlet) {
 								if (err) {
@@ -548,7 +549,7 @@ module.exports.archived = function(req, res) {
 	}, {
 		$set: {
 			'outlet_meta.status': 'archived'
-		} 
+		}
 	}, {
 		upsert:true
 	}, function(err, outlet) {
@@ -717,17 +718,17 @@ module.exports.getDiscovered = function (req, res) {
 			'outlet_meta.status': 'active',
 			$or:[{
 					'basics.name': new RegExp(req.query.q, "i")
-				}, 
+				},
 				{
 					'contact.location.locality_1': new RegExp(req.query.q, "i")
 				},
 				{
 					'contact.location.locality_2': new RegExp(req.query.q, "i")
 				},
-				{ 
+				{
 					'contact.location.city': new RegExp(req.query.q, "i")
 				},
-				{ 
+				{
 					'attributes.tags': new RegExp(req.query.q, "i")
 				}
 			]
@@ -822,7 +823,7 @@ module.exports.getDiscoveredNear = function (req, res) {
 			'outlet_meta.status': 'active',
 			$or:[{
 					'basics.name': new RegExp(req.query.q, "i")
-				}, 
+				},
 				{
 					'contact.location.locality_1': new RegExp(req.query.q, "i")
 				},
@@ -832,7 +833,7 @@ module.exports.getDiscoveredNear = function (req, res) {
 				{
 					'contact.location.city': new RegExp(req.query.q, "i")
 				},
-				{ 
+				{
 					'attributes.tags': new RegExp(req.query.q, "i")
 				}
 			]
@@ -898,17 +899,17 @@ module.exports.getNewYear = function (req, res) {
 			'ny_2015.featured': true,
 			$or:[{
 					'basics.name': new RegExp(req.query.q, "i")
-				}, 
+				},
 				{
 					'contact.location.locality_1': new RegExp(req.query.q, "i")
 				},
 				{
 					'contact.location.locality_2': new RegExp(req.query.q, "i")
 				},
-				{ 
+				{
 					'contact.location.city': new RegExp(req.query.q, "i")
 				},
-				{ 
+				{
 					'attributes.tags': new RegExp(req.query.q, "i")
 				}
 			]
