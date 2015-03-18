@@ -2,7 +2,7 @@
   "dependencies": {
     "adm-zip": "~0.4.4",
     "async": "latest",
-    "aws-sdk": "~1.13.0",
+    "aws-sdk": "latest",
     "body-parser": "latest",
     "compression": "latest",
     "connect-mongo": "latest",
