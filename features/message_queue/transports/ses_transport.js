@@ -13,37 +13,27 @@ var ses = new aws.SES({
 var to = ['ar@twyst.in']
 var from = 'ar@twyst.in'
 
-var params = {
-  IdentityType: 'EmailAddress | Domain',
-  MaxItems: 0,
-  NextToken: 'STRING_VALUE'
-};
-ses.listIdentities(params, function(err, data) {
-  if (err) console.log(err, err.stack); // an error occurred
-  else     console.log(data);           // successful response
+ses.sendEmail({
+  Source: from,
+  Destination: {
+    ToAddresses: to
+  },
+  Message: {
+    Subject: {
+      Data: 'A Message To You Rudy'
+    },
+    Body: {
+      Text: {
+        Data: 'Stop your messing around',
+      }
+    }
+  }
+}, function(err, data) {
+  if (err) {
+    console.log("Error");
+    console.log(err);
+  } else {
+    console.log('Email sent:');
+    console.log(data);
+  }
 });
-
-// ses.sendEmail({
-//   Source: from,
-//   Destination: {
-//     ToAddresses: to
-//   },
-//   Message: {
-//     Subject: {
-//       Data: 'A Message To You Rudy'
-//     },
-//     Body: {
-//       Text: {
-//         Data: 'Stop your messing around',
-//       }
-//     }
-//   }
-// }, function(err, data) {
-//   if (err) {
-//     console.log("Error");
-//     console.log(err);
-//   } else {
-//     console.log('Email sent:');
-//     console.log(data);
-//   }
-// });
