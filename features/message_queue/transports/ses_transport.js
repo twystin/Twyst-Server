@@ -1,39 +1,16 @@
-// module.exports.send = function(to, payload, success, error) {
-//   console.log("TO: " + to);
-//   console.log("PAYLOAD: " + JSON.stringify(payload));
-//   success("done");
-// }
-
-// load aws sdk
 var aws = require('aws-sdk');
-aws.config.loadFromPath('./ses_config.json');
-var ses = new aws.SES({
-  apiVersion: '2010-12-01'
-});
-var to = ['ar@twyst.in']
-var from = 'ar@twyst.in'
 
-ses.sendEmail({
-  Source: from,
-  Destination: {
-    ToAddresses: to
-  },
-  Message: {
-    Subject: {
-      Data: 'A Message To You Rudy'
-    },
-    Body: {
-      Text: {
-        Data: 'Stop your messing around',
-      }
+module.exports.send = function(to, payload, success, error) {
+  aws.config.loadFromPath('./ses_config.json');
+  var ses = new aws.SES({
+    apiVersion: '2010-12-01'
+  });
+
+  ses.sendEmail(payload, function(err, data) {
+    if (err) {
+      error(err);
+    } else {
+      successs(data);
     }
-  }
-}, function(err, data) {
-  if (err) {
-    console.log("Error");
-    console.log(err);
-  } else {
-    console.log('Email sent:');
-    console.log(data);
-  }
-});
+  });
+}
