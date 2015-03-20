@@ -472,8 +472,19 @@ module.exports = function (app) {
         app.get('/cnc_predictor', function (req, res) {
             res.redirect('/home/TCnCF_Contest.html')
         });
+
+        app.get('/rewards_week', function (req, res) {
+            res.redirect('/home/Rewards_Week.html');
+        });
+
+        app.get('/qr/:qr', function(req, res) {
+            res.redirect('https://play.google.com/store/apps/details?id=com.twyst.app.android&hl=en');
+        }); 
+
         app.get('/r/:key', RedirectCtrl.getRedirected);
         app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet);
+        
+        
     })();
 
     (function user_reg_completion_routes() {
@@ -483,7 +494,11 @@ module.exports = function (app) {
 
     (function handle_defaults() {
         app.use(function (req, res){
-            res.send(404, {'info': '...Page not found'});
+            res.send(404, { 
+                'status': 'error',
+                'message': 'Page Not Found',
+                'info': 'Page Not Found'
+            });
         });
     })();
 };
