@@ -20,9 +20,10 @@ module.exports.checkin = function(req, res) {
 		});
 	}
 	else {
-		code = code.substr(code.length - 6);
+		code = code.substr(code.length - 6);	
 		getQr(code, function (err, qr) {
 			if(err) {
+				console.log(err);
 				res.send(400, {	
 					'status': 'error',
 					'message': 'Error getting qr code',
@@ -82,6 +83,7 @@ module.exports.checkin = function(req, res) {
 		}
 		else {
 			hasActiveRewards(qr.outlet_id, function (err, reward) {
+				console.log(err);
 				if(err) {
 					res.send(400, {	
 						'status': 'error',
@@ -107,6 +109,7 @@ module.exports.checkin = function(req, res) {
 
 	function processCheckin(qr, reward) {
 		isValidCheckin(req.user.phone, qr.outlet_id._id, function (err, data) {
+			console.log(err);
 			if(err) {
 				res.send(400, {	
 					'status': 'error',
@@ -131,6 +134,7 @@ module.exports.checkin = function(req, res) {
 			else {
 				countCheckinHere(req.user.phone, reward, function (err, count) {
 					if(err) {
+						console.log(err);
 						res.send(400, {	
 							'status': 'error',
 							'message': 'Error getting checkin count',

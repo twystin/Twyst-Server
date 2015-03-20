@@ -16,6 +16,7 @@ AWS.config.update({
 });
 
 var bucket = "qrcodes";
+var twyst_url = 'http://twyst.in/qr/';
 
 module.exports.qrCreate = function (req, res) {
 
@@ -26,6 +27,7 @@ module.exports.qrCreate = function (req, res) {
 	var num;
 	var outlet;
 	var count = 0;
+	
 
 	function validateQrCreate() {
 		if(req.body) {
@@ -98,6 +100,7 @@ module.exports.qrCreate = function (req, res) {
 
 		for (var i = 0; i < num; i++) {
 			var qrcode = keygen._({forceUppercase: true, length: 6, exclude:['O', '0', 'L', '1']});
+
 			qr.code = qrcode;
 			saveQr(qr, i);
 		};
@@ -105,7 +108,6 @@ module.exports.qrCreate = function (req, res) {
 
 	function saveQr (qr, lim) {
 		var qr = new Qr(qr);
-
 		qr.save(function (err, qr) {
 			if(err) {
 				// Do nothing
@@ -116,6 +118,7 @@ module.exports.qrCreate = function (req, res) {
 				}
 			}
 			else {
+				qr.code = twyst_url + qr.code;
 				getZipped(qr.code, lim);
 			}
 		})

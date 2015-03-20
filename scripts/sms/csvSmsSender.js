@@ -8,7 +8,7 @@ var config = {
 	'from': 'TWYSTR',
 	'sms_api': 'http://localhost:3000/api/v1/sms',
 	'message': 'Testing',
-	'csv_file_name': __dirname + '/ccc.csv',
+	'csv_file_name': __dirname + '/a.csv',
 };
 
 initSms();
@@ -46,6 +46,7 @@ function getPhoneNumbersFromFile(file_name, cb) {
 	.from
 	.stream(fs.createReadStream(file_name, { encoding: 'utf8' }))
 	.on('record', function (row, index) {
+		console.log(row[0])
 		phone_numbers.push(row[0]);
 	})
 	.on('end', function (count) {
