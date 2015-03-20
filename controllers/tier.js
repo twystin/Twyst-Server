@@ -44,7 +44,7 @@ module.exports.addTier = function(req,res) {
 					}
 				}
 			})
-		}				
+		}
 	})
 };
 
@@ -106,7 +106,7 @@ function tierDelete (res, tier) {
 }
 
 module.exports.query = function(req,res) {
-	Tier.find({}, function(err,tiers) { 
+	Tier.find({}, function(err,tiers) {
 		if (err) {
 			res.send({	'status': 'error',
 						'message': 'Error getting list of tiers',
@@ -153,13 +153,14 @@ module.exports.create = function(req,res) {
 						'message': 'Saved tier',
 						'info': ''
 			});
-		}				
+		}
 	})
 };
 
 module.exports.update = function(req,res) {
 	var updated_tier = {};
 	updated_tier = _.extend(updated_tier, req.body);
+	delete updated_tier.__v
 	Tier.findOne({_id: req.params.tier_id}, function (err, tier) {
 		if (err) {
 			res.send(400, {	'status': 'error',
