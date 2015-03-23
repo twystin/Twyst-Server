@@ -20,6 +20,7 @@ module.exports.setGCM = function (req, res) {
         });
     }
     else {
+        delete req.user.__v;
         Account.findOneAndUpdate({
             _id: req.user._id
         }, {
@@ -62,6 +63,7 @@ module.exports.setHome = function (req, res) {
         } else {
             if (account !== null) {
                 account.home = home;
+                delete account.__v;
                 account.save();
                 res.send(200, {
                     'status': 'success',
@@ -91,6 +93,7 @@ module.exports.setLocation = function (id, phone, current_loc) {
             if(!user.role || user.role === 6) {
                 user.role = 7;
             }
+            delete user.__v;
             user.save();
         }
     });
@@ -109,6 +112,7 @@ module.exports.setLocation = function (id, phone, current_loc) {
             }
             user_loc.locations = user_loc.locations || [];
             user_loc.locations.push(loc_obj);
+            delete user_loc.__v;
             user_loc.save();
         }
     })
@@ -215,7 +219,7 @@ module.exports.socialUpdate = function (req, res) {
                 obj.facebook.access = access;
                 obj.facebook.info = info;
                 obj.facebook.friends = body;
-
+                delete user.__v;
                 user.save(function (err) {
                     if(err) {
                         res.send(400, {
@@ -255,6 +259,7 @@ module.exports.socialUpdate = function (req, res) {
         });
 
         function createNew (obj) {
+            delete obj.__v;
             obj.save(function (err) {
                 if(err) {
                     res.send(400, {
@@ -274,7 +279,7 @@ module.exports.socialUpdate = function (req, res) {
         }
 
         function updateExisting (obj) {
-
+            delete obj.__v;
             Social.findOneAndUpdate(
                 {'facebook.info.id': obj.facebook.info.id},
                 {$set: obj},{upsert: true}, function (err) {

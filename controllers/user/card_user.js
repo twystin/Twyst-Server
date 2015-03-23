@@ -91,7 +91,7 @@ var updateUser = function(user, callback){
           }
         }
 
-
+        delete account.__v;
         account.save(function(err) {
               if (err) return next(err);
               callback('Updated');

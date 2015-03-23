@@ -323,6 +323,7 @@ module.exports.update = function(req,res) {
 				program.validity.burn_start = updated_program.validity.burn_start;
 				program.validity.burn_end = updated_program.validity.burn_end;
 				program.images = updated_program.images;
+				delete program.__v;
 				program.save(function (err) {
 					if(err) {
 						res.send(400, {	'status': 'error',

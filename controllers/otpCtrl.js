@@ -73,6 +73,7 @@ module.exports.getOTP = function (req, res) {
 
 	function saveOtp(otp_data) {
 		var otp_message = 'Your Twyst verification code is ';
+		delete otp_data.__v;
 		otp_data.save(function (err) {
 			if(err) {
 				res.send(400, {
@@ -206,6 +207,7 @@ module.exports.validateOtp = function (req, res) {
 
 	function updateUser(user, cb) {
 		user.role = 7;
+		delete user.__v;
 		user.save(function (err) {
 			cb(err);
 		});

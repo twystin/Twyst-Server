@@ -99,6 +99,7 @@ module.exports.updateValidity = function (req, res) {
 	}
 
 	function changeValidity(data, cb) {
+		delete data.__v;
 		Qr.update({
 	        _id: {
 	        	$in: data.ids

@@ -54,6 +54,7 @@ module.exports.update = function (req, res) {
 					else if(user.social_graph.facebook && user.social_graph.facebook.email) {
 						//WelcomeEmail.sendWelcomeMail(user.social_graph.facebook.email);
 					}
+					delete user.__v;
 					user.save(function (err) {
 						if(err) {
 							res.send(400, {

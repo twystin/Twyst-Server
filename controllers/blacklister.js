@@ -88,6 +88,7 @@ function setUnsbs(unsbs, media, message_type, code) {
 }
 
 function saveUnsbs(unsbs, cb) {
+	delete unsbs.__v;
 	unsbs.save(function (err) {
 		cb(err);
 	})

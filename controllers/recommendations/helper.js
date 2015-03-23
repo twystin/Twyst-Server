@@ -79,6 +79,7 @@ module.exports.updateReccoConfig = function (callback) {
 		}
 		if(!recco_config) {
 			var recco_config = new ReccoConfig(RECCO_CONFIG);
+			delete recco_config.__v;
 			recco_config.save();
 		}
 		callback(true);

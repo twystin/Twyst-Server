@@ -7,7 +7,7 @@ var _ = require("underscore");
 module.exports.create = function (req, res) {
     var created_winback = {};
     created_winback = _.extend(created_winback, req.body);
-
+    delete created_winback.__v;
     created_winback.accounts = [];
     created_winback.accounts.push(req.user._id);
     var winback = new Winback(created_winback);
@@ -171,6 +171,7 @@ module.exports.delete = function (req, res) {
             }
             else {
                 winback.status = 'archived';
+                delete winback.__v;
                 winback.save(function (err) {
                     callback(err, null);
                 })

@@ -165,6 +165,7 @@ module.exports.checkin = function(req, res) {
 			checkin_code: qr.code
 		};
 		checkin = new Checkin(checkin);
+		delete checkin.__v;
 		checkin.save(function (err) {
 			if(err) {
 				res.send(400, {	
@@ -226,6 +227,7 @@ module.exports.checkin = function(req, res) {
 
 function updateQrUsed(qr) {
 	qr.times_used += 1;
+	delete qr.__v;
 	qr.save(function (err) {
 		console.log(err || '');
 	});
