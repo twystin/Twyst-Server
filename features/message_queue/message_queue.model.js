@@ -14,6 +14,7 @@ var MessageQueueSchema = new Schema({
     state: {type: String, enum: ['QUEUED', 'SENT', 'FAIL', 'RETRY', 'ERROR', 'ARCHIVED']},
     logged: {type: Date}
   },
+  message_type: {type: String},
   payload: {},
   schedule: {
     immediate: {type: Boolean},

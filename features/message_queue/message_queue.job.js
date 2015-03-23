@@ -1,7 +1,7 @@
 'use strict';
 var mongoose = require('mongoose');
 var async = require('async');
-var logger = require('./logger');
+var logger = require('../logger/logger');
 
 
 // Get the message queue model

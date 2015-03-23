@@ -1,11 +1,11 @@
 // Load up the common config file.
+require('../../features/message_queue/message_queue.model');
+
 var config = require('../common/config_jobs');
 var helper = require('../common/helper')
+var utils = require('../../common/utilities');
+var MessageQueue = mongoose.model('MessageQueue');
 var s = config.values;
-
-// Can I move this to common?
-var Transport = require('./transport');
-
 
 // Load up the models required.
 var Voucher = mongoose.model('Voucher'),
@@ -170,11 +170,7 @@ function generateVouchers(winback, users, cb) {
 						callback(err);
 					}
 					else {
-						if (!s.debug) {
-							Transport.handleMessage(u, winback, voucher);
-						} else {
-							console.log("Mail would have gone with voucher");
-						}
+						scheduleMessage(u, winback, voucher);
 					}
 				});
 		}, function (err) {
@@ -258,8 +254,96 @@ function main() {
           }
         })
       } else {
-        console.log("No winbacks found currently." + new Date());
+        console.log("No winbacks found currently:" + new Date());
       }
     }
   })
 };
+
+function scheduleMessage(user, winback, voucher) {
+	var outlet_phone = (
+		winback.outlets[0].contact.phones.mobile ?
+		winback.outlets[0].contact.phones.mobile[0].num :
+		winback.outlets[0].contact.phones.landline);
+
+	var push_message = "We haven't seen you at "+ winback.outlets[0].basics.name +" in a while! We have something extra for you – "+ rewardify(winback) +" when you visit next. Voucher code "+ voucher.basics.code +" (valid till " + utils.formatDate(voucher.validity.end_date) +"). To claim, just show this to your server. See you soon! Call "+ outlet_phone +" to reserve/order.";
+
+  var payload = {
+    phone: user.phone,
+    from: 'TWYSTR',
+    message: push_message
+  };
+
+  if (!user.blacklisted) {
+    saveMessage(user._id, payload, "WINBACK_VOUCHER_MESSAGE", winback.validity.send_voucher_at)
+	}
+
+  function rewardify(input) {
+      if (input.reward.custom && input.reward.custom.text) {
+          return input.reward.custom.text;
+      } else if (input.reward.flat && (input.reward.flat.off || input.reward.flat.spend)) {
+          if(input.reward.flat.off && input.reward.flat.spend) {
+              return "Rs. " + ifEmpty(input.reward.flat.off) + " off on a min spend of Rs." + ifEmpty(input.reward.flat.spend);
+          }
+          if(input.reward.flat.off) {
+              return "Rs. " + ifEmpty(input.reward.flat.off) + " off on your bill";
+          }
+      } else if (input.reward.free && (input.reward.free.title || input.reward.free._with)) {
+          if(input.reward.free.title && input.reward.free._with) {
+              return "A free " + ifEmpty(input.reward.free.title) + " with " + ifEmpty(input.reward.free._with);
+          }
+          if(input.reward.free.title) {
+              return "A free " + ifEmpty(input.reward.free.title);
+          }
+      } else if (input.reward.buy_one_get_one && input.reward.buy_one_get_one.title) {
+          return "Buy one get one " + ifEmpty(input.reward.buy_one_get_one.title);
+      } else if (input.reward.reduced && (input.reward.reduced.what || input.reward.reduced.worth || input.reward.reduced.for_what)) {
+          if(input.reward.reduced.what && input.reward.reduced.worth) {
+             return ifEmpty(input.reward.reduced.what) + " worth Rs. " + ifEmpty(input.reward.reduced.worth) + " for Rs. " + ifEmpty(input.reward.reduced.for_what);
+          }
+      } else if (input.reward.happyhours && input.reward.happyhours.extension) {
+          return "Extended happy hours by " + ifEmpty(input.reward.happyhours.extension);
+      } else if (input.reward.discount) {
+          if (input.reward.discount.max) {
+              return ifEmpty(input.reward.discount.percentage) + " off, subject to a max discount of Rs." + ifEmpty(input.reward.discount.max);
+          } else {
+              return ifEmpty(input.reward.discount.percentage) + " off on your bill";
+          }
+      } else {
+          return ifEmpty(input.basics.description);
+      }
+
+      function ifEmpty(input) {
+          if(input) {
+              return input;
+          }
+          return '';
+      }
+  }
+
+}
+
+function saveMessage(to, payload, type, time) {
+  var m = new MessageQueue();
+  m.status.state = "QUEUED";
+  m.status.date = new Date();
+  m.to = to;
+  m.payload = payload;
+  m.message_type = type;
+  if (!s.debug) {
+    m.transport = "vf_sms_transport";
+  } else {
+    console.log("SAVED MESSAGE TO DEBUG TRANSPORT" + JSON.stringify(m));
+    m.transport = "debug_transport";
+  }
+  m.schedule.hour = time;
+
+  m.save(function (err) {
+		if(err) {
+			console.log(err);
+		}
+		else {
+			console.log("Saved notif");
+		}
+	});
+}
