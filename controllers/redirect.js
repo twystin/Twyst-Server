@@ -49,7 +49,7 @@ module.exports.redirectToOutlet = function (req, res) {
 	function redirect(outlet, url) {
 		var city = getCityName(outlet);
 		if(!url || !city) {
-			res.send(200);
+			res.redirect('/home/404.html');
 		}
 		else {
 			res.redirect(city + '/' + url);
