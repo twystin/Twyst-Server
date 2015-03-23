@@ -478,7 +478,7 @@ module.exports = function (app) {
         });
 
         app.get('/qr/:qr', function(req, res) {
-            res.redirect('https://play.google.com/store/apps/details?id=com.twyst.app.android&hl=en');
+            res.redirect('http://twyst.in/app');
         }); 
 
         app.get('/r/:key', RedirectCtrl.getRedirected);
