@@ -96,7 +96,6 @@ module.exports.upload = function(req, res) {
 					img_obj.folder_name + '/' + img_obj.image_class,
 					image_data
 				);
-				console.log(upload_object + 'kldkfdf');
 			  	Images.uploader(upload_object, function (err, data) {
 			  		if(err) {
 			  			res.send(400,{
