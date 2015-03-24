@@ -128,6 +128,7 @@ module.exports.update = function(req,res) {
 	var update_user = {};
 	update_user = _.extend(update_user, req.body);
 	delete update_user._id; // Disallow editing of username
+	delete update_user.__v;
 	Account.findOneAndUpdate(
 							{_id:req.params.user_id}, 
 							{$set: update_user }, 

@@ -36,6 +36,7 @@ module.exports.changeOutletFeatured = function (req, res) {
 				}
 				else {
 					outlet.outlet_meta.featured = req.body.featured;
+					delete outlet.__v;
 					outlet.save(function (err) {
 						if(err) {
 							res.send(400, {

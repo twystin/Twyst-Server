@@ -32,7 +32,7 @@ module.exports.create = function (req, res) {
 module.exports.update = function (req, res) {
     var updated_special = {};
     updated_special = _.extend(updated_special, req.body);
-
+    delete updated_special.__v;
     updateSpecialProgram(updated_special, function (err) {
         if(err) {
             res.send(400, { 'status': 'error',
@@ -171,6 +171,7 @@ module.exports.delete = function (req, res) {
             }
             else {
                 special.status = 'archived';
+                delete special.__v;
                 special.save(function (err) {
                     callback(err, null);
                 })

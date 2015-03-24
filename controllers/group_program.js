@@ -6,6 +6,7 @@ module.exports.create = function (req, res){
 	var group_program = {};
 	group_program = _.extend(group_program, req.body);
 	group_program = new GroupProgram(group_program);
+	delete group_program.__v;
 	group_program.save(function (err, group_program) {
 		if(err) {
 			res.send(400, {
@@ -29,6 +30,7 @@ module.exports.update = function(req,res) {
 	updated_group_program = _.extend(updated_group_program, req.body);
 	var id = updated_group_program._id;
 	delete updated_group_program._id;
+	delete updated_group_program.__v;
 	GroupProgram.findOneAndUpdate({
 		_id: id
 	}, {

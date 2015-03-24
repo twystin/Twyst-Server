@@ -106,6 +106,7 @@ module.exports.changePassword = function (req, res) {
 };
 
 function updateHashSalt(q, data, cb) {
+    delete data.__v;
     Account.findOneAndUpdate(q, {
         $set: data
     }, {
