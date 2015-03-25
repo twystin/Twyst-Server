@@ -27,6 +27,7 @@ module.exports.addTier = function(req,res) {
 				else {
 					if(program.tiers.length >= 0 ) {
 						program.tiers.push(tier._id)
+						delete program.__v;
 						program.save(function (err) {
 							if(err) {
 								res.send(400, {	'status': 'error',
@@ -172,6 +173,7 @@ module.exports.update = function(req,res) {
 				tier.basics.name = updated_tier.basics.name;
 				tier.basics.start_value = updated_tier.basics.start_value;
 				tier.basics.end_value = updated_tier.basics.end_value;
+				delete tier.__v;
 				tier.save(function (err) {
 					if(err) {
 						res.send(400, {	'status': 'error',

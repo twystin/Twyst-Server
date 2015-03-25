@@ -25,7 +25,7 @@ module.exports.addOffer = function(req,res) {
 	var created_offer = {};
 	created_offer = _.extend(created_offer, req.body.offer);
 	var offer = new Offer(created_offer);
-
+	delete offer.__v;
 	offer.save(function(err, offer) {
 		if (err) {
 			res.send(400, {	'status': 'error',
@@ -43,6 +43,7 @@ module.exports.addOffer = function(req,res) {
 				else {
 					if(tier.offers.length >= 0 ) {
 						tier.offers.push(offer._id)
+						delete tier.__v;
 						tier.save(function (err) {
 							if(err) {
 								res.send(400, {	'status': 'error',
