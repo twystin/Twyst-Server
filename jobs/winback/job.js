@@ -24,7 +24,7 @@ if (!s.debug) {
 		dayOfWeek: [new schedule.Range(s.jobs.winback.run.begin, s.jobs.winback.run.end)]
 	}, main);
 } else {
-	console.log("DEBUG MODE");
+	console.log("DEBUG MODE - RUNNING RIGHT AWAY");
 	main();
 }
 
@@ -98,7 +98,8 @@ function filterUsers(winback, users) {
 		}
 		else {
 			console.log("Filtered users successfully: " + new Date());
-			if(winback_filtered_users.length) {
+			// Send mail saying how many users the voucher was created for.
+      if(winback_filtered_users.length) {
 				generateVouchers(winback, winback_filtered_users);
 			}
 			else {
@@ -227,39 +228,7 @@ function generateVouchers(winback, users, cb) {
 		}
 }
 
-// Main function
-function main() {
-  getWinbacks(function(err, winbacks) {
-    if (err) {
-      console.log("Error getting winbacks. " + new Date());
-    } else {
-      if (winbacks && winbacks.length > 0) {
-        async.each(winbacks, function(w, callback) {
-          if (w.outlets.length > 0) {
-            getUsers(w, function(err, users) {
-              if (err) {
-                callback(err);
-              } else {
-                filterUsers(w, users);
-              }
-            });
-          } else {
-            console.log("Winback has no outlets. Winback ID: " + w._id + ' ' + new Date());
-          }
-        }, function(err) {
-          if (err) {
-            console.log("Error executing winbacks: " + new Date());
-          } else {
-            console.log("Done the winbacks " + new Date());
-          }
-        })
-      } else {
-        console.log("No winbacks found currently:" + new Date());
-      }
-    }
-  })
-};
-
+// Schedule the messages to send
 function scheduleMessage(user, winback, voucher) {
 	var outlet_phone = (
 		winback.outlets[0].contact.phones.mobile ?
@@ -323,6 +292,7 @@ function scheduleMessage(user, winback, voucher) {
 
 }
 
+// Save the message in the message queue
 function saveMessage(to, payload, type, time) {
   var m = new MessageQueue();
   m.status.state = "QUEUED";
@@ -347,3 +317,36 @@ function saveMessage(to, payload, type, time) {
 		}
 	});
 }
+
+// Main function
+function main() {
+  getWinbacks(function(err, winbacks) {
+    if (err) {
+      console.log("Error getting winbacks. " + new Date());
+    } else {
+      if (winbacks && winbacks.length > 0) {
+        async.each(winbacks, function(w, callback) {
+          if (w.outlets.length > 0) {
+            getUsers(w, function(err, users) {
+              if (err) {
+                callback(err);
+              } else {
+                filterUsers(w, users);
+              }
+            });
+          } else {
+            console.log("Winback has no outlets. Winback ID: " + w._id + ' ' + new Date());
+          }
+        }, function(err) {
+          if (err) {
+            console.log("Error executing winbacks: " + new Date());
+          } else {
+            console.log("Done the winbacks " + new Date());
+          }
+        })
+      } else {
+        console.log("No winbacks found currently:" + new Date());
+      }
+    }
+  })
+};
