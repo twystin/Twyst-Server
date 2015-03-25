@@ -1,44 +1,50 @@
 'use strict';
 var mongoose = require('mongoose');
 var async = require('async');
+var schedule = require('node-schedule');
 var logger = require('../logger/logger');
-
-
-// Get the message queue model
 require('./job_queue.model');
 require('./job_log.model');
-
 var JobQueue = mongoose.model('JobQueue');
 var JobLog = mongoose.model('JobLog');
 
-mongoose.connect("mongodb://localhost/twyst");
+// Schedule the job to run every 5 minutes
+var rule = new schedule.RecurrenceRule();
+rule.minute = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55];
+var jobrunner = schedule.scheduleJob(rule, main);
 
-var query = {
-  $or: [
-    {last_run: null},
-    {last_run: {$lt: new Date() - 60*60*1000}}
-  ]
-}
+function main() {
+  console.log("JOB RUNNER STARTING - " + new Date());
+  var query = {
+    $or: [
+      {last_run: null},
+      {last_run: {$lt: new Date() - 60*60*1000}}
+    ]
+  }
 
-JobQueue.find(query, function(err, jobs) {
-  if (err) {
-    logger.alert(
-      logger.getStatusObject('error', 'Error getting jobs from job queue', err),
-      false,
-      false);
-    mongoose.disconnect();
-  } else {
-    if (jobs.length === 0) {
-      logger.notify(
-        logger.getStatusObject('error', 'No jobs in queue', null),
+  mongoose.connect("mongodb://localhost/twyst");
+
+  JobQueue.find(query, function(err, jobs) {
+    if (err) {
+      logger.alert(
+        logger.getStatusObject('error', 'Error getting jobs from job queue', err),
         false,
         false);
       mongoose.disconnect();
     } else {
-      async.each(jobs, processJob, allDone);
+      if (jobs.length === 0) {
+        logger.notify(
+          logger.getStatusObject('error', 'No jobs in queue', null),
+          false,
+          false);
+        mongoose.disconnect();
+      } else {
+        async.each(jobs, processJob, allDone);
+      }
     }
-  }
-});
+  });
+
+}
 
 function processJob(job, cb) {
   var now = new Date();
