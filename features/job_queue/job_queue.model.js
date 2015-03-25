@@ -6,10 +6,7 @@ var Schema = mongoose.Schema;
 var JobQueueSchema = new Schema({
   name: {type: String},
   job: {type: String},
-  history:  [{
-    state: {type: String, enum: ['QUEUED', 'RUN', 'ERROR']},
-    logged: {type: Date}
-  }],
+  last_run: {type: Date},
   schedule: {
     hour: {type: Number},
     minute: {type: Number},
