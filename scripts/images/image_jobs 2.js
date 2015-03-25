@@ -36,7 +36,7 @@ var dimensions = [
 
 function uploader(upload_object, cb) {
 	var s3 = new AWS.S3();
-	s3.client.putObject(upload_object, function (err, data) {
+	s3.putObject(upload_object, function (err, data) {
 	    console.log(err || data)
 	    cb(err, data)
   	});

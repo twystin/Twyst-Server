@@ -7,10 +7,20 @@ var _ = require('underscore');
 module.exports.register = function(req, res, next) {
 	Account.register(new Account(req.body), req.body.password, function(err, account) {
 	    if (err) {
-	        res.send({	'status' : 'error',
-	        		  	'message' : 'Error creating account',
-	        		  	'info':  err 
-	        });
+	    	console.log(err);
+	    	if(err.message === 'User already exists with username '+ req.body.username){
+	    		res.send({	'status' : 'error',
+	        		'message' : 'Error: User Name Already Exist',
+	        		'info':  err 
+	        	});	
+	    	}
+	    	else {
+	    		res.send({	'status' : 'error',
+	        		'message' : 'Error in Creating User',
+	        		'info':  err 
+	        	});	
+	    	}
+	        
 	    } 
 	    else {
 	    	grantAccess(req.body, account);

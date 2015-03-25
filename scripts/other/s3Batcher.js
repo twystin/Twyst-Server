@@ -31,7 +31,7 @@ csv()
 function createFolders() {
 	var s3 = new AWS.S3();
 	slugs.forEach(function (slug) {
-		s3.client.createBucket({Bucket: bucket+"/"+slug+"/"}, function (err, result) {
+		s3.createBucket({Bucket: bucket+"/"+slug+"/"}, function (err, result) {
 			console.log(err || result);
 		})
 	})
