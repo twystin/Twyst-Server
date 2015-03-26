@@ -290,7 +290,6 @@ function saveMessage(to, payload, type, time) {
   if (!s.debug) {
     m.transport = "vf_sms_transport";
   } else {
-    console.log("SAVED MESSAGE TO DEBUG TRANSPORT" + JSON.stringify(m));
     m.transport = "debug_transport";
   }
   m.schedule.hour = time;
@@ -300,7 +299,7 @@ function saveMessage(to, payload, type, time) {
 			console.log(err);
 		}
 		else {
-			console.log("Saved notif");
+			//console.log("Saved notif");
 		}
 	});
 }
