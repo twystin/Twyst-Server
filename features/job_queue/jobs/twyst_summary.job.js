@@ -2,8 +2,8 @@ var schedule = require('node-schedule');
 var nodemailer = require('nodemailer');
 var AdmZip = require('adm-zip');
 var fs = require('fs');
-var Summary = require('./helpers/summary');
-var RawData = require('./helpers/rawdata');
+var Summary = require('./helpers/twyst_summary/summary');
+var RawData = require('./helpers/twyst_summary/rawdata');
 var async = require('async');
 
 module.exports.run = function(success, error) {
