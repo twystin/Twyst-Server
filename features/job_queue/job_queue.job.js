@@ -33,12 +33,15 @@ JobQueue.find({}, function(err, jobs) {
 
 
 function processJob(job, cb) {
-  console.log("SCHEDULING JOB: " + job.name + " AT:" + JSON.stringify(job.schedule));
+  console.log("Scheduling job: " + job.name + " at:" + JSON.stringify(job.schedule));
+  jobLog(job.name, 'SCHEDULED', function() {});
   var to_run = require('./jobs/' + job.job);
   var jobrunner = schedule.scheduleJob(job.schedule, function() {
+    jobLog(job.name, 'STARTED', function() {});
     to_run.run(function(success) {
       updateJob(job, cb, "RUN")
     }, function(error) {
+      console.log(error);
       updateJob(job, cb, "ERROR")
     })
   });
@@ -49,7 +52,7 @@ function allDone(err) {
     console.log("Error:" + err);
     mongoose.disconnect();
   } else {
-    console.log("Completed a run");
+    console.log("Scheduled all jobs!");
     mongoose.disconnect();
   }
 }
@@ -60,19 +63,24 @@ function updateJob(job, cb, state) {
     if (err) {
       cb(err);
     } else {
-      var joblog = new JobLog({
-        name: job.name,
-        state: state,
-        logged: new Date()
-      })
+      jobLog(job.name, state, cb);
+    }
+  });
+}
 
-      joblog.save(function(err) {
-        if (err) {
-          cb(err);
-        } else {
-          cb(null);
-        }
-      });
+function jobLog(name, state, cb) {
+  console.log("Job " + name + " is in state " + state);
+  var joblog = new JobLog({
+    name: name,
+    state: state,
+    logged: new Date()
+  })
+
+  joblog.save(function(err) {
+    if (err) {
+      cb(err);
+    } else {
+      cb(null);
     }
   });
 }
