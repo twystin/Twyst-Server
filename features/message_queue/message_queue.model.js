@@ -17,8 +17,6 @@ var MessageQueueSchema = new Schema({
   message_type: {type: String},
   payload: {},
   schedule: {
-    immediate: {type: Boolean},
-    pattern: {type: String},
     hour: {type: Number},
     minute: {type: Number},
     start: {type: Number},

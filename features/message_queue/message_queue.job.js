@@ -37,19 +37,41 @@ MessageQueue.find(query, function(err, messages) {
 
 function processMessage(message, cb) {
   var transport = require('./transports/' + message.transport);
-  transport.send(message.to, message.payload, function(success) {
-    message.status.state = "SENT";
-    message.status.logged = new Date();
-    message.save(function(err) {
-      if (err) {
+  var now = new Date();
+  var day = now.getDay();
+  var hour = now.getHours();
+  var minutes = now.getMinutes();
+
+  if (message.schedule) {
+    if (message.schedule.start < day
+    && message.schedule.end > day
+    && message.schedule.hour === hour
+    && message.schedule.minute - minute < 30) {
+      transport.send(message.to, message.payload, function(success) {
+        message.status.state = "SENT";
+        message.status.logged = new Date();
+        message.save(function(err) {
+          if (err) {
+            cb(err);
+          } else {
+            cb(null);
+          }
+        });
+      }, function(err) {
         cb(err);
-      } else {
-        cb(null);
-      }
-    });
-  }, function(err) {
-    cb(err);
-  });
+      });
+    } else {
+      logger.notify(
+        logger.getStatusObject('error', 'Not yet time', null),
+        false,
+        false);
+    }
+  } else {
+    logger.notify(
+      logger.getStatusObject('error', 'No scheduled time', null),
+      false,
+      false);
+  }
 }
 
 function allDone(err) {

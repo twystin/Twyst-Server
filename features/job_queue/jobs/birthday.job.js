@@ -1,8 +1,3 @@
-module.exports.run = function(success, error) {
-  console.log("BIRTHDAY");
-  success("done");
-}
-
 var mongoose = require('mongoose');
 var async = require('async');
 require('../../config/config_models')();
@@ -14,9 +9,7 @@ var Special = mongoose.model('SpecialProgram'),
   keygen = require("keygenerator"),
   Transport = require('./transport');
 
-
-(function main() {
-  mongoose.connect('mongodb://localhost/twyst');
+module.exports.run = function(success, error) {
   getSpecialPrograms(function(err, specials) {
     if (err) {
       console.log("Error getting special programs " + new Date());
@@ -24,7 +17,7 @@ var Special = mongoose.model('SpecialProgram'),
       processSpecialPrograms(specials);
     }
   });
-})();
+}
 
 function getSpecialPrograms(cb) {
   // Do some filtering here.
@@ -148,12 +141,12 @@ function saveVoucher(user, special, cb) {
 }
 
 function sendMessage(err, u, w, v) {
-    if (err) {
-      console.log(err);
-    } else {
-      console.log(v);
-      Transport.handleMessage(u, w, v);
-    }
+  if (err) {
+    console.log(err);
+  } else {
+    console.log(v);
+    Transport.handleMessage(u, w, v);
+  }
 }
 
 function getVoucherObject(special, user) {
