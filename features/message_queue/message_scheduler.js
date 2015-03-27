@@ -1,22 +1,57 @@
 'use strict';
 var mongoose = require('mongoose');
+var _ = require('underscore');
 
 require('./message_queue.model');
 var MessageQueue = mongoose.model('MessageQueue');
-mongoose.connect("mongodb://localhost/twyst");
 
-module.exports.send = function(to, transport, payload, now) {
-  var m = new MessageQueue();
+module.exports.schedule = function(message, cb) {
+  mongoose.connect("mongodb://localhost/twyst");
+  var m = new MessageQueue(message)
+  m.save(function(err) {
+    if(err) {
+      cb(err)
+    } else {
+      cb(null);
+    }
+  });
+}
 
-  if (now == true ) {
+module.exports.send = function(message, success, error) {
+  var m = new MessageQueue(message);
+  var transport = require('./transports/' + m.transport);
+  transport.send(message.to, message.payload, function(data) {
+    success(data);
+  }, function(err) {
+    error(err);
+  });
+}
 
-  } else {
-    m.transport = transport
-    m.status.state = "QUEUED";
-    m.status.date = new Date();
-    m.to = to;
-    m.payload = payload;
+module.exports.create_ses = function(to, subject, body, sender) {
+  var payload = {
+    Destination: {
+      ToAddresses: [
+        to
+      ]
+    },
+    Message: {
+      Body: {
+        Text: {
+          Data: body
+        }
+      },
+      Subject: { /* required */
+        Data: subject
+      }
+    },
+    Source: sender
+  };
 
-    m.save();
+  var message = {
+    transport: 'ses_transport',
+    payload: payload,
+    to: null
   }
+
+  return message;
 }

@@ -1,7 +1,7 @@
 var aws = require('aws-sdk');
 
 module.exports.send = function(to, payload, success, error) {
-  aws.config.loadFromPath('./ses_config.json');
+  aws.config.loadFromPath('../transports/ses_config.json');
   var ses = new aws.SES({
     apiVersion: '2010-12-01'
   });
@@ -10,7 +10,7 @@ module.exports.send = function(to, payload, success, error) {
     if (err) {
       error(err);
     } else {
-      successs(data);
+      success(data);
     }
   });
 }
