@@ -1,3 +1,4 @@
+var ms = require('../../message_queue/message_scheduler.js')
 module.exports.run = function(success, error) {
   var fs = require('fs');
   var sys = require('sys')
@@ -11,6 +12,11 @@ module.exports.run = function(success, error) {
       if (err instanceof Error) {
         error(err);
       }
-      success("DB Backup completed");
+      ms.send(ms.create_ses("ar@twyst.in", "Backup done", "Backup done", "ar@twyst.in"), function(data) {
+        success("DB Backup completed");
+      }, function(err) {
+        error(err);
+      })
+
     });
 }
