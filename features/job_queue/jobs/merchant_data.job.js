@@ -1,27 +1,90 @@
-var schedule = require('node-schedule'),
-  async = require('async'),
-  Utils = require('../../../common/utilities'),
-  Mailer = require('./helpers/merchant_data/mailer/mailer.js');
-  require('../../../config/config_models')();
-  var mongoose = require('mongoose');
-  var Voucher = mongoose.model('Voucher'),
-    Outlet = mongoose.model('Outlet'),
-    Checkin = mongoose.model('Checkin'),
-    Account = mongoose.model('Account');
-  var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+var Utils = require('../../../common/utilities'),
+  Mailer = require('./helpers/merchant_data/mailer.js');
 
-module.exports.run = function(success,error) {
+var config = require('./common/config_jobs');
+var s = config.values;
+
+var Voucher = mongoose.model('Voucher'),
+  Outlet = mongoose.model('Outlet'),
+  Checkin = mongoose.model('Checkin'),
+  Account = mongoose.model('Account');
+var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+module.exports.run = function(success, error) {
   getOutlets(function(err, outlets) {
     if (err) {
-      console.log(new Date());
-      console.log(err);
+      error(err)
     } else {
       if (!outlets || !outlets.length) {
-        console.log("No outlets found: " + new Date());
+        error("No outlets found: " + new Date());
       } else {
-        getMerchants(outlets);
+        getMerchants(outlets, success, error);
       }
     }
+  })
+}
+
+function getOutlets(cb) {
+  Outlet.find({
+      'outlet_meta.status': 'active'
+    })
+    .select('basics outlet_meta shortUrl contact.location.locality_1')
+    .exec(function(err, outlets) {
+      cb(err, outlets);
+    })
+}
+
+function getMerchants(outlets, success, error) {
+  var q = getQuery();
+  async.each(outlets, function(o, callback) {
+    getMerchant(o.outlet_meta.accounts, function(err, user) {
+      if (err || !user) {
+        console.log(err);
+        console.log(new Date());
+        callback(err);
+      } else {
+        if (!user.email) {
+          console.log("User has no email");
+          console.log(user.username);
+          console.log(new Date());
+        } else {
+          collectData(user, o, q);
+        }
+        callback();
+      }
+    })
+  }, function(err) {
+    if (err) {
+      console.log(err);
+      console.log(new Date());
+      error(err);
+    } else {
+      success("All done!");
+    }
+  })
+
+  function getQuery() {
+    var prev_date = new Date(new Date().getTime() - 86400000);
+    return {
+      today_date: setZeroTime(prev_date),
+      date_before_seven_days: setZeroTime(new Date(prev_date.getTime() - 8 * 86400000)),
+      first_date_of_month: setZeroTime(new Date(prev_date.getFullYear(), prev_date.getMonth(), 1))
+    }
+  }
+
+  function setZeroTime(date) {
+    return date.setHours(0, 0, 0, 1);
+  }
+}
+
+function getMerchant(accounts, cb) {
+  Account.findOne({
+    _id: {
+      $in: accounts
+    },
+    role: 3
+  }).exec(function(err, user) {
+    cb(err, user);
   })
 }
 
@@ -113,7 +176,13 @@ function collectData(user, o, q) {
       details.data.month.redeems_count = results.monthly_redeems;
       details.data.month.new_users_count = results.monthly_new_repeat_users.new_users;
       details.data.month.repeat_users = results.monthly_new_repeat_users.repeat_users;
-      Mailer.sendEmail(details);
+
+      if (!s.debug) {
+        Mailer.sendEmail(details);
+      } else {
+        console.log("SENDING EMAIL - " + JSON.stringify(details))
+      }
+
     }
   });
 }
@@ -190,66 +259,5 @@ function getUniqueUsersCount(outlet_id, cb) {
     })
     .distinct('phone', function(err, phones) {
       cb(err, phones ? phones.length : 0);
-    })
-}
-
-function getMerchants(outlets) {
-  var q = getQuery();
-  async.each(outlets, function(o, callback) {
-    getMerchant(o.outlet_meta.accounts, function(err, user) {
-      if (err || !user) {
-        console.log(err);
-        console.log(new Date());
-        callback(err);
-      } else {
-        if (!user.email) {
-          console.log("User has no email");
-          console.log(user.username);
-          console.log(new Date());
-        } else {
-          collectData(user, o, q);
-        }
-        callback();
-      }
-    })
-  }, function(err) {
-    if (err) {
-      console.log(err);
-      console.log(new Date());
-    }
-  })
-}
-
-function getQuery() {
-  var prev_date = new Date(new Date().getTime() - 86400000);
-  return {
-    today_date: setZeroTime(prev_date),
-    date_before_seven_days: setZeroTime(new Date(prev_date.getTime() - 8 * 86400000)),
-    first_date_of_month: setZeroTime(new Date(prev_date.getFullYear(), prev_date.getMonth(), 1))
-  }
-}
-
-function setZeroTime(date) {
-  return date.setHours(0, 0, 0, 1);
-}
-
-function getMerchant(accounts, cb) {
-  Account.findOne({
-    _id: {
-      $in: accounts
-    },
-    role: 3
-  }).exec(function(err, user) {
-    cb(err, user);
-  })
-}
-
-function getOutlets(cb) {
-  Outlet.find({
-      'outlet_meta.status': 'active'
-    })
-    .select('basics outlet_meta shortUrl contact.location.locality_1')
-    .exec(function(err, outlets) {
-      cb(err, outlets);
     })
 }

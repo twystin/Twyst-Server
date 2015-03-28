@@ -51,10 +51,10 @@ function processJob(job, cb) {
 function allDone(err) {
   if (err) {
     console.log("Error:" + err);
-    mongoose.disconnect();
+    //mongoose.disconnect();
   } else {
     console.log("Scheduled all jobs!");
-    mongoose.disconnect();
+    //mongoose.disconnect();
   }
 }
 

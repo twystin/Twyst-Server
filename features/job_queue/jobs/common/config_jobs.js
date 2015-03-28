@@ -14,7 +14,7 @@ global.Schema = mongoose.Schema;
 
 module.exports.values = {
   'active': 'LOCAL',
-  'debug': false,
+  'debug': true,
   'env': {
     'PROD': {
       'DB': 'mongodb://50.112.253.131/twyst',
