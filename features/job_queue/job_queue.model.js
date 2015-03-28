@@ -7,7 +7,9 @@ var JobQueueSchema = new Schema({
   name: {type: String},
   job: {type: String},
   last_run: {type: Date},
-  schedule: {}
+  schedule: {},
+  created_at: {type: Date, default: Date.now}
+
 });
 
 module.exports = mongoose.model('JobQueue', JobQueueSchema);

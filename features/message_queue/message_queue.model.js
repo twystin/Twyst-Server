@@ -21,7 +21,8 @@ var MessageQueueSchema = new Schema({
     minute: {type: Number},
     start: {type: Number},
     end: {type: Number}
-  }
+  },
+  queued_at: {type: Date, default: Date.now}
 });
 
 module.exports = mongoose.model('MessageQueue', MessageQueueSchema);

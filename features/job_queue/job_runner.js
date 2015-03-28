@@ -38,7 +38,8 @@ function processJob(job, cb) {
   var to_run = require('./jobs/' + job.job);
   var jobrunner = schedule.scheduleJob(job.schedule, function() {
     jobLog(job.name, 'STARTED', function() {});
-    to_run.run(function(success) {
+    to_run.run(function(data) {
+      console.log(data);
       updateJob(job, cb, "RUN")
     }, function(error) {
       console.log(error);
@@ -69,11 +70,18 @@ function updateJob(job, cb, state) {
 }
 
 function jobLog(name, state, cb) {
-  console.log("Job " + name + " is in state " + state);
+  console.log(name + " job is in state " + state);
+  var ms = require('../message_queue/message_scheduler.js')
+  ms.send(ms.create_ses("ar@twyst.in", "Job " + name + " is in state " + state, "", "ar@twyst.in"), function(data) {
+    // Nothing for now!
+  }, function(err) {
+    // Nothing for now!
+  })
+
+
   var joblog = new JobLog({
     name: name,
-    state: state,
-    logged: new Date()
+    state: state
   })
 
   joblog.save(function(err) {

@@ -1,28 +1,50 @@
-var schedule = require('node-schedule');
-var nodemailer = require('nodemailer');
-var AdmZip = require('adm-zip');
-var fs = require('fs');
+var config = require('./common/config_jobs');
+var s = config.values;
 var Summary = require('./helpers/twyst_summary/summary');
 var RawData = require('./helpers/twyst_summary/rawdata');
-var async = require('async');
 
 module.exports.run = function(success, error) {
-  console.log("Running analytics");
-  async.parallel({
-    summary: function(callback) {
-      Summary.getCount(callback);
-    },
-    rawdata: function(callback) {
-      RawData.execAsyncCommands(callback);
-    }
-  }, function(err, results) {
-    // Need a timeout here
-    var zip = new AdmZip();
-    zip.addLocalFile("./data/summary.csv");
-    zip.addLocalFile("./data/checkins.csv");
-    zip.addLocalFile("./data/accounts.csv");
-    zip.addLocalFile("./data/vouchers.csv");
-    zip.writeZip("./data/report.zip");
-    success("done");
-  });
+  if (!s.debug) {
+    async.parallel({
+      summary: function(callback) {
+        Summary.getCount(callback);
+      },
+      rawdata: function(callback) {
+        RawData.execAsyncCommands(callback);
+      }
+    }, function(err, results) {
+      setTimeout(function() {
+        var zip = new admzip();
+        fs.exists('./job_data/data/summary.csv', function (exists) {
+          if (exists) {
+            zip.addLocalFile("./job_data/data/summary.csv");
+            fs.exists('./job_data/data/accounts.csv', function (exists) {
+              if (exists) {
+                zip.addLocalFile("./job_data/data/accounts.csv");
+                fs.exists('./job_data/data/vouchers.csv', function (exists) {
+                  if (exists) {
+                    zip.addLocalFile("./job_data/data/vouchers.csv");
+                    zip.writeZip("./job_data/data/report.zip");
+                    console.log("CAME HERE -- ZIPPED THE FILE!")
+                    success("done");
+                  } else {
+                    error("File not found - vouchers.csv")
+                  }
+                });
+              } else {
+                error("File not found - accounts.csv")
+              }
+            });
+          } else {
+            error("File not found - summary.csv")
+          }
+        });
+
+      }, 120000);
+
+    });
+  } else {
+    success("Debug mode: Summary would usually run here...!")
+  }
+
 }
