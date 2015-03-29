@@ -1,26 +1,25 @@
-var schedule = require('node-schedule');
-var async = require('async');
-var _ = require('underscore');
-require('../../config/config_models')();
-var mongoose = require('mongoose');
 var Voucher = mongoose.model('Voucher');
-var Transport = require('./transport');
+var Transport = require('./helpers/voucher_reminder/transport');
+var config = require('./common/config_jobs');
+var s = config.values;
 
 module.exports.run = function(success, error) {
   getVouchers(getFilterQuery(), function(err, vouchers) {
     if (err) {
       console.log("Date " + new Date() + ' Error ' + err);
+      error(err)
     } else {
       if (vouchers && vouchers.length) {
-        processVouchers(vouchers);
+        processVouchers(vouchers, success, error);
       } else {
         console.log("Date " + new Date() + ' No vouchers for reminder');
+        error(err);
       }
     }
   });
 }
 
-function processVouchers(vouchers) {
+function processVouchers(vouchers, success, error) {
   for (var i = 0; i < vouchers.length; i++) {
     if (!vouchers[i].issue_details || !vouchers[i].issue_details.issued_to || !vouchers[i].issue_details.issued_to.phone) {
       vouchers.splice(i, 1);
@@ -30,8 +29,14 @@ function processVouchers(vouchers) {
     return v.issue_details.issued_to.phone;
   });
   vouchers.forEach(function(v) {
-    Transport.handleReminder(v);
+    if (!s.debug) {
+      Transport.handleReminder(v);
+    } else {
+      console.log("WOULD HAVE SENT REMINDER FOR VOUCHER " + JSON.stringify(v));
+    }
+
   });
+  success("All done");
 }
 
 function getVouchers(q, cb) {
