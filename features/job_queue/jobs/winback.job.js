@@ -14,6 +14,40 @@ var Voucher = mongoose.model('Voucher'),
   Checkin = mongoose.model('Checkin'),
   Account = mongoose.model('Account');
 
+// Main function
+module.exports.run = function(success, error) {
+  getWinbacks(function(err, winbacks) {
+    if (err) {
+      error("Error getting winbacks. " + new Date());
+    } else {
+      if (winbacks && winbacks.length > 0) {
+        async.each(winbacks, function(w, callback) {
+          if (w.outlets.length > 0) {
+            getUsers(w, function(err, users) {
+              if (err) {
+                callback(err);
+              } else {
+                filterUsers(w, users);
+              }
+            });
+          } else {
+            error("Winback has no outlets. Winback ID: " + w._id + ' ' + new Date());
+          }
+        }, function(err) {
+          if (err) {
+            error("Error executing winbacks: " + new Date());
+          } else {
+            success("Done the winbacks " + new Date());
+          }
+        })
+      } else {
+        error("No winbacks found currently:" + new Date());
+      }
+    }
+  })
+};
+
+
 
 // Get the winback programs.
 function getWinbacks(cb) {
@@ -303,38 +337,3 @@ function saveMessage(to, payload, type, time) {
 		}
 	});
 }
-
-// Main function
-module.exports.run = function(success, error) {
-  // mongoose.connect(s.env[s.active]['DB']);
-
-  getWinbacks(function(err, winbacks) {
-    if (err) {
-      error("Error getting winbacks. " + new Date());
-    } else {
-      if (winbacks && winbacks.length > 0) {
-        async.each(winbacks, function(w, callback) {
-          if (w.outlets.length > 0) {
-            getUsers(w, function(err, users) {
-              if (err) {
-                callback(err);
-              } else {
-                filterUsers(w, users);
-              }
-            });
-          } else {
-            error("Winback has no outlets. Winback ID: " + w._id + ' ' + new Date());
-          }
-        }, function(err) {
-          if (err) {
-            error("Error executing winbacks: " + new Date());
-          } else {
-            error("Done the winbacks " + new Date());
-          }
-        })
-      } else {
-        error("No winbacks found currently:" + new Date());
-      }
-    }
-  })
-};
