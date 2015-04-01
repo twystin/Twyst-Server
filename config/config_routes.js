@@ -66,6 +66,15 @@ module.exports = function (app) {
         app.delete('/api/v3/winback/:winback_id', checkAuthenticated(), WinbackCtrl.delete);
     })();
 
+    (function coupon_route () {
+        var CouponCtrl = require('../controllers/coupon');
+        app.post('/api/v3/coupon', checkAuthenticated(), CouponCtrl.create);
+        app.get('/api/v3/coupon', checkAuthenticated(), CouponCtrl.read);
+        app.get('/api/v3/coupon/:coupon_id', checkAuthenticated(), CouponCtrl.readOne);
+        app.put('/api/v3/coupon', checkAuthenticated(), CouponCtrl.update);
+        app.delete('/api/v3/coupon/:coupon_id', checkAuthenticated(), CouponCtrl.delete);
+    })();
+
     (function special_programs_route () {
         var SpecialCtrl = require('../controllers/programs/special');
         app.post('/api/v1/special', checkAuthenticated(), SpecialCtrl.create);
@@ -202,7 +211,7 @@ module.exports = function (app) {
         app.put('/api/v1/auth/users/validate/:user_id', AccountCtrl.validateByConsole);
         app.put('/api/v1/auth/validate/email/:token', AccountCtrl.setEmailValidated)
         app.delete('/api/v1/auth/users/:user_id', checkAuthenticated(), checkRole(3), AccountCtrl.delete);
-
+        app.get('/api/v1/auth/phones/:phone',checkAuthenticated(), checkRole(1), AccountCtrl.findUserByPhone)
         app.get('/api/v1/auth/facebook', passport.authenticate('facebook', {
             scope: [ 'email', 'user_about_me'],
             failureRedirect: '/login'
@@ -479,12 +488,12 @@ module.exports = function (app) {
 
         app.get('/qr/:qr', function(req, res) {
             res.redirect('http://twyst.in/app');
-        }); 
+        });
 
         app.get('/r/:key', RedirectCtrl.getRedirected);
         app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet);
-        
-        
+
+
     })();
 
     (function user_reg_completion_routes() {
@@ -494,7 +503,7 @@ module.exports = function (app) {
 
     (function handle_defaults() {
         app.use(function (req, res){
-            res.send(404, { 
+            res.send(404, {
                 'status': 'error',
                 'message': 'Page Not Found',
                 'info': 'Page Not Found'
