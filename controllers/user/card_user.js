@@ -9,11 +9,24 @@ var twyst_welcome_message = 'Welcome To Twyst Rewards Program';
 var async = require('async');
 
 module.exports.populateCardUser = function (req, res) {
-  var allUsers = req.body.userData;
-  var result = true;
-  async.each(allUsers, updateUser, function(err){
-      console.log(err);
-  });
+  if(req.body.panel) {
+    updateUser(req.body.userData, function(err) {
+      if(err) {
+        console.log(err);  
+      }
+    })
+  }
+  else {
+    var allUsers = req.body.userData;
+    var result = true;
+    async.each(allUsers, updateUser, function(err){
+      if(err) {
+        console.log(err);  
+      }
+        
+    });  
+  }
+  
   res.send(200, {
     'status': 'success',
     'message': 'Updated Succcessfully',
@@ -25,7 +38,6 @@ module.exports.populateCardUser = function (req, res) {
 var updateUser = function(user, callback){
   if(user.mobile !== undefined) {
     findUser(user.mobile, function(userFound){
-
       Account.findById(userFound[0]._id, function (err, account) {
         if(err) console.log(err)
           console.log(account)
@@ -76,7 +88,7 @@ var updateUser = function(user, callback){
             if(account.profile !== undefined && account.profile.bday !== undefined &&
             (account.profile.bday.d === undefined || account.profile.bday.d === '')){
             account.profile.bday.d = user.date;
-            console.log('date Updated');
+            console.log('date Updated ' + account.profile.bday.d + " " + user.date);
             }
             if(account.profile !== undefined && account.profile.bday !== undefined &&
               (account.profile.bday.m === undefined || account.profile.bday.m === '')){
@@ -118,7 +130,6 @@ var  findUser = function(phone, callback) {
 }
 
 var sendEmailAndSms = function(user) {
-  //console.log(user);
   if(user.email !== undefined && user.email !== '' && user.email !== null) {
     EmailAndSmsSender.sendWelcomeMail(user.email);
     SMS.sendSms(user.mobile, twyst_welcome_message, 'WELCOME_MESSAGE');
