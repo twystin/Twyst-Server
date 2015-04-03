@@ -15,7 +15,7 @@ var VoucherSchema = new Schema({
     validity:{
         start_date: {type: Date, default: Date.now},
         end_date: {type: Date, default: Date.now},
-        number_of_days: {type: String}
+        number_of_days: {type: Number, default: 20}
     },
     issue_details:{
         issue_date : {type: Date, default: Date.now},
