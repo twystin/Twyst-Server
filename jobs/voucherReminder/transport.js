@@ -46,7 +46,8 @@ function processSms(phone, voucher, outlet) {
 		push_message += ' Click http://twyst.in/' + outlet.shortUrl[0] + ' to see all rewards at ' + outlet.basics.name +'. To stop receiving this, sms STOP ' + outlet.shortUrl[0] +' to 9266801954.';
 	}
 	else {
-		var push_message = "Your Twyst voucher at "+outlet.basics.name+" is pending. Redeem it on the Twyst app today! Get the app at http://twyst.in/app For help, write to support@twyst.in. To stop receiving this, sms STOP "+outlet.shortUrl[0]+" to 9266801954.";
+		var push_message = "Your Twyst voucher for" + _obj.voucher.basics.description +', (TnC apply) at ' +outlet.basics.name+" is pending. To view voucher code and redeem, get the Twyst app at http://twyst.in/app For help, write to support@twyst.in. To stop receiving this, sms STOP "+outlet.shortUrl[0]+" to 9266801954.";
+		push_message = push_message.replace(/Get/g, "");
 	}
 	saveReminder(phone, push_message);
 }
