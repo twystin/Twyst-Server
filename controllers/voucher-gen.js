@@ -61,7 +61,7 @@ function getVoucherObject(object_param) {
 		applicable_hours: getTimings(object_param.offer),
 		terms: object_param.offer.terms,
 		validity: {
-			start_date: object_param.reward_table.program.validity.burn_start,
+			start_date: new Date(),
 			end_date: end_date,
 			number_of_days: object_param.offer.voucher_valid_for_days
 		},
