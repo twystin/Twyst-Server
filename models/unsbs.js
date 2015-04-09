@@ -13,7 +13,9 @@ var sections = {
 var message_types = {
 	transact: sections,
 	remind: sections,
-	promo: sections
+	promo: sections,
+	all: {type: Boolean, default: false},
+	outlets: [{type: Schema.ObjectId, ref: 'Outlet'}]
 };
 
 var UnsubscribeSchema = new Schema ({
