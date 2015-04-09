@@ -1,6 +1,7 @@
 var fs = require('fs'),
 	Handlebars = require('handlebars'),
 	nodemailer = require('nodemailer');
+	var SMS = require('../../common/smsSender');
 var creds = {
 	'FEEDBACK': {
 		service: 'Gmail',
@@ -13,7 +14,7 @@ var creds = {
 	'WELCOME_APP': {
 		service: 'Gmail',
 		username: 'contactus@twyst.in',
-		pass: 'Majoni12',
+		pass: 'Twyst2015',
 		template: './controllers/mailer/templates/welcome-app.handlebars',
 		subject: 'Welcome to Twyst'
 	},
@@ -104,6 +105,10 @@ module.exports.sendEmail = function(email_object){
 	        if(error){
 	            console.log(error);
 	        } else {
+	        	if(email_object.type == 'WELCOME_APP' && email_object.phone) {
+	        		SMS.sendSms(user.mobile,
+    'Welcome to Twyst! We’ve sent you an e-mail verification link to '+email_object.to+ '. Please check your mail to complete verification. If the ID is incorrect, please write to us at support@twyst.in.' , 'WELCOME_MESSAGE');
+	        	}
 	            console.log('Message sent: ' + info.response);
 	        }
 	    });

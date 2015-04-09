@@ -23,8 +23,10 @@ var Account = new Schema({
         role_validated: Boolean,
         email_validated: {
             status: {type: Boolean, default: false},
-            token: String
-        }
+            token: String,
+            is_welcome_mailer_sent: {type: Boolean, default: false}
+        },
+
     },
     provider: { type: String, default: '' },
     authToken: { type: String, default: '' },

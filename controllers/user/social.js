@@ -52,7 +52,12 @@ module.exports.update = function (req, res) {
 						user.validated.email_validated.token = secret_code;
 					}
 					else if(user.social_graph.facebook && user.social_graph.facebook.email) {
-						//WelcomeEmail.sendWelcomeMail(user.social_graph.facebook.email);
+						var email_user = {};
+						email_user = {
+							email:  user.social_graph.facebook.email,
+							type: 'WELCOME_MAILER'
+						}
+						WelcomeEmail.sendWelcomeMail(email_user);
 					}
 					delete user.__v;
 					user.save(function (err) {
@@ -90,10 +95,11 @@ function initEmail(user, email, secret_code) {
 			data: {
 				link: null
 			},
-			type: 'WELCOME_APP'
+			type: 'WELCOME_APP',
+			phone: user.phone
 		};
 
-		email_object.data.link = 'http://twyst.in/verify_email/' + secret_code;
+		email_object.data.link = 'http://twyst.in/verify_email/' +false+'/'+ secret_code;
 		Mailer.sendEmail(email_object);
 	}
 }

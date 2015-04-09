@@ -4,6 +4,7 @@ var fs = require('fs'),
 	mongoose = require('mongoose'),
 	Handlebars = require('handlebars');
 var Account = mongoose.model('Account');
+var WelcomeEmail = require('./welcome_email_sms');
 
 module.exports.login = function (req, res) {
     res.send(200, {
@@ -212,6 +213,7 @@ module.exports.findUserByPhone = function (req, res) {
 
 module.exports.verifyEmail = function (req, res) {
 	var token = req.params.token,
+		isApp_Upgrade = req.params.isApp_Upgrade,
 		message = null;
 	if(!token) {
 		message = 'Sorry, The link is invalid.'
@@ -234,8 +236,31 @@ module.exports.verifyEmail = function (req, res) {
 							sendTemplate(message);
 						}
 						else {
-							message = 'Thanks, Your email address has been verified.';
-							sendTemplate(message);
+							if(isApp_Upgrade){
+								res.redirect('http://twyst.in/app');
+							}
+							else {
+								message = 'Thanks, Your email address has been verified.';
+								var email_user = {};
+								if(user.profile && user.profile.email) {
+									email_user = {
+										email:  user.profile.email,
+										type: 'WELCOME_MAILER'
+									}	
+								}
+								else if(user.email) {
+									email_user = {
+										email:  user.email,
+										type: 'WELCOME_MAILER'
+									}	
+								}
+								if(email_user.email) {
+									WelcomeEmail.sendWelcomeMail(email_user);	
+								}
+								
+								sendTemplate(message);	
+							}
+							
 						}
 					})
 				}
