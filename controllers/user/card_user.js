@@ -158,7 +158,7 @@ var sendEmailAndSms = function(user, type, secret_code ) {
       phone: user.mobile
     };
 
-    email_object.data.link = 'http://localhost:3000/verify_email/' + true +'/'+  secret_code ;
+    email_object.data.link = 'http://twyst.in/verify_email/' + true +'/'+  secret_code ;
 
     EmailAndSmsSender.sendWelcomeMail(email_object);
 
