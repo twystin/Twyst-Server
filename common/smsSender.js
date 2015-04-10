@@ -6,6 +6,9 @@ var mongoose = require('mongoose');
 var SmsSentLog = mongoose.model('SmsSentLog');
 var Notif = mongoose.model('Notif');
 var Account = mongoose.model('Account');
+var UnsubCheck = mongoose.model('Unsbs');
+var outletHandles = require('../outlethandles');
+var _ = require('underscore');
 
 module.exports.sendSms = function (phone, push_message, type, from) {
 	push_message = push_message.replace(/(\n)+/g, '');
@@ -24,7 +27,17 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 				console.log("Blacklisted user.");
 			}
 			else {
-				checkType();
+				isUnsubscribedUser(phone, function(isUnsubscribed) {
+					if(isUnsubscribed) {
+						console.log('You have unsubscribed for this outlet');
+						return 'User is unsbuscribed for message';           
+	       				
+					}
+					else {
+						checkType();
+					}
+				})
+				
 			}
 		});
 	}
@@ -36,6 +49,24 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 		}, function (err, user) {
 			cb(err, user ? true : false);
 		})
+	}
+
+	function isUnsubscribedUser (phone,  callback) {
+		UnsubCheck.find({phone: phone}, function(err, unsubUser) {
+			if(err) console.log(err);
+			var found = _.find(outletHandles, function(item) {
+							return item.handle === from;
+						})
+			if(unsubUser[0].sms.all || found) {
+				callback(true);
+			}
+			else {
+				callback(false);
+			}
+
+
+		})
+
 	}
 
 	function checkType() {
