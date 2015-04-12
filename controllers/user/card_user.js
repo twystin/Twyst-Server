@@ -60,18 +60,21 @@ var updateUser = function(user, callback){
           }
           else {
             if(account.profile !== undefined &&
-            (account.profile.first_name === undefined || account.profile.first_name === '')){
+            (account.profile.first_name === undefined || account.profile.first_name === '' ||
+              account.profile.first_name === null)){
             account.profile.first_name = user.firstName;
             console.log('firstName Updated');
             }
 
             if(account.profile !== undefined &&
-              (account.profile.middle_name === undefined || account.profile.middle_name === '')){
+              (account.profile.middle_name === undefined || account.profile.middle_name === '' ||
+                account.profile.middle_name === null)){
               account.profile.middle_name = user.middleName;
               console.log('middleName Updated');
             }
             if(account.profile !== undefined &&
-              (account.profile.last_name=== undefined || account.profile.last_name === '')){
+              (account.profile.last_name=== undefined || account.profile.last_name === '' ||
+                account.profile.last_name === null)){
               account.profile.last_name = user.lastName;
               console.log('lastName Updated');
             }
@@ -90,11 +93,13 @@ var updateUser = function(user, callback){
               && account.validated.email_validated && account.validated.email_validated.status && 
               (!account.validated.email_validated.is_welcome_mailer_sent)){
                 account.validated.email_validated.is_welcome_mailer_sent = true;
+                user.email = account.profile.email;
                 sendEmailAndSms(user, 'WELCOME_MAILER', null);  
             }
 
             if(account.profile !== undefined &&
-              (account.profile.bday === undefined || account.profile.bday === '')){
+              (account.profile.bday === undefined || account.profile.bday === '' || 
+                account.profile.bday === null)){
               account.profile.bday.d = user.date;
               account.profile.bday.m = user.month;
               account.profile.bday.y = user.year;
@@ -102,17 +107,20 @@ var updateUser = function(user, callback){
             }
             else {
               if(account.profile !== undefined && account.profile.bday !== undefined &&
-              (account.profile.bday.d === undefined || account.profile.bday.d === '')){
+              (account.profile.bday.d === undefined || account.profile.bday.d === '' || 
+                account.profile.bday.d === null)){
               account.profile.bday.d = user.date;
               console.log('date Updated ' + account.profile.bday.d + " " + user.date);
               }
               if(account.profile !== undefined && account.profile.bday !== undefined &&
-                (account.profile.bday.m === undefined || account.profile.bday.m === '')){
+                (account.profile.bday.m === undefined || account.profile.bday.m === '' ||
+                  account.profile.bday.m === null)){
                 account.profile.bday.m = user.month;
                 console.log('month Updated');
               }
               if(account.profile !== undefined && account.profile.bday !== undefined &&
-                (account.profile.bday.y === undefined || account.profile.bday.y === '')){
+                (account.profile.bday.y === undefined || account.profile.bday.y === '' || 
+                  account.profile.bday.y === null)){
                 account.profile.bday.y = user.year;
                 console.log('year Updated');
               }
