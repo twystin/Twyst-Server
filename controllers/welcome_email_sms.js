@@ -9,8 +9,7 @@ var creds = {
     username: 'contactus@twyst.in',
     pass: 'Twyst2015',
     template: './controllers/mailer/templates/appupgrade.handlebars',
-    subject: 'Welcome to Twyst',
-    cc: 'contactus@twyst.in'
+    subject: 'Welcome to Twyst'
   },
   'WELCOME_MAILER': {
     service: 'Gmail',

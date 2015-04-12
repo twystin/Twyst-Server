@@ -1,79 +1,62 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-var async = require('async');
-require('../../config/config_models')();
+db.accounts.find().forEach(
+  function(account) {
+    var first_name, middle_name, last_name, email;
 
-mongoose.connect('127.0.0.1:27017/twyst');
+    if (account.facebook && account.facebook.email && account.profile && !account.profile.email) {
+      first_name = account.facebook.name.split(' ')[0];
 
-var Account = mongoose.model('Account');
+      if (account.facebook.name.split(' ')[2]) {
+        middle_name = account.facebook.name.split(' ')[1] || '';
+        last_name = account.facebook.name.split(' ')[2] || '';
+      } else {
+        last_name = account.facebook.name.split(' ')[1] || '';
+      }
+
+      email = account.facebook.email;
+    }
+
+    if (account.email && account.profile && !account.profile.email) {
+      email = account.email;
+    }
+
+    if (account.social_graph && account.social_graph.facebook && account.social_graph.facebook.email &&  account.profile && !account.profile.email) {
+      first_name = account.social_graph.facebook.name.split(' ')[0];
+      if (account.social_graph.facebook.name.split(' ')[2]) {
+        middle_name = account.social_graph.facebook.name.split(' ')[1] || '';
+        last_name = account.social_graph.facebook.name.split(' ')[2] || '';
+      } else {
+        last_name = account.social_graph.facebook.name.split(' ')[1] || '';
+      }
+
+      email = account.social_graph.facebook.email;
+    }
+
+    if (account.social_graph && account.social_graph.email && account.social_graph.email.email &&  account.profile && !account.profile.email) {
+      email = account.social_graph.email.email;
+    }
+
+    if (account.name &&  account.profile && !account.profile.first_name) {
+      first_name = account.name.split(' ')[0];
+      if (account.name.split(' ')[2]) {
+        middle_name = account.name.split(' ')[1] || '';
+        last_name = account.name.split(' ')[2] || '';
+      } else {
+        last_name = account.name.split(' ')[1] || '';
+      }
+
+    }
 
 
-var q = Account.find({role: { $in: [6, 7] }}).limit(1);
-q.exec(function (err, users) {
-	if(err) {
-		console.log(err);
-	}
-	else {
-		async.each(users, function(user, callback) {
-		    updateUser(user, function(res) {
-		    	console.log(res);
-		    	callback();
-		    })
-	    }, function(err){	        
-	          console.log('All user have been migrated successfully');
-	    }); 
-	}
-});
-
-
-var updateUser = function(user, callback){
-	if(user.facebook && user.facebook.email && !user.profile.email) {
-		user.profile.first_name = user.facebook.name.split(' ')[0];
-		if(user.facebook.name.split(' ')[2]) {
-			user.profile.middle_name = user.facebook.name.split(' ')[1] || '';	
-			user.profile.last_name = user.facebook.name.split(' ')[2] || '';
-		}
-		else {
-			user.profile.last_name = user.facebook.name.split(' ')[1] || '';
-		}
-				
-		user.profile.email = user.facebook.email;
-	}
-
-
-	if(user.email && !user.profile.email) {
-		user.profile.email = user.email;
-	}
-
-	if(user.social_graph && user.social_graph.facebook && user.social_graph.facebook.email && !user.profile.email){
-		user.profile.first_name = user.social_graph.facebook.name.split(' ')[0];
-		if(user.social_graph.facebook.name.split(' ')[2]) {
-			user.profile.middle_name = user.social_graph.facebook.name.split(' ')[1] || '';
-			user.profile.last_name = user.social_graph.facebook.name.split(' ')[2] || '';	
-		}
-		else {
-			user.profile.last_name = user.social_graph.facebook.name.split(' ')[1] || '';
-		}
-		
-		user.profile.email = user.social_graph.facebook.email;
-	}
-
-	if(user.social_graph && user.social_graph.email && user.social_graph.email.email && !user.profile.email){		
-		user.profile.email = user.social_graph.email.email;
-	}
-
-	if(user.name && !user.profile.first_name) {
-		user.profile.first_name = user.name.split(' ')[0];
-		if(user.name.split(' ')[2]) {
-			user.profile.middle_name = user.name.split(' ')[1] || '';
-			user.profile.last_name = user.name.split(' ')[2] || '';	
-		}
-		else {
-			user.profile.last_name = user.name.split(' ')[1] || '';		
-		}
-		
-	}
-	user.save();
-	callback('done');
-
-}
+    db.accounts.update({
+      _id: account._id
+    }, {
+      $set: {
+      	'updated_at': new Date(),
+        'profile.first_name': first_name,
+        'profile.middle_name': middle_name,
+        'profile.last_name': last_name,
+        'profile.email': email
+      }
+    })
+  }
+)

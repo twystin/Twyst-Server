@@ -54,15 +54,26 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 	function isUnsubscribedUser (phone,  callback) {
 		UnsubCheck.find({phone: phone}, function(err, unsubUser) {
 			if(err) console.log(err);
-			var found = _.find(outletHandles, function(item) {
-							return item.handle === from;
-						})
-			if(unsubUser[0].sms.all || found) {
-				callback(true);
+			if(unsubUser[0]) {
+				var isUnsub = _.find(outletHandles.handles,  function(item){ 
+					var found = _.find(unsubUser[0].sms.outlets,  function(outlet){ 
+						console.log(item.outlet+ " "+ outlet);
+						return item.outlet.toString() === outlet.toString();	
+					});
+					return found;
+				});
+			
+				if(unsubUser[0].sms.all || isUnsub) {
+					callback(true);
+				}
+				else {
+					callback(false);
+				}	
 			}
 			else {
-				callback(false);
+				callback(false);	
 			}
+			
 
 
 		})
@@ -108,6 +119,7 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 
 	function isAccurateTime (time) {
 		var hours = new Date(time).getHours();
+		console.log(hours + "  " +  new Date(time))
 		if(hours > 16 || hours < 4) {
 			return false;
 		}
