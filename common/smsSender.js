@@ -83,13 +83,12 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 	function checkType() {
 		var time = null;
 		time = Date.now();
-		console.log(type + " " + time);
 		if(type === 'VOUCHER_MESSAGE') {
 			time = time + 3 * 60 * 60 * 1000;
 		}
 		if(isAccurateTime(time)) {
 			if(type !== 'VOUCHER_MESSAGE') {
-				//send();
+				send();
 			}
 			else {
 				schedule(phone, message, time);
