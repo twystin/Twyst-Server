@@ -80,7 +80,8 @@ var updateUser = function(user, callback){
             }
 
             if(account.profile !== undefined &&
-              (account.profile.email === undefined || account.profile.email === '')){
+              (account.profile.email === undefined || account.profile.email === '' ||
+                account.profile.email === null)){
               account.profile.email = user.email;
               account.validated = account.validated || {};
               account.validated.email_validated = account.validated.email_validated || {};
