@@ -20,7 +20,7 @@ var message_types = {
 
 var UnsubscribeSchema = new Schema ({
 	user: {type: Schema.ObjectId, ref: 'Account'},
-	phone: {type: Number},
+	phone: {type: String},
 	sms: message_types,
 	email: message_types,
 	push: message_types,

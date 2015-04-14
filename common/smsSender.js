@@ -57,7 +57,6 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 			if(unsubUser[0]) {
 				var isUnsub = _.find(outletHandles.handles,  function(item){ 
 					var found = _.find(unsubUser[0].sms.outlets,  function(outlet){ 
-						console.log(item.outlet+ " "+ outlet);
 						return item.outlet.toString() === outlet.toString();	
 					});
 					return found;

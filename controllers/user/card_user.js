@@ -85,7 +85,7 @@ var updateUser = function(user, callback){
               account.validated = account.validated || {};
               account.validated.email_validated = account.validated.email_validated || {};
               account.validated.email_validated.token = secret_code;
-              account.validated.email_validated.is_welcome_mailer_sent = true;
+              account.validated.email_validated.is_app_upgrade_mailer_sent = true;
               console.log('email Updated');
               sendEmailAndSms(user, 'APP_UPGRADE', secret_code);
             }
@@ -95,6 +95,13 @@ var updateUser = function(user, callback){
                 account.validated.email_validated.is_welcome_mailer_sent = true;
                 user.email = account.profile.email;
                 sendEmailAndSms(user, 'WELCOME_MAILER', null);  
+            }
+            else if(account.profile !== undefined && account.profile.email !== undefined && account.validated
+              && account.validated.email_validated && (!account.validated.email_validated.status) && 
+              (!account.validated.email_validated.is_app_upgrade_mailer_sent)){
+                account.validated.email_validated.is_app_upgrade_mailer_sent = true;
+                user.email = account.profile.email;
+                sendEmailAndSms(user, 'APP_UPGRADE', secret_code);
             }
 
             if(account.profile !== undefined &&
