@@ -340,11 +340,6 @@ module.exports.handles = [
 	},
 
 	{
-	"outlet": "54590be5ca8b56097f961c79",
-	"handler": 
-	"},"
-
-	{
 	"outlet": "5461d6a2ae010d3e7bc9e85c",
 	"handler":   "HWZ"
 	},
