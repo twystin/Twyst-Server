@@ -24,7 +24,8 @@ var Account = new Schema({
         email_validated: {
             status: {type: Boolean, default: false},
             token: String,
-            is_welcome_mailer_sent: {type: Boolean, default: false}
+            is_welcome_mailer_sent: {type: Boolean, default: false},
+            is_app_upgrade_mailer_sent: {type: Boolean, default: false}
         },
 
     },
