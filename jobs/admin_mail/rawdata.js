@@ -24,7 +24,7 @@ module.exports.execAsyncCommands = function(main_callback) {
 	    	});
 	    },
 	    vouchers: function(callback) {
-	    	exec("mongoexport --host 50.112.253.131:27017 --db twyst --collection vouchers --csv --fields basics.code,basics.status,basics.description,basics.created_at,issue_details.issued_at,issue_details.issue_date,issue_details.issued_to,used_details.used_by,used_details.used_time,used_details.used_at,validity.end_date -q '{basics.created_at:{$gte:new Date(1425148200000)}}' --out ./data/vouchers.csv", function (err, result) {
+	    	exec("mongoexport --host 50.112.253.131:27017 --db twyst --collection vouchers --csv --fields basics.code,basics.status,basics.description,basics.created_at,issue_details.issued_at,issue_details.issue_date,issue_details.issued_to,used_details.used_by,used_details.used_time,used_details.used_at,validity.end_date -q '{"basics.created_at":{$gte:new Date(1425148200000)}}' --out ./data/vouchers.csv", function (err, result) {
 	    		if(err) {
 	    			return callback(err, null);
 	    		}
