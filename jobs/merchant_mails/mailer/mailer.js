@@ -5,7 +5,7 @@ var creds = {
 	'DAILY_DIGEST': {
 		service: 'Gmail',
 		username: 'support@twyst.in',
-		pass: '5upp0rt@890',
+		pass: 'Majoni12',
 		from: 'Twyst Support <support@twyst.in>',
 		template: '../mailer/templates/daily.handlebars',
 		subject: 'Your Twyst Activity'
