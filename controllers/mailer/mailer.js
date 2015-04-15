@@ -6,7 +6,7 @@ var creds = {
 	'FEEDBACK': {
 		service: 'Gmail',
 		username: 'contactus@twyst.in',
-		pass: 'Majoni12',
+		pass: 'Twyst2015',
 		template: './controllers/mailer/templates/feedback.handlebars',
 		subject: 'Feedback from Twyst User',
 		cc: 'contactus@twyst.in'
@@ -21,28 +21,28 @@ var creds = {
 	'WELCOME_EXISTING': {
 		service: 'Gmail',
 		username: 'contactus@twyst.in',
-		pass: 'Majoni12',
+		pass: 'Twyst2015',
 		template: './controllers/mailer/templates/welcome-pre.handlebars',
 		subject: 'Welcome to Twyst'
 	},
 	'CONTACTUS': {
 		service: 'Gmail',
 		username: 'contactus@twyst.in',
-		pass: 'Majoni12',
+		pass: 'Twyst2015',
 		template: './controllers/mailer/templates/contact.handlebars',
 		subject: 'Contact us page (User)'
 	},
 	'CONTACTUS_MERCHANT': {
 		service: 'Gmail',
 		username: 'contactus@twyst.in',
-		pass: 'Majoni12',
+		pass: 'Twyst2015',
 		template: './controllers/mailer/templates/contact-merchant.handlebars',
 		subject: 'Contact us page (Merchant)'
 	},
 	'APP_FEEDBACK': {
 		service: 'Gmail',
 		username: 'contactus@twyst.in',
-		pass: 'Majoni12',
+		pass: 'Twyst2015',
 		template: './controllers/mailer/templates/app-feedback.handlebars',
 		subject: 'Feedback from App'
 	}

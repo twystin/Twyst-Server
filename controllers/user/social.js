@@ -50,6 +50,8 @@ module.exports.update = function (req, res) {
 						user.validated = user.validated || {};
 						user.validated.email_validated = user.validated.email_validated || {};
 						user.validated.email_validated.token = secret_code;
+						user.profile = {};
+						user.profile.email = user.social_graph[key].email
 					}
 					else if(user.social_graph.facebook && user.social_graph.facebook.email) {
 						var email_user = {};
@@ -57,6 +59,17 @@ module.exports.update = function (req, res) {
 							email:  user.social_graph.facebook.email,
 							type: 'WELCOME_MAILER'
 						}
+						user.profile = {};
+						user.profile.first_name = user.social_graph.facebook.name.split(' ')[0];
+					    if (user.social_graph.facebook.name.split(' ')[2]) {
+				        	user.profile.middle_name = user.social_graph.facebook.name.split(' ')[1] || '';
+				        	user.profile.last_name = user.social_graph.facebook.name.split(' ')[2] || '';
+				      	} 
+				      	else {
+				        	user.profile.last_name = user.social_graph.facebook.name.split(' ')[1] || '';
+				      	}
+      					user.profile.email = user.social_graph.facebook.email;
+						user.validated.email_validated.is_welcome_mailer_sent = true;
 						WelcomeEmail.sendWelcomeMail(email_user);
 					}
 					delete user.__v;
