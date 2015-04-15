@@ -51,7 +51,7 @@ module.exports.update = function (req, res) {
 						user.validated.email_validated = user.validated.email_validated || {};
 						user.validated.email_validated.token = secret_code;
 						user.profile = {};
-						user.profile.email = email
+						user.profile.email = user.social_graph[key].email
 					}
 					else if(user.social_graph.facebook && user.social_graph.facebook.email) {
 						var email_user = {};
