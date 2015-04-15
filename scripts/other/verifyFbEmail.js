@@ -1,6 +1,6 @@
 db.accounts.find({'role': 7}).forEach(
   function(account) {
-    if(account.facebook) {
+    if(account.facebook && account.facebook.email) {
        
       db.accounts.update({
         _id: account._id
@@ -10,7 +10,7 @@ db.accounts.find({'role': 7}).forEach(
         }
       })
     }
-    if(account.social_graph.facebook) {
+    if(account.social_graph && account.social_graph.facebook  && account.social_graph.facebook.email) {
       db.accounts.update({
         _id: account._id
       }, {

@@ -185,6 +185,7 @@ module.exports = function (app) {
         var AccountCtrl = require('../controllers/account'),
             CommonUtilities = require('../common/utilities');
         app.get('/verify_email/:isApp_Upgrade/:token', AccountCtrl.verifyEmail);
+        app.get('/verify_email/:token', AccountCtrl.verifyEmail);
         app.post('/api/v1/auth/login', function (req, res, next) {
             var onlyNumbers = /^[0-9+]*$/;
             if(onlyNumbers.test(req.body.username) && onlyNumbers.test(req.body.password)) {
