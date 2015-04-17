@@ -190,10 +190,10 @@ function checkinMessageSender(_obj, outlet) {
 function voucherMessageSender(_obj, outlet) {
 	var _message;
 	if(isVoucherInApp(outlet)) {
-		_message = 'Your Twyst reward voucher at '+ outlet.basics.name +' is now available. View and redeem your reward on the Twyst app. Get it now at http://twy.st/app Need help? Give us a shout on support@twyst.in';
+		_message = 'Your Twyst reward voucher at '+ outlet.basics.name +' is now available. View and redeem your reward on the Twyst app. Get it now at http://twy.st/app Need help? Give us a shout on support@twyst.in To stop receiving this, SMS STOP ' +outlet.shortUrl +' to 9266801954';
 	}
 	else {
-		_message = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ _obj.voucher.basics.code +'. '+ _obj.voucher.basics.description +'. Terms- '+ _obj.voucher.terms +'. VALID UNTIL '+ Utils.formatDate(new Date(_obj.voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app';
+		_message = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ _obj.voucher.basics.code +'. '+ _obj.voucher.basics.description +'. Terms- '+ _obj.voucher.terms +'. VALID UNTIL '+ Utils.formatDate(new Date(_obj.voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app To stop receiving this, SMS STOP ' +outlet.shortUrl+ ' to 9266801954';
 	}
 	SMS.sendSms(_obj.phone, _message, 'VOUCHER_MESSAGE');
 }

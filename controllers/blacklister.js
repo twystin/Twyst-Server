@@ -78,7 +78,7 @@ function setUnsbs(unsbs, media, message_type, code) {
 					saveUnsbs(unsbs, function (err) {
 						if(!err) {
 							if(media === 'sms') {
-								var message = 'Thanks for your request. You will no longer receive reminders and updates from ' + outlet.basics.name + ' .';
+								var message = 'Thanks for your request. You will no longer receive reminders and updates from ' + outlet.basics.name + " "+ outlet.contact.location.locality_1 + ' .';
 								SmsSender.sendSms(unsbs.phone, message, 'UNSBS_MESSAGE');
 							}
 						}
