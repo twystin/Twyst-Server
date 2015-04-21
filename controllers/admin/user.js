@@ -14,7 +14,14 @@ module.exports.getAllUsers = function (req, res) {
 				}, 
 				{
 					'social_graph.email.email': new RegExp(req.query.q, "i")
+				},
+				{
+					'profile.email': new RegExp(req.query.q, "i")
+				},
+				{
+					'profile.first_name': new RegExp(req.query.q, "i")
 				}
+
 			]
 		}
 	}

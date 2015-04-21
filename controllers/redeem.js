@@ -104,7 +104,7 @@ module.exports.redeemPanel = function (req, res) {
 
 	function redeemCheckinVoucher(voucher) {
 		var program = voucher.issue_details.program;
-		if(isExpired(program.validity.burn_start, program.validity.burn_end)) {
+		if(isExpired(voucher.validity.start_date, voucher.validity.end_date)) {
 			res.send(400, { 
 				'status': 'error',
 	            'message': 'Expired voucher code',

@@ -90,8 +90,8 @@ function redeemVoucherSms (code, phone, outlet_id) {
     function validateVoucher(voucher) {
 
         var push_message = '';
-        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
-            push_message = 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.';
+        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date >= Date.now())) {
+            push_message = 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.';
             SMS.sendSms(phone, push_message);
         }
         else if(voucher.basics.status === 'merchant redeemed') {
@@ -274,9 +274,9 @@ module.exports.redeemVoucherApp = function(req, res) {
 
     function validateVoucher(voucher) {
 
-        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
+        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date>= Date.now())) {
             res.send(200, {'status': 'error',
-                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.',
+                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.',
                            'info': JSON.stringify(voucher)
             });
         }
@@ -484,9 +484,9 @@ module.exports.redeemVoucherPanel = function(req,res) {
 
     function validateVoucher(voucher) {
 
-        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
+        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date >= Date.now())) {
             res.send(200, {'status': 'success',
-                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.',
+                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.',
                            'info': JSON.stringify(voucher)
             });
         }
