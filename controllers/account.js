@@ -245,13 +245,19 @@ module.exports.verifyEmail = function (req, res) {
 								if(user.profile && user.profile.email) {
 									email_user = {
 										email:  user.profile.email,
-										type: 'WELCOME_MAILER'
+										type: 'WELCOME_MAILER',
+										data: {
+									        link: null
+									    }
 									}	
 								}
 								else if(user.email) {
 									email_user = {
 										email:  user.email,
-										type: 'WELCOME_MAILER'
+										type: 'WELCOME_MAILER',
+										data: {
+									        link: null
+									    }
 									}	
 								}
 								if(email_user.email) {

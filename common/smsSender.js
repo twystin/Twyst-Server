@@ -85,7 +85,10 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 		if(type === 'VOUCHER_MESSAGE') {
 			time = time + 3 * 60 * 60 * 1000;
 		}
-		if(isAccurateTime(time)) {
+		if(type === 'CHECKIN_MESSAGE') {
+			send();
+		}
+		else if(isAccurateTime(time)) {
 			if(type !== 'VOUCHER_MESSAGE') {
 				send();
 			}
@@ -97,6 +100,7 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 			var schedule_time = getScheduleTime(time);
 			schedule(phone, message, schedule_time);
 		}
+		
 	}
 
 	function getScheduleTime(time) {
