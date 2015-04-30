@@ -13,6 +13,7 @@
     "emailjs": "0.3.4",
     "errorhandler": "latest",
     "express": "latest",
+    "express-restify-mongoose": "^0.7.5",
     "express-session": "latest",
     "handlebars": "^2.0.0",
     "http-post": "~0.1.1",
