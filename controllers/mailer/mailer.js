@@ -107,7 +107,7 @@ module.exports.sendEmail = function(email_object){
 	        } else {
 	        	if(email_object.type == 'WELCOME_APP' && email_object.phone) {
 	        		SMS.sendSms(email_object.phone,
-    'Welcome to Twyst! We’ve sent you an e-mail verification link to '+email_object.to+ '. Please check your mail to complete verification. If the ID is incorrect, please write to us at support@twyst.in.' , 'WELCOME_MESSAGE');
+    'Welcome to Twyst! We’ve sent you an e-mail verification link to '+email_object.to+ '. Please check your mail to complete verification. If the ID is incorrect, please write to us at support@twyst.in.' , 'WELCOME_MESSAGE', 'TWYSTR', null);
 	        	}
 	            console.log('Message sent: ' + info.response);
 	        }

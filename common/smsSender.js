@@ -10,7 +10,7 @@ var UnsubCheck = mongoose.model('Unsbs');
 var outletHandles = require('../outlethandles');
 var _ = require('underscore');
 
-module.exports.sendSms = function (phone, push_message, type, from) {
+module.exports.sendSms = function (phone, push_message, type, from, outlet) {
 	push_message = push_message.replace(/(\n)+/g, '');
 	var message = push_message.replace(/&/g,'%26');
 	message = message.replace(/% /g,'%25 ');
@@ -27,7 +27,7 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 				console.log("Blacklisted user.");
 			}
 			else {
-				isUnsubscribedUser(phone, function(isUnsubscribed) {
+				isUnsubscribedUser(phone, outlet, function(isUnsubscribed) {
 					if(isUnsubscribed) {
 						console.log('You have unsubscribed for this outlet');
 						return 'User is unsbuscribed for message';           
@@ -51,18 +51,15 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 		})
 	}
 
-	function isUnsubscribedUser (phone,  callback) {
+	function isUnsubscribedUser (phone, outlet,  callback) {
 		UnsubCheck.find({phone: phone}, function(err, unsubUser) {
 			if(err) console.log(err);
-			if(unsubUser[0]) {
-				var isUnsub = _.find(outletHandles.handles,  function(item){ 
-					var found = _.find(unsubUser[0].sms.outlets,  function(outlet){ 
-						return item.outlet.toString() === outlet.toString();	
-					});
-					return found;
+			if(unsubUser[0]) {				
+				var found = _.find(unsubUser[0].sms.outlets,  function(foundOutlet){ 
+					return outlet.toString() === foundOutlet.toString();	
 				});
-			
-				if(unsubUser[0].sms.all || isUnsub) {
+
+				if(unsubUser[0].sms.all || found) {
 					callback(true);
 				}
 				else {
@@ -73,8 +70,6 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 				callback(false);	
 			}
 			
-
-
 		})
 
 	}
@@ -85,10 +80,7 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 		if(type === 'VOUCHER_MESSAGE') {
 			time = time + 3 * 60 * 60 * 1000;
 		}
-		if(type === 'CHECKIN_MESSAGE') {
-			send();
-		}
-		else if(isAccurateTime(time)) {
+		if(isAccurateTime(time)) {
 			if(type !== 'VOUCHER_MESSAGE') {
 				send();
 			}
@@ -124,7 +116,7 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 		var hours = new Date(time).getHours();
 		console.log(hours + "  " +  new Date(time))
 		if(hours > 16 || hours < 4) {
-			return false;
+			return true;
 		}
 		return true;
 	}

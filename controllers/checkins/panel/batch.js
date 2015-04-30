@@ -196,7 +196,7 @@ module.exports.checkin = function(req, res) {
 			}
 			else {
 				var push_message = message.replace(/xxxxxx/g, voucher.basics.code);
-				SMS.sendSms(phone, push_message, 'BATCH_CHECKIN', sms_sender_id);
+				SMS.sendSms(phone, push_message, 'BATCH_CHECKIN', sms_sender_id, outlet_id);
 				res.send(200, {	
 					'status': 'success',
 					'message': 'Successfully checked-in, Unlocked a voucher',

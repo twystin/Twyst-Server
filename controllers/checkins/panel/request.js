@@ -76,6 +76,7 @@ module.exports.poscheckin = function(req, res){
 module.exports.batchCheckin = function (req, res) {
 	var message = req.body.message,
 		sms_sender_id = req.body.sms_sender_id;
+		var outlet_id = req.body.outlet;
 	var _obj = {
         'phone': req.body.phone,
         'outlet': req.body.outlet,
@@ -118,7 +119,7 @@ module.exports.autoCheckin = function (_obj, cb) {
 function batchSmsHandler(_obj, _message, sms_sender_id) {
 	if(_obj.voucher) {
 		_message = _message.replace(/xxxxxx/g, _obj.voucher.basics.code);
-		SMS.sendSms(_obj.phone, _message, 'BATCH_CHECKIN_MESSAGE', sms_sender_id);
+		SMS.sendSms(_obj.phone, _message, 'BATCH_CHECKIN_MESSAGE', sms_sender_id, outlet_id);
 	}
 }
 
@@ -184,7 +185,7 @@ function checkinMessageSender(_obj, outlet) {
 	if(outlet.checkin_message_append) {
 		_message += ' ' + outlet.checkin_message_append;
 	}
-	SMS.sendSms(_obj.phone, _message, 'CHECKIN_MESSAGE');
+	SMS.sendSms(_obj.phone, _message, 'CHECKIN_MESSAGE', 'TWYSTR', outlet._id );
 }
 
 function voucherMessageSender(_obj, outlet) {
@@ -195,7 +196,7 @@ function voucherMessageSender(_obj, outlet) {
 	else {
 		_message = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ _obj.voucher.basics.code +'. '+ _obj.voucher.basics.description +'. Terms- '+ _obj.voucher.terms +'. VALID UNTIL '+ Utils.formatDate(new Date(_obj.voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app To stop receiving this, SMS STOP ' +outlet.shortUrl+ ' to 9266801954';
 	}
-	SMS.sendSms(_obj.phone, _message, 'VOUCHER_MESSAGE');
+	SMS.sendSms(_obj.phone, _message, 'VOUCHER_MESSAGE', 'TWYSTR', outlet._id);
 }
 
 function isVoucherInApp(outlet) {

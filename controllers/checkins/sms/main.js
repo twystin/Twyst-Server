@@ -11,10 +11,10 @@ module.exports.smsCheckin = function (checkin_obj) {
 				checkin_obj.location = "DINE_IN";
 				CheckinCtrl.initCheckin(checkin_obj, function (success_object) {
 					if(success_object.sms && success_object.sms.checkin) {
-						SMS.sendSms(checkin_obj.phone, success_object.sms.checkin, 'CHECKIN_MESSAGE');
+						SMS.sendSms(checkin_obj.phone, success_object.sms.checkin, 'CHECKIN_MESSAGE', 'TWYSTR', checkin_obj.outlet);
 					}
 					if(success_object.sms && success_object.sms.reward) {
-						SMS.sendSms(checkin_obj.phone, success_object.sms.reward, 'VOUCHER_MESSAGE');
+						SMS.sendSms(checkin_obj.phone, success_object.sms.reward, 'VOUCHER_MESSAGE','TWYSTR', checkin_obj.outlet);
 					}
 					if(!success_object.sms) {
 						var push_message = success_object.res.message.message;

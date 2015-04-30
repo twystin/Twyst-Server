@@ -11,7 +11,8 @@ var Voucher = mongoose.model('Voucher'),
 module.exports.redeemPanel = function (req, res) {
 	var code = req.body.code,
 		used_at = req.body.used_at,
-		used_time = req.body.used_time || new Date();
+		used_time = req.body.used_time || new Date()
+		phone = req.body.phone;
 
 	if(code && used_at) {
 		initRedeem();
@@ -152,7 +153,7 @@ function sendRedeemSmsToUser (voucher, user, used_at, used_time) {
     }, function (err, outlet) {
     	if(outlet) {
     		var message = 'Voucher code '+ voucher.basics.code +' redeemed at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(used_time)) +' at '+ date.getHours() + ':' + date.getMinutes() +'. Keep checking-in at '+ outlet.basics.name +' on Twyst for more rewards! Get Twyst http://twy.st/app';
-    		SMS.sendSms(user.phone, message, 'VOUCHER_REDEEM_MESSAGE');
+    		SMS.sendSms(user.phone, message, 'VOUCHER_REDEEM_MESSAGE', 'TWYSTR', outlet._id);
     	}
     });
 }
@@ -191,6 +192,7 @@ function getOutlet(q, cb) {
 		cb(err, outlet);
 	})
 }
+
 
 module.exports.redeemApp = function (req, res) {
 	var code = req.body.code,
@@ -306,7 +308,7 @@ module.exports.redeemApp = function (req, res) {
 		var push_message = 'User '+user_phone+' has redeemed voucher '+voucher.basics.code+' on '+Utils.formatDate(current_time)+', at '+outlet.basics.name+', '+outlet.contact.location.locality_1.toString()+'. Voucher is VALID. Reward details- '+voucher.basics.description+'.';
         outlet.contact.phones.reg_mobile.forEach (function (phone) {
             if(phone && phone.num) {
-            	SMS.sendSms(phone.num, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE');
+            	SMS.sendSms(phone.num, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE', 'TWYSTR', outlet._id);
             }
         });
 	}
