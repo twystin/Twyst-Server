@@ -9,6 +9,7 @@ var settings = require('./config/settings');
     var Deal = require('./models/deal');
     var router = express.Router();
     restify.serve(router, Deal);
+    app.use(router);
 
     require('./config/config_routes')(app);
 
