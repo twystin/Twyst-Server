@@ -42,12 +42,13 @@ function filterUnsbs(user_id, outlets, cb) {
 
 function processSms(phone, voucher, outlet) {
 	if(outlet.voucher_in_app) {
-		var push_message = 'Your Twyst Voucher for ' + voucher.basics.description +', (TnC apply) at '+ voucher.issue_details.issued_at[0].basics.name +' is pending. Voucher code '+ voucher.basics.code +' - Redeem Today!';
-		push_message += ' Click http://twyst.in/' + outlet.shortUrl[0] + ' to see all rewards at ' + outlet.basics.name +'. To stop receiving this, sms STOP ' + outlet.shortUrl[0] +' to 9266801954.';
+		var push_message = "Your Twyst voucher for " + _obj.voucher.basics.description +', (TnC apply) at ' +outlet.basics.name+" is pending. To view voucher code and redeem, get the Twyst app at http://twyst.in/app For help, write to support@twyst.in. To stop receiving this, sms STOP "+outlet.shortUrl[0]+" to 9266801954.";
+		push_message = push_message.replace(/Get/g, "");
+		
 	}
 	else {
-		var push_message = "Your Twyst voucher for" + _obj.voucher.basics.description +', (TnC apply) at ' +outlet.basics.name+" is pending. To view voucher code and redeem, get the Twyst app at http://twyst.in/app For help, write to support@twyst.in. To stop receiving this, sms STOP "+outlet.shortUrl[0]+" to 9266801954.";
-		push_message = push_message.replace(/Get/g, "");
+		var push_message = 'Your Twyst Voucher for ' + voucher.basics.description +', (TnC apply) at '+ voucher.issue_details.issued_at[0].basics.name +' is pending. Voucher code '+ voucher.basics.code +' - Redeem Today!';
+		push_message += ' Click http://twyst.in/' + outlet.shortUrl[0] + ' to see all rewards at ' + outlet.basics.name +'. To stop receiving this, sms STOP ' + outlet.shortUrl[0] +' to 9266801954.';
 	}
 	saveReminder(phone, push_message);
 }

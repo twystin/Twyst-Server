@@ -153,8 +153,17 @@ module.exports.checkin = function(req, res) {
 		voucher.checkin_details = {};
 		
 		//Validity for voucher
-		voucher.validity.start_date = reward.program.validity.burn_start;
-		voucher.validity.end_date = reward.program.validity.burn_end;
+		var end_date;
+		if(success_obj.reward.offer.voucher_valid_for_days !== undefined) {
+			var burn_date = new Date();
+			burn_date.setDate(burn_date.getDate() + object_param.offer.voucher_valid_for_days);
+			end_date = burn_date;
+		}
+		else {
+			end_date = success_obj.program.validity.burn_end;
+		}
+		voucher.validity.start_date =  new Date();
+		voucher.validity.end_date = end_date;
 		
 		// Issue details
 		voucher.issue_details.issued_at = [];
@@ -187,7 +196,7 @@ module.exports.checkin = function(req, res) {
 			}
 			else {
 				var push_message = message.replace(/xxxxxx/g, voucher.basics.code);
-				SMS.sendSms(phone, push_message, 'BATCH_CHECKIN', sms_sender_id);
+				SMS.sendSms(phone, push_message, 'BATCH_CHECKIN', sms_sender_id, outlet_id);
 				res.send(200, {	
 					'status': 'success',
 					'message': 'Successfully checked-in, Unlocked a voucher',

@@ -266,22 +266,6 @@ module.exports.create = function(req,res) {
 
 	function saveProgram(program) {
 
-		function isEmptyObject( obj ) {
-			for ( var name in obj ) {
-				return false;
-			}
-			return true;
-		}
-
-		if(!isEmptyObject(program.validity)) {
-			if(!program.validity.burn_start) {
-				program.validity.burn_start = program.validity.earn_start;
-			}
-			if(!program.validity.burn_end) {
-				program.validity.burn_end = program.validity.earn_end;
-			}
-		}
-
 		var program = new Program(program);
 
 		program.save(function (err, program) {

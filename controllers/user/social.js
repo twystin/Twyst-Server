@@ -57,7 +57,10 @@ module.exports.update = function (req, res) {
 						var email_user = {};
 						email_user = {
 							email:  user.social_graph.facebook.email,
-							type: 'WELCOME_MAILER'
+							type: 'WELCOME_MAILER',
+							data: {
+						        link: null
+						    }
 						}
 						user.profile = {};
 						user.profile.first_name = user.social_graph.facebook.name.split(' ')[0];
