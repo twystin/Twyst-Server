@@ -9,6 +9,7 @@ var DealSchema = new Schema ({
     slug: {type: String, trim: true, required: true},
     created_at : {type: Date, default: Date.now},
     modified_at: {type: Date, default: Date.now},
+    end_date: {type: Date, default: Date.now},
     status: {type: String, enum: ['active', 'archived', 'draft'], default: 'draft'},
     avaiable_at: business_hours.hours,
     generate_coupon: {type: Boolean},

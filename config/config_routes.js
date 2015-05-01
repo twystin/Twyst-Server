@@ -41,6 +41,11 @@ module.exports = function (app) {
         return false;
     };
 
+    (function process_deal_req_from_user() {
+        var DealCtrl = require('../controllers/deal.js');
+        app.get('/api/v1/process_deal/:deal', DealCtrl.processDeal);
+    })();
+
     (function job_status_route () {
         var SMSJob = require('../controllers/job_status/sms_sender');
         app.get('/api/v3/job_status/sms', SMSJob.status);
@@ -501,6 +506,8 @@ module.exports = function (app) {
         var PopulateUserCtrl = require('../controllers/user/card_user');
         app.post('/api/v1/populate/card_user', checkAuthenticated(), PopulateUserCtrl.populateCardUser)
     })();
+
+
 
     (function handle_defaults() {
         app.use(function (req, res){
