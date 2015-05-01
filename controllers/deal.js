@@ -9,8 +9,6 @@ var _ = require('underscore');
 module.exports.useDeal = function(req, res) {
 	var deal = req.body;
 	var user = req.user;
-	console.log('deal id ' + JSON.stringify(deal))
-	console.log('req obj ' + JSON.stringify(req.body))
 	saveVoucher(deal, user, function(err, callback) {
 		if(err) {
 			console.log(err)
@@ -40,7 +38,7 @@ function saveVoucher(deal, user, cb) {
 
 	voucher.save(function (err) {
 		if(err) {
-			console.log('err' + er)
+			console.log('err' + err)
 			cb(err, voucher);
 		}
 		else {

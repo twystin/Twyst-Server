@@ -95,7 +95,7 @@ module.exports.redeemPanel = function (req, res) {
 				else {
 					var user = voucher.issue_details.issued_to;
 	                if(user && user.phone) {
-	                	//sendRedeemSmsToUser(voucher, user, used_at, used_time);
+	                	sendRedeemSmsToUser(voucher, user, used_at, used_time);
 	                }
 	                res.send(200, { 
 						'status': 'success',
