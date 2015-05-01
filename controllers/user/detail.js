@@ -7,6 +7,7 @@ var Outlet = mongoose.model('Outlet');
 	Voucher = mongoose.model('Voucher'),
 	Reward = mongoose.model('Reward'),
 	Follow = mongoose.model('Favourite');
+var Deal = mongoose.model('Deal');
 
 var CommonUtils = require('../../common/utilities');
 
@@ -56,6 +57,7 @@ module.exports.getDetails = function (req, res) {
 							getOtherInfo(req.user, result, function (err, data) {
 								result.is_following = data.is_following;
 								result.active_rewards = data.active_rewards;
+								result.deals = data.deals;
 								result.checkin_count = data.checkin_count;
 								result.checkins_to_next_reward = checkinsToReward(reward, data.checkin_count);
 								result.relevant_reward = getActiveReward(reward, data.checkin_count);
@@ -119,7 +121,12 @@ function getOtherInfo(user, result, cb) {
 	    		var value = follow ? true : false;
 	    		callback(null, value);
 	    	})
-	    }
+	    },
+			deals: function(callback) {
+				getActiveDeals(user, result, function(has_active) {
+					callback(null, has_active);
+				});
+			}
 	}, function(err, results) {
 	    cb(err, results);
 	});
@@ -153,6 +160,20 @@ function getCheckinCount(user, result, cb) {
 	}
 }
 
+function getActiveDeals(user, result, cb) {
+	if (!user || !result.outlet_details) {
+		cb([]);
+	}
+	else {
+		Deal.find({
+			'status':'active',
+			'outlets': result.outlet_details._id
+		}, function (err, deals) {
+			cb(deals || []);
+		});
+	}
+}
+
 function getActiveRewards(user, result, cb) {
 	if(!user || !result.outlet_details) {
 		cb([]);
@@ -175,7 +196,7 @@ function getActiveRewards(user, result, cb) {
 					'validity.end_date': {
 						$gt: new Date()
 					}
-				}		
+				}
 			]
 		}, function (err, vouchers) {
 			cb(vouchers || []);
