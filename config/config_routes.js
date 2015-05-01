@@ -3,7 +3,7 @@
 var mongoose = require('mongoose');
 var passport = require('passport');
 var Routes = require('./routes');
- 
+
 module.exports = function (app) {
     //Check if a User is authenticated
     function checkAuthenticated() {
@@ -41,6 +41,11 @@ module.exports = function (app) {
         return false;
     };
 
+    (function process_deal_req_from_user() {
+        var DealCtrl = require('../controllers/deal.js');
+        app.get('/api/v1/process_deal/:deal', DealCtrl.processDeal);
+    })();
+
     (function job_status_route () {
         var SMSJob = require('../controllers/job_status/sms_sender');
         app.get('/api/v3/job_status/sms', SMSJob.status);
@@ -64,6 +69,15 @@ module.exports = function (app) {
         app.get('/api/v3/winback/:winback_id', checkAuthenticated(), WinbackCtrl.readOne);
         app.put('/api/v3/winback', checkAuthenticated(), WinbackCtrl.update);
         app.delete('/api/v3/winback/:winback_id', checkAuthenticated(), WinbackCtrl.delete);
+    })();
+
+    (function coupon_route () {
+        var CouponCtrl = require('../controllers/coupon');
+        app.post('/api/v3/coupon', checkAuthenticated(), CouponCtrl.create);
+        app.get('/api/v3/coupon', checkAuthenticated(), CouponCtrl.read);
+        app.get('/api/v3/coupon/:coupon_id', checkAuthenticated(), CouponCtrl.readOne);
+        app.put('/api/v3/coupon', checkAuthenticated(), CouponCtrl.update);
+        app.delete('/api/v3/coupon/:coupon_id', checkAuthenticated(), CouponCtrl.delete);
     })();
 
     (function special_programs_route () {
@@ -127,7 +141,6 @@ module.exports = function (app) {
         app.get('/api/v2/total_checkins', AnonDataCtrl.totalCheckins);
         app.get('/api/v2/alloutlets', StatusCtrl.getAllOutlets);
         app.get('/api/v2/allprograms', StatusCtrl.getAllPrograms);
-        app.get('/api/v2/specialprograms', StatusCtrl.getSpecialPrograms);
         app.get('/api/v2/allusers', UserCtrl.getAllUsers);
         app.get('/api/v2/alluser/:username', UserCtrl.getUser);
         app.post('/api/v2/alluser', UserCtrl.getTimeline);
@@ -168,7 +181,7 @@ module.exports = function (app) {
     })();
 
     //Change password and reset passwords
-    (function password_reset_routes() { 
+    (function password_reset_routes() {
         var ResetCtrl = require('../controllers/reset_password');
         app.put('/api/v1/pass/reset/:token', ResetCtrl.resetPassword);
         app.put('/api/v1/pass/change', checkAuthenticated(), ResetCtrl.changePassword);
@@ -185,6 +198,7 @@ module.exports = function (app) {
     (function authentication_routes() {
         var AccountCtrl = require('../controllers/account'),
             CommonUtilities = require('../common/utilities');
+        app.get('/verify_email/:isApp_Upgrade/:token', AccountCtrl.verifyEmail);
         app.get('/verify_email/:token', AccountCtrl.verifyEmail);
         app.post('/api/v1/auth/login', function (req, res, next) {
             var onlyNumbers = /^[0-9+]*$/;
@@ -203,7 +217,7 @@ module.exports = function (app) {
         app.put('/api/v1/auth/users/validate/:user_id', AccountCtrl.validateByConsole);
         app.put('/api/v1/auth/validate/email/:token', AccountCtrl.setEmailValidated)
         app.delete('/api/v1/auth/users/:user_id', checkAuthenticated(), checkRole(3), AccountCtrl.delete);
-
+        app.get('/api/v1/auth/phones/:phone',checkAuthenticated(), checkRole(1), AccountCtrl.findUserByPhone)
         app.get('/api/v1/auth/facebook', passport.authenticate('facebook', {
             scope: [ 'email', 'user_about_me'],
             failureRedirect: '/login'
@@ -218,7 +232,7 @@ module.exports = function (app) {
 
         app.get('/api/v1/auth/get_logged_in_user', function (req,res) {
             if(req.user) {
-               res.send(200, {status: 'success', user: req.user}); 
+               res.send(200, {status: 'success', user: req.user});
             }
             else {
                 res.send(401, {status: 'error'});
@@ -299,7 +313,7 @@ module.exports = function (app) {
     (function qr_routes() {
         var QrCtrl = require('../controllers/qr');
         app.post('/api/v1/qr/outlets', checkAuthenticated(), checkRole(1), QrCtrl.qrCreate);
-    })(); 
+    })();
 
 
     //Program CRUD routes
@@ -317,7 +331,7 @@ module.exports = function (app) {
         app.delete('/api/v1/programs/:program_id', checkAuthenticated(), checkRole(4), ProgramCtrl.delete);
     })();
 
-    (function group_program_routes() {        
+    (function group_program_routes() {
         var GroupProgramCtrl = require('../controllers/group_program');
         app.get('/api/v1/group_program/:group_program_id',checkAuthenticated(), GroupProgramCtrl.getGroupProgram);
         app.post('/api/v1/group_program/', checkAuthenticated(), GroupProgramCtrl.create);
@@ -473,13 +487,35 @@ module.exports = function (app) {
         app.get('/cnc_predictor', function (req, res) {
             res.redirect('/home/TCnCF_Contest.html')
         });
+
+        app.get('/rewards_week', function (req, res) {
+            res.redirect('/home/Rewards_Week.html');
+        });
+
+        app.get('/qr/:qr', function(req, res) {
+            res.redirect('http://twyst.in/app');
+        });
+
         app.get('/r/:key', RedirectCtrl.getRedirected);
         app.get('/:shortUrl(*)', RedirectCtrl.redirectToOutlet);
+
+
     })();
+
+    (function user_reg_completion_routes() {
+        var PopulateUserCtrl = require('../controllers/user/card_user');
+        app.post('/api/v1/populate/card_user', checkAuthenticated(), PopulateUserCtrl.populateCardUser)
+    })();
+
+
 
     (function handle_defaults() {
         app.use(function (req, res){
-            res.send(404, {'info': '...Page not found'});
+            res.send(404, {
+                'status': 'error',
+                'message': 'Page Not Found',
+                'info': 'Page Not Found'
+            });
         });
     })();
 };

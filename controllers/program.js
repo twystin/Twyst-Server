@@ -13,7 +13,7 @@ var errs = [];
 program.tiers = [];
 
 module.exports.get = function (req, res) {
-	
+
 	Program.find(getQuery(), function (err, programs) {
 		if(err) {
 			res.send(400, {
@@ -85,7 +85,7 @@ module.exports.onlyPrograms = function (req, res) {
 	})
 };
 
-module.exports.query = function (req, res) { 
+module.exports.query = function (req, res) {
 	Program.find({
 		accounts: getAccountIdForProgram()
 	})
@@ -111,7 +111,7 @@ module.exports.query = function (req, res) {
 		if(req.user.role === 4 || req.user.role === 5) {
 			var user = req.user.toObject();
 			return user.account;
-		} 
+		}
 		return req.user._id;
 	}
 };
@@ -201,7 +201,7 @@ module.exports.create = function(req,res) {
 	var errs = [];
 	var program = {};
 	program = _.extend(program, req.body);
-	
+
 	var number_of_tier = program.tiers.length;
 	if(number_of_tier === 0) {
 		saveProgram(program);
@@ -218,7 +218,7 @@ module.exports.create = function(req,res) {
 			}
 			else {
 				tier.offers.forEach(function (offer) {
-					
+
 					var offer = new Offer(offer);
 					offer.save(function (err, offer) {
 						number_of_offer--;
@@ -266,22 +266,6 @@ module.exports.create = function(req,res) {
 
 	function saveProgram(program) {
 
-		function isEmptyObject( obj ) {
-			for ( var name in obj ) {
-				return false;
-			}
-			return true;
-		}
-		
-		if(!isEmptyObject(program.validity)) {
-			if(!program.validity.burn_start) {
-				program.validity.burn_start = program.validity.earn_start;
-			}
-			if(!program.validity.burn_end) {
-				program.validity.burn_end = program.validity.earn_end;
-			}
-		}
-
 		var program = new Program(program);
 
 		program.save(function (err, program) {
@@ -306,14 +290,14 @@ module.exports.create = function(req,res) {
 module.exports.update = function(req,res) {
 	var updated_program = {};
 	updated_program = _.extend(updated_program, req.body);
-	
+	delete updated_program.__v;
 	Program.findOne({_id: req.params.program_id}, function (err, program) {
 		if (err) {
 			res.send(400, {	'status': 'error',
 						'message': 'Error saving program',
 						'info': JSON.stringify(err)
 			});
-		} else { 
+		} else {
 			if(program) {
 				program.name = updated_program.name;
 				program.outlets = updated_program.outlets;
@@ -323,6 +307,7 @@ module.exports.update = function(req,res) {
 				program.validity.burn_start = updated_program.validity.burn_start;
 				program.validity.burn_end = updated_program.validity.burn_end;
 				program.images = updated_program.images;
+				delete program.__v;
 				program.save(function (err) {
 					if(err) {
 						res.send(400, {	'status': 'error',
@@ -337,21 +322,21 @@ module.exports.update = function(req,res) {
 						}
 						VoucherCtrl.updateValidity(program._id, validity, function (err, num ) {
 							if(err) {
-								res.send(200, {	
+								res.send(200, {
 									'status': 'success',
 									'message': 'Saved program, voucher update error',
 									'info': err
 								});
 							}
 							else {
-								res.send(200, {	
+								res.send(200, {
 									'status': 'success',
 									'message': 'Saved program, updated validity for vouchers',
 									'info': num
 								});
 							}
 						})
-						
+
 					};
 				});
 			}
@@ -380,7 +365,7 @@ module.exports.delete = function (req, res) {
 			'info': ''
 		});
 	}
-	
+
 	function deleteProgram (program_id) {
 		Program.findOneAndRemove({_id: program_id}, function(err, program){
 			if (err) {

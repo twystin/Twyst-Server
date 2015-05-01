@@ -14,7 +14,14 @@ module.exports.getAllUsers = function (req, res) {
 				}, 
 				{
 					'social_graph.email.email': new RegExp(req.query.q, "i")
+				},
+				{
+					'profile.email': new RegExp(req.query.q, "i")
+				},
+				{
+					'profile.first_name': new RegExp(req.query.q, "i")
 				}
+
 			]
 		}
 	}
@@ -132,6 +139,7 @@ module.exports.updateUser = function(req, res) {
 	update_user = _.extend(update_user, req.body);
 	delete update_user._id; 
 	delete update_user.username;
+	delete update_user.__v;
 	Account.findOneAndUpdate(
 	{username:req.params.username}, 
 	{$set: update_user}, 

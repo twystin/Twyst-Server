@@ -90,8 +90,8 @@ function redeemVoucherSms (code, phone, outlet_id) {
     function validateVoucher(voucher) {
 
         var push_message = '';
-        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
-            push_message = 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.';
+        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date >= Date.now())) {
+            push_message = 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.';
             SMS.sendSms(phone, push_message);
         }
         else if(voucher.basics.status === 'merchant redeemed') {
@@ -274,9 +274,9 @@ module.exports.redeemVoucherApp = function(req, res) {
 
     function validateVoucher(voucher) {
 
-        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
+        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date>= Date.now())) {
             res.send(200, {'status': 'error',
-                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.',
+                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.',
                            'info': JSON.stringify(voucher)
             });
         }
@@ -411,7 +411,7 @@ module.exports.redeemVoucherApp = function(req, res) {
                 var current_time = new Date();
                 outlet.contact.phones.reg_mobile.forEach (function (phone) {
                     var push_message = 'User '+req.user.phone+' has redeemed voucher '+voucher.basics.code+' at '+current_time+', '+current_time.getDate()+' at '+outlet.basics.name+', '+outlet.contact.location.locality_1.toString()+'. Voucher is VALID. Reward details-  '+voucher.basics.description+'. '+voucher.issue_details.issued_for.terms+'. .';
-                    SMS.sendSms(phone, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE');
+                    SMS.sendSms(phone, push_message, 'VOUCHER_REDEEM_MERCHANT_MESSAGE', 'TWYSTR', outlet_id );
                 });
             }
         })
@@ -484,9 +484,9 @@ module.exports.redeemVoucherPanel = function(req,res) {
 
     function validateVoucher(voucher) {
 
-        if(!(voucher.issue_details.program.validity.burn_start <= Date.now() && voucher.issue_details.program.validity.burn_end >= Date.now())) {
+        if(!(voucher.validity.start_date <= Date.now() && voucher.validity.end_date >= Date.now())) {
             res.send(200, {'status': 'success',
-                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.issue_details.program.validity.burn_end +'.',
+                           'message': 'Sorry, the voucher '+ voucher.basics.code +' has expired on '+ voucher.validity.end_date +'.',
                            'info': JSON.stringify(voucher)
             });
         }
@@ -615,7 +615,7 @@ module.exports.redeemVoucherPanel = function(req,res) {
                     voucher.issue_details.issued_to.phone) {
                     var date = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
                     var message = 'Voucher code '+ check_voucher.basics.code +' redeemed at '+ applicable.basics.name +' on '+ CommonUtilities.formatDate(new Date(used_time)) +' at '+ date.getHours() + ':' + date.getMinutes() +'. Keep checking-in at '+ applicable.basics.name +' on Twyst for more rewards! Get Twyst http://twy.st/app';
-                    SMS.sendSms(voucher.issue_details.issued_to.phone, message, 'VOUCHER_REDEEM_MESSAGE');  
+                    SMS.sendSms(voucher.issue_details.issued_to.phone, message, 'VOUCHER_REDEEM_MESSAGE', 'TWYSTR', applicable._id);  
 
                 }   
                 

@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var Offer = mongoose.model('Offer');
 var Tier = mongoose.model('Tier');
-var _ = require('underscore'); 
+var _ = require('underscore');
 
 
 module.exports.read = function(req,res) {
@@ -17,7 +17,7 @@ module.exports.read = function(req,res) {
 						'info': JSON.stringify(offer)
 			});
 		}
-	}) 
+	})
 };
 
 module.exports.addOffer = function(req,res) {
@@ -25,7 +25,7 @@ module.exports.addOffer = function(req,res) {
 	var created_offer = {};
 	created_offer = _.extend(created_offer, req.body.offer);
 	var offer = new Offer(created_offer);
-
+	delete offer.__v;
 	offer.save(function(err, offer) {
 		if (err) {
 			res.send(400, {	'status': 'error',
@@ -43,6 +43,7 @@ module.exports.addOffer = function(req,res) {
 				else {
 					if(tier.offers.length >= 0 ) {
 						tier.offers.push(offer._id)
+						delete tier.__v;
 						tier.save(function (err) {
 							if(err) {
 								res.send(400, {	'status': 'error',
@@ -60,12 +61,12 @@ module.exports.addOffer = function(req,res) {
 					}
 				}
 			})
-		}				
+		}
 	})
 };
 
 module.exports.query = function(req,res) {
-	Offer.find({username: req.params.username}, function(err,offers) { 
+	Offer.find({username: req.params.username}, function(err,offers) {
 		if (err) {
 			res.send(400,{'status': 'error',
 						'message': 'Error getting list of offers',
@@ -84,8 +85,9 @@ module.exports.update = function(req,res) {
 	var updated_offer = {};
 	updated_offer = _.extend(updated_offer, req.body.offer);
 	delete updated_offer._id;
+	delete updated_offer.__v;
 	Offer.findOneAndUpdate(
-		{_id:req.body.offer_id}, 
+		{_id:req.body.offer_id},
 		{$set: updated_offer },
 		{upsert:true},
 		function(err,offer) {

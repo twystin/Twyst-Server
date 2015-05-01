@@ -1,0 +1,48 @@
+Refactoring:
+  ☐ Separate out code by feature (instead of MVC)
+  ☐ Clean up the Twyst-Analytics structure directory
+  ☐ Add contests to the beta_users model
+  ☐ csvSmsSender - look at the code and fix.
+
+DevOps:
+  ☐ Switch to PM2 from AWS
+  ☐ Block our prod db
+
+Testing:
+  ☐ Write tests for server code
+
+Dead code:
+  ☐ getSMSCheckinCode.js & sms_parser.js - dead code
+  ☐ csvSMSSender.js - dead code
+  ☐ controllers/sms.js - dead code
+
+Features:
+  ☐ SMS sending - consolidate & respect blacklist / unsubscribe list
+    ✔ SMS sending @done(2015-03-15 21:24) @project(Features)
+        - common/smsSender.js: done
+        - Check all places where sendSms is called: done
+        - getApp.js - done
+        - csvSMSSender.js - done
+        - controllers/redeem.js - done
+        - controllers/sms.js - done
+        - controllers/voucherRedeem.js - done
+        - jobs/voucherReminder/: done
+        - jobs/winback: done
+        - scripts/batch/checkinCsv - done
+        - jobs/notifications/smsSender - done
+
+    ☐ Unsubscribe
+        - blacklister.js
+        - jobs/voucherReminder/transport.js
+        - handle users in unsubscribed list
+
+    ☐ Sending STOP message in all
+    ☐ Merchant handle SMSs
+    ☐ STOP BB1 / handle
+  ☐ Wishlist program
+
+＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
+Archive:
+
+  ✔ Separate scripts directory out @done(2015-03-15 17:51) @project(Refactoring)
+  ✔ Bring in twyst-data also into the same tree @done(2015-03-15 17:05) @project(Refactoring)

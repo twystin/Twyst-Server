@@ -236,6 +236,7 @@ module.exports.changeStatus  = function (req, res){
                 triggerAutoCheckin(auto_checkin_obj, voucher);
                 voucher.basics.status = 'merchant redeemed';
                 voucher.basics.type = voucher.basics.type || 'CHECKIN';
+                delete voucher.__v;
                 voucher.save(function(err) {
                     if(err) {
                         res.send(400, { 'status': 'error',
@@ -302,6 +303,7 @@ module.exports.create = function(req,res) {
 module.exports.update = function(req,res) {
         var updated_voucher = {};
         updated_voucher = _.extend(updated_voucher, req.body);
+        delete updated_voucher.__v;
         Voucher.findOneAndUpdate(
                 {slug:req.params.voucher_id}, 
                 {$set: updated_voucher }, 

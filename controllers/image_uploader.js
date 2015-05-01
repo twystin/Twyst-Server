@@ -15,7 +15,7 @@ module.exports.upload = function(req, res) {
   var image_path = req.files.file.path;
   var s3 = new AWS.S3();
   var key = keygen._();
-  s3.client.putObject({
+  s3.putObject({
     ACL : 'public-read',
     Bucket: bucket,
     ContentType: 'image/jpg',

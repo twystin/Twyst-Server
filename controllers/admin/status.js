@@ -38,6 +38,7 @@ module.exports.changeOutletStatus = function (req, res) {
 				}
 				else {
 					outlet.outlet_meta.status = req.body.outlet.outlet_meta.status;
+					delete outlet.__v;
 					outlet.save(function (err) {
 						if(err) {
 							res.send(400, {

@@ -64,7 +64,8 @@ var OfferSchema = new Schema({
         },
         day_of_week: [{type: String, enum: ['weekdays', 'weekends', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']}]
     },
-    tags: [{type: String, default: '', trim: true}]
+    tags: [{type: String, default: '', trim: true}],
+    voucher_valid_for_days: {type: Number, default: 35} 
 });
 
 function slugify(title) {

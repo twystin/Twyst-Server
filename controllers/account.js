@@ -4,6 +4,7 @@ var fs = require('fs'),
 	mongoose = require('mongoose'),
 	Handlebars = require('handlebars');
 var Account = mongoose.model('Account');
+var WelcomeEmail = require('./welcome_email_sms');
 
 module.exports.login = function (req, res) {
     res.send(200, {
@@ -128,6 +129,7 @@ module.exports.update = function(req,res) {
 	var update_user = {};
 	update_user = _.extend(update_user, req.body);
 	delete update_user._id; // Disallow editing of username
+	delete update_user.__v;
 	Account.findOneAndUpdate(
 							{_id:req.params.user_id}, 
 							{$set: update_user }, 
@@ -211,6 +213,7 @@ module.exports.findUserByPhone = function (req, res) {
 
 module.exports.verifyEmail = function (req, res) {
 	var token = req.params.token,
+		isApp_Upgrade = req.params.isApp_Upgrade,
 		message = null;
 	if(!token) {
 		message = 'Sorry, The link is invalid.'
@@ -233,8 +236,37 @@ module.exports.verifyEmail = function (req, res) {
 							sendTemplate(message);
 						}
 						else {
-							message = 'Thanks, Your email address has been verified.';
-							sendTemplate(message);
+							if(isApp_Upgrade){
+								res.redirect('http://twyst.in/app');
+							}
+							else {
+								message = 'Thanks, Your email address has been verified.';
+								var email_user = {};
+								if(user.profile && user.profile.email) {
+									email_user = {
+										email:  user.profile.email,
+										type: 'WELCOME_MAILER',
+										data: {
+									        link: null
+									    }
+									}	
+								}
+								else if(user.email) {
+									email_user = {
+										email:  user.email,
+										type: 'WELCOME_MAILER',
+										data: {
+									        link: null
+									    }
+									}	
+								}
+								if(email_user.email) {
+									WelcomeEmail.sendWelcomeMail(email_user);	
+								}
+								
+								sendTemplate(message);	
+							}
+							
 						}
 					})
 				}

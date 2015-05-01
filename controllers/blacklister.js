@@ -56,6 +56,7 @@ function handleBlacklist(user, media, message_type, code) {
 function setUnsbs(unsbs, media, message_type, code) {
 	if(code === 'ALL') {
 		unsbs[media][message_type].all = true;
+		unsbs[media].all = true;
 		saveUnsbs(unsbs, function (err) {
 			// Do nothing for now
 		});
@@ -73,10 +74,11 @@ function setUnsbs(unsbs, media, message_type, code) {
 				}
 				else {
 					unsbs[media][message_type].outlets.push(outlet._id);
+					unsbs[media].outlets.push(outlet._id);
 					saveUnsbs(unsbs, function (err) {
 						if(!err) {
 							if(media === 'sms') {
-								var message = 'Thanks for your request. You will no longer receive reminders and updates from ' + outlet.basics.name + ' .';
+								var message = 'Thanks for your request. You will no longer receive reminders and updates from ' + outlet.basics.name + " "+ outlet.contact.location.locality_1 + ' .';
 								SmsSender.sendSms(unsbs.phone, message, 'UNSBS_MESSAGE');
 							}
 						}
@@ -88,6 +90,7 @@ function setUnsbs(unsbs, media, message_type, code) {
 }
 
 function saveUnsbs(unsbs, cb) {
+	delete unsbs.__v;
 	unsbs.save(function (err) {
 		cb(err);
 	})

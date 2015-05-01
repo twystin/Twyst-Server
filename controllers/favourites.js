@@ -66,6 +66,7 @@ module.exports.create = function(req,res) {
     })
 
 	function createNew () {
+		delete favouriteNew.__v;
 		favouriteNew.save(function(err) {
 			if (err) {
 				res.send(400, {	'status': 'error',

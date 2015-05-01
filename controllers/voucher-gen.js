@@ -35,6 +35,15 @@ module.exports.generate = function (object_param, cb) {
 }
 
 function getVoucherObject(object_param) {
+	var end_date;
+	if(object_param.offer.voucher_valid_for_days !== undefined) {
+		var burn_date = new Date();
+		burn_date.setDate(burn_date.getDate() + object_param.offer.voucher_valid_for_days);
+		end_date = burn_date;
+	}
+	else {
+		end_date = object_param.reward_table.program.validity.burn_end;
+	}
 	var voucher = {};
 	voucher = {
 		basics: {
@@ -52,8 +61,9 @@ function getVoucherObject(object_param) {
 		applicable_hours: getTimings(object_param.offer),
 		terms: object_param.offer.terms,
 		validity: {
-			start_date: object_param.reward_table.program.validity.burn_start,
-			end_date: object_param.reward_table.program.validity.burn_end
+			start_date: new Date(),
+			end_date: end_date,
+			number_of_days: object_param.offer.voucher_valid_for_days
 		},
 		issue_details: {
 			issued_to: object_param.user._id,

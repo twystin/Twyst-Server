@@ -128,6 +128,7 @@ function updateQrUsedDetails(qr) {
 		else {
 			if(qr !== null) {
 				qr.times_used += 1;
+				delete qr.__v;
 				qr.save();
 			}
 		}

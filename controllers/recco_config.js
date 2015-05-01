@@ -38,7 +38,8 @@ module.exports.update = function(req, res) {
 	updated_recco_config.OUTLET_POPULARITY_WEIGHT = updated_recco_config.OUTLET_POPULARITY_WEIGHT	|| RECCO_CONFIG.OUTLET_POPULARITY_WEIGHT;
 	updated_recco_config.RELEVANCE_MATCH_WEIGHT = updated_recco_config.RELEVANCE_MATCH_WEIGHT	|| RECCO_CONFIG.RELEVANCE_MATCH_WEIGHT;
 	updated_recco_config.DISTANCE_WEIGHT = updated_recco_config.DISTANCE_WEIGHT	|| RECCO_CONFIG.DISTANCE_WEIGHT;
-	delete updated_recco_config._id
+	delete updated_recco_config._id;
+	delete updated_recco_config.__v;
 	ReccoConfig.findOneAndUpdate(
 		{}, 
 		{$set: updated_recco_config }, 

@@ -3,6 +3,7 @@ var Account = mongoose.model('Account');
 var Mailer = require('../mailer/mailer'),
 	keygen = require("keygenerator");
 
+var WelcomeEmail = require('../../controllers/welcome_email_sms');
 module.exports.update = function (req, res) {
 	var user = req.user,
 		key = req.body.key,
@@ -41,7 +42,7 @@ module.exports.update = function (req, res) {
 					user.social_graph = user.social_graph || {};
 					user.social_graph[key] = data;
 					var secret_code = null;
-					if(key === 'email' 
+					if(key === 'email'
 						&& user.social_graph
 						&& user.social_graph.email
 						&& user.social_graph['email'].email) {
@@ -49,7 +50,32 @@ module.exports.update = function (req, res) {
 						user.validated = user.validated || {};
 						user.validated.email_validated = user.validated.email_validated || {};
 						user.validated.email_validated.token = secret_code;
+						user.profile = {};
+						user.profile.email = user.social_graph[key].email
 					}
+					else if(user.social_graph.facebook && user.social_graph.facebook.email) {
+						var email_user = {};
+						email_user = {
+							email:  user.social_graph.facebook.email,
+							type: 'WELCOME_MAILER',
+							data: {
+						        link: null
+						    }
+						}
+						user.profile = {};
+						user.profile.first_name = user.social_graph.facebook.name.split(' ')[0];
+					    if (user.social_graph.facebook.name.split(' ')[2]) {
+				        	user.profile.middle_name = user.social_graph.facebook.name.split(' ')[1] || '';
+				        	user.profile.last_name = user.social_graph.facebook.name.split(' ')[2] || '';
+				      	} 
+				      	else {
+				        	user.profile.last_name = user.social_graph.facebook.name.split(' ')[1] || '';
+				      	}
+      					user.profile.email = user.social_graph.facebook.email;
+						user.validated.email_validated.is_welcome_mailer_sent = true;
+						WelcomeEmail.sendWelcomeMail(email_user);
+					}
+					delete user.__v;
 					user.save(function (err) {
 						if(err) {
 							res.send(400, {
@@ -85,10 +111,11 @@ function initEmail(user, email, secret_code) {
 			data: {
 				link: null
 			},
-			type: 'WELCOME_APP'
+			type: 'WELCOME_APP',
+			phone: user.phone
 		};
 
-		email_object.data.link = 'http://twyst.in/verify_email/' + secret_code;
+		email_object.data.link = 'http://twyst.in/verify_email/' +false+'/'+ secret_code;
 		Mailer.sendEmail(email_object);
 	}
 }

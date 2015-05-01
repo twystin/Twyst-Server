@@ -6,26 +6,38 @@ var mongoose = require('mongoose');
 var SmsSentLog = mongoose.model('SmsSentLog');
 var Notif = mongoose.model('Notif');
 var Account = mongoose.model('Account');
+var UnsubCheck = mongoose.model('Unsbs');
+var outletHandles = require('../outlethandles');
+var _ = require('underscore');
 
-module.exports.sendSms = function (phone, push_message, type, from) {
-	push_message = push_message.replace(/(\n)+/g, '');	
+module.exports.sendSms = function (phone, push_message, type, from, outlet) {
+	push_message = push_message.replace(/(\n)+/g, '');
 	var message = push_message.replace(/&/g,'%26');
 	message = message.replace(/% /g,'%25 ');
 
 	console.log(message);
 	console.log("------------------------");
-	if(type === 'OTP_MESSAGE' 
-		|| type === 'UNSBS_MESSAGE' 
-		|| type === 'PROMO_MESSAGE') {
+	if(type === 'OTP_MESSAGE'
+		|| type === 'UNSBS_MESSAGE') {
 		send();
 	}
 	else {
 		isBlackListedUser(phone, function (err, isBlackListed) {
 			if(err || isBlackListed) {
-				console.log("Blacklisted user here...issse na hoga...Twyst tere liye nahi hai babua...");
+				console.log("Blacklisted user.");
 			}
 			else {
-				checkType();
+				isUnsubscribedUser(phone, outlet, function(isUnsubscribed) {
+					if(isUnsubscribed) {
+						console.log('You have unsubscribed for this outlet');
+						return 'User is unsbuscribed for message';           
+	       				
+					}
+					else {
+						checkType();
+					}
+				})
+				
 			}
 		});
 	}
@@ -37,6 +49,29 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 		}, function (err, user) {
 			cb(err, user ? true : false);
 		})
+	}
+
+	function isUnsubscribedUser (phone, outlet,  callback) {
+		UnsubCheck.find({phone: phone}, function(err, unsubUser) {
+			if(err) console.log(err);
+			if(unsubUser[0]) {				
+				var found = _.find(unsubUser[0].sms.outlets,  function(foundOutlet){ 
+					return outlet.toString() === foundOutlet.toString();	
+				});
+
+				if(unsubUser[0].sms.all || found) {
+					callback(true);
+				}
+				else {
+					callback(false);
+				}	
+			}
+			else {
+				callback(false);	
+			}
+			
+		})
+
 	}
 
 	function checkType() {
@@ -57,6 +92,7 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 			var schedule_time = getScheduleTime(time);
 			schedule(phone, message, schedule_time);
 		}
+		
 	}
 
 	function getScheduleTime(time) {
@@ -78,8 +114,9 @@ module.exports.sendSms = function (phone, push_message, type, from) {
 
 	function isAccurateTime (time) {
 		var hours = new Date(time).getHours();
+		console.log(hours + "  " +  new Date(time))
 		if(hours > 16 || hours < 4) {
-			return false;
+			return true;
 		}
 		return true;
 	}
@@ -136,7 +173,7 @@ function saveSentSms (phone, message, status) {
 	sms_log.phone = phone;
 	sms_log.message = message;
 	sms_log.status = status;
-	
+
 	var sms_log = new SmsSentLog(sms_log);
 
 	sms_log.save(function (err) {
