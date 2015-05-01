@@ -41,9 +41,9 @@ module.exports = function (app) {
         return false;
     };
 
-    (function process_deal_req_from_user() {
+    (function deal_routes() {
         var DealCtrl = require('../controllers/deal.js');
-        app.get('/api/v1/process_deal/:deal', DealCtrl.processDeal);
+        app.post('/api/v1/use_deal', DealCtrl.useDeal);
     })();
 
     (function job_status_route () {

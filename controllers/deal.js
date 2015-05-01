@@ -4,16 +4,16 @@ var Voucher = mongoose.model('Voucher');
 var	Deal = mongoose.model('Deal');
 var Account = mongoose.model('Account');
 var keygen = require("keygenerator");
+var _ = require('underscore');
 
-
-module.exports.processDeal = function(req, res) {
-	var deal = req.params.deal;
+module.exports.useDeal = function(req, res) {
+	var deal = req.body;
 	var user = req.user;
-	console.log('deal id ' + req.params.deal)
-	Deal.find({'_id': deal},  function(err, gotDeal) {
+	console.log('deal id ' + deal)
+	Deal.find({'_id': deal._id},  function(err, gotDeal) {
 		if(err) console.log('error in getting deal ' + err);
 		console.log('gotDeal' +gotDeal);
-		
+
 		saveVoucher(gotDeal, user, function(err, callback) {
 			if(err) {
 				console.log(err)
@@ -40,7 +40,7 @@ module.exports.processDeal = function(req, res) {
 function saveVoucher(deal, user, cb) {
 	var voucher = getVoucherObject(deal, user);
 	voucher = new Voucher(voucher);
-	
+
 	voucher.save(function (err) {
 		if(err) {
 			cb(err, voucher);
@@ -48,9 +48,9 @@ function saveVoucher(deal, user, cb) {
 		else {
 			cb(null, voucher);
 		}
-		
+
 	})
-	 
+
 
 }
 
@@ -76,13 +76,9 @@ function getVoucherObject(deal, user) {
 		},
 		issue_details: {
 			issue_date: new Date(),
-			issued_at: deal.outlets.map(function (o) {
-				return o._id;
-			}),
-			issued_to: user._id
+			issued_at: deal.outlets,
+			issued_to: user && user._id || null
 		}
 	}
 	return voucher;
 }
-
-
