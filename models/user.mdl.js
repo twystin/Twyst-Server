@@ -9,6 +9,8 @@ var User = new Schema({
   company_name: String,
   job_title: String,
   website: String,
+  facebook_url: String,
+  twitter_url: String,
   phone: String,
   first_name: String,
   middle_name: String,
