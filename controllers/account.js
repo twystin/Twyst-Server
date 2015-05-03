@@ -6,13 +6,47 @@ var fs = require('fs'),
 var Account = mongoose.model('Account');
 var WelcomeEmail = require('./welcome_email_sms');
 
-module.exports.login = function (req, res) {
-    res.send(200, {
-    	'status': 'success',
+var keygen = require('keygenerator');
+var mongoose = require('mongoose');
+
+require('../models/authtoken.mdl.js');
+var AuthToken = mongoose.model('AuthToken');
+
+module.exports.login = function(req, res) {
+  var token = keygen.session_id();
+  var auth_token = new AuthToken({
+    token: token,
+    expiry: new Date(),
+    account: req.user._id,
+    user: req.user.user
+  });
+
+  auth_token.save(function(err) {
+    if (!err) {
+      res.send(200, {
+        'status': 'success',
         'message': 'Login successful',
-        'info': req.user
-    });
+        'info': req.user,
+				'token': token
+      });
+    } else {
+      res.send(400, {
+        'status': 'error',
+        'message': 'couldnt generate auth token'
+      });
+    }
+  });
 };
+
+
+
+// module.exports.login = function (req, res) {
+//     res.send(200, {
+//     	'status': 'success',
+//         'message': 'Login successful',
+//         'info': req.user
+//     });
+// };
 
 module.exports.register = function(req, res) {
 	var user = req.body,
@@ -22,7 +56,7 @@ module.exports.register = function(req, res) {
             res.send(400, {
             	'status' : 'error',
                 'message' : 'Error creating account',
-                'info':  err 
+                'info':  err
             });
         } else {
             res.send(200, {
@@ -86,7 +120,7 @@ module.exports.query = function(req,res) {
 						'info': JSON.stringify(users)
 			});
 		}
-	}); 
+	});
 }
 
 module.exports.read = function(req,res) {
@@ -107,8 +141,8 @@ module.exports.read = function(req,res) {
 
 module.exports.validateByConsole = function(req,res) {
 	Account.findOneAndUpdate(
-							{username:req.params.user_id}, 
-							{$set: {"role": req.body.role, "validated.role_validated": req.body.validated} }, 
+							{username:req.params.user_id},
+							{$set: {"role": req.body.role, "validated.role_validated": req.body.validated} },
 							{upsert:true},
 							function(err,user) {
 								if (err) {
@@ -122,7 +156,7 @@ module.exports.validateByConsole = function(req,res) {
 												'info': JSON.stringify(user)
 									});
 								}
-							});	
+							});
 }
 
 module.exports.update = function(req,res) {
@@ -131,8 +165,8 @@ module.exports.update = function(req,res) {
 	delete update_user._id; // Disallow editing of username
 	delete update_user.__v;
 	Account.findOneAndUpdate(
-							{_id:req.params.user_id}, 
-							{$set: update_user }, 
+							{_id:req.params.user_id},
+							{$set: update_user },
 							{upsert:true},
 							function(err,user) {
 								if (err) {
@@ -146,7 +180,7 @@ module.exports.update = function(req,res) {
 												'info': JSON.stringify(user)
 									});
 								}
-							});	
+							});
 }
 
 module.exports.delete = function(req,res) {
@@ -162,7 +196,7 @@ module.exports.delete = function(req,res) {
 						'info': ''
 			});
 		}
-	});	
+	});
 }
 
 module.exports.findUserByPhone = function (req, res) {
@@ -249,7 +283,7 @@ module.exports.verifyEmail = function (req, res) {
 										data: {
 									        link: null
 									    }
-									}	
+									}
 								}
 								else if(user.email) {
 									email_user = {
@@ -258,15 +292,15 @@ module.exports.verifyEmail = function (req, res) {
 										data: {
 									        link: null
 									    }
-									}	
+									}
 								}
 								if(email_user.email) {
-									WelcomeEmail.sendWelcomeMail(email_user);	
+									WelcomeEmail.sendWelcomeMail(email_user);
 								}
-								
-								sendTemplate(message);	
+
+								sendTemplate(message);
 							}
-							
+
 						}
 					})
 				}
@@ -279,8 +313,8 @@ module.exports.verifyEmail = function (req, res) {
 	}
 
 	function sendTemplate(message) {
-		fs.readFile("./templates/email_verify.handlebars", 
-		'utf8', 
+		fs.readFile("./templates/email_verify.handlebars",
+		'utf8',
 		function (err, data) {
 			var template_data = {
 				message: null

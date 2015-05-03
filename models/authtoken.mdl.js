@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 require('./account');
-require('./user');
+require('./user.mdl');
 var Account =  mongoose.model('Account');
 var User = mongoose.model('User');
 
