@@ -29,7 +29,8 @@ module.exports = function(app) {
 
     app.use(compression());
     app.use(morgan('dev'));
-    app.use(bodyParser());
+    app.use(bodyParser.urlencoded({extended:true}));
+    app.use(bodyParser.json());
     app.use(multer());
     app.use(cookieParser('Twyst_2014_Sessions'));
     app.use(session({
@@ -37,7 +38,9 @@ module.exports = function(app) {
         cookie: {
             maxAge: 31536000000
         },
-        store: sessionStore
+        store: sessionStore,
+        resave: true,
+        saveUninitialized: true
     }));
     app.use(methodOverride());
     app.use(passport.initialize());

@@ -5,12 +5,6 @@ var settings = require('./config/settings');
         app = express();
     require('./config/config_app')(app);
     require('./config/config_models')();
-    var restify = require('express-restify-mongoose');
-    var Deal = require('./models/deal');
-    var router = express.Router();
-    restify.serve(router, Deal);
-    app.use(router);
-
     require('./config/config_routes')(app);
 
     // START THE SERVER!
