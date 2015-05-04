@@ -33,6 +33,7 @@ module.exports.redeemPanel = function (req, res) {
 
 		getVoucher(q, function (err, voucher) {
 			if(err) {
+				console.log(err)
 				res.send(400, { 
 					'status': 'error',
 		            'message': 'Error getting voucher',
@@ -60,6 +61,9 @@ module.exports.redeemPanel = function (req, res) {
 		}
 		else if (!voucher.basics.type || voucher.basics.type === 'CHECKIN') {
 			redeemCheckinVoucher(voucher);
+		}
+		else if(!voucher.basics.type || voucher.basics.type === 'DEAL'){
+			redeemWinbackVoucher(voucher);
 		}
 		else {
 			res.send(400, { 
