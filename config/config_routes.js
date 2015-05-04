@@ -41,6 +41,26 @@ module.exports = function (app) {
         return false;
     };
 
+    (function new_app_routes() {
+      var AuthCtrl = require('../controllers/v4/auth.ctrl');
+
+      var CommonUtilities = require('../common/utilities');
+      var OtpCtrl = require('../controllers/otpCtrl.js');
+
+      app.post('/api/v4/auth/login', function (req, res, next) {
+          var onlyNumbers = /^[0-9+]*$/;
+          if(onlyNumbers.test(req.body.username) && onlyNumbers.test(req.body.password)) {
+              req.body.username = CommonUtilities.tenDigitPhone(req.body.username);
+              req.body.password = CommonUtilities.tenDigitPhone(req.body.password);
+          }
+          next();
+      }, passport.authenticate('local'), AuthCtrl.login);
+
+      app.get('/api/v4/otp/:phone', AuthCtrl.getOTP);
+      app.post('/api/v4/otp', AuthCtrl.validateOtp);
+
+    })();
+
     (function deal_routes() {
         var DealCtrl = require('../controllers/deal.js');
         app.post('/api/v1/use_deal', DealCtrl.useDeal);

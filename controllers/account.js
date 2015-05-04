@@ -6,47 +6,13 @@ var fs = require('fs'),
 var Account = mongoose.model('Account');
 var WelcomeEmail = require('./welcome_email_sms');
 
-var keygen = require('keygenerator');
-var mongoose = require('mongoose');
-
-require('../models/authtoken.mdl.js');
-var AuthToken = mongoose.model('AuthToken');
-
-module.exports.login = function(req, res) {
-  var token = keygen.session_id();
-  var auth_token = new AuthToken({
-    token: token,
-    expiry: new Date(),
-    account: req.user._id,
-    user: req.user.user
-  });
-
-  auth_token.save(function(err) {
-    if (!err) {
-      res.send(200, {
-        'status': 'success',
+module.exports.login = function (req, res) {
+    res.send(200, {
+    	'status': 'success',
         'message': 'Login successful',
-        'info': req.user,
-				'token': token
-      });
-    } else {
-      res.send(400, {
-        'status': 'error',
-        'message': 'couldnt generate auth token'
-      });
-    }
-  });
+        'info': req.user
+    });
 };
-
-
-
-// module.exports.login = function (req, res) {
-//     res.send(200, {
-//     	'status': 'success',
-//         'message': 'Login successful',
-//         'info': req.user
-//     });
-// };
 
 module.exports.register = function(req, res) {
 	var user = req.body,

@@ -47,7 +47,7 @@ module.exports.isClosed = function (business_hours) {
         else {
             return false;
         }
-        
+
         if(t && t.close) {
             close_min = t.close.hr * 60 + t.close.min;
         }
@@ -89,7 +89,7 @@ module.exports.opensAt = function (business_hours) {
         }
         return checkNextDays();
     }
-    
+
     function checkNextDays() {
         for(var j = 1; j < 7; j++) {
             time = new Date(time.getTime() + 86400000);
@@ -97,7 +97,7 @@ module.exports.opensAt = function (business_hours) {
             var day = days[time.getDay()];
             var today = business_hours[day];
             if(today.closed || !today.timings || !today.timings.length) {
-                
+
             }
             else {
 
@@ -126,6 +126,14 @@ function formatTime(hours, minutes) {
     return strTime;
 }
 
+module.exports.isAPhone = function(phone) {
+  if (phone.match(/\d+/) && phone.length === 10) {
+    return true;
+  }
+
+  return false;
+};
+
 module.exports.tenDigitPhone = function (phone) {
     if(!phone) {
         return '';
@@ -150,13 +158,13 @@ module.exports.calculateDistance = function(a, b) {
     }
 
     if (!p1 || !p2) {
-        return 100; 
+        return 100;
         //return null;
     };
 
     var dLat = (p2.latitude-p1.latitude).toRad();
     var dLon = (p2.longitude-p1.longitude).toRad();
-    
+
     var lat1 = (p1.latitude * 1).toRad();
     var lat2 = (p2.latitude * 1).toRad();
 
@@ -164,7 +172,7 @@ module.exports.calculateDistance = function(a, b) {
         Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     var d = R * c;
-    
+
     return d.toFixed(1)*1;
 }
 
@@ -239,7 +247,7 @@ module.exports.setCurrentTime = function (oldDate) {
 module.exports.getOutletAttributes = function (outlet) {
 
     var attributes = [];
-    
+
     if(outlet.attributes)  {
         _.each( outlet.attributes, function( val, key ) {
             if(key === "cost_for_two" || key === "timings" || key === "toObject") {
