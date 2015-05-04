@@ -12,10 +12,12 @@ var SMSSender = require('../../common/smsSender');
 
 // Require the models
 require('../../models/authtoken.mdl.js');
+require('../../models/user.mdl.js');
+
 var AuthToken = mongoose.model('AuthToken');
 var Account = mongoose.model('Account');
 var OTP = mongoose.model('TempOTP');
-
+var User = mongoose.model('User');
 // Require the helpers
 var Helper = require('../../common/utilities');
 var DateHelper = require('../../common/date_helpers.js');
@@ -261,12 +263,12 @@ module.exports.logged_in = function(token, cb) {
         cb(null);
       } else {
         if (token) {
-          Account.findOne({_id: token.account}, function(err, account) {
+          User.findOne({_id: token.account}, function(err, user) {
             if (err) {
               cb(null);
             } else {
-              if (account) {
-                cb(account);
+              if (user) {
+                cb(user);
               } else {
                 cb(null);
               }

@@ -5,7 +5,6 @@ var mongoose = require('mongoose'),
     business_hours = require("../common/operatingHours")
 
 var OutletSchema = new Schema({
-    username: {type: String},
     checkin_message_append: {type: String},
     publicUrl: [{type: String}],
     shortUrl: [{type: String}],
@@ -71,6 +70,12 @@ var OutletSchema = new Schema({
     },
     business_hours: business_hours.hours,
     attributes: {
+        delivery: {
+          delivery_area: String,
+          delivery_estimated_time: String,
+          delivery_timings: business_hours.hours,
+          delivery_conditions: String
+        },
         home_delivery: {type: Boolean},
         dine_in: {type: Boolean},
         veg: {type: Boolean},
@@ -131,7 +136,70 @@ var OutletSchema = new Schema({
             start: {type: Number, default: 23},
             end: {type: Number, default: 9}
         }
-    }
+    },
+    analytics: {
+      event_analytics: [{
+          event_name: {type: String},
+          event_count: {type: Number}
+      }],
+      coupon_analytics: {
+        coupons_generated: {type: Number},
+        coupons_redeemed: {type: Number},
+        coupons_active: {type: Number},
+        coupons_expired: {type: Number}
+      }
+    },
+    rules: [{
+      status: {type: String},
+      program: {type: String},
+      event_type: {type: String},
+      event_count: {type: String},
+      reward: {
+        title: {type: String},
+        terms: {type: String},
+        detail: {type: String},
+        expiry: {type: String},
+        reward_meta: {} // the structured rewards
+      },
+      message: {
+        sms: {type: String},
+        email: {type: String},
+        push: {type: String}
+      },
+      points: {type: Number}
+    }],
+    jobs: [
+      {
+        job_name: {type: String},
+        job_parameters: {}, // depends on the job, leaving it open
+        reward: {
+          title: {type: String},
+          terms: {type: String},
+          detail: {type: String},
+          expiry: {type: String},
+          reward_meta: {} // the structured rewards
+        }
+      }
+    ],
+    menu: [{
+        status: {type: String},
+        name: {type: String},
+        last_updated: {type: Date},
+        menu_description: {type: String},
+        sections: [{
+          section_name: {type: String},
+          section_description: {type: String},
+          items: [
+            {
+              item_name: {type: String},
+              item_description: {type: String},
+              item_photo: {type: String},
+              item_tags: [{type: String}],
+              item_cost: {type: String}
+            }
+          ]
+        }]
+    }]
 });
 
 OutletSchema.pre('validate', function (next) {

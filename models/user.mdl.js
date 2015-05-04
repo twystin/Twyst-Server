@@ -108,6 +108,7 @@ var User = new Schema({
       outlets: [{type: Schema.ObjectId, ref:'Outlet'}],
       title: String,
       detail: String,
+      terms: String,
       expiry: Date,
       used_details: {
         used_time: Date,
