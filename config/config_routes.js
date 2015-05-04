@@ -1,3 +1,4 @@
+/*jslint node: true */
 'use strict';
 
 var mongoose = require('mongoose');
@@ -39,14 +40,18 @@ module.exports = function (app) {
             return false;
         }
         return false;
-    };
+    }
 
     (function new_app_routes() {
       var AuthCtrl = require('../controllers/v4/auth.ctrl');
-
-      var CommonUtilities = require('../common/utilities');
+      var ReccoCtrl = require('../controllers/v4/recco.ctrl');
+      var RewardCtrl = require('../controllers/user/rewards');
+      var DetailCtrl = require('../controllers/user/detail');
       var OtpCtrl = require('../controllers/otpCtrl.js');
 
+      var CommonUtilities = require('../common/utilities');
+
+      // Login route
       app.post('/api/v4/auth/login', function (req, res, next) {
           var onlyNumbers = /^[0-9+]*$/;
           if(onlyNumbers.test(req.body.username) && onlyNumbers.test(req.body.password)) {
@@ -56,8 +61,15 @@ module.exports = function (app) {
           next();
       }, passport.authenticate('local'), AuthCtrl.login);
 
+      // OTP routes
       app.get('/api/v4/otp/:phone', AuthCtrl.getOTP);
       app.post('/api/v4/otp', AuthCtrl.validateOtp);
+
+      // Data routes - GET
+      app.get('/api/v4/recco', ReccoCtrl.getRecco);
+      app.get('/api/v4/outlet', DetailCtrl.getDetails);
+      app.get('/api/v4/coupon', DetailCtrl.getDetails);
+
 
     })();
 

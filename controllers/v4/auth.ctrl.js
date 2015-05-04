@@ -252,3 +252,32 @@ module.exports.validateOtp = function(req, res) {
       });
   }
 };
+
+module.exports.logged_in = function(token, cb) {
+  if (token) {
+    AuthToken.findOne({token:token}, function(err, token) {
+      if (err) {
+        console.log(err);
+        cb(null);
+      } else {
+        if (token) {
+          Account.findOne({_id: token.account}, function(err, account) {
+            if (err) {
+              cb(null);
+            } else {
+              if (account) {
+                cb(account);
+              } else {
+                cb(null);
+              }
+            }
+          });
+        } else {
+          cb(null);
+        }
+      }
+    });
+  } else {
+    cb(null);
+  }
+};
