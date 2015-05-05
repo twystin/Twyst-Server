@@ -1,7 +1,7 @@
 'use strict';
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
-require('./user');
+require('./user.mdl');
 require('./outlet');
 var Outlet = mongoose.model('Outlet');
 var User = mongoose.model('User');

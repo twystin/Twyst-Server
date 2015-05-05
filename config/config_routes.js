@@ -48,6 +48,7 @@ module.exports = function (app) {
       var RewardCtrl = require('../controllers/user/rewards');
       var DetailCtrl = require('../controllers/user/detail');
       var OtpCtrl = require('../controllers/otpCtrl.js');
+      var EventCtrl = require('../controllers/v4/event.ctrl');
 
       var CommonUtilities = require('../common/utilities');
 
@@ -70,6 +71,8 @@ module.exports = function (app) {
       app.get('/api/v4/outlet', DetailCtrl.getDetails);
       app.get('/api/v4/coupon', DetailCtrl.getDetails);
 
+      // Data routes - POST
+      app.post('/api/v4/event', EventCtrl.registerEvent);
 
     })();
 
