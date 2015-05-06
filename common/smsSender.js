@@ -56,7 +56,13 @@ module.exports.sendSms = function (phone, push_message, type, from, outlet) {
 			if(err) console.log(err);
 			if(unsubUser[0]) {				
 				var found = _.find(unsubUser[0].sms.outlets,  function(foundOutlet){ 
-					return outlet.toString() === foundOutlet.toString();	
+					if(outlet && foundOutlet) {
+						return outlet.toString() === foundOutlet.toString();		
+					}
+					else {
+						return false;
+					}
+					
 				});
 
 				if(unsubUser[0].sms.all || found) {

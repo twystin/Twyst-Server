@@ -5,7 +5,9 @@ var mongoose = require('mongoose'),
 var Outlet = mongoose.model('Outlet'),
 	Reward = mongoose.model('Reward'),
 	Program = mongoose.model('Program'),
-	SpecialProgram = mongoose.model('SpecialProgram');
+	SpecialProgram = mongoose.model('SpecialProgram'),
+	Voucher = mongoose.model('Voucher')
+	_ = require('underscore');
 
 module.exports.changeOutletStatus = function (req, res) {
 	if(!req.body.outlet) {
@@ -49,11 +51,29 @@ module.exports.changeOutletStatus = function (req, res) {
 						}
 						else {
 							CacheCtrl.clear();
-							res.send(200, {
-						    	'status' : 'success',
-				                'message' : 'successfully updated status.',
-				                'info': ''
-				            });
+							if(outlet.outlet_meta.status === 'archived') {
+								Voucher.find({'issue_details.issued_at': {$in: [outlet._id]}}, function(err, vouchers) {
+									if(err) console.log(err);
+									var voucher;
+									//console.log('getting vouchers for outlet ' + vouchers);
+									_.map(vouchers, function(voucher) {
+										console.log('set status for voucher ' + voucher);
+										if(voucher.basics.status === 'expired') {
+											voucher.basics.status = 'active'	
+										}
+										voucher.save(function(err) {
+											if(err) console.log(err);
+										})
+									})
+									
+									res.send(200, {
+								    	'status' : 'success',
+						                'message' : 'successfully updated status.',
+						                'info': ''
+						            });
+									
+								})	
+							}
 						}
 					});
 				}

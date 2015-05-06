@@ -48,6 +48,13 @@ module.exports.redeemPanel = function (req, res) {
 			            'info': 'Invalid voucher code'
 			        });
 				}
+				else if(voucher && voucher.basics && voucher.basics.status === 'expired'){
+					res.send(200, { 
+						'status': 'success',
+			            'message': 'Voucher Expired',
+			            'info': 'Voucher Expired'
+			        });
+				}
 				else {
 					processRedeem(voucher);
 				}

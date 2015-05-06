@@ -6,6 +6,7 @@ var image_sizes = {
 	'logo': 0.2,
 	'logo_gray': 0.2,
 	'background': 1.0,
+	'discover': 0.1,
 	'others': 5.0
 };
 
@@ -93,7 +94,7 @@ module.exports.upload = function(req, res) {
 			else {
 				var upload_object = getUploadObject(
 					img_obj, 
-					img_obj.folder_name + '/' + img_obj.image_class,
+					img_obj.folder_name	 + '/' + img_obj.image_class,
 					image_data
 				);
 			  	Images.uploader(upload_object, function (err, data) {
