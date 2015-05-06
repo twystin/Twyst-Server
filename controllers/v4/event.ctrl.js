@@ -16,7 +16,10 @@ module.exports.registerEvent = function(req,res) {
 	var event = new Event(created_event);
 
   // Find the deals that match the event & outlet or the Twyst deals if no event.
-  Deal.find({'rule.event_type':event.event_type}, function(err, deals) {
+  Deal
+  .find({'rule.event_type':event.event_type})
+  .elemMatch('outlets', {$eq: event.event_outlet})
+  .exec(function(err, deals) {
     if (err) {
       // Error getting info from teh server
     } else {
@@ -28,7 +31,6 @@ module.exports.registerEvent = function(req,res) {
         // No deals were found
       }
     }
-
   });
 
 	event.save(function(err) {
