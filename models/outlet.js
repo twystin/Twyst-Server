@@ -149,25 +149,6 @@ var OutletSchema = new Schema({
         coupons_expired: {type: Number}
       }
     },
-    rules: [{
-      status: {type: String},
-      program: {type: String},
-      event_type: {type: String},
-      event_count: {type: String},
-      reward: {
-        title: {type: String},
-        terms: {type: String},
-        detail: {type: String},
-        expiry: {type: String},
-        reward_meta: {} // the structured rewards
-      },
-      message: {
-        sms: {type: String},
-        email: {type: String},
-        push: {type: String}
-      },
-      points: {type: Number}
-    }],
     jobs: [
       {
         job_name: {type: String},
