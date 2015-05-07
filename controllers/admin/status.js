@@ -57,9 +57,8 @@ module.exports.changeOutletStatus = function (req, res) {
 									var voucher;
 									//console.log('getting vouchers for outlet ' + vouchers);
 									_.map(vouchers, function(voucher) {
-										console.log('set status for voucher ' + voucher);
-										if(voucher.basics.status === 'expired') {
-											voucher.basics.status = 'active'	
+										if(voucher.basics.status === 'active') {
+											voucher.basics.status = 'expired'	
 										}
 										voucher.save(function(err) {
 											if(err) console.log(err);

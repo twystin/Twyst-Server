@@ -145,7 +145,6 @@ function checkinMessageSender(_obj, outlet) {
 	var _message = null;
 	if(isVoucherInApp(outlet)) {
 		if(_obj.count === 0) {
-			console.log(new Date() +"   okokokokok   " + _obj.created_date)
 	        if(_obj.voucher && (new Date()).getDate() <= (_obj.created_date).getDate()) {
 	        	_message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +", reward unlocked! Your voucher for " + _obj.voucher.basics.description.replace(/Get/g, "")  +' will be available on Twyst AFTER 3 hrs, for use on your NEXT visit/order. View voucher details and TnC, or redeem, only on the Twyst app, at http://twyst.in/app. To unsubscribe, sms STOP ' +outlet.shortUrl[0]+ ' to 9266801954'
 	        }
