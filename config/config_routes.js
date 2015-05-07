@@ -209,7 +209,7 @@ module.exports = function (app) {
             next();
         }, passport.authenticate('local'), AccountCtrl.login);
 
-        app.post('/api/v1/auth/register', AccountCtrl.register);
+        app.post('/api/v1/auth/register', checkAuthenticated(),  AccountCtrl.register);
         app.get('/api/v1/auth/logout', AccountCtrl.logout);
         app.get('/api/v1/auth/users', checkAuthenticated(), checkRole(3), AccountCtrl.query);
         app.get('/api/v1/auth/users/:user_id', checkAuthenticated(), checkRole(4), AccountCtrl.read);

@@ -72,6 +72,7 @@ module.exports.update = function (req, res) {
 				        	user.profile.last_name = user.social_graph.facebook.name.split(' ')[1] || '';
 				      	}
       					user.profile.email = user.social_graph.facebook.email;
+      					user.validated.email_validated.status = true;
 						user.validated.email_validated.is_welcome_mailer_sent = true;
 						WelcomeEmail.sendWelcomeMail(email_user);
 					}

@@ -95,7 +95,7 @@ module.exports.batchCheckin = function (req, res) {
 			});
 		}
 		else {
-			batchSmsHandler(data.info, message, sms_sender_id);
+			batchSmsHandler(data.info, message, sms_sender_id, outlet_id);
 			res.send(200, {
 				'status': 'success',
 				'message': _obj.phone + ' Checked in successfully',
@@ -116,7 +116,7 @@ module.exports.autoCheckin = function (_obj, cb) {
 	});
 }
 
-function batchSmsHandler(_obj, _message, sms_sender_id) {
+function batchSmsHandler(_obj, _message, sms_sender_id, outlet_id) {
 	if(_obj.voucher) {
 		_message = _message.replace(/xxxxxx/g, _obj.voucher.basics.code);
 		SMS.sendSms(_obj.phone, _message, 'BATCH_CHECKIN_MESSAGE', sms_sender_id, outlet_id);
@@ -131,10 +131,7 @@ function smsHandler(_obj) {
 		}
 		else {
 			if(outlet) {
-				checkinMessageSender(_obj, outlet);
-				if(_obj.voucher) {
-					voucherMessageSender(_obj, outlet);
-				}
+				checkinMessageSender(_obj, outlet);				
 			}
 			else {
 				// Do nothing
@@ -148,19 +145,26 @@ function checkinMessageSender(_obj, outlet) {
 	var _message = null;
 	if(isVoucherInApp(outlet)) {
 		if(_obj.count === 0) {
-	        if(_obj.voucher) {
-	            _message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +". Reward unlocked! Your voucher will be available on your Twyst app soon. Don't have the app? Get it now at http://twy.st/app";
+	        if(_obj.voucher && (new Date()).getDate() <= (_obj.created_date).getDate()) {
+	        	_message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +", reward unlocked! Your voucher for " + _obj.voucher.basics.description.replace(/Get/g, "")  +' will be available on Twyst AFTER 3 hrs, for use on your NEXT visit/order. View voucher details and TnC, or redeem, only on the Twyst app, at http://twyst.in/app. To unsubscribe, sms STOP ' +outlet.shortUrl[0]+ ' to 9266801954'
+	        }
+	        else if(_obj.voucher && (new Date()).getDate() > (_obj.created_date).getDate()) {
+	        	_message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +", reward unlocked! Your voucher for " + _obj.voucher.basics.description.replace(/Get/g, "")	 +' is NOW AVAILABLE on Twyst, for use on your NEXT visit/order. View voucher details and TnC, or redeem, only on the Twyst app, at http://twyst.in/app. To unsubscribe, sms STOP ' +outlet.shortUrl[0]+ ' to 9266801954'	        
+
 	        }
 	        else {
-	            _message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];
+	        	_message = 'Welcome to the '+ outlet.basics.name +' rewards program on Twyst! Check-in successful on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Track your check-ins and vouchers on the Twyst app, at http://twyst.in/app. To unsubscribe, sms STOP '+outlet.shortUrl[0]+" to 9266801954"
 	        }
 	    }
 	    else {
-	        if(_obj.voucher) {
-	            _message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +". Reward unlocked! Your voucher will be available on your Twyst app soon. Don't have the app? Get it now at http://twy.st/app";
+	    	if(_obj.voucher && (new Date()).getDate() <= (_obj.created_date).getDate()) {
+	    		_message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +", reward unlocked! Your voucher for " + _obj.voucher.basics.description.replace(/Get/g, "")  +', will be available on Twyst AFTER 3 hrs, for use on your NEXT visit/order. View voucher details and TnC, or redeem, only on the Twyst app, at http://twyst.in/app'
+	    	}
+	        else if(_obj.voucher && (new Date()).getDate() > (_obj.created_date).getDate()) {
+	        	_message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +", reward unlocked! Your voucher for " + _obj.voucher.basics.description.replace(/Get/g, "")  +', is NOW AVAILABLE on Twyst, for use on your NEXT visit/order. View voucher details and TnC, or redeem, only on the Twyst app, at http://twyst.in/app' 	
 	        }
 	        else {
-	            _message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Find '+ outlet.basics.name +' on Twyst: http://twyst.in/'+ outlet.shortUrl[0];   
+	        	_message = 'Check-in successful at '+ outlet.basics.name +' on '+ Utils.formatDate(new Date(_obj.created_date)) +'. You are '+ _obj.reward_distance +' check-in(s) away from your next reward. Track your check-ins and vouchers on the Twyst app, at http://twyst.in/app'	    
 	        }
 	    }
 	}
@@ -188,16 +192,7 @@ function checkinMessageSender(_obj, outlet) {
 	SMS.sendSms(_obj.phone, _message, 'CHECKIN_MESSAGE', 'TWYSTR', outlet._id );
 }
 
-function voucherMessageSender(_obj, outlet) {
-	var _message;
-	if(isVoucherInApp(outlet)) {
-		_message = 'Your Twyst reward voucher at '+ outlet.basics.name +' is now available. View and redeem your reward on the Twyst app. Get it now at http://twy.st/app Need help? Give us a shout on support@twyst.in To stop receiving this, SMS STOP ' +outlet.shortUrl +' to 9266801954';
-	}
-	else {
-		_message = 'Your Twyst voucher code at '+ outlet.basics.name +' is '+ _obj.voucher.basics.code +'. '+ _obj.voucher.basics.description +'. Terms- '+ _obj.voucher.terms +'. VALID UNTIL '+ Utils.formatDate(new Date(_obj.voucher.validity.end_date)) +'. Track and redeem your rewards easily, get Twyst http://twy.st/app To stop receiving this, SMS STOP ' +outlet.shortUrl+ ' to 9266801954';
-	}
-	SMS.sendSms(_obj.phone, _message, 'VOUCHER_MESSAGE', 'TWYSTR', outlet._id);
-}
+
 
 function isVoucherInApp(outlet) {
 	return outlet.voucher_in_app;
