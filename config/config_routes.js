@@ -43,7 +43,8 @@ module.exports = function (app) {
 
     (function deal_routes() {
         var DealCtrl = require('../controllers/deal.js');
-        app.post('/api/v1/use_deal', DealCtrl.useDeal);
+        app.post('/api/v1/use_deal',checkAuthenticated(), DealCtrl.useDeal);
+        app.put('/api/v1/update_deal', checkAuthenticated(), DealCtrl.updateDeal);
     })();
 
     (function job_status_route () {
@@ -121,6 +122,7 @@ module.exports = function (app) {
         app.post('/api/v2/pos_checkins', CheckinCtrl.poscheckin);
         app.post('/api/v2/checkins', checkAuthenticated(), CheckinCtrl.panelCheckin);
         app.post('/api/v3/batch_checkins', CheckinCtrl.batchCheckin);
+        app.post('/api/v1/mrl_checkins', CheckinCtrl.mrlCheckin);
         app.get('/api/v2/allcheckins/:outlet/:program', checkAuthenticated(),  AllCheckinCtrl.getCheckins);
         app.get('/api/v2/allvouchers/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getVouchers);
         app.get('/api/v2/allredeems/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getRedeems);
