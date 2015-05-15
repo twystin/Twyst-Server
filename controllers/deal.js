@@ -80,3 +80,40 @@ function getVoucherObject(deal, user) {
 	}
 	return voucher;
 }
+
+
+module.exports.updateDeal = function(req, res) {
+	var created_deal = {};
+    created_deal = _.extend(created_deal, req.body);
+    delete created_deal.__v;
+    var deal = new Deal(created_deal);
+    updateDeal(deal, function (err) {
+        if(err) {
+        	console.log(err)
+            res.send(400, { 'status': 'error',
+                        'message': 'Error saving deal.',
+                        'info': err
+            });
+        }
+        else {
+            res.send(200, { 'status': 'success',
+                        'message': 'Saved deal successfully.',
+                        'info': ''
+            });
+        }
+    })
+}
+
+function updateDeal(deal, cb) {
+    var id = deal._id;
+    delete deal._id;
+    Deal.findOneAndUpdate({
+        _id: id
+    }, {
+        $set: deal
+    }, {
+        upsert: true
+    }, function (err, deal) {
+        cb(err, deal);
+    })
+}
