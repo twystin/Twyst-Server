@@ -7,6 +7,7 @@ var SmsSentLog = mongoose.model('SmsSentLog');
 var Notif = mongoose.model('Notif');
 var Account = mongoose.model('Account');
 var UnsubCheck = mongoose.model('Unsbs');
+var Outlet = mongoose.model('Outlet');
 var outletHandles = require('../outlethandles');
 var _ = require('underscore');
 
@@ -119,12 +120,22 @@ module.exports.sendSms = function (phone, push_message, type, from, outlet) {
 	}
 
 	function isAccurateTime (time) {
-		var hours = new Date(time).getHours();
-		console.log(hours + "  " +  new Date(time))
-		if(hours > 16 || hours < 4) {
+		var smsOffStart = null, smsOffEnd = null; hours = null;
+		var flag = Outlet.findOne({'_id': outlet}, function(err, currOutlet) {
+			if(err) console.log(err)
+			if(currOutlet) {
+				smsOffStart = currOutlet.sms_off.time.start/60;
+				smsOffEnd = currOutlet.sms_off.time.end/60;
+				hours = new Date(time).getHours();
+				console.log(hours + "  " +  new Date(time))	
+			}
+			
+			if(hours > smsOffStart || hours < smsOffEnd) {
+				return false;
+			}
 			return true;
-		}
-		return true;
+		})
+		return flag;
 	}
 
 	function schedule(phone, message, time) {
@@ -188,3 +199,4 @@ function saveSentSms (phone, message, status) {
 		}
 	});
 }
+

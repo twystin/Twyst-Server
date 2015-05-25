@@ -10,7 +10,7 @@ var UserCtrl = require('../user.js');
 var CommonUtilities = require('../../common/utilities');
 
 module.exports.getData = function (req, res) {
-
+	console.log('calling api/v2/data ' + req.user);
 	var userCache = getFromCache();
 	var current_loc = {
 		latitude : Number(req.params.latitude),

@@ -107,13 +107,19 @@ module.exports.updateDeal = function(req, res) {
 function updateDeal(deal, cb) {
     var id = deal._id;
     delete deal._id;
-    Deal.findOneAndUpdate({
-        _id: id
-    }, {
-        $set: deal
-    }, {
-        upsert: true
-    }, function (err, deal) {
-        cb(err, deal);
-    })
+    if(deal.tc && deal.info) {
+    	Deal.findOneAndUpdate({
+	        _id: id
+	    }, {
+	        $set: deal
+	    }, {
+	        upsert: true
+	    }, function (err, deal) {
+	        cb(err, deal);
+	    })	
+    }
+    else {
+    	callback(err, null);
+    }
+    
 }

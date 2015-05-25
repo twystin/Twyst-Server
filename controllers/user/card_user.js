@@ -179,7 +179,7 @@ var sendEmailAndSms = function(user, type, secret_code ) {
     EmailAndSmsSender.sendWelcomeMail(email_object);
 
     SMS.sendSms(user.mobile,
-    'Welcome to Twyst! We have sent you a welcome mail to ' +user.email+'. Please check your mail, and get the Twyst app to discover a world of dining rewards! If the ID is incorrect, please write to us at support@twyst.in.' , type);
+    'Welcome to Twyst! We have sent you a welcome mail to ' +user.email+'. Please check your mail, and get the Twyst app to discover a world of dining rewards! If the ID is incorrect, please write to us at support@twyst.in.' , type, '');
   }
   else if (user.email !== undefined && user.email !== '' && user.email !== null && type === 'WELCOME_MAILER') {
     var email_object = {

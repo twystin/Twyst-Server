@@ -142,6 +142,50 @@ module.exports.mrlCheckin = function(req, res){
     
 };
 
+
+module.exports.bulkPanelCheckin = function (req, res) {
+	
+	var rows = req.body.rows;
+	console.log(JSON.stringify(rows) + 'okok')
+	if(!rows || !rows.length) {
+		res.send(400, {
+			'status': 'error',
+			'message': 'Nothing to checkin',
+			'info': null
+		})
+	}
+	else { 
+		rows = _.uniq(rows);
+		async.each(rows, function (request, callback) {
+			console.log(request)
+			var _obj = {
+	            'phone': request.mobile,
+	            'outlet': request.outlet,
+	            'location': 'HOME_DELIVERY',
+	            'created_date': new Date(request.checkin_date),
+	            'checkin_type' : 'PANEL',
+	            'checkin_code' : 'PANEL',
+	            'is_batch': false
+	        };
+		    Checkin_Main.checkin(_obj, function (err, data) {
+				if(err) {
+					callback();
+				}
+				else {
+					smsHandler(data.info);
+					callback();
+				}
+			});
+		}, function (err) {
+			res.send(200, {
+				'status': 'success',
+				'message': 'Checked in successfully',
+				'info': null
+			})
+		})
+	}
+};
+
 module.exports.autoCheckin = function (_obj, cb) {
 	Checkin_Main.checkin(_obj, function (err, data) {
 		if(err) {
