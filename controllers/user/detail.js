@@ -167,7 +167,8 @@ function getActiveDeals(user, result, cb) {
 	else {
 		Deal.find({
 			'status':'active',
-			'outlets': result.outlet_details._id
+			'outlets': result.outlet_details._id,
+			'end_date': {$lte: new Date()}
 		}, function (err, deals) {
 			cb(deals || []);
 		});

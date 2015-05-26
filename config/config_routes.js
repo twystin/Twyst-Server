@@ -123,6 +123,7 @@ module.exports = function (app) {
         app.post('/api/v2/checkins', checkAuthenticated(), CheckinCtrl.panelCheckin);
         app.post('/api/v3/batch_checkins', CheckinCtrl.batchCheckin);
         app.post('/api/v1/mrl_checkins', CheckinCtrl.mrlCheckin);
+        app.post('/api/v1/bulk/panel_checkins', CheckinCtrl.bulkPanelCheckin);
         app.get('/api/v2/allcheckins/:outlet/:program', checkAuthenticated(),  AllCheckinCtrl.getCheckins);
         app.get('/api/v2/allvouchers/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getVouchers);
         app.get('/api/v2/allredeems/:outlet/:program', checkAuthenticated(), AllVoucherCtrl.getRedeems);
@@ -135,6 +136,7 @@ module.exports = function (app) {
         var UserCtrl = require('../controllers/admin/user');
         var QrCtrl = require('../controllers/admin/qr');
         var AnonDataCtrl = require('../controllers/admin/dataCtrlAnonymous');
+        var MetricCtrl = require('../controllers/admin/report');
         app.post('/api/v2/admin/outlets/', AnonDataCtrl.getAnonData);
         app.get('/api/v2/merchants', DataCtrl.getMerchants);
         app.post('/api/v2/outlets/city/', DataCtrl.getOutlets);
@@ -152,6 +154,7 @@ module.exports = function (app) {
         app.post('/api/v2/changefeatured/outlet', FeatureCtrl.changeOutletFeatured);
         app.post('/api/v2/changestatus/program', StatusCtrl.changeProgramStatus);
         app.post('/api/v2/changevalidity/qr', QrCtrl.updateValidity);
+        app.post('/api/v2/summary_metric', MetricCtrl.getSummary);
     })();
 
     (function user_data_route() {

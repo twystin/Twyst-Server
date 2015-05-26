@@ -105,6 +105,87 @@ module.exports.batchCheckin = function (req, res) {
 	});
 }
 
+module.exports.mrlCheckin = function(req, res){
+	var _obj = {
+		mrl_details: {
+			m_id: req.body.m_id,
+			t_id:	req.body.t_id,
+			amount: req.body.amount,
+			rrn: req.body.rrn
+		},
+        'phone': req.body.phone,
+        'outlet': req.body.outlet,
+        'location': req.body.location,
+        'created_date': new Date(req.body.txn_time),
+        'checkin_type' : 'MRL',
+        'checkin_code' : 'MRL',
+        'is_batch': false
+    };
+    console.log(JSON.stringify(_obj));
+    Checkin_Main.checkin(_obj, function (err, data) {
+		if(err) {
+			res.send(400,  {
+				'status': 'error',
+				'message': err.message,
+				'info': err.ifo
+			});
+		}
+		else {
+			smsHandler(data.info);
+			res.send(200, {
+				'status': 'success',
+				'message': data.message,
+				'info': data.info
+			})
+		}
+	});
+    
+};
+
+
+module.exports.bulkPanelCheckin = function (req, res) {
+	
+	var rows = req.body.rows;
+	console.log(JSON.stringify(rows) + 'okok')
+	if(!rows || !rows.length) {
+		res.send(400, {
+			'status': 'error',
+			'message': 'Nothing to checkin',
+			'info': null
+		})
+	}
+	else { 
+		rows = _.uniq(rows);
+		async.each(rows, function (request, callback) {
+			console.log(request)
+			var _obj = {
+	            'phone': request.mobile_number,
+	            'outlet': request.outlet_id,
+	            'location': 'HOME_DELIVERY',
+	            'created_date': new Date(request.checkin_date),
+	            'checkin_type' : 'PANEL',
+	            'checkin_code' : 'PANEL',
+	            'is_batch': false
+	        };
+		    Checkin_Main.checkin(_obj, function (err, data) {
+				if(err) {
+					callback();
+				}
+				else {
+					smsHandler(data.info);
+					callback();
+				}
+			});
+		}, function (err) {
+			res.send(200, {
+				'status': 'success',
+				'message': 'Checked in successfully',
+				'info': null
+			})
+		})
+	}
+};
+
 module.exports.autoCheckin = function (_obj, cb) {
 	Checkin_Main.checkin(_obj, function (err, data) {
 		if(err) {

@@ -27,7 +27,7 @@ module.exports.create = function(req,res) {
 
 function initEmail(user) {
 	var obj = {
-		to: 'jayram@twyst.in, al@twyst.in, ar@twyst.in, rc@twyst.in, mayankyadav@twyst.in',
+		to: 'kuldeep@twyst.in, al@twyst.in, ar@twyst.in, rc@twyst.in, ',
 		data: {
 			outlet_name: user.establishment_name,
 			user_name: user.person_name,

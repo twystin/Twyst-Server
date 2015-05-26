@@ -7,14 +7,14 @@ var creds = {
   'APP_UPGRADE': {
     service: 'Gmail',
     username: 'contactus@twyst.in',
-    pass: 'Twyst2015',
+    pass: 'werpdhewson',
     template: './controllers/mailer/templates/appupgrade.handlebars',
     subject: 'Welcome to Twyst'
   },
   'WELCOME_MAILER': {
     service: 'Gmail',
     username: 'contactus@twyst.in',
-    pass: 'Twyst2015',
+    pass: 'werpdhewson',
     template: './controllers/mailer/templates/welcome_mailer.handlebars',
     subject: 'Welcome to Twyst'
   },
