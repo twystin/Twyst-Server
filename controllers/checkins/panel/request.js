@@ -159,8 +159,8 @@ module.exports.bulkPanelCheckin = function (req, res) {
 		async.each(rows, function (request, callback) {
 			console.log(request)
 			var _obj = {
-	            'phone': request.mobile,
-	            'outlet': request.outlet,
+	            'phone': request.mobile_number,
+	            'outlet': request.outlet_id,
 	            'location': 'HOME_DELIVERY',
 	            'created_date': new Date(request.checkin_date),
 	            'checkin_type' : 'PANEL',

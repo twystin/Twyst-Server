@@ -174,6 +174,7 @@ module.exports.checkin = function (_obj, cb) {
 		checkin = new Checkin(checkin);
 		checkin.save(function (err) {
 			if(err) {
+				console.log(err)
 				error = {
 					'message': 'Check-in error. Error saving checkin',
 					'info': err
