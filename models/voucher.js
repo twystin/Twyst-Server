@@ -7,7 +7,7 @@ var VoucherSchema = new Schema({
     basics: {
         code: {type: String, trim: true, required: true, unqiue: true, index: true},
         description: {type: String, default: '', trim: true},
-        type: {type: String, enum: ['WINBACK', 'CHECKIN', 'BIRTHDAY', 'DEAL'], default: 'CHECKIN'},
+        type: {type: String, enum: ['WINBACK', 'CHECKIN', 'BIRTHDAY', 'DEAL', 'CORPORATE'], default: 'CHECKIN'},
         status : {type: String, enum: ['active', 'expired','user redeemed', 'merchant redeemed'], default: 'active'},
         created_at : {type: Date, default: Date.now},
         modified_at: {type: Date, default: Date.now}

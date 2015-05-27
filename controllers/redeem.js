@@ -3,6 +3,7 @@ var mongoose = require('mongoose'),
 	Utils = require('../common/utilities'),
 	Reward = require('../models/reward_applicability'),
 	AutoCheckin = require('./checkins/panel/request'),
+	CorporateAutoCheckin = require('./checkins/qr/corporateCheckin');
 	SMS = require('../common/smsSender');
 
 var Voucher = mongoose.model('Voucher'),
@@ -72,6 +73,9 @@ module.exports.redeemPanel = function (req, res) {
 		else if(!voucher.basics.type || voucher.basics.type === 'DEAL'){
 			redeemWinbackVoucher(voucher);
 		}
+		else if(!voucher.basics.type || voucher.basics.type === 'CORPORATE'){
+			redeemCorporateVoucher(voucher);
+		}
 		else {
 			res.send(400, { 
 				'status': 'error',
@@ -113,6 +117,49 @@ module.exports.redeemPanel = function (req, res) {
 			})
 		}
 	}
+
+	function redeemCorporateVoucher(voucher) {
+		if(isExpired(voucher.validity.start_date, voucher.validity.end_date)) {
+			res.send(400, { 
+				'status': 'error',
+	            'message': 'Expired voucher code',
+	            'info': 'Expired voucher code'
+	        });
+		}
+		else {
+			var status = "merchant redeemed";
+			redeemVoucher(voucher, used_at, used_time, status, function (err) {
+				if(err) {
+					res.send(400, { 
+						'status': 'error',
+			            'message': 'Error redeeming voucher',
+			            'info': err
+			        });
+				}
+				else {
+					var user = voucher.issue_details.issued_to;
+	                if(user && user.phone) {
+	                	sendRedeemSmsToUser(voucher, user, used_at, used_time);
+	                }
+	                var auto_checkin_obj = {
+				        'outlet': used_at,
+				        'location': 'DINE_IN',
+				        'user': user
+				    };
+	                CorporateAutoCheckin.autoCheckin(auto_checkin_obj, function(err, autoCheckinVoucher) {
+	                	if(err) console.log(err);
+	                	res.send(200, { 
+							'status': 'success',
+				            'message': 'Successfully redeemed voucher',
+				            'info': 'Successfully redeemed voucher'
+				        });
+	                })
+	                
+				}
+			})
+		}
+	}
+
 
 	function redeemCheckinVoucher(voucher) {
 		var program = voucher.issue_details.program;

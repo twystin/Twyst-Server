@@ -2,14 +2,16 @@ var mongoose = require('mongoose'),
 	_ = require('underscore'),
 	keygen = require("keygenerator"),
 	Utils = require('../../../common/utilities'),
-	VoucherGen = require('../../voucher-gen');
+	VoucherGen = require('../../voucher-gen'),
+	//CorporateQr = require('./corporateQr'),
+	CorporateCheckin = require('./corporateCheckin');
 var Checkin = mongoose.model('Checkin'),
 	Qr = mongoose.model('Qr'),
 	Program = mongoose.model('Program'),
 	Outlet = mongoose.model('Outlet'),
 	Reward = mongoose.model('Reward'),
 	Voucher = mongoose.model('Voucher');
-
+	var corporateQr = ['8W5MJ5', 'XPXL9V'];
 module.exports.checkin = function(req, res) {
 	var code = req.body.code; 
 	if(!code) {
@@ -20,29 +22,60 @@ module.exports.checkin = function(req, res) {
 		});
 	}
 	else {
-		code = code.substr(code.length - 6);	
-		getQr(code, function (err, qr) {
-			if(err) {
-				console.log(err);
-				res.send(400, {	
-					'status': 'error',
-					'message': 'Error getting qr code',
-					'info': err
-				});
+		code = code.substr(code.length - 6);
+		var isCorporate = _.find(corporateQr, function(qr){
+			if(qr === code) {
+				console.log('corporate checkin');
+				return true
 			}
 			else {
-				if(!qr) {
+				return false;
+			}
+		})	
+		if(isCorporate) {
+			CorporateCheckin.checkin(req.user, code, res, function(err, success) {
+				if(err){
+					console.log(err);
 					res.send(400, {	
 						'status': 'error',
-						'message': 'Invalid qr code',
-						'info': 'Invalid qr code'
+						'message': err,
+						'info': err
 					});
 				}
 				else {
-					initCheckin(qr);
+					res.send(200, {	
+						'status': 'success',
+						'message': 'Successfully checked-in',
+						'info': success
+					});
 				}
-			}
-		})
+			});
+		}
+		else {
+			getQr(code, function (err, qr) {
+				if(err) {
+					console.log(err);
+					res.send(400, {	
+						'status': 'error',
+						'message': 'Error getting qr code',
+						'info': err
+					});
+				}
+				else {
+					if(!qr) {
+						res.send(400, {	
+							'status': 'error',
+							'message': 'Invalid qr code',
+							'info': 'Invalid qr code'
+						});
+					}
+					else {
+						initCheckin(qr);
+					}
+				}
+			})	
+		}
+		
 	}
 
 	function initCheckin(qr) {
