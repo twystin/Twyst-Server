@@ -3,7 +3,7 @@
 module.exports.values = {
     'static': '../web_apps',
     'db': 'mongodb://localhost/twyst',
-    'env': 'LOCAL', // options LOCAL, DOGFOOD, PROD
+    'env': 'PROD', // options LOCAL, DOGFOOD, PROD
     'config': {
         'LOCAL' : {
             'server': 'http://localhost',
@@ -45,8 +45,10 @@ module.exports.values = {
             }
         },
         'PROD' : {
-            'server': 'http://www.twyst.in',
-            'port': 80,
+//          'server': 'http://www.twyst.in',
+ //         'port': 80,
+            'server': 'http://localhost:3000',
+            'port': 3000,
             "clientID": "763534923659747",
             "clientSecret":"673eceff400c5dde837fdedead53ce20",
             "callbackURL":"/api/v1/auth/facebook/callback",

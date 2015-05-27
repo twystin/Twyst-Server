@@ -189,7 +189,7 @@ module.exports.bulkPanelCheckin = function (req, res) {
 module.exports.autoCheckin = function (_obj, cb) {
 	Checkin_Main.checkin(_obj, function (err, data) {
 		if(err) {
-			
+			console.log(err);
 		}
 		else {
 			smsHandler(data.info);

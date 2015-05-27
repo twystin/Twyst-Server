@@ -455,6 +455,7 @@ module.exports.create = function(req,res) {
 	var outlet = new Outlet(created_outlet);
 	outlet.save(function(err) {
 		if (err) {
+			console.log(err);
 			res.send(400, {	'status': 'error',
 						'message': 'Outlet creation error. Please fill all required fields',
 						'info': JSON.stringify(err)
