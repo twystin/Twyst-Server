@@ -146,7 +146,6 @@ module.exports.mrlCheckin = function(req, res){
 module.exports.bulkPanelCheckin = function (req, res) {
 	
 	var rows = req.body.rows;
-	console.log(JSON.stringify(rows) + 'okok')
 	if(!rows || !rows.length) {
 		res.send(400, {
 			'status': 'error',
@@ -169,6 +168,7 @@ module.exports.bulkPanelCheckin = function (req, res) {
 	        };
 		    Checkin_Main.checkin(_obj, function (err, data) {
 				if(err) {
+					console.log(err);
 					callback();
 				}
 				else {
