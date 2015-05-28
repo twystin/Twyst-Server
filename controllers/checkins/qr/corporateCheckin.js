@@ -103,7 +103,7 @@ module.exports.checkin = function(user, code, res, callback) {
 							}
 							else {
 								var success_obj = {
-									outlet: qr.outlet_id._id,
+									outlet: qr.outlet_id,
 									reward: voucher.basics.description
 								}
 								saveCorporateData(user, winback, voucher, function(err, data) {
