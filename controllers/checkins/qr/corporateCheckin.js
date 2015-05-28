@@ -102,13 +102,17 @@ module.exports.checkin = function(user, code, res, callback) {
 								callback(err);
 							}
 							else {
+								var success_obj = {
+									outlet: qr.outlet_id._id,
+									reward: voucher.basics.description
+								}
 								saveCorporateData(user, winback, voucher, function(err, data) {
 									if(err) console.log(err);
 									updateQrUsed(qr);
 									res.send(200, {	
 										'status': 'success',
 										'message': 'Successfully checked-in, Voucher generated',
-										'info': voucher
+										'info': success_obj
 									});
 								});
 								
