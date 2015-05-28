@@ -145,8 +145,8 @@ module.exports.mrlCheckin = function(req, res){
 
 module.exports.bulkPanelCheckin = function (req, res) {
 	
-	var rows = req.body.rows;
-	if(!rows || !rows.length) {
+	var checkin_obj = req.body.rows;
+	if(!checkin_obj.mobile_number || !checkin_obj.outlet_id) {
 		res.send(400, {
 			'status': 'error',
 			'message': 'Nothing to checkin',
@@ -154,35 +154,36 @@ module.exports.bulkPanelCheckin = function (req, res) {
 		})
 	}
 	else { 
-		rows = _.uniq(rows);
-		async.each(rows, function (request, callback) {
-			console.log(request)
-			var _obj = {
-	            'phone': request.mobile_number,
-	            'outlet': request.outlet_id,
-	            'location': 'HOME_DELIVERY',
-	            'created_date': new Date(request.checkin_date),
-	            'checkin_type' : 'PANEL',
-	            'checkin_code' : 'PANEL',
-	            'is_batch': false
-	        };
-		    Checkin_Main.checkin(_obj, function (err, data) {
-				if(err) {
-					console.log(err);
-					callback();
-				}
-				else {
-					smsHandler(data.info);
-					callback();
-				}
-			});
-		}, function (err) {
-			res.send(200, {
-				'status': 'success',
-				'message': 'Checked in successfully',
-				'info': null
-			})
-		})
+		
+		var _obj = {
+            'phone': checkin_obj.mobile_number,
+            'outlet': checkin_obj.outlet_id,
+            'location': 'HOME_DELIVERY',
+            'created_date': new Date(checkin_obj.checkin_date),
+            'checkin_type' : 'PANEL',
+            'checkin_code' : 'PANEL',
+            'is_batch': false
+        };
+	    Checkin_Main.checkin(_obj, function (err, data) {
+			if(err) {
+				console.log(err);
+				res.send(400, {
+					'status': 'error',
+					'message': err,
+					'info': err
+				})
+				
+			}
+			else {
+				smsHandler(data.info);
+				res.send(200, {
+					'status': 'success',
+					'message': rows.phone + ' Checked in successfully',
+					'info': null
+				})
+			}
+		});
+		
 	}
 };
 
