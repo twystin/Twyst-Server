@@ -11,7 +11,7 @@ var Checkin = mongoose.model('Checkin'),
 	Outlet = mongoose.model('Outlet'),
 	Reward = mongoose.model('Reward'),
 	Voucher = mongoose.model('Voucher');
-	var corporateQr = ['8W5MJ5', 'XPXL9V'];
+	var corporateQr = ['8W5MJ5'];
 module.exports.checkin = function(req, res) {
 	var code = req.body.code; 
 	if(!code) {

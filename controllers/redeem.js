@@ -8,6 +8,7 @@ var mongoose = require('mongoose'),
 
 var Voucher = mongoose.model('Voucher'),
 	Outlet = mongoose.model('Outlet');
+var corporateQr = ['8W5MJ5'];
 
 module.exports.redeemPanel = function (req, res) {
 	var code = req.body.code,
@@ -65,7 +66,22 @@ module.exports.redeemPanel = function (req, res) {
 
 	function processRedeem(voucher) {
 		if (voucher.basics.type === 'WINBACK') {
-			redeemWinbackVoucher(voucher);
+			var isCorporate = _.find(corporateQr, function(qr){
+				if(qr === voucher.basics.code) {
+					console.log('corporate redeem');
+					return true;
+				}
+				else {
+					return false;
+				}
+			})
+			if(isCorporate) {
+				redeemCorporateVoucher(voucher);
+			}
+			else {
+				redeemWinbackVoucher(voucher);	
+			}
+			
 		}
 		else if (!voucher.basics.type || voucher.basics.type === 'CHECKIN') {
 			redeemCheckinVoucher(voucher);
@@ -73,9 +89,7 @@ module.exports.redeemPanel = function (req, res) {
 		else if(!voucher.basics.type || voucher.basics.type === 'DEAL'){
 			redeemWinbackVoucher(voucher);
 		}
-		else if(!voucher.basics.type || voucher.basics.type === 'CORPORATE'){
-			redeemCorporateVoucher(voucher);
-		}
+		
 		else {
 			res.send(400, { 
 				'status': 'error',

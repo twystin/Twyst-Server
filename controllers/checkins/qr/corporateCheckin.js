@@ -140,7 +140,7 @@ function getVoucherObject(winback, user) {
 				length: 6,
 				exclude:['O', '0', 'L', '1']
 			}),
-			type: 'CORPORATE',
+			type: 'WINBACK',
 			description: reward
 		},
 		validity: {
