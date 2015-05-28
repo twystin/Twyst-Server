@@ -104,7 +104,7 @@ module.exports.checkin = function(user, code, res, callback) {
 							else {
 								var success_obj = {
 									outlet: qr.outlet_id,
-									reward: voucher.basics.description
+									reward: voucher
 								}
 								saveCorporateData(user, winback, voucher, function(err, data) {
 									if(err) console.log(err);
@@ -145,7 +145,8 @@ function getVoucherObject(winback, user) {
 				exclude:['O', '0', 'L', '1']
 			}),
 			type: 'WINBACK',
-			description: reward
+			description: reward,
+			isCorporate: true
 		},
 		validity: {
 			start_date: new Date(),
