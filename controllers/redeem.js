@@ -6,9 +6,9 @@ var mongoose = require('mongoose'),
 	CorporateAutoCheckin = require('./checkins/qr/corporateCheckin');
 	SMS = require('../common/smsSender');
 
+
 var Voucher = mongoose.model('Voucher'),
 	Outlet = mongoose.model('Outlet');
-var corporateQr = ['8W5MJ5'];
 
 module.exports.redeemPanel = function (req, res) {
 	var code = req.body.code,
@@ -66,16 +66,8 @@ module.exports.redeemPanel = function (req, res) {
 
 	function processRedeem(voucher) {
 		if (voucher.basics.type === 'WINBACK') {
-			var isCorporate = _.find(corporateQr, function(qr){
-				if(qr === voucher.basics.code) {
-					console.log('corporate redeem');
-					return true;
-				}
-				else {
-					return false;
-				}
-			})
-			if(isCorporate) {
+			if(voucher.basics.isCorporate) {
+				console.log('corporate redeem');
 				redeemCorporateVoucher(voucher);
 			}
 			else {
