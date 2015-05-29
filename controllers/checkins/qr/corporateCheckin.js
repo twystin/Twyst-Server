@@ -249,7 +249,7 @@ module.exports.autoCheckin = function(_obj, cb) {
 				if(!winback) {
 					cb('err')
 				}
-				else {
+				else if(!_obj.user_redeem) {
 					saveVoucher(_obj.user, winback, function (err, voucher) {
 						if(err) {
 							callback(err);
@@ -262,6 +262,9 @@ module.exports.autoCheckin = function(_obj, cb) {
 							
 						}
 					});
+				}
+				else{
+					cb(null);
 				}
 			}
 		})
