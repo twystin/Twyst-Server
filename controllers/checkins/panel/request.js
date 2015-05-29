@@ -107,12 +107,6 @@ module.exports.batchCheckin = function (req, res) {
 
 module.exports.mrlCheckin = function(req, res){
 	var _obj = {
-		mrl_details: {
-			m_id: req.body.m_id,
-			t_id:	req.body.t_id,
-			amount: req.body.amount,
-			rrn: req.body.rrn
-		},
         'phone': req.body.phone,
         'outlet': req.body.outlet,
         'location': req.body.location,
