@@ -150,7 +150,8 @@ module.exports.redeemPanel = function (req, res) {
 	                var auto_checkin_obj = {
 				        'outlet': used_at,
 				        'location': 'DINE_IN',
-				        'user': user
+				        'user': user,
+				        'user_redeem': false
 				    };
 	                CorporateAutoCheckin.autoCheckin(auto_checkin_obj, function(err, autoCheckinVoucher) {
 	                	if(err) console.log(err);
@@ -355,13 +356,34 @@ module.exports.redeemApp = function (req, res) {
 			            'info': err
 			        });
 				}
+				else if(voucher.basics.type === 'WINBACK' && voucher.basics.isCorporate){
+					
+					console.log('corporate user redeem');
+					var auto_checkin_obj = {
+				        'outlet': used_at,
+				        'location': 'DINE_IN',
+				        'user': user,
+				        'user_redeem': true
+				    };
+	                CorporateAutoCheckin.autoCheckin(auto_checkin_obj, function(err, autoCheckinVoucher) {
+	                	if(err) console.log(err);
+	                	sendMessageToMerchant(voucher, outlet, user.phone);
+	                	res.send(200, { 
+							'status': 'success',
+				            'message': 'Successfully redeemed voucher',
+				            'info': 'Successfully redeemed voucher'
+				        });
+	                })
+	            }
+						
 				else {
-	                res.send(200, {
+					sendMessageToMerchant(voucher, outlet, user.phone);
+                	res.send(200, { 
 						'status': 'success',
 			            'message': 'Successfully redeemed voucher',
 			            'info': 'Successfully redeemed voucher'
 			        });
-			        sendMessageToMerchant(voucher, outlet, user.phone);
+									       
 				}
 			})
 		}
