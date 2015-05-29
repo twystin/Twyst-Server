@@ -107,12 +107,6 @@ module.exports.batchCheckin = function (req, res) {
 
 module.exports.mrlCheckin = function(req, res){
 	var _obj = {
-		mrl_details: {
-			m_id: req.body.m_id,
-			t_id:	req.body.t_id,
-			amount: req.body.amount,
-			rrn: req.body.rrn
-		},
         'phone': req.body.phone,
         'outlet': req.body.outlet,
         'location': req.body.location,
@@ -121,7 +115,6 @@ module.exports.mrlCheckin = function(req, res){
         'checkin_code' : 'MRL',
         'is_batch': false
     };
-    console.log(JSON.stringify(_obj));
     Checkin_Main.checkin(_obj, function (err, data) {
 		if(err) {
 			res.send(400,  {
@@ -178,7 +171,7 @@ module.exports.bulkPanelCheckin = function (req, res) {
 				smsHandler(data.info);
 				res.send(200, {
 					'status': 'success',
-					'message': rows.phone + ' Checked in successfully',
+					'message': _obj.phone + ' Checked in successfully',
 					'info': null
 				})
 			}

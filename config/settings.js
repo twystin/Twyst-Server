@@ -3,7 +3,7 @@
 module.exports.values = {
     'static': '../web_apps',
     'db': 'mongodb://localhost/twyst',
-    'env': 'PROD', // options LOCAL, DOGFOOD, PROD
+    'env': 'LOCAL', // options LOCAL, DOGFOOD, PROD
     'config': {
         'LOCAL' : {
             'server': 'http://localhost',

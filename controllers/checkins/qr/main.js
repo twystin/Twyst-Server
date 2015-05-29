@@ -11,7 +11,9 @@ var Checkin = mongoose.model('Checkin'),
 	Outlet = mongoose.model('Outlet'),
 	Reward = mongoose.model('Reward'),
 	Voucher = mongoose.model('Voucher');
-	var corporateQr = ['8W5MJ5', 'FU6VDR', 'HOZKV7', 'MZABJC', 'T8TFNJ', 'Y8J7XM'];
+	var corporateQr = ['8W5MJ5', 'FU6VDR', 'HOZKV7', 'MZABJC', 'T8TFNJ', 'Y8J7XM', '4Q976H', '6MFPHZ', '7LINZ8','97POXQ',
+						'AZUDUY', 'CE9CPN', 'I7CPEJ', 'IOMCXR', 'K9N6IA', 'LPILRQ', 'NGBA76', 'PQAIJI', 'QFQVAM', 'RXDFKJ',
+						'SBR7IK', 'T7ZFON', 'TY6MOY', 'U9S6SD', 'VYJMJK', 'ZZDTK4'];
 module.exports.checkin = function(req, res) {
 	var code = req.body.code; 
 	if(!code) {
