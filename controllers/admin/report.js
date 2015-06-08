@@ -40,9 +40,6 @@ module.exports.getSummary= function (req, res) {
 		            });
 			    }
 			    else {
-			    	
-
-					
 			    	res.send(200, {
 				    	'status' : 'success',
 		                'message' : 'Got dashboard data',
@@ -65,9 +62,7 @@ module.exports.getSummary= function (req, res) {
 		            });
 			    }
 			    else {
-			    	
-
-					
+			    
 			    	res.send(200, {
 				    	'status' : 'success',
 		                'message' : 'Got dashboard data',
@@ -93,14 +88,46 @@ function getCheckins(startDate, endDate, checkinType, callback) {
 	    { $group : { _id : {date:"$date", outlet: "$outlet", checkin_type: "$checkin_type"} , checkin_count : { $sum : 1 } } },
 	    { $sort : { "_id.date" : 1 } },
 	     function(err, data) {
-	     	
-	    	console.log(data);
-	    	callback(null, data);
-	    }
+	     	var allCheckin = []
+	    	
+	    	_.map(data, function(check) {
+	    		var checkin_obj = {
+	    			'date': check._id.date,
+	    			'outlet': check._id.outlet,
+	    			'checkin_count': check.checkin_count
+	    		}
+	    		allCheckin.push(checkin_obj);
+	    	})
+	    	//console.log(allCheckin);
+	    	var finalCount = {};
+	    	
 
-	  
-	)
-		
+	    	for (var i = 0; i < allCheckin.length ; i++) {
+	    		for(var j = i; j< allCheckin.length; j++) {
+
+	    			//console.log(allCheckin[i].date.toString() + "  " + allCheckin[j].date.toString())
+	    			if(allCheckin[i].date.toString() === allCheckin[j].date.toString()) {
+	    				if(!finalCount[allCheckin[i].date]) {
+	    					finalCount[allCheckin[i].date] = [];
+	    						
+	    				}
+	    				var a = {
+	    					'outlet': allCheckin[j].outlet,
+	    					'count': allCheckin[j].checkin_count
+	    				}
+	    				//console.log('here ' + allCheckin[j].outlet + " " + allCheckin[j].checkin_count);
+	    				finalCount[allCheckin[i].date].push(a) 
+	    				
+	    			}
+	    			break;
+	    		}
+
+	    	};
+	    	finalRedeem.isCheckin = true;
+	    	//console.log(JSON.stringify(finalCount));
+	    	callback(null, finalCount);
+	    }
+	)	
 }
 
 function getRedeemCount(startDate, endDate, callback) {
@@ -114,11 +141,43 @@ function getRedeemCount(startDate, endDate, callback) {
 		{$group: {_id: {usedDate: "$usedDate", outlet: "$outlet"}, redeem_count: {$sum: 1}}},
 		{$sort : { "_id.usedDate" : 1 } },
 		function(err, redeem_data) {
+	    	var allRedeem = []
 	    	
-	    	redeem_data.forEach(function(data){
-	    		console.log(data._id.usedDate + "  " + data._id.outlet + ' ' + data.redeem_count);	
+	    	_.map(redeem_data, function(redeem) {
+	    		var redeem_obj = {
+	    			'date': redeem._id.usedDate,
+	    			'outlet': redeem._id.outlet,
+	    			'redeem_count': redeem.redeem_count
+	    		}
+	    		allRedeem.push(redeem_obj	);
 	    	})
-	    	callback(null, redeem_data);
+	    	var finalRedeem = {};
+	    	
+
+	    	for (var i = 0; i < allRedeem.length ; i++) {
+	    		for(var j = i; j< allRedeem.length; j++) {
+
+	    			//console.log(allCheckin[i].date.toString() + "  " + allCheckin[j].date.toString())
+	    			if(allRedeem[i].date.toString() === allRedeem[j].date.toString()) {
+	    				if(!finalRedeem[allRedeem[i].date]) {
+	    					finalRedeem[allRedeem[i].date] = [];
+	    						
+	    				}
+	    				var a = {
+	    					'outlet': allRedeem[j].outlet,
+	    					'count': allRedeem[j].redeem_count
+	    				}
+	    				//console.log('here ' + allCheckin[j].outlet + " " + allCheckin[j].checkin_count);
+	    				finalRedeem[allRedeem[i].date].push(a) 
+	    				
+	    			}
+	    			break;
+	    		}
+
+	    	};
+	    	finalRedeem.isRedeem = true;
+	    	//console.log(finalRedeem)
+	    	callback(null, finalRedeem);
 	    }
 	)
 }
