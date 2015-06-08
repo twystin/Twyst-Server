@@ -29,9 +29,9 @@ module.exports.create = function (req, res) {
 }
 
 module.exports.update = function (req, res) {
+
     var updated_winback = {};
     updated_winback = _.extend(updated_winback, req.body);
-
     updateWinback(updated_winback, function (err) {
         if(err) {
             res.send(400, { 'status': 'error',
@@ -51,6 +51,7 @@ module.exports.update = function (req, res) {
 function updateWinback(winback, cb) {
     var id = winback._id;
     delete winback._id;
+    delete winback.__v;
     Winback.findOneAndUpdate({
         _id: id
     }, {
@@ -58,12 +59,14 @@ function updateWinback(winback, cb) {
     }, {
         upsert: true
     }, function (err, winback) {
+        if(err) console.log(err)
         cb(err, winback);
     })
 }
 
 function saveWinback(winback, cb) {
     winback.save(function (err) {
+        if(err) console.log(err)
         cb(err);
     })
 }

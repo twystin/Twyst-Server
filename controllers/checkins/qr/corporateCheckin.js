@@ -249,7 +249,7 @@ module.exports.autoCheckin = function(_obj, cb) {
 				if(!winback) {
 					cb('err')
 				}
-				else if(!_obj.user_redeem) {
+				else if(_obj.user_redeem === 'active') {
 					saveVoucher(_obj.user, winback, function (err, voucher) {
 						if(err) {
 							callback(err);

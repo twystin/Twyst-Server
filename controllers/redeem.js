@@ -133,6 +133,7 @@ module.exports.redeemPanel = function (req, res) {
 	        });
 		}
 		else {
+			var redeemed_status = voucher.basics.status;
 			var status = "merchant redeemed";
 			redeemVoucher(voucher, used_at, used_time, status, function (err) {
 				if(err) {
@@ -151,7 +152,7 @@ module.exports.redeemPanel = function (req, res) {
 				        'outlet': used_at,
 				        'location': 'DINE_IN',
 				        'user': user,
-				        'user_redeem': false
+				        'user_redeem':redeemed_status
 				    };
 	                CorporateAutoCheckin.autoCheckin(auto_checkin_obj, function(err, autoCheckinVoucher) {
 	                	if(err) console.log(err);
@@ -363,7 +364,7 @@ module.exports.redeemApp = function (req, res) {
 				        'outlet': used_at,
 				        'location': 'DINE_IN',
 				        'user': user,
-				        'user_redeem': true
+				        'user_redeem': 'active'
 				    };
 	                CorporateAutoCheckin.autoCheckin(auto_checkin_obj, function(err, autoCheckinVoucher) {
 	                	if(err) console.log(err);

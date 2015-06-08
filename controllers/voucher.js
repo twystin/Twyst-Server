@@ -189,6 +189,7 @@ module.exports.readByUserPhone = function(req, res) {
         .populate('issue_details.winback')
         .populate('issue_details.issued_to')
         .populate('issue_details.program')
+        .populate('issue_details.birthday')
         .sort({'basics.modified_at': -1})
         .exec(function(err, vouchers) {
             callback(err, vouchers);
