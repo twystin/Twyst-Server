@@ -12,8 +12,10 @@ var async = require('async');
 module.exports.getSummary= function (req, res) {
 	var startDate = new Date(req.body.start_date);
 	var endDate = new Date(req.body.end_date);
+	endDate.setHours(23,59,59,999);
 	var checkinType = req.body.checkin_type;
-	console.log(startDate + ' ' + endDate + " " + checkinType);
+	var voucherType = req.body.voucher_type;
+	console.log(startDate + ' ' + endDate + " " + checkinType + " " + voucherType);
 	if(!startDate && !endDate) {
 		res.send(400,{
 			'status': 'error',
@@ -51,7 +53,7 @@ module.exports.getSummary= function (req, res) {
 		else {
 			async.parallel({
 			    redeem_count: function(callback) {
-			    	getRedeemCount(startDate, endDate, callback);
+			    	getRedeemCount(startDate, endDate, voucherType, callback);
 			    }
 			}, function(err, results) {
 			    if(err) {
@@ -79,7 +81,7 @@ module.exports.getSummary= function (req, res) {
 function getCheckins(startDate, endDate, checkinType, callback) {
 	Checkin.aggregate(
 			{$match: {"checkin_type": checkinType, 
-				"checkin_date": {$gt: new Date(startDate),$lt: new Date(endDate)}}},
+				"checkin_date": {$gte: startDate, $lte: endDate}}},
 	    
 	    //{ $project : { checkin_type :  "$checkin_type" } } ,
 	    //{ $group: {_id: {checkin_type: "$checkin_type" }, bookCount: { $sum: 1 }}},
@@ -123,18 +125,18 @@ function getCheckins(startDate, endDate, checkinType, callback) {
 	    		}
 
 	    	};
-	    	finalRedeem.isCheckin = true;
+	    	finalCount.isCheckin = true;
 	    	//console.log(JSON.stringify(finalCount));
 	    	callback(null, finalCount);
 	    }
 	)	
 }
 
-function getRedeemCount(startDate, endDate, callback) {
+function getRedeemCount(startDate, endDate, voucherType, callback) {
 	Voucher.aggregate(
-		{$match: {'basics.status': 'merchant redeemed','used_details.used_time': {
-			$gt: new Date(startDate), 
-			$lt: new Date(endDate)
+		{$match: {'basics.gen_type': voucherType, 'basics.status': 'merchant redeemed','used_details.used_time': {
+			$gte: startDate, 
+			$lte: endDate
 			}
 		}},
 		{$project: {usedDate: {$dateToString : { format: "%d-%m", date: "$used_details.used_time"}}, outlet: "$used_details.used_at"}},
