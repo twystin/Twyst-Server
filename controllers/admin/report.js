@@ -102,30 +102,34 @@ function getCheckins(startDate, endDate, checkinType, callback) {
 	    	})
 	    	//console.log(allCheckin);
 	    	var finalCount = {};
+	    	console.log(allCheckin.length)
+
+	    	if(allCheckin.length) {
+	    		for (var i = 0; i < allCheckin.length ; i++) {
+		    		for(var j = i; j< allCheckin.length; j++) {
+
+		    			//console.log(allCheckin[i].date.toString() + "  " + allCheckin[j].date.toString())
+		    			if(allCheckin[i].date.toString() === allCheckin[j].date.toString()) {
+		    				if(!finalCount[allCheckin[i].date]) {
+		    					finalCount[allCheckin[i].date] = [];
+		    						
+		    				}
+		    				var a = {
+		    					'outlet': allCheckin[j].outlet,
+		    					'count': allCheckin[j].checkin_count
+		    				}
+		    				//console.log('here ' + allCheckin[j].outlet + " " + allCheckin[j].checkin_count);
+		    				finalCount[allCheckin[i].date].push(a) 
+		    				
+		    			}
+		    			break;
+		    		}
+
+		    	};	
+		    	finalCount.isCheckin = true;
+	    	}
 	    	
-
-	    	for (var i = 0; i < allCheckin.length ; i++) {
-	    		for(var j = i; j< allCheckin.length; j++) {
-
-	    			//console.log(allCheckin[i].date.toString() + "  " + allCheckin[j].date.toString())
-	    			if(allCheckin[i].date.toString() === allCheckin[j].date.toString()) {
-	    				if(!finalCount[allCheckin[i].date]) {
-	    					finalCount[allCheckin[i].date] = [];
-	    						
-	    				}
-	    				var a = {
-	    					'outlet': allCheckin[j].outlet,
-	    					'count': allCheckin[j].checkin_count
-	    				}
-	    				//console.log('here ' + allCheckin[j].outlet + " " + allCheckin[j].checkin_count);
-	    				finalCount[allCheckin[i].date].push(a) 
-	    				
-	    			}
-	    			break;
-	    		}
-
-	    	};
-	    	finalCount.isCheckin = true;
+	    	
 	    	//console.log(JSON.stringify(finalCount));
 	    	callback(null, finalCount);
 	    }
@@ -155,29 +159,31 @@ function getRedeemCount(startDate, endDate, voucherType, callback) {
 	    	})
 	    	var finalRedeem = {};
 	    	
+	    	if(allRedeem.length) {
+	    		for (var i = 0; i < allRedeem.length ; i++) {
+		    		for(var j = i; j< allRedeem.length; j++) {
 
-	    	for (var i = 0; i < allRedeem.length ; i++) {
-	    		for(var j = i; j< allRedeem.length; j++) {
+		    			//console.log(allCheckin[i].date.toString() + "  " + allCheckin[j].date.toString())
+		    			if(allRedeem[i].date.toString() === allRedeem[j].date.toString()) {
+		    				if(!finalRedeem[allRedeem[i].date]) {
+		    					finalRedeem[allRedeem[i].date] = [];
+		    						
+		    				}
+		    				var a = {
+		    					'outlet': allRedeem[j].outlet,
+		    					'count': allRedeem[j].redeem_count
+		    				}
+		    				//console.log('here ' + allCheckin[j].outlet + " " + allCheckin[j].checkin_count);
+		    				finalRedeem[allRedeem[i].date].push(a) 
+		    				
+		    			}
+		    			break;
+		    		}
 
-	    			//console.log(allCheckin[i].date.toString() + "  " + allCheckin[j].date.toString())
-	    			if(allRedeem[i].date.toString() === allRedeem[j].date.toString()) {
-	    				if(!finalRedeem[allRedeem[i].date]) {
-	    					finalRedeem[allRedeem[i].date] = [];
-	    						
-	    				}
-	    				var a = {
-	    					'outlet': allRedeem[j].outlet,
-	    					'count': allRedeem[j].redeem_count
-	    				}
-	    				//console.log('here ' + allCheckin[j].outlet + " " + allCheckin[j].checkin_count);
-	    				finalRedeem[allRedeem[i].date].push(a) 
-	    				
-	    			}
-	    			break;
-	    		}
-
-	    	};
-	    	finalRedeem.isRedeem = true;
+		    	};
+		    	finalRedeem.isRedeem = true;	
+	    	}
+	    	
 	    	//console.log(finalRedeem)
 	    	callback(null, finalRedeem);
 	    }
