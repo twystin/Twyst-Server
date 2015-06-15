@@ -11,7 +11,8 @@ var VoucherSchema = new Schema({
         status : {type: String, enum: ['active', 'expired','user redeemed', 'merchant redeemed'], default: 'active'},
         created_at : {type: Date, default: Date.now},
         modified_at: {type: Date, default: Date.now},
-        isCorporate: {type: Boolean, default: false}
+        isCorporate: {type: Boolean, default: false},
+        gen_type: {type: String, enum: ['PANEL', 'QR', 'POS', 'SMS', 'MRL', 'BATCH'], default: 'PANEL'}
     },
     validity:{
         start_date: {type: Date, default: Date.now},
