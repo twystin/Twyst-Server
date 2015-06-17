@@ -42,7 +42,9 @@ function getVoucherObject(object_param) {
 		end_date = burn_date;
 	}
 	else {
-		end_date = object_param.reward_table.program.validity.burn_end;
+		var burn_date = new Date();
+		burn_date.setDate(burn_date.getDate() + 35);
+		end_date = burn_date;
 	}
 	var voucher = {};
 	voucher = {
@@ -55,7 +57,8 @@ function getVoucherObject(object_param) {
 			description: object_param.current_reward.rewardified,
 			type: 'CHECKIN',
 			status: 'active',
-			created_at: object_param.is_batch ? (new Date(object_param.creation_time)) : (new Date(object_param.creation_time).getTime() + 10800000)
+			created_at: object_param.is_batch ? (new Date(object_param.creation_time)) : (new Date(object_param.creation_time).getTime() + 10800000),
+			gen_type: object_param.gen_type
 		},
 		reward: object_param.offer.reward,
 		applicable_hours: getTimings(object_param.offer),
@@ -63,7 +66,7 @@ function getVoucherObject(object_param) {
 		validity: {
 			start_date: new Date(),
 			end_date: end_date,
-			number_of_days: object_param.offer.voucher_valid_for_days
+			number_of_days: object_param.offer.voucher_valid_for_days || 35
 		},
 		issue_details: {
 			issued_to: object_param.user._id,
