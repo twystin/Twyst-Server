@@ -29,14 +29,14 @@ module.exports.get = function (req, res) {
 module.exports.save = function (req, res) {
 
 	var obj = req.body.obj;
-	
-	if((!obj.phones) && (!obj.gcms)) {
+	if((!req.body.phones) && (!obj.gcms)) {
 		fillAllFields();
 	}
-	else if(obj.phones) {
+	else if(req.body.phones) {
 		if(obj.body 
 			&& obj.head
 			&& obj.scheduled_at) {
+			obj.phones = req.body.phones;
 			saveNotifs();
 		}
 		else {
