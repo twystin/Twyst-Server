@@ -4,6 +4,7 @@ var async = require('async');
 
 var Checkin = mongoose.model('Checkin');
 var Program = mongoose.model('Program');
+var outletHandles = require('../../outlethandles');
 
 module.exports.getUserMetric = function (req, res) {
 
@@ -124,7 +125,6 @@ module.exports.getUserMetric = function (req, res) {
 }
 
 module.exports.getUserData = function (req, res) {
-
 	var functions = {
 		'unique': getUniqueUsers,
 		'cross': getCrossVisitingUsers,
@@ -147,12 +147,12 @@ module.exports.getUserData = function (req, res) {
 		var q = {};
 		if(req.body.outlets && req.body.outlets.length > 0) {
 			q = {
-				checkin_program : {
-					$in: req.body.programs.map(
-						function(id){
-							return mongoose.Types.ObjectId(String(id)); 
-					})
-				},
+				//checkin_program : {
+				//	$in: req.body.programs.map(
+				//		function(id){
+				//			return mongoose.Types.ObjectId(String(id)); 
+				//	})
+				//},
 				outlet: {
 					$in: req.body.outlets.map(
 						function(id){
@@ -207,10 +207,10 @@ module.exports.getUserData = function (req, res) {
 	function getUniqueUsers() {
 		Checkin.aggregate({$match: getMatchObject()},
 				{ $group: { 
-						_id: '$phone',
-						outlets: {
-							$push: '$outlet'
-						}
+						_id: '$phone'//,
+					//	outlets: {
+						//	$push: '$outlet'
+						//}
 					}
 				}, function (err, op) {
 					if(err) {
@@ -221,6 +221,12 @@ module.exports.getUserData = function (req, res) {
 				        });
 					}
 					else {
+						var smsHandler = _.find(outletHandles.handlers, function(id){					
+							if(id.outlet.toString() ===  req.body.outlets.toString()) {
+								return id.handler
+							}
+						})
+						op.push(smsHandler.handler)
 						res.send(200, {
 				        	'status': 'success',
 				        	'message': 'Got data successfully.',

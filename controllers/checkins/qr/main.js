@@ -246,7 +246,8 @@ module.exports.checkin = function(req, res) {
 			current_reward: success_obj.reward,
 			checkin_id: checkin_id,
 			creation_time: Date.now(),
-			is_batch: false
+			is_batch: false,
+			gen_type: 'QR'
 		};
 		VoucherGen.generate(obj, function (err, voucher) {
 			if(err) {
