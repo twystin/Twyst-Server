@@ -155,6 +155,7 @@ module.exports = function (app) {
         app.post('/api/v2/changestatus/program', StatusCtrl.changeProgramStatus);
         app.post('/api/v2/changevalidity/qr', QrCtrl.updateValidity);
         app.post('/api/v2/summary_metric', MetricCtrl.getSummary);
+        app.post('/api/v2/smsReport', MetricCtrl.getSmsReport);
     })();
 
     (function user_data_route() {

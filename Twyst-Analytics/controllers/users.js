@@ -221,11 +221,11 @@ module.exports.getUserData = function (req, res) {
 				        });
 					}
 					else {
-						var smsHandler = _.find(outletHandles.handlers, function(id){					
-							if(id.outlet.toString() ===  req.body.outlets.toString()) {
+						var smsHandler = _.find(outletHandles.handlers, function(id){							
+							if(id.outlet.toString() ===  req.body.outlets[0].toString()) {
 								return id.handler
 							}
-						})
+						})						
 						op.push(smsHandler.handler)
 						res.send(200, {
 				        	'status': 'success',
