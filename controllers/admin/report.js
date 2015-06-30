@@ -7,6 +7,7 @@ var Tier = mongoose.model('Tier');
 var _ = require('underscore');
 var Checkin = mongoose.model('Checkin');
 var Voucher = mongoose.model('Voucher');
+var Notif = mongoose.model('Notif');
 var async = require('async');
 
 module.exports.getSummary= function (req, res) {
@@ -100,9 +101,7 @@ function getCheckins(startDate, endDate, checkinType, callback) {
 	    		}
 	    		allCheckin.push(checkin_obj);
 	    	})
-	    	//console.log(allCheckin);
 	    	var finalCount = {};
-	    	console.log(allCheckin.length)
 
 	    	if(allCheckin.length) {
 	    		for (var i = 0; i < allCheckin.length ; i++) {
@@ -119,8 +118,7 @@ function getCheckins(startDate, endDate, checkinType, callback) {
 		    					'count': allCheckin[j].checkin_count
 		    				}
 		    				//console.log('here ' + allCheckin[j].outlet + " " + allCheckin[j].checkin_count);
-		    				finalCount[allCheckin[i].date].push(a) 
-		    				
+		    				finalCount[allCheckin[i].date].push(a);		    				
 		    			}
 		    			break;
 		    		}
@@ -128,7 +126,6 @@ function getCheckins(startDate, endDate, checkinType, callback) {
 		    	};	
 		    	finalCount.isCheckin = true;
 	    	}
-	    	
 	    	
 	    	//console.log(JSON.stringify(finalCount));
 	    	callback(null, finalCount);
@@ -148,7 +145,6 @@ function getRedeemCount(startDate, endDate, voucherType, callback) {
 		{$sort : { "_id.usedDate" : 1 } },
 		function(err, redeem_data) {
 	    	var allRedeem = []
-	    	
 	    	_.map(redeem_data, function(redeem) {
 	    		var redeem_obj = {
 	    			'date': redeem._id.usedDate,
@@ -184,12 +180,33 @@ function getRedeemCount(startDate, endDate, voucherType, callback) {
 		    	finalRedeem.isRedeem = true;	
 	    	}
 	    	
-	    	//console.log(finalRedeem)
 	    	callback(null, finalRedeem);
 	    }
 	)
 }
 
-
+module.exports.getSmsReport = function(req, res) {
+	var startDate = new Date(req.body.start_date);
+	var endDate = new Date(req.body.end_date);
+	endDate.setHours(23,59,59,999);
+	Notif.find( { 'from': {$exists: true, $ne: 'TWYSTR'},  'logged_at': {$gte: startDate, $lte: endDate}}, {'logged_at': 1, 'phones': 1, 'from': 1, 'body': 1}, function(err, obj) {
+		if(err) {
+			console.log(err)
+	    	res.send(200, {
+		    	'status' : 'error',
+                'message' : 'Error getting sms data',
+                'info': err
+            });
+	    }
+	    else {
+	    	res.send(200, {
+		    	'status' : 'success',
+                'message' : 'Got dashboard data',
+                'info': obj								
+            });
+	    }
+		
+	} );
+}
 
 
