@@ -65,7 +65,7 @@ function getVoucherObject(object_param) {
 		terms: object_param.offer.terms,
 		validity: {
 			start_date: new Date(),
-			end_date: end_date,
+			end_date: end_date.setHours(23,59,59,999),
 			number_of_days: object_param.offer.voucher_valid_for_days || 35
 		},
 		issue_details: {
