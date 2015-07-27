@@ -316,26 +316,12 @@ module.exports.update = function(req,res) {
 						});
 					}
 					else {
-						var validity = {
-							start_date: program.validity.burn_start,
-							end_date: program.validity.burn_end
-						}
-						VoucherCtrl.updateValidity(program._id, validity, function (err, num ) {
-							if(err) {
-								res.send(200, {
-									'status': 'success',
-									'message': 'Saved program, voucher update error',
-									'info': err
-								});
-							}
-							else {
-								res.send(200, {
-									'status': 'success',
-									'message': 'Saved program, updated validity for vouchers',
-									'info': num
-								});
-							}
-						})
+						
+						res.send(200, {	'status': 'success',
+							'message': 'Saved program',
+							'info': ''
+						});
+							
 
 					};
 				});
