@@ -1,6 +1,9 @@
 'use strict';
 var mongoose = require('mongoose');
+var _ = require('underscore');
 var Notif = mongoose.model('Notif');
+var Account = mongoose.model('Account');
+var Unsbs = mongoose.model('Unsbs');
 
 module.exports.get = function (req, res) {
 	Notif.find({
@@ -56,11 +59,54 @@ module.exports.save = function (req, res) {
 	}
 
 	function saveNotifs () {
-		var notif = new Notif(obj);
+		Account.find({
+			phone: {
+				$in: obj.phones
+			},
+			blacklisted: true
+		}, {
+			'phone': 1
+		}, function(err, blacklistedUsers) {
+			if(err) {
+				return sendResponse(err);
+			}
 
-		notif.save(function (err) {
-			sendResponse(err);
+			obj.phones = _.difference(obj.phones, _.map(blacklistedUsers, function(user) {
+				return user.phone;
+			}));
+
+			Unsbs.find({
+				phone: {
+					$in: obj.phones
+				},
+				sms: {
+					outlets: {
+						$exists: true
+					}
+				}
+			}, {
+				'sms': 1,
+				'phone': 1
+			}, function(err, unsubs) {
+				if(err) {
+					return sendResponse(err)
+				}
+
+				var unsubPhones = _.filter(unsubs, function(unsub) {
+					return _.includes(_.map(unsub.sms.outlets, function(outlet) {
+						return outlet.toString();
+					}), obj.outlet);
+				});
+
+				obj.phones = _.difference(obj.phones, unsubPhones);
+				var notif = new Notif(obj);
+
+				notif.save(function (err) {
+					sendResponse(err);
+				});
+			});
 		});
+		
 	}
 
 	function fillAllFields () {
