@@ -1,5 +1,6 @@
 'use strict';
 var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
 var Notif = mongoose.model('Notif');
 var Account = mongoose.model('Account');
@@ -74,37 +75,39 @@ module.exports.save = function (req, res) {
 			obj.phones = _.difference(obj.phones, _.map(blacklistedUsers, function(user) {
 				return user.phone;
 			}));
-
-			Unsbs.find({
-				phone: {
-					$in: obj.phones
-				},
-				sms: {
-					outlets: {
-						$exists: true
+			
+			try {
+				obj.outlet = ObjectId(obj.outlet);
+				Unsbs.find({
+					phone: {
+						$in: obj.phones
+					},
+					'sms.outlets': {
+						$in: [obj.outlet]
 					}
-				}
-			}, {
-				'sms': 1,
-				'phone': 1
-			}, function(err, unsubs) {
-				if(err) {
-					return sendResponse(err)
-				}
+				}, {
+					'phone': 1
+				}, function(err, unsubs) {
+					if(err) {
+						return sendResponse(err)
+					}
 
-				var unsubPhones = _.filter(unsubs, function(unsub) {
-					return _.includes(_.map(unsub.sms.outlets, function(outlet) {
-						return outlet.toString();
-					}), obj.outlet);
+					var unsubPhones = _.map(unsubs, function(unsub) {
+						return unsub.phone;
+					});
+					obj.phones = _.difference(obj.phones, unsubPhones);
+					var notif = new Notif(obj);
+
+					notif.save(function (err) {
+						sendResponse(err);
+					});
 				});
 
-				obj.phones = _.difference(obj.phones, unsubPhones);
-				var notif = new Notif(obj);
+			} catch(err) {
+				return sendResponse(new Error('Outlet ID is invalid'));
+			}
 
-				notif.save(function (err) {
-					sendResponse(err);
-				});
-			});
+			
 		});
 		
 	}
